@@ -5,14 +5,16 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/paginas-comics.mjs && astro build",
     "preview": "astro preview",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "comics": "node scripts/paginas-comics.mjs"
   },
   "dependencies": {
     "@fontsource-variable/big-shoulders-stencil": "^5.3.0",
     "@fontsource/atkinson-hyperlegible-next": "^5.3.0",
     "astro": "^7.4.7",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "yaml": "^2.9.1"
   }
 }

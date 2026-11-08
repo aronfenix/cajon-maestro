@@ -2,6 +2,29 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import { AREAS, areaPorId, type Area, type Tipo } from '../data/areas';
 import { ruta } from './rutas';
+import { existsSync, readFileSync } from 'node:fs';
+
+export interface PaginaComic {
+  src: string;
+  ancho: number;
+  alto: number;
+}
+
+// Páginas generadas por scripts/paginas-comics.mjs, si existen.
+function paginasComic(id: string): PaginaComic[] | undefined {
+  const indice = `public/comics/${id}/paginas.json`;
+  if (!existsSync(indice)) return undefined;
+  try {
+    const { paginas } = JSON.parse(readFileSync(indice, 'utf8'));
+    return paginas.map((p: { archivo: string; ancho: number; alto: number }) => ({
+      src: ruta(`/comics/${id}/${p.archivo}`),
+      ancho: p.ancho,
+      alto: p.alto,
+    }));
+  } catch {
+    return undefined;
+  }
+}
 
 // Todas las imágenes de src/media, para optimizarlas al publicar.
 const imagenes = import.meta.glob<{ default: ImageMetadata }>(
@@ -56,6 +79,7 @@ export interface Material {
   relacionados: string[];
   orden: number;
   pendiente: boolean; // le falta el archivo, el vídeo o el enlace
+  lector?: PaginaComic[]; // páginas del cómic para leerlo en la web
   entrada: CollectionEntry<'materiales'>;
 }
 
@@ -100,7 +124,7 @@ export async function catalogo() {
       fecha: d.fecha,
       tema,
       portada: imagen(d.portada, d.titulo),
-      enlace: d.enlace,
+      enlace: d.enlace ? ruta(d.enlace) : undefined,
       codigo: d.codigo,
       video: d.video ? ruta(d.video) : undefined,
       archivo: d.archivo ? ruta(d.archivo) : undefined,
@@ -111,6 +135,7 @@ export async function catalogo() {
       relacionados: d.relacionados.map(idDe),
       orden: d.orden ?? 99,
       pendiente: !tieneDestino,
+      lector: d.tipo === 'comic' ? paginasComic(m.id) : undefined,
       entrada: m,
     });
   }

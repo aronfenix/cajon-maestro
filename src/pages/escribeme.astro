@@ -1,0 +1,30 @@
+---
+import Archivador from '../layouts/Archivador.astro';
+import Buzon from '../components/Buzon.astro';
+import { SITIO } from '../data/sitio';
+import { ruta } from '../lib/rutas';
+---
+
+<Archivador activo="" titulo="Escríbeme" descripcion={`Buzón de ${SITIO.nombre}.`}>
+  <header class="cabecera-area">
+    <h1 class="rotulo">Escríbeme</h1>
+    <a class="volver" href={ruta('/')}>{SITIO.nombre}</a>
+  </header>
+  <div class="pagina-buzon">
+    {
+      SITIO.buzon ? (
+        <Buzon
+          titulo="El buzón del cajón"
+          texto="Para avisar de un fallo, contar que algo te ha servido o proponer una idea. No hace falta correo."
+        />
+      ) : (
+        <p class="vacio">El buzón todavía no está abierto.</p>
+      )
+    }
+    {SITIO.contacto && (
+      <p class="buzon-texto">
+        Si eres docente y prefieres el correo: <a href={`mailto:${SITIO.contacto}`}>{SITIO.contacto}</a>
+      </p>
+    )}
+  </div>
+</Archivador>

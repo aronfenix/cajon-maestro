@@ -69,14 +69,14 @@ const canonica = new URL(Astro.url.pathname, Astro.site);
               <a href={SITIO.licencia.url} rel="license">{SITIO.licencia.nombre}</a>: {SITIO.licencia.explicacion}.
             </p>
             <p>
-              Esta web no tiene cuentas ni cookies y no guarda datos de nadie. Los juegos que enlaza son
-              versiones de demostración, sin alumnos dentro.
+              Esta web no tiene cuentas ni cookies. Si escribes en el buzón, el mensaje me llega por correo a
+              través de Web3Forms; en esta web no se guarda nada. Los juegos enlazados son versiones sin alumnos dentro.
             </p>
             {
-              SITIO.contacto ? (
+              SITIO.buzon || SITIO.contacto ? (
                 <p>
-                  <a href={`mailto:${SITIO.contacto}`}>Escríbeme</a> si usas algo en tu clase o encuentras
-                  una errata. Las erratas también acaban en el cajón.
+                  <a href={ruta('/escribeme/')}>Escríbeme</a> si usas algo en tu clase o encuentras una errata.
+                  Las erratas también acaban en el cajón.
                 </p>
               ) : (
                 <p>Las erratas también acaban en el cajón.</p>

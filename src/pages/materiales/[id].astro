@@ -2,6 +2,7 @@
 import { Image, getImage } from 'astro:assets';
 import Archivador from '../../layouts/Archivador.astro';
 import Miniatura from '../../components/Miniatura.astro';
+import Buzon from '../../components/Buzon.astro';
 import { catalogo, relacionadosDe, render, detalle, type Material } from '../../lib/catalogo';
 import { TIPOS } from '../../data/areas';
 import { SITIO } from '../../data/sitio';
@@ -23,7 +24,11 @@ const poster = m.portada && m.video ? (await getImage({ src: m.portada, width: 1
 
 // El botón principal depende de lo que haya.
 let principal: { href: string; texto: string; descarga?: boolean } | undefined;
-if (m.archivo) {
+let secundario: { href: string; texto: string; descarga?: boolean } | undefined;
+if (m.lector?.length) {
+  principal = { href: ruta(`/materiales/${m.id}/leer/`), texto: 'Leer el cómic' };
+  if (m.archivo) secundario = { href: m.archivo, texto: 'Descargar (PDF)', descarga: true };
+} else if (m.archivo) {
   const ext = m.archivo.split('.').pop()?.toUpperCase();
   const extra = [ext, det].filter(Boolean).join(', ');
   principal = { href: m.archivo, texto: `Descargar${extra ? ` (${extra})` : ''}`, descarga: true };
@@ -46,6 +51,11 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
         {principal && (
           <a class="boton" href={principal.href} download={principal.descarga ? '' : undefined}>
             {principal.texto}
+          </a>
+        )}
+        {secundario && (
+          <a class="boton-sec" href={secundario.href} download={secundario.descarga ? '' : undefined}>
+            {secundario.texto}
           </a>
         )}
         {descargaVideo && (
@@ -127,6 +137,10 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
           </section>
         )
       }
+      <Buzon
+        material={m.titulo}
+        titulo={['juego', 'web', 'herramienta'].includes(m.tipo) ? '¿Algo no funciona?' : '¿Algo está mal?'}
+      />
     </div>
   </div>
 </Archivador>

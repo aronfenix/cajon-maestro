@@ -25,6 +25,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Instalar pdftoppm (para las páginas de los cómics)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
       - run: npm ci
       - run: npm run build
         env:

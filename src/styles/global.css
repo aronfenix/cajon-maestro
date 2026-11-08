@@ -640,6 +640,213 @@ a.subrayado:hover {
   font-size: 17px;
 }
 
+/* ——— Buzón ——— */
+
+.buzon {
+  margin-top: 8px;
+  padding-top: 28px;
+  border-top: 1px solid var(--linea);
+  max-width: 36em;
+}
+.buzon-texto {
+  font-size: 17px;
+  margin: 0 0 18px;
+}
+.buzon-form {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+.campo {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+.campo label {
+  font-weight: 700;
+  font-size: 15px;
+}
+.campo input,
+.campo textarea {
+  font: inherit;
+  font-size: 17px;
+  padding: 10px 12px;
+  border: 2px solid var(--toner);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--toner);
+  width: 100%;
+}
+.campo input {
+  max-width: 320px;
+  min-height: 46px;
+}
+.campo textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+.ayuda {
+  margin: 0;
+  font-size: 14px;
+  color: var(--gris);
+}
+.trampa {
+  position: absolute;
+  left: -9999px;
+}
+.buzon-form .boton {
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+.buzon-form .boton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.buzon-estado {
+  margin: 0;
+  font-size: 16px;
+  min-height: 1.5em;
+}
+.buzon-estado.error {
+  color: var(--boli-rojo);
+}
+.pagina-buzon {
+  padding-top: 28px;
+}
+.pagina-buzon .buzon {
+  border-top: 0;
+  padding-top: 0;
+}
+
+/* ——— Lector de cómics ——— */
+
+.lector {
+  min-height: 100vh;
+}
+.lector-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 24px;
+  padding: 18px 24px 14px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+.lector-volver {
+  font-size: 16px;
+}
+.lector-titulo {
+  font-family: var(--rotulo);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1;
+  margin: 0;
+  flex: 1 1 auto;
+}
+.lector-cuenta {
+  margin: 0;
+  font-size: 15px;
+  color: var(--gris);
+}
+.lector-escenario {
+  position: relative;
+  padding: 0 16px 24px;
+  touch-action: pan-y pinch-zoom;
+}
+.lector-paginas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 24px;
+  justify-items: center;
+}
+.lector-pagina[hidden] {
+  display: none;
+}
+.lector-pagina img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 900px);
+  background: #fff;
+  box-shadow: 3px 3px 0 #c3c7c0, 6px 6px 0 #b3b7b0;
+}
+.paginado .lector-pagina img {
+  max-height: calc(100vh - 150px);
+  max-height: calc(100dvh - 150px);
+}
+.paginado.al-ancho .lector-pagina img {
+  max-height: none;
+  max-width: min(100%, 1100px);
+  width: 100%;
+}
+.lector-zona {
+  position: absolute;
+  top: 0;
+  bottom: 24px;
+  width: 30%;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.lector-zona[hidden] {
+  display: none;
+}
+.lector-zona:focus-visible {
+  outline-offset: -6px;
+}
+.lector-zona-izq {
+  left: 0;
+  cursor: w-resize;
+}
+.lector-zona-der {
+  right: 0;
+  cursor: e-resize;
+}
+.lector-mandos {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  background: var(--bandeja);
+}
+.lector-mandos[hidden] {
+  display: none;
+}
+.lector-mandos button {
+  font-family: inherit;
+  cursor: pointer;
+  background: #fff;
+}
+.lector-mandos .boton {
+  background: var(--toner);
+  border: 0;
+}
+.lector-mandos button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.lector-mandos [aria-pressed='true'] {
+  background: var(--toner);
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .lector-mandos [data-ancho] {
+    display: none;
+  }
+  .lector-barra {
+    padding: 12px 16px 10px;
+  }
+  .lector-titulo {
+    font-size: 24px;
+  }
+}
+
 /* ——— Pie ——— */
 
 .pie {

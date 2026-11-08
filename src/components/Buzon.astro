@@ -1,0 +1,81 @@
+---
+import { SITIO } from '../data/sitio';
+
+interface Props {
+  material?: string; // título del material desde el que se escribe
+  titulo?: string;
+  texto?: string;
+}
+const {
+  material,
+  titulo = '¿Algo no funciona?',
+  texto = 'Escríbeme aquí si algo falla o está mal. No hace falta correo: solo tu nombre y lo que pasa.',
+} = Astro.props;
+const asunto = material ? `Cajón maestro · ${material}` : 'Cajón maestro · mensaje';
+const id = material ? 'buzon-material' : 'buzon';
+---
+
+{
+  SITIO.buzon && (
+    <section class="buzon" aria-labelledby={`${id}-titulo`}>
+      <h2 class="seccion-titulo" id={`${id}-titulo`}>{titulo}</h2>
+      <p class="buzon-texto">{texto}</p>
+      <form class="buzon-form" data-buzon novalidate>
+        <input type="hidden" name="access_key" value={SITIO.buzon} />
+        <input type="hidden" name="subject" value={asunto} />
+        <input type="hidden" name="from_name" value="Cajón maestro" />
+        {material && <input type="hidden" name="material" value={material} />}
+        <input type="checkbox" name="botcheck" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="campo">
+          <label for={`${id}-nombre`}>Tu nombre</label>
+          <input id={`${id}-nombre`} name="name" type="text" maxlength="40" autocomplete="given-name" required aria-describedby={`${id}-nombre-ayuda`} />
+          <p class="ayuda" id={`${id}-nombre-ayuda`}>Solo el nombre, sin apellidos.</p>
+        </div>
+        <div class="campo">
+          <label for={`${id}-mensaje`}>¿Qué pasa?</label>
+          <textarea id={`${id}-mensaje`} name="message" rows="5" maxlength="1500" required></textarea>
+        </div>
+        <button type="submit" class="boton">Enviar al profe</button>
+        <p class="buzon-estado" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  )
+}
+
+<script>
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-buzon]')) {
+    const estado = form.querySelector<HTMLElement>('.buzon-estado')!;
+    const boton = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = form.elements.namedItem('name') as HTMLInputElement;
+      const mensaje = form.elements.namedItem('message') as HTMLTextAreaElement;
+      estado.classList.remove('error');
+      if (!nombre.value.trim() || !mensaje.value.trim()) {
+        estado.classList.add('error');
+        estado.textContent = 'Escribe tu nombre y qué pasa antes de enviarlo.';
+        (nombre.value.trim() ? mensaje : nombre).focus();
+        return;
+      }
+      const datos = Object.fromEntries(new FormData(form)) as Record<string, string>;
+      datos.pagina = location.href;
+      boton.disabled = true;
+      estado.textContent = 'Enviando…';
+      try {
+        const r = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(datos),
+        });
+        if (!r.ok) throw new Error(String(r.status));
+        form.reset();
+        estado.textContent = 'Enviado. Gracias: lo leo y, si hay que arreglar algo, lo arreglo.';
+      } catch {
+        estado.classList.add('error');
+        estado.textContent = 'No se ha podido enviar. Comprueba la conexión y vuelve a probar dentro de un rato.';
+      } finally {
+        boton.disabled = false;
+      }
+    });
+  }
+</script>
