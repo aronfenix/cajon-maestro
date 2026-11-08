@@ -1,14 +1,14 @@
 (function (root) {
   'use strict';
   const games = [
-    { id: 'celulas', n: '01', title: 'Detectives de células', type: 'Observa y localiza', minutes: '3 min', topic: 'celulas', image: 'epitelial', description: 'Encuentra las cuatro partes en células con formas diferentes.' },
-    { id: 'parejas', n: '02', title: 'Cada palabra con su idea', type: 'Une parejas', minutes: '2 min', topic: 'conceptos', image: 'neurona', description: 'Relaciona conceptos y definiciones. Las pistas te ayudan a entenderlos.' },
+    { id: 'celulas', n: '01', title: 'Micropuzles de células', type: 'Reconstruye imágenes', minutes: '5 min', topic: 'celulas', image: 'epitelial', description: 'Reconstruye cuatro modelos intercambiando piezas y descubre sus partes.' },
+    { id: 'parejas', n: '02', title: 'Memoria de conceptos', type: 'Destapa y recuerda', minutes: '3 min', topic: 'conceptos', image: 'neurona', description: 'Encuentra parejas de palabras y definiciones entre cartas ocultas.' },
     { id: 'organizacion', n: '03', title: 'Construye un organismo', type: 'Ordena con imágenes', minutes: '2 min', topic: 'celulas', image: 'corazon', description: 'Coloca las piezas desde una célula hasta una persona completa.' },
-    { id: 'nutricion', n: '04', title: 'Rutas de vida', type: 'Conecta los destinos', minutes: '3 min', topic: 'funciones', image: 'circulatorio', description: 'Acompaña al oxígeno, los nutrientes y los desechos por el cuerpo.' },
-    { id: 'relacion', n: '05', title: '¡Que no se escape la pelota!', type: 'Activa la respuesta', minutes: '3 min', topic: 'funciones', image: 'pelota', description: 'Detecta el estímulo y activa, paso a paso, una respuesta del cuerpo.' },
+    { id: 'nutricion', n: '04', title: 'Circuitos de vida', type: 'Gira y conecta', minutes: '6 min', topic: 'funciones', image: 'circulatorio', description: 'Construye circuitos de tuberías y prueba el recorrido de nutrientes, oxígeno y desechos.' },
+    { id: 'relacion', n: '05', title: '¡Atrapa la pelota!', type: 'Arcade de coordinación', minutes: '3 min', topic: 'funciones', image: 'pelota', description: 'Controla la mano, atrapa pelotas y sigue la cadena de la función de relación.' },
     { id: 'reproduccion', n: '06', title: 'El comienzo de una vida', type: 'Completa la historia', minutes: '2 min', topic: 'funciones', image: 'gametos', description: 'Usa las palabras del tema para explicar cómo comienza un nuevo ser.' },
-    { id: 'clasificar', n: '07', title: '¿Célula o ser vivo?', type: 'Clasifica y descubre', minutes: '2 min', topic: 'celulas', image: 'ameba', description: 'Una célula puede ser un organismo completo… o una parte de otro.' },
-    { id: 'reto', n: '08', title: 'El gran reto de Naturales', type: 'Ponte a prueba', minutes: '4 min', topic: 'conceptos', image: 'tejido_cardiaco', description: 'Repasa todo el tema y descubre qué te conviene volver a estudiar.' }
+    { id: 'clasificar', n: '07', title: 'Palabras escondidas', type: 'Sopa de letras con pistas', minutes: '5 min', topic: 'celulas', image: 'ameba', description: 'Descifra definiciones y traza palabras sobre seres unicelulares y pluricelulares.' },
+    { id: 'reto', n: '08', title: 'Biole: el código de la vida', type: 'Descifra la palabra', minutes: '4 min', topic: 'conceptos', image: 'tejido_cardiaco', description: 'Escribe conceptos del tema y aprovecha las pistas de cada letra para resolverlos.' }
   ];
   const parts = {
     membrana: { name: 'membrana', hint: 'Envuelve la célula y regula la entrada y salida de sustancias.' },
