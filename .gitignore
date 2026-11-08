@@ -4,3 +4,4 @@ dist/
 .wrangler/
 .DS_Store
 public/comics/
+public/juegos/motores/_bocetos/
