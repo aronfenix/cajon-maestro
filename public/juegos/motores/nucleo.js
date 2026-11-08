@@ -68,27 +68,42 @@ function nota(f, t, dur, tipo = 'sine', vol = 0.07, hasta) {
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g).connect(ac.destination); o.start(t); o.stop(t + dur + 0.02);
 }
-export function suena(que) {
+let ruidoBuf = null;
+// golpe de ruido filtrado: papel, cartón, tinta…
+function ruido(t, dur, { f = 1200, q = 0.8, tipo = 'lowpass', vol = 0.1 } = {}) {
+  if (!ruidoBuf) { ruidoBuf = ac.createBuffer(1, ac.sampleRate * 0.5, ac.sampleRate); const d = ruidoBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  const src = ac.createBufferSource(), fil = ac.createBiquadFilter(), g = ac.createGain();
+  src.buffer = ruidoBuf; fil.type = tipo; fil.frequency.value = f; fil.Q.value = q;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(fil).connect(g).connect(ac.destination); src.start(t, Math.random() * 0.3); src.stop(t + dur + 0.02);
+}
+const ESCALA = [523, 587, 659, 698, 784, 880, 988, 1046, 1175, 1318];
+export function suena(que, k = 0) {
   if (!sonidoOn) return;
   try {
     ac ??= new (window.AudioContext || window.webkitAudioContext)();
     if (ac.state === 'suspended') ac.resume();
     const t = ac.currentTime + 0.01;
     const s = {
-      pon: () => nota(520, t, 0.08, 'triangle', 0.09, 780),
-      quita: () => nota(500, t, 0.08, 'triangle', 0.06, 300),
+      coge: () => { ruido(t, 0.09, { f: 2600, q: 1.2, tipo: 'bandpass', vol: 0.12 }); nota(330, t, 0.07, 'sine', 0.05, 520); },
+      pon: () => { nota(190, t, 0.1, 'sine', 0.16, 110); ruido(t, 0.05, { f: 900, vol: 0.12 }); },
+      quita: () => { ruido(t, 0.12, { f: 1800, q: 0.7, tipo: 'bandpass', vol: 0.08 }); nota(420, t, 0.09, 'triangle', 0.04, 260); },
       salto: () => nota(300, t, 0.2, 'sine', 0.08, 900),
       atras: () => nota(700, t, 0.2, 'sine', 0.07, 260),
-      clic: () => nota(1400, t, 0.03, 'square', 0.025),
-      sello: () => { nota(120, t, 0.12, 'square', 0.06, 60); },
+      clic: () => { nota(1500, t, 0.025, 'square', 0.02); ruido(t, 0.02, { f: 4000, tipo: 'highpass', vol: 0.04 }); },
+      sello: () => { ruido(t, 0.16, { f: 380, vol: 0.32 }); nota(95, t, 0.18, 'sine', 0.22, 48); },
+      selloBien: () => { ruido(t, 0.12, { f: 420, vol: 0.28 }); nota(100, t, 0.14, 'sine', 0.2, 55); nota(ESCALA[k % ESCALA.length], t + 0.03, 0.22, 'triangle', 0.07); nota(ESCALA[k % ESCALA.length] * 2, t + 0.03, 0.12, 'sine', 0.025); },
+      selloMal: () => { ruido(t, 0.14, { f: 300, vol: 0.3 }); nota(90, t, 0.16, 'sine', 0.2, 45); nota(196, t + 0.04, 0.22, 'sawtooth', 0.03, 150); },
       estrella: () => nota(1320, t, 0.12, 'triangle', 0.06, 1760),
-      bien: () => [523, 659, 784, 1046].forEach((f, i) => nota(f, t + i * 0.08, 0.22, 'triangle', 0.07)),
+      bien: () => [523, 659, 784, 1046].forEach((f, i) => { nota(f, t + i * 0.08, 0.24, 'triangle', 0.07); nota(f * 2, t + i * 0.08, 0.1, 'sine', 0.02); }),
       regular: () => [523, 659].forEach((f, i) => nota(f, t + i * 0.1, 0.2, 'triangle', 0.06)),
-      mal: () => { nota(220, t, 0.18, 'sawtooth', 0.04, 160); nota(165, t + 0.16, 0.26, 'sawtooth', 0.04, 120); },
+      mal: () => { nota(220, t, 0.18, 'sawtooth', 0.035, 160); nota(165, t + 0.16, 0.26, 'sawtooth', 0.035, 120); },
+      cremallera: () => { for (let i = 0; i < 14; i++) ruido(t + i * 0.018, 0.02, { f: 3000 + i * 120, q: 2, tipo: 'bandpass', vol: 0.06 }); },
     }[que];
     s?.();
   } catch { /* sin audio: no pasa nada */ }
 }
+fx.ponSonido(suena);
 
 /* ---------- pegatinas y estrellas ---------- */
 const COLOR = ['#c9cfca', '#d98c4a', '#b8c3cc', '#f6b81a']; // 0 nada, 1 bronce, 2 plata, 3 oro
@@ -118,6 +133,7 @@ const SELLOS = ['Otra vez será', 'Por poco', '¡Muy bien!', '¡Perfecto!'];
 /* ---------- arranque ---------- */
 export async function arrancar(config, motor) {
   document.title = `${config.titulo} · Cajón maestro`;
+  document.body.classList.add('juego');
   if (config.area) document.body.dataset.area = config.area;
   const pizarraInicial = new URLSearchParams(location.search).has('pizarra');
 
@@ -136,7 +152,7 @@ export async function arrancar(config, motor) {
   const acciones = el('div', { class: 'acciones' });
   const aviso = el('p', { class: 'aviso', role: 'status' });
   const correccion = el('div', { class: 'correccion', hidden: true });
-  const zona = el('div', {}, reto, pista, escenario, acciones, aviso, correccion);
+  const zona = el('div', { class: 'zona' }, reto, pista, escenario, acciones, aviso, correccion);
   const final = el('section', { class: 'final', hidden: true, 'aria-live': 'polite' });
 
   // barra de progreso: avanza por objetivos conseguidos, no por número de pantallas
@@ -189,7 +205,7 @@ export async function arrancar(config, motor) {
 
   document.body.prepend(
     el('header', { class: 'barra-juego' },
-      el('a', { class: 'volver', href: config.volver || '../../' },
+      el('a', { class: 'volver', href: config.volver || '../../', 'aria-label': 'Volver al Cajón maestro', title: 'Volver' },
         svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 }), 'Cajón maestro'),
       el('h1', { text: config.titulo }),
       el('div', { class: 'controles' }, el('div', { class: 'interruptor', role: 'group', 'aria-label': 'Modo' }, btnReto, btnPiz), btnSon),
@@ -233,7 +249,7 @@ export async function arrancar(config, motor) {
   const pintaBarra = (p, chispa) => {
     relleno.style.width = Math.max(3, p) + '%';
     barra.setAttribute('aria-valuenow', String(Math.round(p)));
-    if (chispa) setTimeout(() => fx.chispasEn(relleno.querySelector('.punta-barra'), 10, css('--acento')), 450);
+    if (chispa) { barra.classList.remove('avanza'); void barra.offsetWidth; barra.classList.add('avanza'); setTimeout(() => fx.chispasEn(relleno.querySelector('.punta-barra'), 10, css('--acento')), 450); }
   };
   const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
 
@@ -244,7 +260,7 @@ export async function arrancar(config, motor) {
       if (zona.animate && (n > 0 || intento > 1)) await zona.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateX(-60px)', opacity: 0 }], { duration: 200, easing: 'ease-in' }).finished.catch(() => {});
       if (mio !== token) return;
       reto.replaceChildren(); pista.replaceChildren(); escenario.replaceChildren(); acciones.replaceChildren();
-      aviso.textContent = ''; aviso.className = 'aviso'; correccion.hidden = true; correccion.replaceChildren();
+      aviso.textContent = ''; aviso.className = 'aviso'; correccion.hidden = true; correccion.replaceChildren(); document.body.classList.remove('corrigiendo');
       calla();
       if (intento === 1) {
         cartel.replaceChildren(...[el('b', { text: `Reto ${n + 1}` }), !adaptativo && el('span', { text: `de ${fijas().length}` })].filter(Boolean));
@@ -287,7 +303,7 @@ export async function arrancar(config, motor) {
             el('div', { class: 'sello' + (estrellas === 0 ? ' gris' : ''), 'aria-hidden': 'true', text: SELLOS[estrellas] }),
             el('div', { class: 'texto' }, el('p', {}, marca(mensaje)), estrellasNodo(estrellas)),
             el('div', { class: 'opciones' }, opciones));
-          correccion.hidden = false;
+          correccion.hidden = false; document.body.classList.add('corrigiendo');
           if (!pizarra) {
             const sello = correccion.querySelector('.sello');
             suena('sello'); fx.vibra(estrellas ? 25 : [40, 60, 40]);
@@ -370,7 +386,7 @@ export async function arrancar(config, motor) {
     // final
     calla();
     primeraPartida = false;
-    zona.hidden = true;
+    zona.hidden = true; document.body.classList.remove('corrigiendo');
     const completo = progreso >= 100;
     const sinAyuda = historial.filter((h) => h.estrellas >= 2 && !h.ayuda).length;
     const conAyuda = historial.filter((h) => h.estrellas >= 2 && h.ayuda).length;

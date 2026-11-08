@@ -177,6 +177,10 @@ export function gomets(n = 28) {
 
 /* ---------- arrastrar con el dedo (y tocar, para quien no pueda arrastrar) ---------- */
 // arrastra(nodo, { destinos: () => [elementos], alSoltar(destino, x, y) → true si se queda, alTocar() })
+let sonar = () => {};
+export const ponSonido = (f) => (sonar = f);
+// Arrastrar con el dedo: la pieza se despega del sitio, se inclina según la velocidad (como si colgara del dedo),
+// se balancea con un muelle y al soltarla aterriza con un pequeño aplastamiento.
 export function arrastra(nodo, { destinos, alSoltar, alTocar, puede = () => true }) {
   nodo.style.touchAction = 'none';
   // el toque (y el teclado) llega como click; tras un arrastre el click se descarta
@@ -188,30 +192,47 @@ export function arrastra(nodo, { destinos, alSoltar, alTocar, puede = () => true
     if (!puede() || e.button > 0) return;
     e.preventDefault();
     const x0 = e.clientX, y0 = e.clientY, r0 = nodo.getBoundingClientRect();
-    let fantasma = null, sobre = null;
+    let fantasma = null, sobre = null, raf = 0;
     const dx = x0 - r0.left, dy = y0 - r0.top;
+    // muelle: ángulo y escala persiguen a su objetivo
+    let px = x0, py = y0, vx = 0, ang = 0, vang = 0, esc = 1, vesc = 0, ultimoT = performance.now(), tx = 0, ty = 0;
     try { nodo.setPointerCapture(e.pointerId); } catch {}
     const bajo = (x, y) => { const lista = destinos(); return lista.find((d) => { const r = d.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; }) || null; };
+    const pinta = () => {
+      const objAng = Math.max(-22, Math.min(22, vx * 1.6));
+      vang += (objAng - ang) * 0.16; vang *= 0.74; ang += vang;
+      const objEsc = sobre ? 1.04 : 1.14;
+      vesc += (objEsc - esc) * 0.2; vesc *= 0.7; esc += vesc;
+      vx *= 0.86;
+      fantasma.style.transform = `translate(${tx}px, ${ty}px) rotate(${ang.toFixed(2)}deg) scale(${esc.toFixed(3)})`;
+      raf = requestAnimationFrame(pinta);
+    };
     const mover = (ev) => {
       if (!fantasma) {
         if (Math.hypot(ev.clientX - x0, ev.clientY - y0) < 7) return;
         fantasma = nodo.cloneNode(true);
-        fantasma.classList.add('fantasma'); fantasma.removeAttribute('id');
-        Object.assign(fantasma.style, { position: 'fixed', left: 0, top: 0, width: r0.width + 'px', height: r0.height + 'px', margin: 0, zIndex: 99, pointerEvents: 'none' });
+        fantasma.classList.add('fantasma'); fantasma.classList.remove('elegida', 'bien', 'mal'); fantasma.removeAttribute('id');
+        Object.assign(fantasma.style, { position: 'fixed', left: 0, top: 0, width: r0.width + 'px', height: r0.height + 'px', margin: 0, zIndex: 99, pointerEvents: 'none', transformOrigin: `${dx}px ${dy}px`, rotate: '0deg', translate: 'none', scale: 'none' });
         document.body.append(fantasma);
         nodo.classList.add('levantado');
         document.body.classList.add('arrastrando');
+        sonar('coge');
+        if (quieto()) { fantasma.style.transform = `translate(${ev.clientX - dx}px, ${ev.clientY - dy}px)`; } else raf = requestAnimationFrame(pinta);
       }
-      const x = ev.clientX - dx, y = ev.clientY - dy;
-      fantasma.style.transform = `translate(${x}px, ${y}px) rotate(-4deg) scale(1.1)`;
+      const ahora = performance.now(), dt = Math.max(8, ahora - ultimoT);
+      vx = vx * 0.5 + ((ev.clientX - px) / dt) * 16 * 0.5;
+      px = ev.clientX; py = ev.clientY; ultimoT = ahora;
+      tx = ev.clientX - dx; ty = ev.clientY - dy;
+      if (quieto()) fantasma.style.transform = `translate(${tx}px, ${ty}px)`;
       const s = bajo(ev.clientX, ev.clientY);
-      if (s !== sobre) { sobre?.classList.remove('sobre'); s?.classList.add('sobre'); sobre = s; }
+      if (s !== sobre) { sobre?.classList.remove('sobre'); s?.classList.add('sobre'); if (s) sonar('clic'); sobre = s; }
     };
     const soltar = (ev) => {
       nodo.removeEventListener('pointermove', mover); nodo.removeEventListener('pointerup', soltar); nodo.removeEventListener('pointercancel', soltar);
       sobre?.classList.remove('sobre');
       document.body.classList.remove('arrastrando');
       if (!fantasma) return;
+      cancelAnimationFrame(raf);
       nodo._trasArrastre = true; setTimeout(() => (nodo._trasArrastre = false), 60);
       const destino = bajo(ev.clientX, ev.clientY);
       const res = destino ? alSoltar(destino, ev.clientX, ev.clientY) : false;
@@ -220,14 +241,26 @@ export function arrastra(nodo, { destinos, alSoltar, alTocar, puede = () => true
       const pista = res instanceof Element ? res : nodo;
       requestAnimationFrame(() => {
         const desde = fantasma.style.transform;
-        const acaba = () => { fantasma.remove(); nodo.classList.remove('levantado'); if (queda) bote(pista.isConnected ? pista : nodo, 6); };
+        const acaba = () => {
+          fantasma.remove(); nodo.classList.remove('levantado');
+          const n = pista.isConnected ? pista : nodo;
+          if (queda) aterriza(n); else sonar('quita');
+        };
         if (!pista.isConnected) { fantasma.animate([{ transform: desde, opacity: 1 }, { transform: desde + ' scale(.6)', opacity: 0 }], { duration: 200 }).onfinish = acaba; return; }
         const r = pista.getBoundingClientRect();
-        const tx = r.left + r.width / 2 - r0.width / 2, ty = r.top + r.height / 2 - r0.height / 2;
-        const anim = fantasma.animate([{ transform: desde }, { transform: `translate(${tx}px, ${ty}px) rotate(0) scale(1)` }], { duration: queda ? 220 : 320, easing: queda ? 'cubic-bezier(.3,1.5,.5,1)' : 'cubic-bezier(.3,0,.3,1)' });
+        const ox = r.left + r.width / 2 - r0.width / 2, oy = r.top + r.height / 2 - r0.height / 2;
+        const anim = fantasma.animate([{ transform: desde }, { transform: `translate(${ox}px, ${oy}px) rotate(0deg) scale(${r.width / r0.width})` }], { duration: queda ? 200 : 380, easing: queda ? 'cubic-bezier(.5,0,.75,0)' : 'cubic-bezier(.3,1.3,.5,1)' });
         anim.onfinish = acaba;
       });
     };
     nodo.addEventListener('pointermove', mover); nodo.addEventListener('pointerup', soltar); nodo.addEventListener('pointercancel', soltar);
   });
+}
+// al caer sobre la mesa: se aplasta un poco, rebota y levanta polvillo
+export function aterriza(n) {
+  sonar('pon');
+  if (quieto() || !n.animate) return;
+  n.animate([{ transform: 'scale(1.12,.84)' }, { transform: 'scale(.95,1.07)', offset: 0.45 }, { transform: 'scale(1.02,.98)', offset: 0.75 }, { transform: 'none' }], { duration: 380, easing: 'ease-out' });
+  const r = n.getBoundingClientRect();
+  polvo(r.left + r.width / 2, r.top + r.height * 0.85, 6);
 }

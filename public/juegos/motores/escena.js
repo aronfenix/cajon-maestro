@@ -6,30 +6,37 @@ const h = (tag, cls, html = '') => { const n = document.createElement(tag); if (
 /* ---------------------------------------------------------------- fondos */
 const FONDOS = {
   // el estuche de cremallera: tela rosa, cremallera turquesa, lápices en sus gomas
+  // la mesa de manualidades: sobre la alfombrilla, recortes de cartulina, unas tijeras y un lápiz (solo en los bordes)
   estuche: `
-    <defs>
-      <pattern id="tela" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="14" height="14" fill="#ffc9df"/><path d="M0 7h14" stroke="#ffb8d4" stroke-width="3"/></pattern>
-      <pattern id="dientes" width="22" height="26" patternUnits="userSpaceOnUse"><rect x="3" y="0" width="16" height="12" rx="3" fill="#0e8f86"/><rect x="14" y="13" width="16" height="12" rx="3" fill="#0e8f86"/><rect x="-8" y="13" width="16" height="12" rx="3" fill="#0e8f86"/></pattern>
-    </defs>
-    <rect width="1600" height="1000" fill="url(#tela)"/>
-    <rect y="0" width="1600" height="70" fill="#1fb5a9"/><rect y="22" width="1600" height="26" fill="url(#dientes)"/>
-    <path d="M30 100 H1570 V960 H30Z" fill="none" stroke="#ff8fbd" stroke-width="4" stroke-dasharray="14 12"/>
-    <g opacity=".9">
-      <rect x="1500" y="180" width="34" height="520" rx="6" fill="#ffd23f" stroke="#000" stroke-width="4"/><path d="M1500 180 L1517 120 L1534 180Z" fill="#f6e0b5" stroke="#000" stroke-width="4"/><path d="M1511 140 L1517 120 L1523 140Z" fill="#000"/>
-      <rect x="1546" y="260" width="34" height="480" rx="6" fill="#2f6be0" stroke="#000" stroke-width="4"/><path d="M1546 260 L1563 205 L1580 260Z" fill="#f6e0b5" stroke="#000" stroke-width="4"/>
-      <rect x="1488" y="430" width="104" height="44" rx="10" fill="#1fb5a9" stroke="#000" stroke-width="4"/>
-      <rect x="40" y="620" width="30" height="340" rx="6" fill="#ff7a1a" stroke="#000" stroke-width="4"/><path d="M40 620 L55 570 L70 620Z" fill="#f6e0b5" stroke="#000" stroke-width="4"/>
-      <rect x="26" y="760" width="58" height="40" rx="10" fill="#1fb5a9" stroke="#000" stroke-width="4"/>
-    </g>`,
+    <defs><filter id="sombra-mesa" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="7" dy="12" stdDeviation="7" flood-color="#06180f" flood-opacity=".45"/></filter></defs>
+    <g filter="url(#sombra-mesa)" stroke="#1b1e3a" stroke-width="4" stroke-linejoin="round">
+      <path d="M-20 870 L120 820 L60 960 Z" fill="#ffc531"/>
+      <path d="M1480 40 L1640 -10 L1640 150 L1560 120 Z" fill="#e8417a"/>
+      <path d="M1520 930 l70 -110 l60 40 l-20 110z" fill="#5ec3ff"/>
+      <path d="M150 1010 q30 -70 90 -60 q-10 50 -40 90z" fill="#9bd84a"/>
+      <g transform="translate(1385 820) rotate(-32)">
+        <rect x="0" y="0" width="300" height="34" rx="4" fill="#ffc531"/><path d="M0 0 L-46 17 L0 34Z" fill="#f4d9a8"/><path d="M-30 11 L-46 17 L-30 23Z" fill="#1b1e3a"/>
+        <rect x="300" y="-2" width="34" height="38" rx="6" fill="#e8417a"/><path d="M30 10 h240" stroke="#fff" stroke-opacity=".6" stroke-width="5" stroke-linecap="round"/>
+      </g>
+      <g transform="translate(-40 300) rotate(18)">
+        <path d="M60 30 L330 70 L330 82 L60 60Z" fill="#cfd6e6"/><path d="M60 90 L330 86 L330 96 L60 120Z" fill="#b9c2d6"/>
+        <circle cx="40" cy="40" r="34" fill="#2f5bd3"/><circle cx="40" cy="40" r="15" fill="#2e7d5b"/>
+        <circle cx="40" cy="112" r="34" fill="#2f5bd3"/><circle cx="40" cy="112" r="15" fill="#2e7d5b"/>
+        <circle cx="96" cy="76" r="7" fill="#fff"/>
+      </g>
+    </g>
+    <g fill="#f3ecdf" stroke="#1b1e3a" stroke-width="2.5"><path d="M1470 760 q14 -10 20 4 q-12 10 -20 -4z"/><path d="M1440 790 q10 -14 20 -2 q-8 12 -20 2z"/><path d="M1500 800 q14 -4 14 10 q-14 4 -14 -10z"/></g>`,
   // fondo del cajón de madera: para cualquier compartimento sin escenario propio
   cajon: `
-    <defs><pattern id="veta" width="600" height="80" patternUnits="userSpaceOnUse"><rect width="600" height="80" fill="#e6c08c"/><path d="M0 20 C150 10 300 34 600 18 M0 54 C200 64 380 40 600 58" stroke="#d4a868" stroke-width="3" fill="none"/></pattern></defs>
-    <rect width="1600" height="1000" fill="url(#veta)"/>
-    <rect width="1600" height="40" fill="#b9874a"/><rect y="960" width="1600" height="40" fill="#b9874a"/>
-    <g stroke="#7d868c" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"><path d="M1460 880 h70 a16 16 0 0 0 0 -32 h-80 a10 10 0 0 0 0 20 h60"/><path d="M90 140 h60 a14 14 0 0 1 0 28 h-70 a9 9 0 0 1 0 -18 h52"/></g>`,
+    <defs><filter id="sombra-cajon" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="6" dy="10" stdDeviation="6" flood-color="#3a2208" flood-opacity=".45"/></filter></defs>
+    <g filter="url(#sombra-cajon)" stroke="#1b1e3a" stroke-linejoin="round">
+      <g fill="none" stroke="#8d97a8" stroke-width="7" stroke-linecap="round"><path d="M1460 880 h70 a16 16 0 0 0 0 -32 h-80 a10 10 0 0 0 0 20 h60"/><path d="M90 150 h60 a14 14 0 0 1 0 28 h-70 a9 9 0 0 1 0 -18 h52"/></g>
+      <g transform="translate(1500 300) rotate(84)" stroke-width="4"><rect width="260" height="30" rx="5" fill="#2f5bd3"/><path d="M0 0 L-40 15 L0 30Z" fill="#f4d9a8"/><path d="M-26 10 L-40 15 L-26 20Z" fill="#1b1e3a"/><rect x="250" y="-2" width="30" height="34" rx="5" fill="#ff7fae"/></g>
+      <g transform="translate(-30 760) rotate(-12)" stroke-width="4"><rect width="150" height="70" rx="12" fill="#fff1cf"/><rect x="90" width="60" height="70" rx="0" fill="#2f5bd3"/><path d="M90 0 v70" /></g>
+      <circle cx="1540" cy="960" r="26" fill="#ffc531" stroke-width="4"/><circle cx="1540" cy="960" r="10" fill="#c98f00" stroke-width="3"/>
+    </g>`,
   corcho: `
     <defs><pattern id="corcho" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#c99658"/><circle cx="8" cy="9" r="2" fill="#b07f45"/><circle cx="27" cy="21" r="2.6" fill="#ddb07a"/><circle cx="16" cy="32" r="1.8" fill="#a8763d"/><circle cx="35" cy="5" r="1.6" fill="#b07f45"/></pattern></defs>
-    <rect width="1600" height="1000" fill="url(#corcho)"/>
     <rect x="1400" y="120" width="150" height="150" fill="#fff27a" transform="rotate(5 1475 195)"/><circle cx="1475" cy="132" r="12" fill="#c8201a" stroke="#000" stroke-width="3"/>
     <rect x="60" y="760" width="170" height="120" fill="#fff" transform="rotate(-4 145 820)"/><circle cx="145" cy="768" r="12" fill="#1fb5a9" stroke="#000" stroke-width="3"/>`,
 };

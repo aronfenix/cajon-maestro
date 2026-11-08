@@ -1,0 +1,2 @@
+gsap.js: GSAP 3.15.1 (núcleo + Flip) empaquetado como módulo ES con esbuild.
+Licencia estándar «No Charge» de GSAP (Webflow): https://gsap.com/standard-license

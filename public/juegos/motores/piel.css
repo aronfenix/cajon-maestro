@@ -1,0 +1,349 @@
+/* =====================================================================================
+   Piel del Cajón maestro · «Mesa de manualidades»
+   Todo pasa encima de la alfombrilla verde de cortar, bajo el flexo: cartulina recortada,
+   cinta de carrocero, pegatinas, telas cosidas y sellos de tinta. Luz desde arriba a la
+   izquierda; cada objeto tiene canto (grosor) y sombra de contacto.
+   Tinta: azul marino casi negro (#1b1e3a) en contornos y textos, como pegatinas.
+   ===================================================================================== */
+:root{
+  --tinta:#1b1e3a; --gris:#4d5170; --papel:#fffdf6; --linea:#c9cbe0;
+  --amarillo:#ffc531; --amarillo-osc:#c98f00;
+  --cobalto:#2f5bd3; --cobalto-osc:#1c3a96;
+  --fucsia:#e8417a; --fucsia-osc:#a8204f;
+  --cielo:#5ec3ff; --lima:#9bd84a; --naranja:#ff8a1f;
+  --mate:#2e7d5b; --mate-osc:#1f5c42;
+  --azul:var(--cobalto); --rojo:#d7263d; --oro:var(--amarillo);
+  --acento:var(--amarillo); --acento2:#fff0c2; --acento-osc:var(--amarillo-osc);
+  --borde:3px solid var(--tinta);
+  --sombra:5px 9px 0 -2px rgba(15,25,30,.28),8px 16px 22px -10px rgba(10,20,25,.55);
+  --sombra-baja:3px 5px 0 -1px rgba(15,25,30,.25),5px 10px 14px -8px rgba(10,20,25,.5);
+  --fuerte:'Rotulo','Grandstander',system-ui,sans-serif;
+  --muelle:cubic-bezier(.25,1.45,.4,1);
+}
+body[data-escena="estuche"]{--acento:var(--amarillo);--acento2:#fff0c2;--acento-osc:var(--amarillo-osc)}
+
+/* ---------- la alfombrilla de corte (fondo común) ---------- */
+html{background:var(--mate)}
+body.juego{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;background:transparent!important;color:var(--tinta)}
+.fondo-escena{position:fixed;inset:0;z-index:-1;pointer-events:none;background-color:var(--mate);
+  background-image:
+    radial-gradient(120% 90% at 12% -10%,rgba(255,236,190,.42),rgba(255,236,190,0) 55%),
+    radial-gradient(90% 80% at 105% 110%,rgba(5,25,18,.5),rgba(5,25,18,0) 60%),
+    linear-gradient(rgba(240,255,210,.26) 2px,transparent 2px),
+    linear-gradient(90deg,rgba(240,255,210,.26) 2px,transparent 2px),
+    linear-gradient(rgba(240,255,210,.1) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(240,255,210,.1) 1px,transparent 1px),
+    url('tex/mate.webp');
+  background-size:100% 100%,100% 100%,150px 150px,150px 150px,30px 30px,30px 30px,256px 256px;
+  background-position:0 0,0 0,-1px -1px,-1px -1px,-1px -1px,-1px -1px,0 0;
+  background-blend-mode:normal,normal,normal,normal,normal,normal,multiply}
+.fondo-escena svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+body[data-escena]{background:transparent}
+
+/* ---------- textos y marcas de fosforito ---------- */
+.marca,.reto .marca,.bocadillo .marca{background:linear-gradient(176deg,transparent 0 22%,rgba(255,197,49,.92) 24% 86%,transparent 88%);padding:0 .12em;margin:0 -.04em;border-radius:.2em .5em .3em .45em;box-decoration-break:clone;-webkit-box-decoration-break:clone;color:inherit}
+
+/* ---------- botones: cartulina con canto ---------- */
+.tecla{--c:var(--papel);--c-txt:var(--tinta);--canto:var(--tinta);
+  position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 26px 2px;
+  border:var(--borde);border-radius:18px;background:var(--c);color:var(--c-txt);
+  font-family:var(--fuerte);font-weight:800;font-size:20px;letter-spacing:.01em;line-height:1;cursor:pointer;text-decoration:none;
+  touch-action:manipulation;user-select:none;-webkit-user-select:none;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.6),inset 0 -5px 0 rgba(27,30,58,.1),0 5px 0 var(--canto),4px 12px 16px -6px rgba(10,20,25,.5);
+  transform:translateY(0);transition:transform .08s,box-shadow .08s,filter .15s}
+.tecla:hover:not(:disabled){transform:translateY(-2px);box-shadow:inset 0 3px 0 rgba(255,255,255,.6),inset 0 -5px 0 rgba(27,30,58,.1),0 7px 0 var(--canto),5px 16px 18px -6px rgba(10,20,25,.5)}
+.tecla:active:not(:disabled){transform:translateY(5px) scale(.98,.96);box-shadow:inset 0 3px 0 rgba(255,255,255,.4),inset 0 -2px 0 rgba(27,30,58,.1),0 0 0 var(--canto),2px 4px 6px -3px rgba(10,20,25,.4)}
+.tecla.primaria{--c:var(--amarillo);--c-txt:var(--tinta)}
+.tecla.grande{min-height:66px;padding:0 34px 3px;font-size:24px;border-radius:22px}
+.tecla:disabled{cursor:default;filter:none;opacity:1;--c:#d9dbe6;--c-txt:#8a8ea8;border-color:#8a8ea8;transform:translateY(5px);box-shadow:0 0 0 transparent}
+:focus-visible{outline:4px solid var(--cielo);outline-offset:3px}
+
+/* ---------- la cabecera: piezas sueltas pegadas en la alfombrilla ---------- */
+.barra-juego{position:relative;z-index:30;flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;width:100%;max-width:none;margin:0;padding:12px clamp(12px,2.4vw,30px) 4px;background:none!important;box-shadow:none!important;backdrop-filter:none!important;border-radius:0!important}
+.volver{flex:none;display:inline-grid;place-items:center;width:52px;height:52px;padding:0;border:var(--borde);border-radius:50%;background:var(--papel);color:var(--tinta);font-size:0;box-shadow:var(--sombra-baja);transition:transform .15s var(--muelle)}
+.volver svg{width:26px;height:26px}
+.volver:hover{background:var(--papel);transform:rotate(-8deg) scale(1.06)}
+.barra-juego h1{position:relative;flex:none;margin:0;padding:7px 18px 9px;border:var(--borde);border-radius:6px 12px 8px 10px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;
+  font-family:var(--fuerte);font-weight:900;font-size:clamp(20px,2.2vw,28px);line-height:1;letter-spacing:0;transform:rotate(-1.4deg);box-shadow:var(--sombra-baja)}
+.barra-juego h1::before{content:"";position:absolute;left:-14px;top:-9px;width:54px;height:20px;background:rgba(242,226,180,.86);transform:rotate(-24deg);box-shadow:0 1px 2px rgba(0,0,0,.15);
+  -webkit-mask:linear-gradient(90deg,transparent 0 2px,#000 2px calc(100% - 2px),transparent calc(100% - 2px));clip-path:polygon(0 8%,6% 0,12% 10%,18% 0,24% 6%,100% 0,100% 100%,94% 92%,88% 100%,82% 90%,76% 100%,0 100%)}
+.estado{order:3;flex:1 1 320px;display:flex;align-items:center;gap:12px;margin:0;min-width:0}
+.controles{order:4;margin-left:auto;display:flex;align-items:center;gap:10px}
+.interruptor{display:inline-flex;padding:4px;border:var(--borde);border-radius:16px;background:var(--papel);box-shadow:var(--sombra-baja)}
+.interruptor button{min-height:40px;padding:0 14px;border:0;border-radius:11px;background:transparent;font-family:var(--fuerte);font-weight:800;font-size:16px;color:var(--gris);cursor:pointer}
+.interruptor button[aria-pressed="true"]{background:var(--tinta);color:var(--papel);box-shadow:none}
+.icono{width:52px;height:52px;border:var(--borde);border-radius:50%;background:var(--papel);color:var(--tinta);box-shadow:var(--sombra-baja)}
+
+/* progreso: regla de plástico transparente y un fosforito que va subrayando */
+.progreso{position:relative;flex:1;max-width:560px;height:40px;border:var(--borde);border-radius:8px;overflow:visible;
+  background:
+    repeating-linear-gradient(90deg,rgba(27,30,58,.55) 0 2px,transparent 2px 100%) 0 0/10% 14px no-repeat,
+    repeating-linear-gradient(90deg,rgba(27,30,58,.4) 0 1.5px,transparent 1.5px 100%) 0 0/2% 8px repeat-x,
+    linear-gradient(180deg,rgba(225,245,255,.78),rgba(190,225,245,.66));
+  background-repeat:repeat-x;box-shadow:inset 0 -6px 0 rgba(255,255,255,.35),var(--sombra-baja)}
+.relleno{position:absolute;left:4px;top:15px;bottom:5px;width:3%;max-width:calc(100% - 8px);border-radius:3px 10px 6px 12px;background:rgba(255,197,49,.88);box-shadow:none;mix-blend-mode:multiply;transition:width .9s var(--muelle)}
+.relleno::before{display:none}
+.punta-barra{position:absolute;right:-18px;top:-30px;width:34px;height:52px;margin:0;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 52'%3E%3Cg transform='rotate(28 17 26)' stroke='%231b1e3a' stroke-width='2.6' stroke-linejoin='round'%3E%3Crect x='9' y='0' width='16' height='30' rx='4' fill='%23ffc531'/%3E%3Cpath d='M9 30h16l-3 9h-10z' fill='%23fff7d6'/%3E%3Cpath d='M12 39h10l-2 7h-6z' fill='%23ffc531'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+  filter:drop-shadow(3px 4px 2px rgba(0,0,0,.3));transform-origin:50% 100%}
+.progreso.avanza .punta-barra{animation:subraya .9s ease-in-out}
+@keyframes subraya{25%{transform:rotate(-8deg) translateY(2px)}50%{transform:rotate(6deg)}75%{transform:rotate(-4deg) translateY(1px)}}
+.nivel{flex:none;display:inline-flex;align-items:flex-end;gap:3px;height:40px;padding:7px 10px;border:var(--borde);border-radius:12px;background:var(--papel);box-shadow:var(--sombra-baja)}
+.nivel i{width:7px;border-radius:2px;background:#d9dbe6}
+.nivel i.on{background:var(--cobalto)}
+.racha{flex:none;height:40px;margin:0;padding:0 12px 0 8px;border:var(--borde);border-radius:999px;background:var(--papel);font-family:var(--fuerte);font-weight:800;font-size:16px;box-shadow:var(--sombra-baja)}
+
+/* ---------- la zona de juego ---------- */
+.mesa-juego{flex:1;min-height:0;overflow:auto;width:100%;max-width:none;margin:0;padding:8px clamp(12px,2.4vw,30px) 170px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.4) transparent}
+@media (min-width:1000px){.mesa-juego{padding-right:clamp(30px,15vw,230px)}}
+body .mesa-juego>p.pista:first-child{display:none!important}
+.mesa-juego>div:not(.final){max-width:1240px}
+.reto{position:relative;width:fit-content;max-width:min(32ch,100%);margin:10px 0 10px;padding:12px 22px 14px;border:var(--borde);border-radius:4px 10px 6px 12px;
+  background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;color:var(--tinta)!important;text-shadow:none!important;
+  font-family:var(--fuerte);font-weight:800;font-size:clamp(22px,2.6vw,33px);line-height:1.15;letter-spacing:0;text-wrap:balance;transform:rotate(-.5deg);box-shadow:var(--sombra)}
+.reto::after{content:"";position:absolute;right:-16px;top:-10px;width:62px;height:22px;background:rgba(242,226,180,.86);transform:rotate(28deg);
+  clip-path:polygon(0 8%,6% 0,12% 10%,18% 0,24% 6%,100% 0,100% 100%,94% 92%,88% 100%,82% 90%,76% 100%,0 100%)}
+.pista,body[data-escena] .zona-entra>.pista,body[data-escena] .mesa-juego>div>.pista{display:inline-flex;width:fit-content;max-width:44em;margin:0 0 16px;padding:7px 14px;border-radius:12px;background:rgba(255,253,246,.9);color:var(--tinta);font-size:16px;line-height:1.35;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.pista:empty{display:none!important}
+.acciones{position:relative;z-index:25;width:fit-content;display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:22px}
+.acciones:empty{display:none}
+.aviso{width:fit-content;min-height:0;margin:12px 0 0;padding:6px 14px;border-radius:12px;background:var(--papel);font-weight:700;font-size:17px;box-shadow:var(--sombra-baja)}
+.aviso:empty{display:none}
+.aviso.mal{background:#ffe1e5;color:var(--rojo)}
+.zona-entra{animation:entra-ronda .45s var(--muelle) both}
+@keyframes entra-ronda{from{transform:translateY(26px) rotate(.6deg);opacity:0}}
+
+/* ---------- la corrección: hoja de cuaderno que sube con un sello de tinta ---------- */
+.correccion{position:relative;z-index:26;width:min(860px,100%);max-width:none;margin:18px 0 0;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px 24px;padding:18px 22px 18px 58px;
+  border:var(--borde);border-radius:6px 14px 8px 12px;
+  background:
+    linear-gradient(90deg,transparent 38px,rgba(215,38,61,.55) 38px 40px,transparent 40px),
+    repeating-linear-gradient(transparent 0 29px,rgba(47,91,211,.2) 29px 31px),
+    var(--papel) url('tex/papel.webp');
+  background-blend-mode:normal,normal,multiply;box-shadow:var(--sombra);
+  animation:hoja-sube .55s var(--muelle) both}
+@keyframes hoja-sube{from{transform:translateY(60px) rotate(-2deg);opacity:0}}
+.correccion::before{content:"";position:absolute;left:12px;top:16px;bottom:16px;width:14px;background:radial-gradient(circle,var(--mate) 0 5px,rgba(0,0,0,.25) 5px 6.5px,transparent 7px) center top/14px 30px repeat-y}
+body.corrigiendo .mesa-juego{padding-bottom:40px}
+.sello{--t:var(--cobalto);width:118px;height:118px;padding:14px;border:5px double var(--t);color:var(--t);font-family:var(--fuerte);font-weight:900;font-size:23px;line-height:.95;
+  mix-blend-mode:multiply;-webkit-mask:url('tex/fieltro.webp') 0 0/150px;mask:url('tex/fieltro.webp') 0 0/150px luminance;animation:sella-tinta .5s cubic-bezier(.2,1.7,.4,1) .12s both}
+.sello::after{content:"";position:absolute;inset:7px;border:2px solid var(--t);border-radius:50%;opacity:.6}
+.sello{position:relative}
+.sello.gris{--t:#6b6f8a}
+@keyframes sella-tinta{0%{transform:scale(2.6) rotate(-34deg);opacity:0;filter:blur(3px)}55%{opacity:1;filter:none}72%{transform:scale(.92) rotate(-10deg)}100%{transform:scale(1) rotate(-12deg);opacity:.95}}
+.correccion .texto p{margin:0 0 8px;font-size:18px;line-height:1.4}
+.correccion .texto strong,.correccion .texto .marca{color:var(--tinta)}
+.estrellas svg{width:44px;height:44px;filter:drop-shadow(2px 3px 0 rgba(0,0,0,.18))}
+.opciones .tecla{white-space:nowrap}
+.pizarra .correccion{grid-template-columns:1fr auto;padding-left:58px}
+@media (max-width:760px){
+  .correccion{width:100%;grid-template-columns:auto 1fr;padding:14px 14px 14px 46px;gap:10px 14px}
+  .correccion::before{left:8px}
+  .correccion{background:linear-gradient(90deg,transparent 30px,rgba(215,38,61,.55) 30px 32px,transparent 32px),repeating-linear-gradient(transparent 0 29px,rgba(47,91,211,.2) 29px 31px),var(--papel)}
+  .correccion .opciones{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}
+  .sello{width:84px;height:84px;font-size:17px;padding:10px}
+}
+
+/* ---------- el ayudante ---------- */
+.asistente{right:clamp(8px,1.6vw,22px);bottom:10px;z-index:72}
+.figura{width:112px;height:140px;filter:drop-shadow(3px 5px 0 rgba(10,20,25,.22))}
+.figura::after{content:"";position:absolute;left:18%;right:18%;bottom:2px;height:12px;border-radius:50%;background:rgba(5,25,18,.4);filter:blur(3px);z-index:-1}
+.figura{position:relative}
+.bocadillo{max-width:min(270px,calc(100vw - 40px));margin:0 0 10px;padding:14px 18px 15px;border:var(--borde);border-radius:22px 22px 8px 22px;background:var(--papel);font-size:17px;line-height:1.38;color:var(--tinta);box-shadow:var(--sombra-baja)}
+.bocadillo::after,.bocadillo.pista::after,.bocadillo.animo::after{right:34px;bottom:-15px;width:18px;height:18px;border:0;background:var(--papel);border-right:var(--borde);border-bottom:var(--borde);transform:skewX(32deg) rotate(30deg);border-radius:0 0 4px 0}
+.bocadillo.pista{border:var(--borde);background:#fff7d6}
+.bocadillo.pista::after{background:#fff7d6}
+.bocadillo.animo{border:var(--borde);background:#e3ecff}
+.bocadillo.animo::after{background:#e3ecff}
+.bocadillo.entra{animation:bocata-pop .42s var(--muelle) both;transform-origin:85% 100%}
+@keyframes bocata-pop{0%{transform:scale(.3) rotate(8deg);opacity:0}60%{opacity:1}}
+.boton-ayuda{width:66px;height:66px;margin-bottom:22px;border:var(--borde);background:var(--amarillo);box-shadow:inset 0 3px 0 rgba(255,255,255,.55),0 5px 0 var(--tinta),4px 12px 14px -6px rgba(10,20,25,.55);transition:transform .12s var(--muelle)}
+.boton-ayuda b{font-family:var(--fuerte);font-weight:900;font-size:40px;color:var(--tinta)}
+.boton-ayuda:hover:not(:disabled){transform:rotate(-8deg) scale(1.06)}
+.boton-ayuda:active:not(:disabled){transform:translateY(5px);box-shadow:0 0 0 var(--tinta)}
+.boton-ayuda:disabled{filter:none;opacity:1;background:#d9dbe6;border-color:#8a8ea8;box-shadow:none}
+.boton-ayuda:disabled b{color:#8a8ea8}
+.puntos-ayuda{bottom:-19px}
+.puntos-ayuda i{width:11px;height:11px;border:2px solid var(--tinta);background:var(--papel)}
+.puntos-ayuda i.on{background:var(--amarillo)}
+
+/* ---------- cartel de ronda ---------- */
+.cartel{padding:12px 34px 14px;border:var(--borde);border-radius:10px 18px 12px 16px;background:var(--papel);color:var(--tinta);box-shadow:var(--sombra)}
+.cartel b{font-family:var(--fuerte);font-weight:900;font-size:clamp(44px,7vw,80px);line-height:1}
+.cartel span{color:var(--gris);font-weight:700}
+
+/* ---------- pantalla final ---------- */
+.final{position:relative;max-width:820px;margin:18px 0 0;padding:26px 30px 30px;border:var(--borde);border-radius:8px 16px 10px 14px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra);animation:hoja-sube .6s var(--muelle) both}
+.final h2{font-family:var(--fuerte);font-weight:900;font-size:clamp(40px,5.6vw,68px);line-height:1;margin:0 0 14px}
+.resumen{gap:10px}
+.resumen li{padding:8px 14px;border:var(--borde);border-radius:14px;background:#fff;font-size:17px;box-shadow:0 3px 0 var(--tinta)}
+.resumen strong{font-family:var(--fuerte);font-weight:900;font-size:28px}
+.hoja{border:2px dashed rgba(27,30,58,.35);background:#fff;box-shadow:none;border-radius:16px}
+.posit{background:#fff27a;border:0;box-shadow:var(--sombra)}
+.posit strong{font-family:var(--fuerte);font-weight:900}
+.final .acciones{position:static;margin-top:22px}
+.record{border:var(--borde);background:var(--amarillo)}
+
+/* ---------- viñetas de historia ---------- */
+.vineta-capa{background:rgba(15,40,30,.6)}
+.vineta{border:var(--borde);border-radius:18px 26px 20px 24px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:8px 10px 0 rgba(10,20,25,.35)}
+.vineta-bocadillo{border:var(--borde);border-radius:22px}
+.nota-profe p{font-family:var(--fuerte);font-weight:900;letter-spacing:0}
+.nota-profe span{font-family:'Texto',sans-serif}
+
+/* ---------- teclado en pantalla ---------- */
+.teclado{border:var(--borde);border-radius:24px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra)}
+.tecla-num{font-family:var(--fuerte);font-weight:900;font-size:28px;padding:0;border-radius:16px}
+.tecla-num.ok{--c:var(--amarillo);--c-txt:var(--tinta)}
+.tecla-num.op{--c:#e3ecff}
+
+/* ---------- arrastrar: la pieza se levanta y se inclina con la velocidad ---------- */
+.fantasma{filter:drop-shadow(10px 22px 10px rgba(5,20,15,.42))!important;opacity:1!important;will-change:transform}
+.levantado{opacity:.22!important;filter:grayscale(.6)}
+body.arrastrando,body.arrastrando *{cursor:grabbing!important}
+
+/* ---------- pantallas pequeñas ---------- */
+@media (max-width:760px){
+  .barra-juego{padding-top:8px;gap:8px}
+  .barra-juego h1{font-size:19px;padding:6px 12px 7px}
+  .volver,.icono{width:44px;height:44px}
+  .interruptor{display:none}
+  .estado{flex-basis:100%;order:5}
+  .progreso{height:34px}
+  .relleno{top:12px}
+  .nivel,.racha{height:34px}
+  .figura{width:76px;height:95px}
+  .mesa-juego{padding-bottom:150px}
+}
+@media (prefers-reduced-motion:reduce){
+  .zona-entra,.correccion,.final,.sello,.bocadillo.entra{animation:none!important}
+}
+
+/* =====================================================================================
+   El estuche (Aduana): figuras de cartulina, bandeja de cartón y estuche de tela abierto
+   ===================================================================================== */
+.mesa-clasificar{gap:20px}
+@media (min-width:900px){.mesa-clasificar{grid-template-columns:200px minmax(0,1fr)}}
+/* bandeja de cartón donde esperan las figuras */
+.cola-figuras.bandeja{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;place-items:center;align-content:start;min-height:120px;margin:0 0 14px;padding:16px 10px 14px;
+  border:var(--borde);border-radius:18px;background:#c99a63 url('tex/cartulina.webp');background-blend-mode:multiply;
+  box-shadow:inset 0 10px 14px -6px rgba(60,30,0,.55),inset 0 -3px 0 rgba(255,255,255,.18),var(--sombra-baja)}
+.cola-figuras.bandeja::after{content:"";position:absolute}
+.cola-figuras.bandeja:empty{display:grid;grid-template-columns:1fr}
+.cola-figuras.bandeja:empty::before{content:"¡Bandeja vacía!";font-family:var(--fuerte);font-weight:800;font-size:18px;color:rgba(40,20,0,.55)}
+@media (max-width:899px){.cola-figuras.bandeja{grid-template-columns:repeat(auto-fill,minmax(78px,1fr))}}
+/* la figura recortada */
+.pasajero{width:88px;padding:2px;border:0;border-radius:10px;background:transparent!important;box-shadow:none!important;cursor:grab;transform:none;rotate:var(--giro,0deg);transition:rotate .25s var(--muelle),translate .25s var(--muelle),scale .25s var(--muelle),filter .2s;
+  filter:drop-shadow(3px 5px 0 rgba(10,20,25,.28)) drop-shadow(4px 9px 8px rgba(10,20,25,.3))}
+.pasajero svg{overflow:visible}
+.pasajero:hover{rotate:calc(var(--giro,0deg) * -1);translate:0 -3px;scale:1.05}
+.pasajero.elegida{animation:none;transform:none;translate:0 -8px;rotate:calc(var(--giro,0deg) - 4deg);scale:1.08;filter:drop-shadow(0 0 0 transparent) drop-shadow(5px 14px 10px rgba(10,20,25,.45))}
+.pasajero.elegida::before{content:"";position:absolute;inset:-6px;border:3px dashed var(--papel);border-radius:14px;animation:gira-trazo 6s linear infinite}
+@keyframes gira-trazo{to{transform:rotate(360deg)}}
+.pasajero.colocada{width:76px}
+.pasajero.bien,.pasajero.mal{box-shadow:none!important}
+.pasajero.mal::after{display:none}
+.pasajero.bien,.pasajero.mal{cursor:help}
+.pasajero.pista-sitio{animation:late .9s ease-in-out 3}
+@keyframes late{50%{transform:scale(1.14) rotate(-6deg)}}
+.geo.recorte .notas .nota-igual{stroke-width:4}
+/* el estuche abierto */
+.diagrama-caja{width:min(100%,920px,max(560px,calc((100dvh - 300px) * 1.6667)));max-width:none;cursor:pointer;filter:none}
+.diagrama-caja.sobre .diagrama{filter:brightness(1.04)}
+.estuche-svg .exterior{fill:var(--amarillo);stroke:var(--tinta);stroke-width:4}
+.estuche-svg .textura{mix-blend-mode:multiply;pointer-events:none}
+.estuche-svg .forro{opacity:.9}
+.estuche-svg .cinta-cremallera{fill:none;stroke:#1c3a96;stroke-width:22}
+.estuche-svg .dientes-cremallera{fill:none;stroke:#e6e9f2;stroke-width:9;stroke-dasharray:4.5 3.5;stroke-linecap:butt}
+.estuche-svg .z-otros{fill:#2b3f8f;stroke:var(--tinta);stroke-width:3}
+.estuche-svg .sombra-interior{fill:none;stroke:rgba(5,10,40,.45);stroke-width:18;filter:blur(6px);pointer-events:none}
+.estuche-svg .z-par{fill:#fff1cf;stroke:var(--tinta);stroke-width:3.5}
+.estuche-svg .dobladillo-fieltro{fill:#f5dc9c;stroke:var(--tinta);stroke-width:3}
+.estuche-svg .costura{fill:none;stroke:rgba(27,30,58,.55);stroke-width:2.5;stroke-dasharray:10 8;stroke-linecap:round}
+.estuche-svg .costura.c-otros{stroke:rgba(255,255,255,.5)}
+.estuche-svg .bolsillo-svg .fondo{fill-opacity:.5}
+.estuche-svg .malla{opacity:.55}
+.estuche-svg .bolsillo-svg.rect .fondo{fill:var(--cielo)}
+.estuche-svg .bolsillo-svg.rombo .fondo{fill:#ff6f9f}
+.estuche-svg .bolsillo-svg.rect,.estuche-svg .bolsillo-svg.rombo{mix-blend-mode:multiply}
+.estuche-svg .ribete{fill:none;stroke-width:9}
+.estuche-svg .dobladillo{stroke:rgba(27,30,58,.35);stroke-width:4;stroke-dasharray:2 7;stroke-linecap:round}
+.estuche-svg .bolsillo-svg .costura{stroke:rgba(255,255,255,.75);stroke-dasharray:7 7}
+.estuche-svg .etq .tejido{fill:#fffaf0;stroke:var(--tinta);stroke-width:3}
+.estuche-svg .etq .puntada{stroke:var(--fucsia);stroke-width:3;stroke-linecap:round;stroke-dasharray:4 4}
+.estuche-svg .etq text{font-family:var(--fuerte);font-weight:800;font-size:23px;fill:var(--tinta)}
+.estuche-svg .etq.e-otros .tejido{fill:#ffc531}
+.estuche-svg .tirador rect,.estuche-svg .tirador circle{stroke:var(--tinta);stroke-width:3}
+.estuche-svg .tirador rect{fill:#c9cfdd}
+.estuche-svg .tirador .lengueta{fill:var(--fucsia)}
+.estuche-svg .tirador .agujero{fill:#fff1cf}
+.diagrama-caja .pasajero{width:76px}
+@media (max-width:760px){.diagrama-caja .pasajero{width:54px}.estuche-svg .etq text{font-size:28px}}
+/* bolsillos de fieltro (por número de lados) dentro del estuche */
+.zona-clasificar.lados,.zona-clasificar.triangulos{position:relative;padding:28px 26px 26px;border:var(--borde);border-radius:46px;
+  background:#2b3f8f url('tex/lona.webp') 0 0/128px;background-blend-mode:multiply;
+  box-shadow:0 0 0 14px #1c3a96,0 0 0 17px var(--tinta),0 0 0 30px var(--amarillo),0 0 0 33px var(--tinta),12px 26px 26px 18px rgba(4,20,13,.5),inset 0 0 22px rgba(5,10,40,.6);margin:34px}
+.zona-clasificar.lados::before,.zona-clasificar.triangulos::before{content:"";position:absolute;inset:-11px;border:6px dotted #e6e9f2;border-radius:56px;pointer-events:none}
+.bolsillo{--b:var(--fucsia);min-height:230px;padding:56px 10px 14px;border:var(--borde);border-radius:14px 14px 30px 30px;
+  background:var(--b) url('tex/fieltro.webp') 0 0/160px;background-blend-mode:multiply;
+  box-shadow:inset 0 16px 14px -10px rgba(0,0,0,.35),4px 8px 0 -1px rgba(5,10,40,.4),6px 14px 16px -8px rgba(5,10,40,.6);gap:4px;align-content:flex-start;justify-content:center;transition:transform .2s var(--muelle)}
+.bolsillo::before{inset:9px;border:2.5px dashed rgba(255,255,255,.8);border-radius:8px 8px 22px 22px}
+.bolsillo.b0{--b:#ff6f9f}.bolsillo.b1{--b:var(--amarillo)}.bolsillo.b2{--b:var(--cielo)}.bolsillo.b3{--b:var(--lima)}
+.dobladillo-html{position:absolute;left:-3px;right:-3px;top:-3px;height:34px;border:var(--borde);border-radius:14px 14px 6px 6px;background:color-mix(in srgb,var(--b) 70%,#fff) url('tex/fieltro.webp') 0 0/160px;background-blend-mode:multiply;pointer-events:none}
+.dobladillo-html::after{content:"";position:absolute;left:12px;right:12px;bottom:6px;border-bottom:2.5px dashed rgba(27,30,58,.45)}
+.etq-html{z-index:2;left:50%;top:18px;transform:translateX(-50%) rotate(-2deg);padding:5px 16px 6px;border:var(--borde);border-radius:5px;background:#fffaf0;font-family:var(--fuerte);font-weight:800;font-size:18px;white-space:nowrap;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.etq-html::before{left:6px;top:7px;bottom:7px;width:0;height:auto;margin:0;border-radius:0;background:none;border-left:3px dashed var(--fucsia)}
+.etq-html::after{content:"";position:absolute;right:6px;top:7px;bottom:7px;border-left:3px dashed var(--fucsia)}
+.bolsillo.sobre{transform:translateY(-4px) scale(1.02);outline:none}
+.bolsillo .pasajero{width:70px}
+/* cajonera de triángulos: compartimentos de fieltro */
+.zona-clasificar.triangulos{gap:12px}
+.cab-cajon{font-family:var(--fuerte);font-weight:800;font-size:17px;color:var(--papel);align-self:end;text-align:center}
+.cab-cajon.fila{align-self:center;text-align:right;padding-right:4px}
+.cajon-tri,.cajon-tri.f0,.cajon-tri.f1{min-height:150px;border:var(--borde);border-radius:12px 12px 22px 22px;background:var(--b,#ff6f9f) url('tex/fieltro.webp') 0 0/160px;background-blend-mode:multiply;
+  box-shadow:inset 0 14px 12px -8px rgba(0,0,0,.35),4px 8px 0 -1px rgba(5,10,40,.4)}
+.cajon-tri.f0{--b:var(--cielo)}.cajon-tri.f1{--b:#ff6f9f}
+.cajon-tri::after{display:none}
+.cajon-tri .pasajero{width:64px}
+/* comprobar: el sello de aduana */
+.sello-aduana{position:fixed;left:0;top:0;z-index:91;width:150px;height:188px;pointer-events:none}
+.sello-aduana svg{width:100%;height:100%}
+.sombra-sello{position:fixed;left:0;top:0;z-index:90;width:120px;height:32px;border-radius:50%;background:radial-gradient(closest-side,rgba(5,20,15,.85),rgba(5,20,15,0));pointer-events:none}
+.marca-tinta{position:absolute;z-index:4;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;display:grid;place-items:center;border:4px solid var(--t);border-radius:50%;color:var(--t);
+  font-family:var(--fuerte);font-weight:900;font-size:30px;line-height:1;mix-blend-mode:multiply;pointer-events:none;
+  -webkit-mask:url('tex/fieltro.webp') 0 0/90px;mask:url('tex/fieltro.webp') 0 0/90px luminance;transform:rotate(var(--r,-12deg))}
+.marca-tinta.si{--t:#1b8f4e}.marca-tinta.no{--t:var(--rojo)}
+.marca-tinta::after{content:"";position:absolute;inset:4px;border:1.5px solid var(--t);border-radius:50%;opacity:.7}
+.pasaporte-mini{z-index:5;border:2px solid var(--tinta);background:var(--papel);color:var(--tinta);font-weight:700;box-shadow:0 2px 0 var(--tinta)}
+.pasajero .sello-ok{display:none}
+
+/* reto e instrucción en la misma línea cuando cabe */
+@media (min-width:1000px){
+  .zona{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:18px;align-items:end;align-content:start}
+  .zona>*{grid-column:1/-1}
+  .zona>.reto{grid-column:1;margin-bottom:14px}
+  .zona>.pista{grid-column:2;align-self:end;margin-bottom:18px}
+  .zona>.acciones,.zona>.aviso{width:fit-content}
+}
+.reto{font-size:clamp(21px,2.3vw,30px)}
+
+/* al corregir, el estuche se encoge un poco para que la hoja quepa debajo sin tapar nada */
+.diagrama-caja{transition:width .5s var(--muelle)}
+body.corrigiendo .diagrama-caja{width:min(100%,920px,max(480px,calc((100dvh - 450px) * 1.6667)))}
+
+/* el cajón de madera: fondo de madera clara con las paredes del cajón en sombra */
+.fondo-escena.cajon{background-color:#d9ad72;background-image:
+    radial-gradient(120% 90% at 15% -10%,rgba(255,240,205,.5),rgba(255,240,205,0) 55%),
+    radial-gradient(90% 80% at 105% 110%,rgba(60,30,5,.4),rgba(60,30,5,0) 60%),
+    url('tex/madera.webp');
+  background-size:100% 100%,100% 100%,512px 256px;box-shadow:inset 0 0 0 14px #8a5a26,inset 0 0 0 17px #1b1e3a,inset 0 24px 40px rgba(50,25,0,.55),inset 0 -20px 30px rgba(50,25,0,.35)}
+body[data-escena="cajon"]{--acento:var(--amarillo)}
+.fondo-escena.corcho{background-color:#c99658;background-image:radial-gradient(120% 90% at 15% -10%,rgba(255,240,205,.45),rgba(255,240,205,0) 55%),radial-gradient(90% 80% at 105% 110%,rgba(60,30,5,.4),rgba(60,30,5,0) 60%),url('tex/corcho.webp');background-size:100% 100%,100% 100%,256px 256px;box-shadow:inset 0 0 0 16px #6e4a2a,inset 0 0 0 19px #1b1e3a}
+@media (max-width:760px){
+  .zona-clasificar.lados,.zona-clasificar.triangulos{margin:22px 16px;padding:20px 14px;border-radius:34px;box-shadow:0 0 0 10px #1c3a96,0 0 0 13px var(--tinta),0 0 0 22px var(--amarillo),0 0 0 25px var(--tinta),8px 18px 20px 10px rgba(4,20,13,.5),inset 0 0 18px rgba(5,10,40,.6)}
+  .zona-clasificar.lados::before,.zona-clasificar.triangulos::before{inset:-8px;border-width:4px}
+  .bolsillo{min-height:170px}
+  .bocadillo{max-width:min(230px,calc(100vw - 110px));font-size:15px;padding:10px 14px}
+  .pasajero{width:74px}
+}
