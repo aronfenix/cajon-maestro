@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A saltos · Cajón maestro</title>
+<meta name="description" content="Llega de un número a otro con el menor número de saltos de 1, 10, 100 y 1 000.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "recta",
+  "area": "matematicas",
+  "titulo": "A saltos",
+  "subtitulo": "Tienes saltos de 1, de 10, de 100… hacia delante y hacia atrás. Llega a la meta con los menos saltos que puedas.",
+  "volver": "../../materiales/a-saltos/",
+  "observa": "¿Cuándo compensa **pasarse y volver hacia atrás**? Busca un ejemplo en el que saltar de más ahorre saltos.",
+  "rondas": [
+    {
+      "modo": "saltos",
+      "inicio": 37,
+      "meta": 100,
+      "saltos": [
+        1,
+        10
+      ]
+    },
+    {
+      "modo": "saltos",
+      "generar": {
+        "inicio": [
+          10,
+          60
+        ],
+        "distancia": [
+          25,
+          75
+        ]
+      },
+      "saltos": [
+        1,
+        10
+      ]
+    },
+    {
+      "modo": "saltos",
+      "inicio": 196,
+      "meta": 400,
+      "saltos": [
+        1,
+        10,
+        100
+      ]
+    },
+    {
+      "modo": "saltos",
+      "generar": {
+        "inicio": [
+          100,
+          500
+        ],
+        "distancia": [
+          150,
+          480
+        ],
+        "haciaAtras": true
+      },
+      "saltos": [
+        1,
+        10,
+        100
+      ],
+      "repetir": 2
+    },
+    {
+      "modo": "saltos",
+      "inicio": 2990,
+      "meta": 5000,
+      "saltos": [
+        1,
+        10,
+        100,
+        1000
+      ]
+    },
+    {
+      "modo": "saltos",
+      "generar": {
+        "inicio": [
+          1000,
+          4000
+        ],
+        "distancia": [
+          1200,
+          3900
+        ],
+        "haciaAtras": true
+      },
+      "saltos": [
+        1,
+        10,
+        100,
+        1000
+      ],
+      "repetir": 2
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

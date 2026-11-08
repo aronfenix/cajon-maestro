@@ -1,0 +1,181 @@
+/* Motores del Cajón maestro: estilo común. Un juego = una carpeta con un index.html que solo lleva su configuración. */
+@font-face{font-family:'Rotulo';src:url('fonts/big-shoulders-stencil-latin-wght-normal.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Texto';src:url('fonts/atkinson-hyperlegible-next-latin-400-normal.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Texto';src:url('fonts/atkinson-hyperlegible-next-latin-700-normal.woff2') format('woff2');font-weight:700;font-display:swap}
+:root{
+  --bandeja:#d9dcd6; --folio:#fff; --toner:#000; --gris:#4a4d49; --linea:#c9ccc6; --suave:#f1f2ef;
+  --azul:#1e3fb0; --rojo:#c8201a;
+  --acento:#7fd6ff; --acento2:#d9f3ff;
+}
+body[data-area="lengua"]{--acento:#ff8ac4;--acento2:#ffe0ef}
+body[data-area="naturales"]{--acento:#8df07d;--acento2:#e0fbdb}
+body[data-area="sociales"]{--acento:#f5f03c;--acento2:#fcfbcf}
+body[data-area="plastica"]{--acento:#ffb054;--acento2:#ffe6c8}
+body[data-area="valores"]{--acento:#cda8ff;--acento2:#efe4ff}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bandeja);color:var(--toner);font-family:'Texto',Verdana,sans-serif;font-size:18px;line-height:1.45}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+.folio{max-width:1120px;margin:24px auto 48px;background:var(--folio);padding:28px 40px 36px;box-shadow:3px 3px 0 #c3c7c0,6px 6px 0 #b3b7b0}
+.cab{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:18px;border-bottom:3px solid var(--toner)}
+.cab h1{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:clamp(46px,7vw,84px);line-height:.85;margin:4px 0 0;max-width:12ch}
+.cab p{margin:8px 0 0;color:var(--gris);max-width:32em}
+.volver{font-size:15px;color:var(--azul)}
+.modos{display:flex;gap:8px;flex-wrap:wrap}
+
+.btn,.btn-sec,.modo{min-height:48px;padding:0 18px;border-radius:4px;cursor:pointer;font-weight:700;touch-action:manipulation}
+.btn{border:0;background:var(--toner);color:#fff}
+.btn:hover{background:var(--azul)}
+.btn-sec,.modo{border:2px solid var(--toner);background:#fff}
+.btn-sec:hover{background:var(--acento2)}
+.modo[aria-pressed="true"]{background:var(--toner);color:#fff}
+.btn:disabled,.btn-sec:disabled{opacity:.35;cursor:default;background:var(--gris)}
+.btn-sec:disabled{background:#fff}
+
+.marcador{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 20px;margin:18px 0 0;font-size:16px;color:var(--gris)}
+.marcador strong{color:var(--toner)}
+.pizarra .marcador .puntos,.pizarra .planta,.pizarra .estrellas{display:none}
+
+.juego{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:24px;align-items:start}
+.pizarra .juego{grid-template-columns:minmax(0,1fr)}
+.reto{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:clamp(34px,5.4vw,60px);line-height:1.04;margin:18px 0 6px;text-wrap:balance}
+.reto .marca{background:var(--acento);padding:0 .12em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.pista{margin:0 0 14px;color:var(--gris);font-size:16px;max-width:42em}
+.escenario{position:relative;min-height:120px}
+.acciones{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px}
+.aviso{min-height:1.5em;margin:12px 0 0;font-size:18px;max-width:44em}
+.aviso.mal{color:var(--rojo)}
+.resultado{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;margin-top:16px;padding:14px 16px;background:var(--acento2);border-left:8px solid var(--acento)}
+.resultado p{margin:0;font-size:18px;flex:1 1 20em}
+.estrellas{font-size:30px;letter-spacing:3px;margin:0;white-space:nowrap;line-height:1}
+.estrellas .off{color:var(--linea)}
+
+/* planta: crece con las estrellas */
+.planta{position:sticky;top:12px;margin-top:22px}
+.planta svg{display:block;width:120px;height:220px}
+.planta p{margin:4px 0 0;font-size:14px;color:var(--gris);text-align:center}
+.planta .tallo{transition:d .5s ease-out}
+.planta .hoja,.planta .flor{transform-box:fill-box;transform-origin:center bottom;animation:brota .45s ease-out both}
+@keyframes brota{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* final */
+.final h2{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:clamp(40px,6vw,64px);line-height:.9;margin:22px 0 8px}
+.final .total{font-size:22px;margin:0 0 12px}
+.final ol{margin:0 0 16px;padding-left:1.4em;color:var(--gris);font-size:16px}
+.observa{margin:16px 0 0;padding:14px 16px;background:#fff;border:2px solid var(--toner);border-left-width:10px;max-width:40em}
+.observa strong{display:block;font-family:'Rotulo',Impact,sans-serif;font-size:26px;line-height:1;margin-bottom:6px}
+
+/* ---------- recta ---------- */
+.recta{position:relative;height:150px;margin:0 22px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair}
+.recta.alta{height:var(--alto,230px)}
+.recta .eje{position:absolute;left:0;right:0;bottom:44px;height:4px;background:var(--toner)}
+.recta .eje::before,.recta .eje::after{content:"";position:absolute;top:-8px;width:4px;height:20px;background:var(--toner)}
+.recta .eje::before{left:-2px}.recta .eje::after{right:-2px}
+.recta .tic{position:absolute;bottom:44px;width:2px;height:12px;margin-left:-1px;background:var(--toner)}
+.recta .tic.menor{height:7px;background:var(--gris)}
+.recta .num{position:absolute;bottom:12px;transform:translateX(-50%);font-weight:700;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.recta .pin{position:absolute;bottom:48px;width:0;height:0;transform:translateX(0);z-index:3}
+.recta .pin .cabeza{position:absolute;left:-17px;bottom:24px;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--toner);border:3px solid #fff;box-shadow:0 0 0 2px var(--toner)}
+.recta .pin .palo{position:absolute;left:-1.5px;bottom:0;width:3px;height:30px;background:var(--toner)}
+.recta .pin.tuyo{cursor:grab}
+.recta .pin.tuyo:active{cursor:grabbing}
+.recta .pin.tuyo:focus-visible{outline:none}
+.recta .pin.tuyo:focus-visible .cabeza{box-shadow:0 0 0 2px var(--toner),0 0 0 6px var(--azul)}
+.recta .pin.bueno .cabeza{background:var(--azul)}
+.recta .pin.bueno .palo{background:var(--azul)}
+.recta .pin .rotulo{position:absolute;bottom:66px;left:0;transform:translateX(-50%);white-space:nowrap;font-weight:700;font-size:16px;background:#fff;padding:0 4px}
+.recta .pin.bueno .rotulo{color:var(--azul)}
+.recta .hueco{position:absolute;bottom:42px;height:8px;background:var(--rojo);z-index:2;transition:width .4s ease-out}
+.recta .zona{position:absolute;bottom:40px;height:12px;background:var(--acento);opacity:.55;z-index:1}
+
+/* tarjetas para ordenar */
+.bandeja{display:flex;flex-wrap:wrap;gap:8px;min-height:60px;padding:10px;margin-bottom:14px;border:2px dashed var(--linea)}
+.bandeja:empty::before{content:"Todas colocadas.";color:var(--gris);font-size:15px;align-self:center}
+.tarjeta{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-height:48px;padding:4px 12px;border:2px solid var(--toner);background:#fff;border-radius:4px;font-weight:700;font-size:17px;line-height:1.1;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;white-space:nowrap}
+.tarjeta small{font-weight:400;font-size:13px;color:var(--gris)}
+.tarjeta.elegida{background:var(--acento);box-shadow:3px 3px 0 var(--toner)}
+.tarjeta.arrastrando{position:fixed;z-index:50;pointer-events:none;box-shadow:4px 4px 0 var(--toner);transform:rotate(-3deg)}
+.recta .colgada{position:absolute;z-index:4;transform:translateX(-50%)}
+.recta .colgada .tarjeta{cursor:grab}
+.recta .cuerda{position:absolute;width:2px;margin-left:-1px;background:var(--toner);z-index:1}
+.recta .punto{position:absolute;bottom:41px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--toner);z-index:2}
+.recta .punto.bueno{background:var(--azul);width:14px;height:14px;margin-left:-7px;bottom:39px;box-shadow:0 0 0 3px #fff}
+.recta .enlace{position:absolute;bottom:45px;height:2px;background:var(--rojo);z-index:1}
+.recta .colgada.mal .tarjeta{border-color:var(--rojo);color:var(--rojo)}
+.recta .colgada.bien .tarjeta{border-color:var(--azul)}
+
+/* saltos */
+.recta svg.arcos{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.arcos path{fill:none;stroke:var(--toner);stroke-width:3;stroke-linecap:round}
+.arcos path.atras{stroke:var(--rojo);stroke-dasharray:6 6}
+.arcos path.nuevo{animation:traza .45s ease-out both}
+@keyframes traza{from{stroke-dashoffset:var(--l)}to{stroke-dashoffset:0}}
+.arcos text{font-family:'Texto',sans-serif;font-weight:700;font-size:15px;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:5px}
+.arcos text.atras{fill:var(--rojo)}
+.recta .meta{position:absolute;bottom:40px;width:18px;height:18px;margin-left:-9px;border:3px solid var(--toner);background:var(--acento);transform:rotate(45deg);z-index:2}
+.recta .ficha{position:absolute;bottom:38px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--toner);border:3px solid #fff;box-shadow:0 0 0 2px var(--toner);z-index:3;transition:left .35s cubic-bezier(.3,1.4,.6,1)}
+.saltos{display:flex;flex-wrap:wrap;gap:8px}
+.saltos .btn-sec{min-width:76px;font-size:20px;font-variant-numeric:tabular-nums}
+.saltos .btn-sec.menos{color:var(--rojo);border-color:var(--rojo)}
+.cuenta{font-size:clamp(22px,3vw,30px);font-weight:700;font-variant-numeric:tabular-nums;margin:14px 0 0;min-height:1.4em}
+.cuenta .atras{color:var(--rojo)}
+
+/* ---------- cifras ---------- */
+.maquina{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin:8px 0 6px}
+.hueco-cifra{display:flex;flex-direction:column;align-items:center;gap:4px}
+.hueco-cifra button{width:clamp(56px,9vw,84px);height:clamp(72px,11vw,104px);border:3px solid var(--toner);background:var(--suave);border-radius:4px;cursor:pointer;font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:clamp(44px,7vw,72px);line-height:1;font-variant-numeric:tabular-nums}
+.hueco-cifra button.lleno{background:#fff}
+.hueco-cifra button.espera{background:var(--acento2);border-style:dashed}
+.hueco-cifra small{font-size:14px;font-weight:700;color:var(--gris)}
+.hueco-cifra.bien button{border-color:var(--azul);color:var(--azul)}
+.coma{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:72px;line-height:1;align-self:center;margin:0 -2px}
+.monton{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;min-height:76px}
+.cifra{width:64px;height:76px;border:2px solid var(--toner);border-radius:4px;background:#fff;cursor:pointer;font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:48px;line-height:1;box-shadow:3px 3px 0 var(--linea);transition:transform .15s}
+.cifra[aria-pressed="true"]{background:var(--acento);transform:translateY(-6px);box-shadow:3px 9px 0 var(--toner)}
+.cifra.usada{visibility:hidden}
+.sale{display:flex;align-items:center;gap:16px;margin-top:18px}
+.sale .cifra{transform:rotate(-4deg);animation:cae .4s cubic-bezier(.3,1.5,.6,1) both;background:var(--acento);cursor:default}
+@keyframes cae{from{transform:translateY(-40px) rotate(-20deg);opacity:0}}
+.sale p{margin:0}
+.comparar{margin:12px 0 0;font-size:20px}
+.comparar b{font-variant-numeric:tabular-nums}
+
+/* ---------- rejilla ---------- */
+.rejilla{display:grid;grid-template-columns:repeat(var(--cols,10),minmax(0,1fr));gap:4px;max-width:720px}
+.rejilla.palabras{max-width:900px}
+.celda{position:relative;min-height:48px;aspect-ratio:1;border:2px solid var(--toner);background:#fff;border-radius:3px;cursor:pointer;font-weight:700;font-size:clamp(14px,2.2vw,19px);font-variant-numeric:tabular-nums;padding:0;touch-action:manipulation}
+.palabras .celda{aspect-ratio:auto;min-height:56px;padding:6px 8px;font-size:clamp(16px,2.2vw,20px)}
+.celda[aria-pressed="true"]{background:var(--acento)}
+.celda.antes{background-image:repeating-linear-gradient(135deg,var(--c-antes,#ffb054) 0 4px,transparent 4px 9px)}
+.celda[aria-pressed="true"].antes{background-color:var(--acento)}
+.celda.falta{border:3px dashed var(--rojo);color:var(--rojo)}
+.celda.sobra{color:var(--rojo)}
+.celda.sobra::after{content:"";position:absolute;inset:4px;background:linear-gradient(to top right,transparent calc(50% - 2px),var(--rojo) calc(50% - 2px) calc(50% + 2px),transparent calc(50% + 2px))}
+.leyenda-rejilla{display:flex;flex-wrap:wrap;gap:6px 18px;margin:12px 0 0;font-size:15px;color:var(--gris)}
+.leyenda-rejilla i{display:inline-block;width:18px;height:18px;border:2px solid var(--toner);vertical-align:-4px;margin-right:6px}
+
+/* página de motores */
+.motor{border-top:3px solid var(--toner);padding-top:14px;margin-top:28px}
+.motor h2{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:40px;line-height:.9;margin:0 0 8px}
+.motor pre{background:var(--suave);padding:14px;overflow:auto;font-size:14px;line-height:1.4;border-left:6px solid var(--acento)}
+.motor code{font-size:.92em}
+.motor ul{padding-left:1.2em}
+
+@media (max-width:760px){
+  body{font-size:17px}
+  .folio{margin:0;padding:18px 14px 28px;box-shadow:none}
+  .juego{grid-template-columns:minmax(0,1fr)}
+  .planta{position:static;display:flex;align-items:flex-end;gap:10px;margin-top:10px}
+  .planta svg{width:60px;height:110px}
+  .recta{margin:0 14px}
+  .recta .num{font-size:14px}
+  .rejilla{gap:3px}
+  .celda{min-height:32px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}

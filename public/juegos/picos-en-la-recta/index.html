@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Picos en la recta · Cajón maestro</title>
+<meta name="description" content="Coloca las montañas más altas de España en una recta de altitudes.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "recta",
+  "area": "sociales",
+  "titulo": "Picos en la recta",
+  "subtitulo": "Cada tarjeta es un pico con su altitud. Cuélgalo en su sitio de la recta: primero de 0 a 4 000 metros y luego con lupa.",
+  "volver": "../../materiales/picos-en-la-recta/",
+  "observa": "En la primera recta los picos salen casi juntos y en la segunda, separados. ¿Han cambiado las montañas o ha cambiado **la recta**?",
+  "rondas": [
+    {
+      "modo": "ordenar",
+      "min": 0,
+      "max": 4000,
+      "marcas": [
+        0,
+        1000,
+        2000,
+        3000,
+        4000
+      ],
+      "divisiones": 8,
+      "unidad": "m",
+      "texto": "Cuelga cada pico **a su altura**",
+      "tarjetas": [
+        {
+          "texto": "Teide",
+          "valor": 3718
+        },
+        {
+          "texto": "Aneto",
+          "valor": 3404
+        },
+        {
+          "texto": "Peñalara",
+          "valor": 2428
+        },
+        {
+          "texto": "Moncayo",
+          "valor": 2314
+        }
+      ]
+    },
+    {
+      "modo": "ordenar",
+      "min": 2000,
+      "max": 4000,
+      "marcas": [
+        2000,
+        2500,
+        3000,
+        3500,
+        4000
+      ],
+      "divisiones": 8,
+      "unidad": "m",
+      "texto": "Ahora con lupa: la recta va **de 2 000 a 4 000 m**",
+      "explica": "Teide en Tenerife, Mulhacén en Sierra Nevada (Sistema Bético), Aneto en los Pirineos, Torre Cerredo en la Cordillera Cantábrica, Almanzor y Peñalara en el Sistema Central y Moncayo en el Sistema Ibérico.",
+      "tarjetas": [
+        {
+          "texto": "Teide",
+          "valor": 3718
+        },
+        {
+          "texto": "Mulhacén",
+          "valor": 3479
+        },
+        {
+          "texto": "Aneto",
+          "valor": 3404
+        },
+        {
+          "texto": "Torre Cerredo",
+          "valor": 2648
+        },
+        {
+          "texto": "Almanzor",
+          "valor": 2592
+        },
+        {
+          "texto": "Peñalara",
+          "valor": 2428
+        },
+        {
+          "texto": "Moncayo",
+          "valor": 2314
+        }
+      ]
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agudas, llanas y esdrújulas · Cajón maestro</title>
+<meta name="description" content="Clasifica palabras en agudas, llanas y esdrújulas pintándolas por rondas.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "rejilla",
+  "area": "lengua",
+  "titulo": "Agudas, llanas y esdrújulas",
+  "subtitulo": "Las mismas 24 palabras en tres rondas. Lo que ya está clasificado se queda rayado, así que cada ronda hay menos donde elegir.",
+  "volver": "../../materiales/agudas-llanas-esdrujulas/",
+  "observa": "Busca las palabras **con tilde** de cada grupo. ¿En qué terminan las agudas que llevan tilde? ¿Y las llanas?",
+  "rondas": [
+    {
+      "items": [
+        "sábado",
+        "azúcar",
+        "árbol",
+        "brújula",
+        "pájaro",
+        "lápiz",
+        "camión",
+        "césped",
+        "ratón",
+        "papel",
+        "teléfono",
+        "feliz",
+        "móvil",
+        "sofá",
+        "cárcel",
+        "reloj",
+        "café",
+        "examen",
+        "canción",
+        "joven",
+        "murciélago",
+        "mesa",
+        "pared",
+        "música"
+      ],
+      "columnas": 6,
+      "regla": {
+        "lista": [
+          "canción",
+          "reloj",
+          "sofá",
+          "papel",
+          "camión",
+          "feliz",
+          "ratón",
+          "café",
+          "pared"
+        ]
+      },
+      "texto": "Pinta las palabras **agudas**",
+      "pista": "Agudas: la sílaba más fuerte es la última, como en can-CIÓN o re-LOJ. Dilas en voz alta."
+    },
+    {
+      "items": [
+        "sábado",
+        "azúcar",
+        "árbol",
+        "brújula",
+        "pájaro",
+        "lápiz",
+        "camión",
+        "césped",
+        "ratón",
+        "papel",
+        "teléfono",
+        "feliz",
+        "móvil",
+        "sofá",
+        "cárcel",
+        "reloj",
+        "café",
+        "examen",
+        "canción",
+        "joven",
+        "murciélago",
+        "mesa",
+        "pared",
+        "música"
+      ],
+      "columnas": 6,
+      "regla": {
+        "lista": [
+          "árbol",
+          "lápiz",
+          "mesa",
+          "césped",
+          "azúcar",
+          "examen",
+          "móvil",
+          "joven",
+          "cárcel"
+        ]
+      },
+      "mantener": true,
+      "textoAntes": "Rayadas: las agudas",
+      "texto": "Ahora las **llanas**",
+      "pista": "Llanas: la sílaba más fuerte es la penúltima, como en ÁR-bol o ME-sa."
+    },
+    {
+      "items": [
+        "sábado",
+        "azúcar",
+        "árbol",
+        "brújula",
+        "pájaro",
+        "lápiz",
+        "camión",
+        "césped",
+        "ratón",
+        "papel",
+        "teléfono",
+        "feliz",
+        "móvil",
+        "sofá",
+        "cárcel",
+        "reloj",
+        "café",
+        "examen",
+        "canción",
+        "joven",
+        "murciélago",
+        "mesa",
+        "pared",
+        "música"
+      ],
+      "columnas": 6,
+      "regla": {
+        "lista": [
+          "pájaro",
+          "música",
+          "murciélago",
+          "brújula",
+          "sábado",
+          "teléfono"
+        ]
+      },
+      "mantener": true,
+      "textoAntes": "Rayadas: agudas y llanas",
+      "texto": "Y por último, las **esdrújulas**",
+      "pista": "Esdrújulas: la sílaba más fuerte es la antepenúltima, como en PÁ-ja-ro. Todas llevan tilde.",
+      "explica": "Si has acertado las dos rondas anteriores, las que quedan sin rayar son justo estas."
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

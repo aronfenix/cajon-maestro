@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La máquina de cifras · Cajón maestro</title>
+<meta name="description" content="Coloca las cifras para formar el mayor, el menor, el más cercano o el par más grande. Con rondas a ciegas.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "cifras",
+  "area": "matematicas",
+  "titulo": "La máquina de cifras",
+  "subtitulo": "Cada hueco vale distinto según dónde esté. Coloca las cifras para que salga el número que pide el reto.",
+  "volver": "../../materiales/la-maquina-de-cifras/",
+  "observa": "¿Dónde pones la cifra más grande cuando buscas el número mayor? ¿Y en las rondas **a ciegas**, dónde pones un 5 si es la primera que sale?",
+  "rondas": [
+    {
+      "generar": true,
+      "huecos": 4,
+      "objetivo": "max"
+    },
+    {
+      "generar": {
+        "conCero": true
+      },
+      "huecos": 4,
+      "objetivo": "min",
+      "explica": "El 0 no puede ir delante: el número dejaría de tener cuatro cifras."
+    },
+    {
+      "generar": true,
+      "huecos": 4,
+      "objetivo": "max",
+      "condicion": "par"
+    },
+    {
+      "generar": {
+        "conCero": true
+      },
+      "huecos": 5,
+      "objetivo": "min",
+      "condicion": "impar"
+    },
+    {
+      "generar": {
+        "cerca": [
+          3000,
+          7000
+        ]
+      },
+      "huecos": 4,
+      "objetivo": "cerca"
+    },
+    {
+      "generar": {
+        "cantidad": 6
+      },
+      "huecos": 4,
+      "objetivo": "max",
+      "condicion": "multiplo:5"
+    },
+    {
+      "generar": true,
+      "huecos": 4,
+      "objetivo": "max",
+      "aCiegas": true
+    },
+    {
+      "generar": {
+        "cantidad": 5,
+        "cerca": [
+          40000,
+          60000
+        ]
+      },
+      "huecos": 5,
+      "objetivo": "cerca",
+      "aCiegas": true
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

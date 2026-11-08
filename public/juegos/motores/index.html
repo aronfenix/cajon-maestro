@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motores de juegos · Cajón maestro</title>
+<meta name="description" content="Tres motores para hacer juegos nuevos cambiando solo los datos: recta, máquina de cifras y rejilla.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="base.css">
+</head>
+<body>
+<div class="folio">
+<header class="cab">
+  <div>
+    <a class="volver" href="../../">← Cajón maestro</a>
+    <h1>Motores</h1>
+    <p>Los juegos de recta, cifras y rejilla no tienen código propio. Cada uno es una carpeta con un <code>index.html</code> que solo lleva sus datos. Para hacer uno nuevo se copia una carpeta y se cambian los datos.</p>
+  </div>
+</header>
+
+<section class="motor">
+<h2>Cómo hacer un juego nuevo</h2>
+<ol>
+  <li>Copia la carpeta del juego más parecido (por ejemplo <code>public/juegos/picos-en-la-recta</code>) y ponle otro nombre, sin espacios ni tildes: <code>rios-en-la-recta</code>.</li>
+  <li>Abre su <code>index.html</code>. Solo hay que tocar el bloque <code>&lt;script type="application/json" id="config"&gt;</code>: título, subtítulo, área, la pregunta final y las rondas.</li>
+  <li>Si algo está mal escrito, el juego no se rompe en silencio: dice qué falla en la pantalla.</li>
+  <li>Sube una ficha de tipo «juego» con el enlace <code>/juegos/rios-en-la-recta/</code>.</li>
+</ol>
+<p>Campos comunes a todos: <code>motor</code> (recta, cifras o rejilla), <code>titulo</code>, <code>subtitulo</code>, <code>area</code> (lengua, matematicas, naturales, sociales, plastica, valores: cambia el color), <code>volver</code> (enlace a su ficha), <code>observa</code> (la pregunta de la pantalla final) y <code>rondas</code>.</p>
+<p>En cada ronda: <code>texto</code> cambia el enunciado (lo que va entre <code>**</code> sale resaltado), <code>pista</code> la línea de ayuda, <code>explica</code> lo que se añade al comprobar, <code>repetir</code> cuántas veces sale y <code>generar</code> hace que los números salgan al azar en cada partida.</p>
+<p>Todos tienen modo <strong>Pizarra</strong> (sin puntos, para proyectar). Para abrir un juego directamente así, añade <code>?pizarra</code> al final del enlace.</p>
+</section>
+
+<section class="motor">
+<h2>Recta</h2>
+<p>Tres modos. <strong>estimar</strong>: clavar un valor en una recta que solo tiene algunos números. <strong>ordenar</strong>: colgar varias tarjetas en su sitio (ordenar y estimar a la vez). <strong>saltos</strong>: ir de un número a otro con el menor número de saltos; el juego calcula el camino más corto y lo enseña.</p>
+<pre><code>{ "modo": "ordenar", "min": 0, "max": 1100, "marcas": [0, 500, 1000], "unidad": "km",
+  "texto": "Cuelga cada río **por su longitud**",
+  "tarjetas": [ { "texto": "Tajo", "valor": 1007 }, { "texto": "Ebro", "valor": 930 } ] }
+
+{ "modo": "estimar", "min": 1400, "max": 2000, "marcas": [1400, 1500, 1600, 1700, 1800, 1900, 2000],
+  "valor": 1492, "etiqueta": "Colón llega a América" }
+
+{ "modo": "saltos", "inicio": 37, "meta": 100, "saltos": [1, 10], "restar": true }
+{ "modo": "estimar", "generar": { "redondeo": 10 }, "min": 0, "max": 10000, "marcas": [0, 10000] }</code></pre>
+<ul>
+  <li>Otros campos: <code>divisiones</code> (rayitas sin número), <code>decimales</code>, <code>tolerancia</code> (porcentajes para 3, 2 y 1 estrella; por defecto 2, 5 y 10), <code>mostrarValor</code> (false para que las tarjetas no enseñen su número hasta comprobar).</li>
+  <li>Ideas: fechas de Historia, altitudes y longitudes, temperaturas bajo cero, fracciones y decimales entre 0 y 1, etapas de la vida de un ser vivo.</li>
+</ul>
+</section>
+
+<section class="motor">
+<h2>Cifras</h2>
+<p>Una máquina con huecos (con su nombre: UM, C, D, U, d, c…) y un montón de cifras. El juego prueba todas las colocaciones posibles, así que sabe cuál era la mejor y en qué puesto ha quedado la del alumno.</p>
+<pre><code>{ "huecos": 4, "cifras": [3, 0, 8, 5], "objetivo": "min" }
+{ "huecos": 4, "generar": true, "objetivo": "max", "condicion": "par" }
+{ "huecos": 3, "decimales": 1, "cifras": [4, 9, 2, 7], "objetivo": "cerca", "valor": 50 }
+{ "huecos": 5, "generar": { "cantidad": 5, "cerca": [40000, 60000] }, "objetivo": "cerca", "aCiegas": true }</code></pre>
+<ul>
+  <li><code>objetivo</code>: max, min o cerca (con <code>valor</code>). <code>condicion</code>: par, impar o multiplo:5 (o del número que sea).</li>
+  <li><code>aCiegas</code>: las cifras salen de una en una y no se pueden mover. Es la ronda con más estrategia: ¿dónde pongo un 5 si no sé qué viene después?</li>
+  <li>Si hay más cifras que huecos, sobran: el juego lo avisa.</li>
+</ul>
+</section>
+
+<section class="motor">
+<h2>Rejilla</h2>
+<p>Una cuadrícula de casillas y una regla: hay que pintar las que la cumplen. Se pinta tocando o arrastrando el dedo. Al comprobar se ven las que faltaban y las que sobraban. Con <code>mantener</code>, lo bueno de las rondas anteriores se queda rayado: sirve para ver coincidencias (múltiplos de 2 y de 3) o para clasificar por descarte.</p>
+<pre><code>{ "desde": 1, "hasta": 100, "regla": { "multiplo": 3 }, "texto": "Pinta los **múltiplos de 3**" }
+{ "desde": 1, "hasta": 50, "regla": { "primo": true } }
+{ "items": ["león", "pino", "seta", "trucha"], "columnas": 4, "regla": { "lista": ["león", "trucha"] },
+  "texto": "Pinta los **animales vertebrados**" }
+{ "items": [ { "t": "célula", "si": true }, { "t": "roca", "si": false } ], "columnas": 2 }</code></pre>
+<ul>
+  <li>Reglas para números: <code>multiplo</code>, <code>divisor</code>, <code>cuadrado</code>, <code>primo</code>, <code>acabaEn</code>. Para palabras: <code>lista</code> con las que van, o <code>"si": true</code> en cada una.</li>
+  <li>Campos: <code>columnas</code>, <code>mantener</code>, <code>textoAntes</code> (la leyenda de las rayadas).</li>
+  <li>Ideas: seres vivos e inertes, sustantivos de un texto, palabras con b o con v, provincias de una comunidad, materiales que conducen la electricidad.</li>
+</ul>
+</section>
+</div>
+</body>
+</html>

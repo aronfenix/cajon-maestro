@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La chincheta · Cajón maestro</title>
+<meta name="description" content="Clava cada número en su sitio de la recta. Estimación con números hasta 100 000.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "recta",
+  "area": "matematicas",
+  "titulo": "La chincheta",
+  "subtitulo": "Solo hay un par de números escritos en la recta. Clava la chincheta donde creas que va el número y comprueba cuánto te has desviado.",
+  "volver": "../../materiales/la-chincheta/",
+  "observa": "¿Qué número miras primero para colocar la chincheta? ¿Te ayuda pensar en **la mitad** de la recta, o en **los cuartos**?",
+  "rondas": [
+    {
+      "modo": "estimar",
+      "generar": true,
+      "min": 0,
+      "max": 100,
+      "marcas": [
+        0,
+        100
+      ],
+      "repetir": 2
+    },
+    {
+      "modo": "estimar",
+      "generar": {
+        "redondeo": 1
+      },
+      "min": 0,
+      "max": 1000,
+      "marcas": [
+        0,
+        1000
+      ],
+      "repetir": 2
+    },
+    {
+      "modo": "estimar",
+      "generar": {
+        "redondeo": 1
+      },
+      "min": 0,
+      "max": 10000,
+      "marcas": [
+        0,
+        10000
+      ],
+      "repetir": 2
+    },
+    {
+      "modo": "estimar",
+      "generar": {
+        "redondeo": 1
+      },
+      "min": 2000,
+      "max": 3000,
+      "marcas": [
+        2000,
+        3000
+      ],
+      "explica": "Ojo: esta recta no empieza en 0."
+    },
+    {
+      "modo": "estimar",
+      "generar": {
+        "redondeo": 100
+      },
+      "min": 0,
+      "max": 100000,
+      "marcas": [
+        0,
+        100000
+      ]
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

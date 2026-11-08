@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pinta la tabla · Cajón maestro</title>
+<meta name="description" content="Pinta múltiplos y cuadrados en la tabla del 1 al 100 y descubre los dibujos que salen.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "rejilla",
+  "area": "matematicas",
+  "titulo": "Pinta la tabla",
+  "subtitulo": "Una tabla del 1 al 100 y una regla. Pinta las casillas que la cumplen y fíjate en el dibujo que sale.",
+  "volver": "../../materiales/pinta-la-tabla/",
+  "observa": "Los múltiplos de 2 salen en **columnas** y los de 9 en **diagonal**. ¿Por qué cambia el dibujo? Pista: la tabla tiene 10 columnas.",
+  "rondas": [
+    {
+      "desde": 1,
+      "hasta": 100,
+      "regla": {
+        "multiplo": 2
+      },
+      "texto": "Pinta los **múltiplos de 2**",
+      "explica": "Salen columnas enteras: acaban en 0, 2, 4, 6 u 8."
+    },
+    {
+      "desde": 1,
+      "hasta": 100,
+      "regla": {
+        "multiplo": 3
+      },
+      "mantener": true,
+      "textoAntes": "Rayadas: los múltiplos de 2",
+      "texto": "Ahora, los **múltiplos de 3**",
+      "explica": "Las rayadas y pintadas a la vez son múltiplos de 2 y de 3: 6, 12, 18… los múltiplos de 6."
+    },
+    {
+      "desde": 1,
+      "hasta": 100,
+      "regla": {
+        "multiplo": 5
+      },
+      "texto": "Pinta los **múltiplos de 5**"
+    },
+    {
+      "desde": 1,
+      "hasta": 100,
+      "regla": {
+        "multiplo": 9
+      },
+      "texto": "Pinta los **múltiplos de 9**",
+      "explica": "Suma las cifras de cada uno: 18 → 1 + 8, 27 → 2 + 7…"
+    },
+    {
+      "desde": 1,
+      "hasta": 100,
+      "regla": {
+        "cuadrado": true
+      },
+      "texto": "Pinta los **números cuadrados**",
+      "pista": "Un número cuadrado sale de multiplicar un número por sí mismo: 3 × 3 = 9.",
+      "explica": "1, 4, 9, 16, 25… la distancia entre uno y el siguiente crece de 2 en 2."
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>
