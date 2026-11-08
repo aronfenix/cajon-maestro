@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<title>Una vuelta en un minuto</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<style>
+:root{color-scheme:dark;--bg:#0d0a09;--panel:#1a1412;--line:#3a2c26;--ink:#f3ead8;--muted:#b7a591;--red:#e63946}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:16px;padding-block:18px 36px;display:flex;flex-direction:column;gap:12px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 18px}
+h1{font-family:'Archivo Black',Impact,sans-serif;font-weight:400;font-size:clamp(24px,3.4vw,38px);margin:0;letter-spacing:.01em;color:var(--ink);text-wrap:balance}
+h1 span{color:var(--red)}
+header p{margin:0;color:var(--muted);font-family:'Caveat',cursive;font-size:24px;font-weight:700}
+.stage{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7);container-type:inline-size}
+.stage:fullscreen{border-radius:0;aspect-ratio:auto;width:100vw;height:100vh}
+.stage.theater{position:fixed;inset:0;z-index:50;border-radius:0;aspect-ratio:auto;width:100vw;height:100vh}
+canvas{display:block;width:100%;height:100%;object-fit:contain;cursor:pointer}
+#start{position:absolute;inset:0;display:grid;place-items:center;background:rgba(10,6,5,.35);border:0;cursor:pointer;color:inherit;font:inherit;padding:0}
+#start .pill{display:inline-flex;align-items:center;gap:.6em;background:var(--red);color:#fff7ec;font-family:'Archivo Black',Impact,sans-serif;font-size:clamp(16px,3cqw,36px);padding:.7em 1.3em;border-radius:999px;box-shadow:0 12px 40px rgba(0,0,0,.55);transform:rotate(-2deg)}
+#start .pill small{font-family:'Caveat',cursive;font-weight:700;font-size:.8em}
+#start:hover .pill{transform:rotate(-2deg) scale(1.04)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.btn{font:inherit;font-weight:700;border-radius:999px;border:1.5px solid var(--line);background:#261d19;color:var(--ink);padding:0 16px;min-height:44px;min-width:44px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{border-color:var(--muted)}
+.btn.main{background:var(--red);border-color:var(--red);color:#fff}
+.btn:focus-visible,.track:focus-visible,#start:focus-visible{outline:3px solid #f4c542;outline-offset:2px}
+.track{position:relative;flex:1 1 240px;height:44px;cursor:pointer;touch-action:none}
+.rail{position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;border-radius:4px;background:#3a2c26;overflow:hidden}
+.fill{position:absolute;left:0;top:0;bottom:0;background:var(--red)}
+.knob{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#f3ead8;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.time{font-variant-numeric:tabular-nums;color:var(--muted);min-width:88px;text-align:center}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;color:var(--muted);line-height:1.45}
+.notes div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.notes b{color:var(--ink)}
+@media (max-width:540px){.hide-s{display:none}.time{min-width:0}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Una vuelta en <span>un minuto</span></h1>
+    <p>Aparato circulatorio · Ciencias Naturales 5.º</p>
+  </header>
+  <div class="stage" id="stage">
+    <canvas id="cv" width="1920" height="1080" aria-label="Cortometraje animado: el viaje de un glóbulo rojo por todo el cuerpo"></canvas>
+    <button id="start" aria-label="Ver la película con sonido"><span class="pill">▶ Ver la película <small>(con sonido)</small></span></button>
+  </div>
+  <div class="bar">
+    <button class="btn main" id="play" aria-label="Reproducir">▶</button>
+    <div class="track" id="track" tabindex="0" role="slider" aria-label="Línea de tiempo" aria-valuemin="0">
+      <div class="rail"><div class="fill" id="fill"></div></div><div class="knob" id="knob"></div>
+    </div>
+    <span class="time" id="time">0:00 / 1:30</span>
+    <button class="btn" id="snd" aria-pressed="true">🔊 <span class="hide-s">Sonido</span></button>
+    <button class="btn" id="fs" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
+  </div>
+  <div class="notes">
+    <div><b>La idea.</b> En reposo, la sangre tarda más o menos un minuto en dar la vuelta completa al cuerpo. El cronómetro de arriba lo cuenta en tiempo real, mientras Roja hace el viaje.</div>
+    <div><b>En clase.</b> Haz clic en la imagen para pausar. Si paras justo antes de los alvéolos o de los capilares, puedes preguntar qué va a pasar.</div>
+    <div><b>Hecho con código.</b> No hay ni imágenes ni vídeo. Cada fotograma, la música y los efectos se generan en el navegador mientras lo ves.</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Una vuelta en un minuto — cortometraje de recortes de papel.
+   Cada fotograma es una función pura del tiempo: render(t).
+   ============================================================ */
+const W = 1920, H = 1080, TAU = Math.PI * 2, END = 90;
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const FH = "'Caveat', 'Comic Sans MS', cursive", FC = "'Archivo Black', Impact, 'Arial Black', sans-serif";
+const C = { kraft: '#cfae84', cream: '#f3ead8', ink: '#231a17', red: '#e63946', deep: '#b51f35', blood: '#d7263d', vein: '#5b4b9a', veinD: '#3a2d68', pink: '#f2a0b3', lung: '#ef9aa8', muscle: '#e2687d', o2: '#3aa0e8', co2: '#9aa3ad', yellow: '#f4c542', teal: '#2a7d6f', orange: '#e76f51' };
+
+/* ---------- utilidades ---------- */
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const frac = x => x - Math.floor(x);
+const hash = (a, b = 0) => frac(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453);
+const gauss = (x, s) => Math.exp(-(x * x) / (2 * s * s));
+const E = {
+  io: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  out: t => 1 - Math.pow(1 - t, 3), in: t => t * t * t,
+  back: t => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
+  sine: t => .5 - .5 * Math.cos(Math.PI * t)
+};
+const mixHex = (a, b, t) => {
+  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16); t = clamp(t);
+  return `rgb(${Math.round(lerp(pa >> 16, pb >> 16, t))},${Math.round(lerp((pa >> 8) & 255, (pb >> 8) & 255, t))},${Math.round(lerp(pa & 255, pb & 255, t))})`;
+};
+const inout = (t, a, b, f = .35) => seg(t, a, a + f) * (1 - seg(t, b - f, b));
+/* keyframes: [[t, valor]] con valor número u objeto */
+function kf(t, keys, ease = E.io) {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 0; i < keys.length - 1; i++) {
+    const [t0, a] = keys[i], [t1, b] = keys[i + 1];
+    if (t <= t1) {
+      const p = ease((t - t0) / (t1 - t0));
+      if (typeof a === 'number') return lerp(a, b, p);
+      const o = {}; for (const k in b) { const va = a[k] ?? (k === 'z' ? 1 : 0), vb = b[k]; o[k] = k === 'z' ? Math.exp(lerp(Math.log(va), Math.log(vb), p)) : lerp(va, vb, p); } return o;
+    }
+  }
+  return keys[keys.length - 1][1];
+}
+
+/* ---------- trayectorias ---------- */
+function makePath(ctrl, closed = false, samples = 16) {
+  const n = ctrl.length, pts = [], get = i => closed ? ctrl[(i + n) % n] : ctrl[Math.max(0, Math.min(n - 1, i))];
+  for (let i = 0; i < (closed ? n : n - 1); i++) {
+    const p0 = get(i - 1), p1 = get(i), p2 = get(i + 1), p3 = get(i + 2);
+    for (let s = 0; s < samples; s++) {
+      const t = s / samples, t2 = t * t, t3 = t2 * t;
+      const f = k => .5 * ((2 * p1[k]) + (-p0[k] + p2[k]) * t + (2 * p0[k] - 5 * p1[k] + 4 * p2[k] - p3[k]) * t2 + (-p0[k] + 3 * p1[k] - 3 * p2[k] + p3[k]) * t3);
+      pts.push([f(0), f(1)]);
+    }
+  }
+  pts.push(closed ? [...pts[0]] : [...ctrl[n - 1]]);
+  const len = [0]; for (let i = 1; i < pts.length; i++) len.push(len[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  return { pts, len, total: len[len.length - 1] };
+}
+function at(P, u) {
+  const d = clamp(u) * P.total; let lo = 0, hi = P.len.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (P.len[m] < d) lo = m; else hi = m; }
+  const a = P.pts[lo], b = P.pts[hi], k = (d - P.len[lo]) / ((P.len[hi] - P.len[lo]) || 1);
+  return { x: lerp(a[0], b[0], k), y: lerp(a[1], b[1], k), ang: Math.atan2(b[1] - a[1], b[0] - a[0]) };
+}
+
+/* ---------- papel: formas con borde rasgado que "hierve" 8 veces por segundo ---------- */
+let BOIL = 0;
+function densify(pts, step = 14) {
+  const out = [], n = pts.length;
+  for (let i = 0; i < n; i++) { const a = pts[i], b = pts[(i + 1) % n], k = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / step)); for (let j = 0; j < k; j++) out.push([lerp(a[0], b[0], j / k), lerp(a[1], b[1], j / k)]); }
+  return out;
+}
+function normals(pts) {
+  const n = pts.length; let area = 0;
+  for (let i = 0; i < n; i++) { const a = pts[i], b = pts[(i + 1) % n]; area += a[0] * b[1] - b[0] * a[1]; }
+  const sg = area > 0 ? -1 : 1;
+  return pts.map((p, i) => { const a = pts[(i - 1 + n) % n], b = pts[(i + 1) % n]; const tx = b[0] - a[0], ty = b[1] - a[1], l = Math.hypot(tx, ty) || 1; return [sg * -ty / l, sg * tx / l]; });
+}
+function rough(pts, amp, seed, grow = 0) {
+  const N = normals(pts);
+  return pts.map((p, i) => { const o = grow + (hash(seed, i) - .5) * 2 * amp; return [p[0] + N[i][0] * o, p[1] + N[i][1] * o]; });
+}
+function poly(pts) { ctx.beginPath(); for (let i = 0; i < pts.length; i++) i ? ctx.lineTo(pts[i][0], pts[i][1]) : ctx.moveTo(pts[i][0], pts[i][1]); ctx.closePath(); }
+function cut(pts, col, o = {}) {
+  const { sh = 1, torn = 0, seed = 1, amp = 1.6, alpha = 1, tornCol = C.cream, shA = .32 } = o;
+  if (alpha <= 0 || !pts.length) return;
+  ctx.save(); ctx.globalAlpha *= alpha;
+  const r = rough(pts, amp, seed * 7.13 + BOIL * 1.37);
+  if (sh) { ctx.save(); ctx.translate(5 * sh, 7 * sh); poly(r); ctx.fillStyle = `rgba(28,12,8,${shA})`; ctx.fill(); ctx.restore(); }
+  if (torn) { poly(rough(pts, amp * 2.2 + 1.2, seed * 3.3 + BOIL * .71, torn)); ctx.fillStyle = tornCol; ctx.fill(); }
+  poly(r); ctx.fillStyle = col; ctx.fill();
+  ctx.restore();
+}
+/* generadores de formas */
+function ellP(cx, cy, rx, ry, rot = 0) {
+  const n = Math.max(14, Math.round((rx + ry) * Math.PI / 12)), c = Math.cos(rot), s = Math.sin(rot), out = [];
+  for (let i = 0; i < n; i++) { const a = i / n * TAU, x = Math.cos(a) * rx, y = Math.sin(a) * ry; out.push([cx + x * c - y * s, cy + x * s + y * c]); }
+  return out;
+}
+function blobP(cx, cy, r, seed, amp = .14, sx = 1, sy = 1) {
+  const n = Math.max(16, Math.round(r * TAU / 12)), out = [];
+  for (let i = 0; i < n; i++) { const a = i / n * TAU, rr = r * (1 + amp * (Math.sin(3 * a + seed) * .6 + Math.sin(5 * a + seed * 1.7) * .3 + Math.sin(2 * a + seed * .3) * .4)); out.push([cx + Math.cos(a) * rr * sx, cy + Math.sin(a) * rr * sy]); }
+  return out;
+}
+function rrP(x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2); const out = [], cs = [[x + w - r, y + r, -Math.PI / 2], [x + w - r, y + h - r, 0], [x + r, y + h - r, Math.PI / 2], [x + r, y + r, Math.PI]];
+  cs.forEach(([cx, cy, a0]) => { for (let i = 0; i <= 5; i++) { const a = a0 + i / 5 * Math.PI / 2; out.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); } });
+  return densify(out);
+}
+function heartP(cx, cy, s) {
+  const out = [], k = s / 17;
+  for (let i = 0; i < 110; i++) { const a = i / 110 * TAU, sn = Math.sin(a); out.push([cx + 16 * sn * sn * sn * k, cy - (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) * k]); }
+  return out;
+}
+function tubeP(P, w0, w1 = w0) {
+  const L = [], R = [], n = Math.max(6, Math.round(P.total / 14));
+  for (let i = 0; i <= n; i++) { const u = i / n, p = at(P, u), nx = -Math.sin(p.ang), ny = Math.cos(p.ang), ww = lerp(w0, w1, u) / 2; L.push([p.x + nx * ww, p.y + ny * ww]); R.push([p.x - nx * ww, p.y - ny * ww]); }
+  return L.concat(R.reverse());
+}
+function circle(x, y, r) { ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, TAU); }
+
+/* ---------- texto ---------- */
+function hand(s, x, y, o = {}) {
+  const { size = 46, col = C.ink, rot = 0, align = 'center', alpha = 1, fam = FH, w = 700 } = o;
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.rotate(rot + (hash(BOIL, s.length) - .5) * .02);
+  ctx.font = `${w} ${size}px ${fam}`; ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(s, 0, 0); ctx.restore();
+}
+function measure(s, size, fam = FH, w = 700) { ctx.save(); ctx.font = `${w} ${size}px ${fam}`; const m = ctx.measureText(s).width; ctx.restore(); return m; }
+/* etiqueta: tira de papel crema con texto a mano y flecha de rotulador */
+function tag(a, s, x, y, ax = null, ay = null, o = {}) {
+  if (a <= 0) return;
+  const { size = 44, rot = -.03, col = C.cream, ink = C.ink, seed = s.length } = o;
+  const p = E.back(clamp(a * 1.6)), w = measure(s, size) + 40, h = size * 1.35;
+  if (ax !== null) arrow(x, y, ax, ay, clamp(a * 1.4 - .3), '#fff6e4');
+  ctx.save(); ctx.globalAlpha *= clamp(a * 2); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(p, p);
+  cut(rrP(-w / 2, -h / 2, w, h, 6), col, { seed: seed + 3, amp: 1.2, sh: .8 });
+  hand(s, 0, 2, { size, col: ink });
+  ctx.restore();
+}
+function arrow(x1, y1, x2, y2, a, col = C.ink, lw = 6) {
+  if (a <= 0) return;
+  const mx = (x1 + x2) / 2 + (y2 - y1) * .18, my = (y1 + y2) / 2 - (x2 - x1) * .18;
+  const j = (hash(BOIL, x1) - .5) * 3;
+  ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath(); ctx.moveTo(x1, y1);
+  const n = 20, end = Math.round(n * a);
+  let px = x1, py = y1, qx = x1, qy = y1;
+  for (let i = 1; i <= end; i++) { const t = i / n; qx = px; qy = py; px = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * (mx + j) + t * t * x2; py = (1 - t) * (1 - t) * y1 + 2 * (1 - t) * t * (my + j) + t * t * y2; ctx.lineTo(px, py); }
+  ctx.stroke();
+  if (a >= 1) { const an = Math.atan2(py - qy, px - qx); ctx.beginPath(); ctx.moveTo(px + Math.cos(an + 2.6) * 22, py + Math.sin(an + 2.6) * 22); ctx.lineTo(px, py); ctx.lineTo(px + Math.cos(an - 2.6) * 22, py + Math.sin(an - 2.6) * 22); ctx.stroke(); }
+  ctx.restore();
+}
+/* letras recortadas: cada letra en su trozo de papel */
+function cutWord(s, cx, cy, size, t0, t, o = {}) {
+  const { cols = [C.red, C.cream, C.ink], gap = .09, spacing = 1.02 } = o;
+  const chars = [...s]; let widths = chars.map(ch => ch === ' ' ? size * .35 : measure(ch, size, FC, 400) + size * .32);
+  const total = widths.reduce((a, b) => a + b * spacing, 0); let x = cx - total / 2; let k = 0;
+  chars.forEach((ch, i) => {
+    const w = widths[i]; if (ch === ' ') { x += w * spacing; return; }
+    const ts = t0 + k * gap, p = seg(t, ts, ts + .35); k++;
+    if (p > 0) {
+      const col = cols[(i + (o.shift || 0)) % cols.length], tc = col === C.cream ? C.ink : C.cream;
+      const y = lerp(cy - 500, cy, E.out(p)) + (p < 1 ? 0 : 0), rot = (hash(i, s.length) - .5) * .16 + (1 - p) * .6;
+      const sc = p < 1 ? 1 : 1 + .12 * gauss(t - ts - .35, .05);
+      ctx.save(); ctx.translate(x + w / 2, y); ctx.rotate(rot); ctx.scale(sc, sc);
+      const h = size * 1.2; cut(rrP(-w / 2, -h / 2, w, h, 5), col, { seed: i + 20 + s.length, amp: 1.8, sh: 1.2 });
+      ctx.font = `400 ${size}px ${FC}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = tc; ctx.fillText(ch, 0, size * .06);
+      ctx.restore();
+    }
+    x += w * spacing;
+  });
+}
+
+/* ---------- texturas: fibras de papel y grano ---------- */
+function makeTex() {
+  const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d');
+  const id = g.createImageData(512, 512), d = id.data;
+  for (let i = 0; i < d.length; i += 4) { const v = 228 + Math.random() * 27; d[i] = v; d[i + 1] = v - 3; d[i + 2] = v - 9; d[i + 3] = 255; }
+  g.putImageData(id, 0, 0);
+  g.strokeStyle = '#7d5f45'; g.lineWidth = 1;
+  for (let k = 0; k < 1400; k++) { g.globalAlpha = .05 + Math.random() * .09; const x = Math.random() * 512, y = Math.random() * 512, a = Math.random() * TAU, l = 5 + Math.random() * 24; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + Math.cos(a + .6) * l * .5, y + Math.sin(a + .6) * l * .5, x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke(); }
+  const n = document.createElement('canvas'); n.width = n.height = 256; const h = n.getContext('2d'), nd = h.createImageData(256, 256);
+  for (let i = 0; i < nd.data.length; i += 4) { const v = Math.random() * 255; nd.data[i] = nd.data[i + 1] = nd.data[i + 2] = v; nd.data[i + 3] = 255; }
+  h.putImageData(nd, 0, 0);
+  return { fiber: ctx.createPattern(c, 'repeat'), grain: ctx.createPattern(n, 'repeat') };
+}
+const TEX = makeTex();
+function finish(t) {
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = 'multiply'; ctx.globalAlpha = .55; ctx.fillStyle = TEX.fiber; ctx.fillRect(0, 0, W, H);
+  ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .07; ctx.translate(hash(BOIL) * 256, hash(BOIL, 3) * 256); ctx.fillStyle = TEX.grain; ctx.fillRect(-256, -256, W + 512, H + 512);
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  const v = ctx.createRadialGradient(W / 2, H / 2, H * .45, W / 2, H / 2, H * 1.05); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(10,4,2,.5)');
+  ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+}
+/* ---------- cámara y ritmo ---------- */
+function applyCam(c, shake = 0, t = 0) {
+  const k = Math.floor(t * 30);
+  ctx.translate(W / 2 + shake * (hash(k, 1) - .5) * 2, H / 2 + shake * (hash(k, 2) - .5) * 2);
+  ctx.rotate(c.r || 0); ctx.scale(c.z, c.z); ctx.translate(-c.x, -c.y);
+}
+/* capa de fondo con paralaje (f < 1 = más lejos) */
+function para(c, f, fn) { ctx.save(); ctx.translate(W / 2, H / 2); ctx.rotate((c.r || 0) * f); ctx.scale(Math.pow(c.z, f), Math.pow(c.z, f)); ctx.translate(-c.x * f, -c.y * f); fn(); ctx.restore(); }
+function scatter(seed, n, col, x0, y0, x1, y1, r0, r1, alpha = 1) {
+  for (let k = 0; k < n; k++) cut(blobP(lerp(x0, x1, hash(seed, k)), lerp(y0, y1, hash(seed, k + 50)), lerp(r0, r1, hash(seed, k + 99)), k + seed, .18), col, { sh: 0, seed: seed + k, amp: 2.5, alpha });
+}
+/* latido: 75 pulsaciones por minuto, una cada 0,8 s (la música va al mismo pulso) */
+const BEAT = .8;
+function beatP(t) { const f = frac(t / BEAT); return Math.max(gauss(f - .05, .05), .55 * gauss(f - .33, .045), gauss(f - 1.05, .05)); }
+
+/* ---------- personajes ---------- */
+function eye(x, y, r, look, mood, blink, lid) {
+  if (blink) { ctx.strokeStyle = C.ink; ctx.lineWidth = r * .22; ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(x, y, r * .7, .15 * Math.PI, .85 * Math.PI); ctx.stroke(); return; }
+  cut(ellP(x, y, r, r * 1.12), '#fffaf0', { sh: 0, amp: .7, seed: Math.round(x) });
+  ctx.fillStyle = C.ink; circle(x + look[0] * r * .35, y + look[1] * r * .35 + r * .06, r * .52); ctx.fill();
+  ctx.fillStyle = '#fff'; circle(x + look[0] * r * .35 - r * .18, y + look[1] * r * .35 - r * .14, r * .16); ctx.fill();
+  if (mood === 'tired') {
+    ctx.save(); ctx.beginPath(); ctx.rect(x - r * 1.4, y - r * 1.5, r * 2.8, r * 1.32); ctx.clip();
+    ctx.fillStyle = lid; circle(x, y, r * 1.2); ctx.fill(); ctx.restore();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = r * .16; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x - r * .95, y - r * .18); ctx.lineTo(x + r * .95, y - r * .18); ctx.stroke();
+  }
+}
+function faceMouth(s, mood) {
+  ctx.strokeStyle = C.ink; ctx.lineWidth = s * .07; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const y = s * .28;
+  if (mood === 'grin' || mood === 'wow') {
+    ctx.beginPath(); ctx.moveTo(-s * .3, y - s * .05); ctx.quadraticCurveTo(0, y + s * .42, s * .3, y - s * .05); ctx.closePath();
+    ctx.fillStyle = '#3a0d12'; ctx.fill(); ctx.stroke();
+    ctx.save(); ctx.clip(); ctx.fillStyle = '#f07a8a'; circle(0, y + s * .28, s * .16); ctx.fill(); ctx.restore();
+  } else if (mood === 'tired') { ctx.beginPath(); ctx.moveTo(-s * .2, y + s * .04); ctx.quadraticCurveTo(-s * .07, y - s * .04, 0, y + s * .03); ctx.quadraticCurveTo(s * .08, y + s * .09, s * .2, y); ctx.stroke(); }
+  else if (mood === 'surprised') { ctx.fillStyle = '#3a0d12'; ctx.beginPath(); ctx.ellipse(0, y + s * .06, s * .1, s * .14, 0, 0, TAU); ctx.fill(); }
+  else if (mood === 'determined') { ctx.beginPath(); ctx.moveTo(-s * .2, y + s * .05); ctx.lineTo(s * .2, y); ctx.stroke(); }
+  else { ctx.beginPath(); ctx.arc(0, y - s * .08, s * .2, .15 * Math.PI, .85 * Math.PI); ctx.stroke(); }
+}
+function brows(s, mood) {
+  ctx.strokeStyle = C.ink; ctx.lineWidth = s * .065; ctx.lineCap = 'round';
+  [-1, 1].forEach(k => {
+    ctx.beginPath();
+    if (mood === 'tired') { ctx.moveTo(k * s * .14, -s * .5); ctx.lineTo(k * s * .44, -s * .42); }
+    else if (mood === 'determined') { ctx.moveTo(k * s * .14, -s * .42); ctx.lineTo(k * s * .44, -s * .54); }
+    else if (mood === 'surprised' || mood === 'wow') { ctx.arc(k * s * .3, -s * .42, s * .14, 1.15 * Math.PI, 1.85 * Math.PI); }
+    else { ctx.arc(k * s * .3, -s * .4, s * .13, 1.2 * Math.PI, 1.8 * Math.PI); }
+    ctx.stroke();
+  });
+}
+function o2Ball(x, y, r, seed = 1, sc = 1) {
+  if (sc <= 0) return; ctx.save(); ctx.translate(x, y); ctx.scale(sc, sc);
+  cut(ellP(0, 0, r, r), C.o2, { seed: seed + 80, amp: 1, sh: .6 });
+  cut(ellP(-r * .35, -r * .4, r * .28, r * .14, -.5), '#9fd8ff', { sh: 0, seed: seed + 81, amp: .5 });
+  hand('O₂', 0, r * .05, { size: r * 1.15, col: '#fff' }); ctx.restore();
+}
+function co2Bag(x, y, r, seed = 1, sc = 1) {
+  if (sc <= 0) return; ctx.save(); ctx.translate(x, y); ctx.scale(sc, sc);
+  cut(blobP(0, r * .15, r, seed, .08, 1, .92), C.co2, { seed: seed + 60, amp: 1, sh: .6 });
+  cut(ellP(0, -r * .85, r * .26, r * .2), '#7c8590', { sh: 0, seed: seed + 61, amp: .6 });
+  hand('CO₂', 0, r * .2, { size: r * .85, col: C.ink }); ctx.restore();
+}
+const O2_POS = [[-.95, .5], [.95, .5], [-.66, -.9], [.66, -.9]];
+const CO2_POS = [[-1.1, -.35], [1.1, -.3], [-.85, .78], [.88, .8]];
+function drawRoja(x, y, s, o = {}) {
+  const { load = 1, mood = 'happy', sx = 1, sy = 1, rot = 0, look = [0, 0], o2 = 0, co2 = 0, t = 0, wave = 0, sweat = 0, thumb = 0, alpha = 1, seed = 5, glow = 0 } = o;
+  if (alpha <= 0) return;
+  const body = mixHex('#6e1b45', '#e8303e', load), inner = mixHex('#4f1434', '#b81d31', load), rim = mixHex('#96357a', '#ff7b7f', load);
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.rotate(rot);
+  if (glow > 0) { const g = ctx.createRadialGradient(0, 0, s * .6, 0, 0, s * 2.4); g.addColorStop(0, `rgba(255,230,120,${.55 * glow})`); g.addColorStop(1, 'rgba(255,230,120,0)'); ctx.fillStyle = g; circle(0, 0, s * 2.4); ctx.fill(); }
+  // bolsas de CO2 (detrás)
+  for (let k = 0; k < Math.ceil(co2); k++) {
+    const sc = k < Math.floor(co2) ? 1 : E.back(frac(co2)); const [px, py] = CO2_POS[k];
+    ctx.strokeStyle = C.ink; ctx.lineWidth = s * .03; ctx.beginPath(); ctx.moveTo(px * s * .6, py * s * .6); ctx.lineTo(px * s, py * s - s * .15); ctx.stroke();
+    co2Bag(px * s, py * s, s * .3, k + 1, sc);
+  }
+  ctx.save(); ctx.scale(sx, sy);
+  // brazos
+  [-1, 1].forEach(k => {
+    let ang = k * (.35 + .15 * Math.sin(t * 3 + k));
+    if (wave && k === 1) ang = -.9 - .5 * Math.sin(t * 12);
+    if (thumb && k === 1) ang = lerp(ang, -1.25, thumb);
+    ctx.save(); ctx.translate(k * s * .9, s * .12); ctx.rotate(ang + (k < 0 ? Math.PI : 0));
+    cut(rrP(0, -s * .07, s * .5, s * .14, s * .07), inner, { sh: .4, seed: 90 + k, amp: .8 });
+    cut(ellP(s * .54, 0, s * .12, s * .12), body, { sh: .3, seed: 92 + k, amp: .6 });
+    if (thumb && k === 1) cut(rrP(s * .5, -s * .28, s * .08, s * .22, s * .04), body, { sh: 0, seed: 94, amp: .4 });
+    ctx.restore();
+  });
+  cut(ellP(0, 0, s, s * .95), body, { seed, torn: s * .045, amp: 1.4 });
+  cut(ellP(-s * .04, s * .1, s * .56, s * .46), inner, { sh: 0, seed: seed + 1, amp: 1 });
+  cut(ellP(-s * .5, -s * .5, s * .24, s * .09, -.7), rim, { sh: 0, seed: seed + 2, amp: .6 });
+  const blink = frac((t + seed * .37) / 3.1) < .045;
+  eye(-s * .3, -s * .14, s * .2, look, mood, blink, body); eye(s * .3, -s * .14, s * .2, look, mood, blink, body);
+  brows(s, mood);
+  ctx.fillStyle = 'rgba(255,140,160,.45)'; [-1, 1].forEach(k => { ctx.beginPath(); ctx.ellipse(k * s * .55, s * .16, s * .12, s * .07, 0, 0, TAU); ctx.fill(); });
+  ctx.save(); ctx.translate(0, s * .02); faceMouth(s, mood); ctx.restore();
+  ctx.restore();
+  // oxígeno (delante)
+  for (let k = 0; k < Math.ceil(o2); k++) { const sc = k < Math.floor(o2) ? 1 : E.back(frac(o2)); const [px, py] = O2_POS[k]; o2Ball(px * s, py * s, s * .27, k + 3, sc); }
+  // sudor
+  if (sweat > 0) for (let k = 0; k < 3; k++) { const p = frac(t * .9 + k / 3); ctx.save(); ctx.globalAlpha *= sweat * (1 - p); ctx.fillStyle = '#9fd8ff'; const dx = (k - 1) * s * .45 + s * .2, dy = -s * .8 + p * s * .6; ctx.beginPath(); ctx.moveTo(dx, dy - s * .12); ctx.quadraticCurveTo(dx + s * .08, dy, dx, dy + s * .06); ctx.quadraticCurveTo(dx - s * .08, dy, dx, dy - s * .12); ctx.fill(); ctx.restore(); }
+  ctx.restore();
+}
+function cellS(x, y, r, load, seed, o = {}) {
+  const { sx = 1, sy = 1, rot = 0, alpha = 1, sh = .7 } = o;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sx, sy);
+  cut(ellP(0, 0, r, r * .95), mixHex('#6e1b45', '#e0343f', load), { seed, sh, amp: 1.1, alpha });
+  cut(ellP(-r * .04, r * .06, r * .55, r * .46), mixHex('#4f1434', '#b41c30', load), { sh: 0, seed: seed + 1, amp: .8, alpha });
+  ctx.restore();
+}
+function mcell(x, y, r, mood, seed, t, glow = 0) {
+  ctx.save(); ctx.translate(x, y);
+  if (glow > 0) { const g = ctx.createRadialGradient(0, 0, r * .5, 0, 0, r * 2); g.addColorStop(0, `rgba(255,230,120,${.6 * glow})`); g.addColorStop(1, 'rgba(255,230,120,0)'); ctx.fillStyle = g; circle(0, 0, r * 2); ctx.fill(); }
+  cut(blobP(0, 0, r, seed, .1, 1.15, .9), mood === 'grin' ? '#f7a3b0' : '#e98a99', { seed: seed + 5, torn: 3 });
+  cut(ellP(r * .45, r * .3, r * .2, r * .16), '#b84a64', { sh: 0, seed: seed + 6, amp: .6 });
+  const blink = frac((t + seed) / 2.7) < .05;
+  eye(-r * .28, -r * .12, r * .18, [0, .2], mood, blink, '#e98a99'); eye(r * .22, -r * .12, r * .18, [0, .2], mood, blink, '#e98a99');
+  ctx.save(); ctx.scale(.8, .8); ctx.translate(-r * .05, r * .05); faceMouth(r, mood); ctx.restore();
+  ctx.restore();
+}
+function sparkle(x, y, p, r = 90, col = '#ffe066') {
+  if (p <= 0 || p >= 1) return;
+  ctx.save(); ctx.strokeStyle = col; ctx.lineCap = 'round'; ctx.lineWidth = 8 * (1 - p) + 2;
+  for (let k = 0; k < 8; k++) { const a = k / 8 * TAU + .3, r0 = r * (.3 + .6 * E.out(p)), r1 = r * (.55 + E.out(p)); ctx.beginPath(); ctx.moveTo(x + Math.cos(a) * r0, y + Math.sin(a) * r0); ctx.lineTo(x + Math.cos(a) * r1, y + Math.sin(a) * r1); ctx.stroke(); }
+  ctx.restore();
+}
+function bubble(a, s, x, y, o = {}) {
+  if (a <= 0) return; const { size = 42, dir = 1 } = o;
+  const p = E.back(clamp(a * 1.5)), w = measure(s, size) + 44, h = size * 1.5;
+  ctx.save(); ctx.translate(x, y); ctx.scale(p, p); ctx.globalAlpha *= clamp(a * 2);
+  const L = dir > 0 ? -30 : -w + 30;
+  const pts = rrP(L, -h - 34, w, h, h / 2); cut(pts, '#fffaf0', { seed: s.length + 7, amp: 1.2, sh: .8 });
+  cut(densify([[-10, -40], [dir * 26, -40], [0, 0]]), '#fffaf0', { sh: 0, seed: 3, amp: .6 });
+  hand(s, L + w / 2, -h / 2 - 32, { size }); ctx.restore();
+}
+
+/* ============================================================
+   DECORADO: el corazón (se usa en tres planos)
+   ============================================================ */
+const HS = {
+  aorta: makePath([[1060, 640], [1012, 420], [1030, 170], [1200, 30], [1400, 100], [1455, 400], [1465, 900], [1470, 1500]]),
+  pulm: makePath([[880, 660], [925, 440], [935, 200], [905, -300]]),
+  svc: makePath([[700, -400], [712, 100], [742, 330]]),
+  ivc: makePath([[440, 1600], [510, 1050], [585, 720], [650, 520], [735, 450]]),
+  pv: makePath([[2400, 380], [1700, 386], [1320, 408]])
+};
+function heartSet(t, c) {
+  ctx.fillStyle = '#3a111d'; ctx.fillRect(-4000, -4000, 10000, 10000);
+  para(c, .55, () => { scatter(11, 14, '#4a1726', -1200, -900, 3000, 2000, 120, 300); scatter(12, 10, '#2e0c17', -1200, -900, 3000, 2000, 80, 200); });
+  ctx.save(); applyCam(c, c.shake || 0, t);
+  const P = beatP(t), sc = 1 - .025 * P;
+  ctx.save(); ctx.translate(960, 640); ctx.scale(sc, sc); ctx.translate(-960, -640);
+  cut(tubeP(HS.pv, 96), C.blood, { seed: 42, torn: 4 });
+  cut(heartP(960, 600, 560), '#b31d33', { seed: 44, torn: 7, amp: 2.6 });
+  cut(heartP(990, 650, 470), '#9c1a2e', { sh: 0, seed: 45, amp: 2 });
+  const vs = 1 - .13 * P, as = 1 + .05 * P;
+  cut(ellP(760, 420, 150 * as, 124 * as), '#4a3a80', { seed: 46, sh: .5 });
+  cut(ellP(810, 740, 165 * vs, 205 * vs, .15), '#4a3a80', { seed: 47, sh: .5 });
+  cut(ellP(1160, 420, 150 * as, 124 * as), '#e65a5e', { seed: 48, sh: .5 });
+  cut(ellP(1112, 750, 180 * vs, 228 * vs, -.15), '#e65a5e', { seed: 49, sh: .5 });
+  // válvulas entre aurícula y ventrículo: se cierran cuando el ventrículo aprieta
+  const open = 1 - clamp(P * 1.6);
+  [[790, 562], [1140, 568]].forEach(([vx, vy], k) => [-1, 1].forEach(s => {
+    const ang = s * lerp(.15, 1.35, open);
+    ctx.save(); ctx.translate(vx + s * 62, vy); ctx.rotate(Math.PI / 2 - ang * -s * 0 + (s < 0 ? -1 : 1) * 0);
+    ctx.restore();
+    const bx = vx + s * 66, tipx = vx + s * lerp(8, 50, open), tipy = vy + lerp(18, 92, open);
+    cut(densify([[bx, vy - 14], [bx, vy + 14], [tipx, tipy]]), C.cream, { seed: 60 + k * 2 + s, amp: 1, sh: .5 });
+  }));
+  cut(tubeP(HS.pulm, 112, 118), C.vein, { seed: 43, torn: 4 });
+  cut(tubeP(HS.aorta, 128), C.blood, { seed: 41, torn: 4 });
+  cut(tubeP(HS.svc, 110), C.vein, { seed: 50, torn: 4 });
+  cut(tubeP(HS.ivc, 124), C.vein, { seed: 51, torn: 4 });
+  hand('lado derecho', 770, 1010, { size: 46, col: '#ffe9ef', rot: -.05 });
+  hand('lado izquierdo', 1140, 1010, { size: 46, col: '#ffe9ef', rot: .04 });
+  ctx.restore();
+  ctx.restore();
+}
+/* multitud de glóbulos que siguen el mismo camino con retraso */
+function crowd(P, uFn, t, n, load, r, spread = 40, from = -5) {
+  for (let k = from; k <= n; k++) {
+    if (k === 0) continue;
+    const u = uFn(t - k * .2); if (u <= 0 || u >= 1) continue;
+    const p = at(P, u), off = ((k % 3) - 1) * spread + (hash(k, 7) - .5) * 20, nx = -Math.sin(p.ang), ny = Math.cos(p.ang);
+    cellS(p.x + nx * off, p.y + ny * off, r * (.8 + .25 * hash(k, 3)), typeof load === 'function' ? load(u) : load, 100 + k, { rot: p.ang + k });
+  }
+}
+
+/* ============================================================
+   PLANO 0 · Título
+   ============================================================ */
+function shTitle(t) {
+  ctx.fillStyle = '#c7a37a'; ctx.fillRect(0, 0, W, H);
+  const c = { x: 960, y: 540, z: 1 + t * .012 };
+  para(c, .4, () => { for (let k = 0; k < 9; k++) { const x = lerp(-300, 2200, hash(k, 4)), y = lerp(-200, 1300, hash(k, 5)) + Math.sin(t * .6 + k) * 20; cellS(x, y, 60 + 60 * hash(k, 6), .9, k + 300, { rot: t * .1 + k, alpha: .55, sh: 0 }); } });
+  ctx.save(); applyCam(c);
+  cutWord('EL VIAJE', 960, 300, 150, .3, t, { cols: [C.red, C.cream, C.ink] });
+  cutWord('DE ROJA', 960, 490, 150, .3 + 7 * .09, t, { cols: [C.cream, C.red, C.ink] });
+  const rp = E.back(seg(t, 2.1, 2.7));
+  if (rp > 0) drawRoja(1540, 760 + Math.sin(t * 3) * 10, 110 * rp, { t, load: 1, mood: 'grin', wave: 1, look: [-.6, -.2] });
+  const qa = seg(t, 3.1, 3.7);
+  hand('¿Cuánto tarda tu sangre', 820, 720, { size: 74, alpha: qa, rot: -.03, col: C.ink });
+  hand('en dar la vuelta a todo tu cuerpo?', 820, 800, { size: 74, alpha: seg(t, 3.5, 4.1), rot: -.03, col: C.ink });
+  if (qa > 0) { ctx.save(); ctx.strokeStyle = C.red; ctx.lineWidth = 8; ctx.lineCap = 'round'; const w = 1000 * E.out(seg(t, 4.1, 4.7)); ctx.beginPath(); ctx.moveTo(330, 850); ctx.quadraticCurveTo(330 + w / 2, 868, 330 + w, 846); ctx.stroke(); ctx.restore(); }
+  ctx.restore();
+}
+
+/* ============================================================
+   PLANO 1 · Leo
+   ============================================================ */
+function drawKid(t) {
+  const b = 1320, bob = Math.abs(Math.sin(t * 3.2)) * 18;
+  ctx.save(); ctx.translate(0, -bob);
+  cut(rrP(860, b - 470, 95, 470, 36), '#2b4c7e', { seed: 31 }); cut(rrP(975, b - 470, 95, 470, 36), '#2b4c7e', { seed: 32 });
+  cut(ellP(900, b - 8, 90, 38), C.ink, { seed: 33 }); cut(ellP(1030, b - 8, 90, 38), C.ink, { seed: 34 });
+  [-1, 1].forEach(k => { const ang = k * (.3 + .25 * Math.sin(t * 3.2)); ctx.save(); ctx.translate(965 + k * 205, b - 950); ctx.rotate(ang - k * .25); cut(rrP(-40, 0, 80, 400, 40), C.yellow, { seed: 35 + k, torn: 3 }); cut(ellP(0, 420, 52, 52), '#e9b48a', { seed: 37 + k }); ctx.restore(); });
+  cut(rrP(785, b - 980, 360, 560, 110), C.yellow, { seed: 39, torn: 4 });
+  cut(rrP(785, b - 740, 360, 64, 10), C.orange, { sh: 0, seed: 40 });
+  cut(rrP(925, b - 1040, 80, 90, 20), '#e1a67b', { seed: 41 });
+  cut(ellP(965, b - 1180, 165, 175), '#e9b48a', { seed: 42, torn: 4 });
+  cut(ellP(800, b - 1170, 34, 48), '#e1a67b', { seed: 43 }); cut(ellP(1130, b - 1170, 34, 48), '#e1a67b', { seed: 44 });
+  cut(blobP(965, b - 1300, 170, 3, .14, 1.02, .55), '#3b2418', { seed: 45 });
+  const blink = frac(t / 2.9) < .05;
+  eye(905, b - 1180, 30, [0, 0], 'happy', blink, '#e9b48a'); eye(1025, b - 1180, 30, [0, 0], 'happy', blink, '#e9b48a');
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(965, b - 1135, 44, .15 * Math.PI, .85 * Math.PI); ctx.stroke();
+  ctx.fillStyle = 'rgba(230,110,110,.5)'; [880, 1050].forEach(x => { ctx.beginPath(); ctx.ellipse(x, b - 1125, 26, 16, 0, 0, TAU); ctx.fill(); });
+  // ventana al corazón
+  const P = beatP(t);
+  cut(ellP(1010, b - 760, 120, 110), '#5a1a28', { seed: 46, torn: 5 });
+  ctx.save(); ctx.translate(1010, b - 760); ctx.scale(1 + .14 * P, 1 + .14 * P); cut(heartP(0, 0, 70), C.red, { seed: 47 }); ctx.restore();
+  ctx.restore();
+}
+function shKid(t) {
+  const c = kf(t, [[7, { x: 960, y: 640, z: .7, r: 0 }], [8.8, { x: 965, y: 640, z: .74, r: 0 }], [11.8, { x: 1010, y: 560, z: 5.2, r: .08 }], [12.6, { x: 1010, y: 560, z: 9, r: .12 }]]);
+  ctx.fillStyle = '#f5d39b'; ctx.fillRect(0, 0, W, H);
+  para(c, .25, () => { cut(ellP(1500, 250, 150, 150), '#f4a259', { seed: 70, torn: 5 }); scatter(71, 5, '#fff3dc', -600, -250, 2600, 60, 70, 130); });
+  para(c, .6, () => { cut(blobP(300, 1350, 700, 2, .08, 1.4, .5), '#9cc08a', { seed: 72 }); cut(blobP(1700, 1400, 800, 5, .08, 1.3, .5), '#86ad76', { seed: 73 }); });
+  ctx.save(); applyCam(c);
+  cut(rrP(-2000, 1300, 6000, 1500, 0), '#6f9a62', { seed: 74, sh: 0 });
+  drawKid(t);
+  tag(inout(t, 7.7, 10.4), 'Leo', 640, 520, 790, 620, { size: 64 });
+  ctx.restore();
+}
+
+/* ============================================================
+   PLANO 2 · Lado derecho del corazón
+   ============================================================ */
+const RP2 = makePath([[700, -80], [712, 150], [740, 330], [770, 440], [782, 560], [800, 700], [860, 650], [905, 480], [930, 300], [930, 100], [910, -160]]);
+const u2 = t => kf(t, [[12, 0], [13.9, .3], [14.8, .33], [15.6, .47], [16.0, .49], [18.7, 1]], E.io);
+function shHeartR(t) {
+  const c = kf(t, [[12, { x: 740, y: 250, z: 1.6, r: 0 }], [13.9, { x: 770, y: 430, z: 1.7 }], [15.4, { x: 800, y: 640, z: 1.55 }], [16.3, { x: 830, y: 560, z: 1.2 }], [17.6, { x: 910, y: 260, z: 1.35, r: -.04 }], [19.8, { x: 910, y: -80, z: 1.7, r: -.06 }]]);
+  c.shake = 22 * gauss(t - 16.1, .15);
+  heartSet(t, c);
+  ctx.save(); applyCam(c, c.shake, t);
+  crowd(RP2, u2, t, 10, .05, 34);
+  const p = at(RP2, u2(t)), sq = 1 + .12 * Math.sin(t * 9) * seg(t, 15.4, 16);
+  drawRoja(p.x, p.y, 62, { t, load: 0, mood: t > 16 && t < 17 ? 'surprised' : 'tired', co2: 3, look: [0, .6], sx: 1 / sq, sy: sq, rot: Math.sin(t * 2) * .08 });
+  tag(inout(t, 12.5, 15.2), 'vena cava', 520, 110, 690, 150, { size: 40 });
+  tag(inout(t, 13.4, 15.6), 'aurícula derecha', 460, 360, 640, 420, { size: 40 });
+  tag(inout(t, 14.9, 17.2), 'ventrículo derecho', 480, 780, 690, 760, { size: 40 });
+  tag(inout(t, 16.4, 19.6), 'arteria pulmonar', 1170, 170, 960, 170, { size: 40 });
+  ctx.restore();
+}
+
+/* ============================================================
+   PLANO 3 · Pulmones
+   ============================================================ */
+const LUNG_L = [[880, 190], [760, 150], [600, 250], [480, 520], [450, 800], [520, 960], [720, 1010], [880, 950], [905, 700], [875, 420]];
+const LUNG_R = LUNG_L.map(([x, y]) => [1920 - x, y]);
+const LUNG_LP = makePath(LUNG_L, true, 8), LUNG_RP = makePath(LUNG_R, true, 8);
+const BRONCH = (() => { const s = []; function br(x, y, a, l, w, d, sd) { const x2 = x + Math.cos(a) * l, y2 = y + Math.sin(a) * l; s.push([x, y, x2, y2, w]); if (d >= 5) return; const sp = .38 + .2 * hash(sd, d); br(x2, y2, a - sp, l * .72, w * .72, d + 1, sd * 2 + 1); br(x2, y2, a + sp, l * .72, w * .72, d + 1, sd * 2 + 2); } br(960, 300, Math.PI * .72, 170, 46, 1, 1); br(960, 300, Math.PI * .28, 170, 46, 1, 2); return s; })();
+const PA_R = makePath([[960, 1000], [1040, 820], [1180, 640], [1330, 520], [1430, 440]]);
+const PA_L = makePath([[930, 1000], [860, 820], [740, 640], [600, 540], [520, 470]]);
+const u3 = t => kf(t, [[19.6, 0], [24.5, 1]], E.io);
+function shLungs(t) {
+  const c = kf(t, [[19.6, { x: 960, y: 800, z: .95, r: 0 }], [21.6, { x: 1100, y: 660, z: 1.2 }], [23.3, { x: 1360, y: 480, z: 2.3, r: .03 }], [25.2, { x: 1430, y: 440, z: 5, r: .06 }]]);
+  ctx.fillStyle = '#2a1b36'; ctx.fillRect(0, 0, W, H);
+  para(c, .5, () => scatter(81, 16, '#3a2447', -1000, -800, 3000, 2000, 100, 260));
+  ctx.save(); applyCam(c);
+  const br = 1 + .03 * Math.sin(TAU * t / 4);
+  ctx.save(); ctx.translate(960, 560); ctx.scale(br, br); ctx.translate(-960, -560);
+  cut(LUNG_LP.pts, C.lung, { seed: 82, torn: 6, amp: 2.5 }); cut(LUNG_RP.pts, C.lung, { seed: 83, torn: 6, amp: 2.5 });
+  BRONCH.forEach(([x, y, x2, y2, w], k) => cut(tubeP(makePath([[x, y], [x2, y2]], false, 2), w), '#f7e3cf', { seed: 90 + k, sh: .4, amp: 1 }));
+  cut(tubeP(makePath([[960, -400], [960, 310]]), 110), '#f7e3cf', { seed: 88, torn: 3 });
+  ctx.strokeStyle = 'rgba(160,110,90,.5)'; ctx.lineWidth = 8; for (let y = -380; y < 290; y += 34) { ctx.beginPath(); ctx.moveTo(915, y); ctx.quadraticCurveTo(960, y + 10, 1005, y); ctx.stroke(); }
+  ctx.restore();
+  cut(heartP(945, 1180, 280), '#b31d33', { seed: 84, torn: 5 });
+  cut(tubeP(PA_L, 70, 30), C.vein, { seed: 85, torn: 3 }); cut(tubeP(PA_R, 70, 30), C.vein, { seed: 86, torn: 3 });
+  crowd(PA_L, u3, t + .7, 8, .05, 18, 12, 0); crowd(PA_R, u3, t, 9, .05, 20, 12, -4);
+  const p = at(PA_R, u3(t));
+  drawRoja(p.x, p.y, 34, { t, load: 0, mood: 'tired', co2: 3, look: [.5, -.5] });
+  tag(inout(t, 20.1, 23.6), 'pulmones', 520, 130, 560, 280, { size: 48 });
+  ctx.restore();
+}
+/* ---- 3b · alvéolos ---- */
+const ALV = [[960, 250, 150], [790, 350, 140], [1130, 350, 140], [850, 500, 145], [1070, 500, 145], [960, 400, 130]];
+const CAPB = makePath([[-300, 800], [400, 720], [760, 650], [960, 640], [1160, 650], [1520, 720], [2220, 800]]);
+const CAPB_L = makePath([[-300, 800], [400, 720], [760, 650], [960, 640]]), CAPB_R = makePath([[960, 640], [1160, 650], [1520, 720], [2220, 800]]);
+const uB = t => kf(t, [[24.4, .02], [26.2, .47], [29.8, .5], [32.2, .8]], E.io);
+const O2T = [27.2, 27.7, 28.2, 28.7], CO2T = [26.6, 27.0, 27.4];
+function shAlv(t) {
+  const c = kf(t, [[24.4, { x: 960, y: 560, z: .72, r: 0 }], [26, { x: 960, y: 560, z: 1.1 }], [29.8, { x: 980, y: 540, z: 1.22 }], [32.2, { x: 1450, y: 640, z: 1.35, r: -.02 }]]);
+  ctx.fillStyle = '#3b1f36'; ctx.fillRect(0, 0, W, H);
+  para(c, .5, () => scatter(101, 16, '#4b2742', -800, -800, 2800, 1900, 110, 260));
+  ctx.save(); applyCam(c);
+  cut(tubeP(makePath([[960, -500], [960, 190]]), 96), '#f7e3cf', { seed: 102, torn: 3 });
+  const br = 1 + .045 * Math.sin(TAU * t / 4);
+  ALV.forEach(([x, y, r], k) => cut(blobP(x, y, r * br, k * 3 + 1, .06), '#f6b3c3', { seed: 103 + k, alpha: .62, sh: .4, amp: 2 }));
+  // oxígeno flotando en el aire del alvéolo
+  for (let k = 0; k < 10; k++) { const a = t * .5 + k * 2.1, x = 960 + Math.cos(a) * 170 * hash(k, 1) + (hash(k, 2) - .5) * 240, y = 390 + Math.sin(a * 1.3) * 90 * hash(k, 3); o2Ball(x, y, 18, k + 40); }
+  cut(tubeP(CAPB_L, 150), '#6a2f78', { seed: 110, torn: 4 }); cut(tubeP(CAPB_R, 150), C.blood, { seed: 111, torn: 4 });
+  // red de capilares sobre los alvéolos
+  [[640, 700, 820, 280], [1280, 700, 1110, 280], [960, 650, 960, 540]].forEach(([x1, y1, x2, y2], k) => cut(tubeP(makePath([[x1, y1], [lerp(x1, x2, .5) + (k - 1) * 60, lerp(y1, y2, .5)], [x2, y2]]), 22, 10), '#c42a44', { seed: 112 + k, sh: .4, amp: .8 }));
+  crowd(CAPB, uB, t, 6, u => clamp((u - .45) / .1), 50, 0, -6);
+  const u = uB(t), p = at(CAPB, u);
+  const nO2 = O2T.reduce((s, ta) => s + clamp((t - ta) / .35), 0), nCO2 = 3 - CO2T.reduce((s, ta) => s + (t >= ta ? 1 : 0), 0);
+  const load = seg(t, 27, 29.2), mood = t < 28.8 ? 'tired' : t < 29.4 ? 'wow' : 'grin';
+  drawRoja(p.x, p.y, 70, { t, load, mood, o2: nO2, co2: nCO2, look: t < 27 ? [0, -1] : [0, -.3], glow: bumpG(t, 29.3, .5) });
+  sparkle(p.x, p.y, seg(t, 29.1, 29.8), 170);
+  // CO2 que sale hacia el aire
+  CO2T.forEach((ta, k) => { if (t < ta) return; const q = seg(t, ta, ta + .9), q2 = seg(t, ta + .9, ta + 3.2); const [bx, by] = CO2_POS[k]; const sx = p.x + bx * 70, sy = p.y + by * 70; const x = lerp(lerp(sx, 900 + k * 60, E.io(q)), 960, q2), y = lerp(lerp(sy, 420, E.io(q)), -400, E.in(q2)); co2Bag(x, y, 22, k + 1); });
+  // O2 que baja hacia Roja
+  O2T.forEach((ta, k) => { const q = seg(t, ta - .7, ta); if (q <= 0 || q >= 1) return; const [ox, oy] = O2_POS[k]; o2Ball(lerp(900 + k * 50, p.x + ox * 70, E.io(q)), lerp(430, p.y + oy * 70, E.io(q)), 19, k + 3); });
+  tag(inout(t, 25, 31.6), 'alvéolos', 520, 360, 690, 360, { size: 46 });
+  tag(inout(t, 26.5, 29.6), 'sale el CO₂', 1330, 230, 1000, 190, { size: 46 });
+  tag(inout(t, 27.5, 31.6), 'entra el O₂', 1380, 470, 1060, 590, { size: 46 });
+  ctx.restore();
+}
+function bumpG(t, c, w) { return gauss(t - c, w); }
+
+/* ============================================================
+   PLANO 4 · Lado izquierdo y aorta
+   ============================================================ */
+const RP4 = makePath([[2100, 380], [1700, 385], [1400, 395], [1200, 420], [1150, 560], [1120, 720], [1080, 640], [1030, 420], [1030, 170], [1200, 40], [1400, 110], [1455, 400], [1465, 1000]]);
+const u4 = t => kf(t, [[32, 0], [33.8, .28], [34.4, .31], [35.0, .42], [35.2, .44], [38.2, 1]], E.io);
+function shHeartL(t) {
+  const c = kf(t, [[32, { x: 1600, y: 400, z: 1.35, r: 0 }], [33.8, { x: 1250, y: 430, z: 1.5 }], [35.05, { x: 1110, y: 680, z: 1.75 }], [35.4, { x: 1100, y: 480, z: 1.05 }], [36.4, { x: 1230, y: 120, z: 1.2, r: .05 }], [37.3, { x: 1440, y: 300, z: 1.4, r: .02 }], [39.8, { x: 1460, y: 950, z: 1.8, r: 0 }]]);
+  c.shake = 28 * gauss(t - 35.25, .18);
+  heartSet(t, c);
+  ctx.save(); applyCam(c, c.shake, t);
+  crowd(RP4, u4, t, 10, 1, 34);
+  const p = at(RP4, u4(t)), fast = seg(t, 35.2, 35.5) * (1 - seg(t, 37.4, 38.4));
+  drawRoja(p.x, p.y, 62, { t, load: 1, o2: 4, mood: t < 35.2 ? 'happy' : t < 37.6 ? 'wow' : 'grin', look: [Math.cos(p.ang) * .6, Math.sin(p.ang) * .6], sx: 1 + .25 * fast, sy: 1 - .18 * fast, rot: fast ? p.ang : 0 });
+  tag(inout(t, 32.8, 35), 'aurícula izquierda', 1450, 560, 1270, 470, { size: 40 });
+  tag(inout(t, 34.4, 36.3), 'ventrículo izquierdo', 1500, 700, 1270, 760, { size: 40 });
+  if (t > 35.8) { ctx.save(); ctx.translate(1230, -110); ctx.rotate(.08); cutWord('AORTA', 0, 0, 92, 35.8, t, { cols: [C.cream, C.red], gap: .07 }); ctx.restore(); }
+  ctx.restore();
+  // líneas de velocidad (en pantalla)
+  const sp = seg(t, 35.2, 35.4) * (1 - seg(t, 37.6, 38.6));
+  if (sp > 0) { ctx.save(); ctx.globalAlpha = sp * .85; for (let k = 0; k < 26; k++) { const a = hash(k, BOIL) * TAU, r0 = 380 + 240 * hash(k, BOIL + 1), l = 180 + 300 * hash(k, BOIL + 2), cx = W / 2, cy = H / 2; cut(densify([[cx + Math.cos(a) * r0, cy + Math.sin(a) * r0], [cx + Math.cos(a + .012) * (r0 + l), cy + Math.sin(a + .012) * (r0 + l)], [cx + Math.cos(a - .012) * (r0 + l), cy + Math.sin(a - .012) * (r0 + l)]]), C.cream, { sh: 0, seed: k, amp: 1 }); } ctx.restore(); }
+}
+/* ============================================================
+   PLANO 5 · Las carreteras de las arterias
+   ============================================================ */
+const ROADS = [
+  makePath([[1000, 520], [975, 700], [962, 900], [960, 1120]]),
+  makePath([[960, 1120], [1040, 1250], [1090, 1500], [1100, 1900], [1105, 2300]]),
+  makePath([[960, 1120], [880, 1250], [830, 1500], [820, 1900], [815, 2300]]),
+  makePath([[990, 470], [980, 300], [960, 120], [960, -80]]),
+  makePath([[970, 470], [800, 330], [680, 380], [560, 800], [450, 1250]]),
+  makePath([[1010, 470], [1180, 330], [1260, 380], [1370, 800], [1480, 1250]])
+];
+const RP5 = makePath([[1000, 520], [975, 700], [962, 900], [960, 1120], [1040, 1250], [1090, 1500], [1100, 1900], [1102, 2150]]);
+const u5 = t => kf(t, [[39.6, 0], [43.3, .38], [44.3, .44], [47.9, 1]], E.io);
+function sign(x, y, s, a) {
+  if (a <= 0) return; const p = E.back(clamp(a * 1.5));
+  ctx.save(); ctx.translate(x, y); ctx.scale(p, p); ctx.rotate((hash(x) - .5) * .08);
+  cut(rrP(-9, -10, 18, 150, 4), '#7a5a3a', { seed: x });
+  const w = measure(s, 40, FC, 400) + 50; cut(rrP(-w / 2, -86, w, 78, 10), C.teal, { seed: x + 1, torn: 4 });
+  ctx.font = `400 40px ${FC}`; ctx.fillStyle = C.cream; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s, 0, -45);
+  ctx.restore();
+}
+function shMap(t) {
+  const c = kf(t, [[39.6, { x: 990, y: 470, z: 1.3, r: 0 }], [41, { x: 970, y: 650, z: 1.0, r: -.02 }], [43.3, { x: 980, y: 1060, z: 1.25, r: 0 }], [45.6, { x: 1080, y: 1600, z: 1.4, r: .02 }], [48.4, { x: 1102, y: 2150, z: 3.4, r: .05 }]]);
+  ctx.fillStyle = '#d6b88f'; ctx.fillRect(0, 0, W, H);
+  para(c, .45, () => scatter(121, 22, '#c9a67b', -1500, -1500, 3500, 3500, 80, 220));
+  ctx.save(); applyCam(c);
+  // silueta del cuerpo en papel
+  const body = [() => ellP(960, -60, 230, 250), () => rrP(880, 150, 160, 120, 30), () => rrP(660, 220, 600, 960, 200), () => rrP(690, 1080, 250, 1330, 120), () => rrP(980, 1080, 250, 1330, 120)];
+  body.forEach((f, k) => cut(f(), C.cream, { seed: 130 + k, sh: 1.4, amp: 2.2 }));
+  [[-1, 700], [1, 1220]].forEach(([s, x], k) => { ctx.save(); ctx.translate(x, 290); ctx.rotate(-s * .22); cut(rrP(-65, 0, 130, 1000, 65), C.cream, { seed: 136 + k, sh: 1.4, amp: 2.2 }); ctx.restore(); });
+  // carreteras
+  ROADS.forEach((P, k) => {
+    cut(tubeP(P, 58, 40), C.blood, { seed: 140 + k, sh: .7, amp: 1.4 });
+    ctx.fillStyle = C.cream; for (let d = 30; d < P.total - 20; d += 64) { const p = at(P, d / P.total); ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.ang); ctx.fillRect(-14, -3, 28, 6); ctx.restore(); }
+    for (let j = 0; j < 7; j++) { const u = frac(j / 7 + t * .16 + k * .13), p = at(P, u); cellS(p.x, p.y, 14, 1, 150 + j + k * 10, { rot: p.ang, sh: .4 }); }
+  });
+  const P = beatP(t); ctx.save(); ctx.translate(1010, 470); ctx.scale(1 + .15 * P, 1 + .15 * P); cut(heartP(0, 0, 85), C.red, { seed: 160, torn: 4 }); ctx.restore();
+  sign(1090, 250, 'CEREBRO ↑', seg(t, 39.8, 40.3));
+  sign(1290, 560, 'BRAZOS ↔', seg(t, 40.2, 40.7));
+  sign(1150, 1020, 'PIERNAS ↓', seg(t, 42.2, 42.7));
+  const p = at(RP5, u5(t));
+  for (let k = 1; k < 5; k++) { const q = at(RP5, u5(t - k * .05)); ctx.fillStyle = `rgba(243,234,216,${.5 - k * .1})`; circle(q.x, q.y, 20 - k * 3); ctx.fill(); }
+  drawRoja(p.x, p.y, 36, { t, load: 1, o2: 4, mood: 'grin', look: [0, 1] });
+  ctx.restore();
+}
+
+/* ============================================================
+   PLANO 6 · Capilar en un músculo
+   ============================================================ */
+const xR6 = t => kf(t, [[47.8, -150], [49.6, 860], [50.4, 900], [51.2, 1080], [51.8, 1110], [52.6, 1280], [53.2, 1310], [54, 1480], [54.6, 1510], [57.4, 2250]], E.io);
+const TS6 = [50.0, 51.5, 52.9, 54.3], MC6 = [[900, 380], [1100, 730], [1300, 380], [1500, 730]];
+const MCX = [[520, 380], [700, 730], [1720, 380], [1900, 730], [300, 730]];
+function fibers(y0, n, seed) {
+  for (let i = 0; i < n; i++) {
+    const y = y0 + i * 120; cut(rrP(-600, y, 3400, 112, 56), i % 2 ? '#d9576f' : C.muscle, { seed: seed + i, sh: .9, amp: 2 });
+    ctx.strokeStyle = 'rgba(110,20,40,.22)'; ctx.lineWidth = 4; ctx.beginPath();
+    for (let x = -560; x < 2780; x += 28) { ctx.moveTo(x, y + 14); ctx.lineTo(x + 4, y + 98); } ctx.stroke();
+  }
+}
+function shCap(t) {
+  const xR = xR6(t), c = { x: clamp(lerp(960, xR, .8), 500, 1520), y: 555, z: 1.25, r: 0 };
+  ctx.fillStyle = '#5a1a2a'; ctx.fillRect(0, 0, W, H);
+  ctx.save(); applyCam(c);
+  fibers(-300, 6, 170); fibers(700, 6, 180);
+  cut(rrP(-600, 458, 3400, 194, 20), '#f4c1c9', { seed: 190, sh: 1 });
+  cut(rrP(-600, 480, 3400, 150, 20), '#7a1c2e', { seed: 191, sh: 0 });
+  // células musculares
+  MCX.forEach(([x, y], k) => mcell(x, y, 70, 'tired', 200 + k, t));
+  MC6.forEach(([x, y], i) => { const got = t > TS6[i] + .5; mcell(x, y, 74, got ? 'grin' : 'tired', 210 + i, t, gauss(t - TS6[i] - .7, .25)); sparkle(x, y, seg(t, TS6[i] + .5, TS6[i] + 1.1), 150); });
+  bubble(inout(t, 48.4, 50.3), '¡O₂, porfa!', 1300, 320, { size: 40 });
+  bubble(inout(t, 50.7, 52.4), '¡Gracias!', 900, 320, { size: 40 });
+  bubble(inout(t, 54.9, 56.8), '¡Ahora a trabajar!', 1500, 800, { size: 38, dir: -1 });
+  // cola de glóbulos en fila
+  for (let k = -5; k <= 7; k++) { if (!k) continue; cellS(xR + k * 215, 555, 56, k > 0 ? .8 : .45, 220 + k, { sx: 1.25, sy: .8 }); }
+  const nOut = TS6.reduce((s, ts) => s + (t >= ts ? 1 : 0), 0), nIn = TS6.reduce((s, ts) => s + (t >= ts + .8 ? 1 : 0), 0);
+  const load = 1 - TS6.reduce((s, ts) => s + seg(t, ts, ts + .6), 0) / 4;
+  drawRoja(xR, 555, 58, { t, load, o2: 4 - nOut, co2: nIn, sx: 1.25, sy: .8, mood: load > .5 ? 'grin' : 'happy', look: [0, 0] });
+  TS6.forEach((ts, i) => {
+    const q = seg(t, ts, ts + .6); if (q > 0 && q < 1) { const [ox, oy] = O2_POS[3 - i]; o2Ball(lerp(xR + ox * 58, MC6[i][0], E.io(q)), lerp(555 + oy * 58, MC6[i][1], E.io(q)), 17, i); }
+    const r = seg(t, ts + .2, ts + .8); if (r > 0 && r < 1) { const [bx, by] = CO2_POS[i]; co2Bag(lerp(MC6[i][0], xR + bx * 58, E.io(r)), lerp(MC6[i][1], 555 + by * 58, E.io(r)), 18, i + 1); }
+  });
+  tag(inout(t, 48.4, 51.2), 'capilar: ¡en fila de uno!', 620, 220, 700, 500, { size: 44 });
+  tag(inout(t, 52.4, 56.8), 'células de un músculo', 1720, 830, 1540, 760, { size: 42 });
+  ctx.restore();
+}
+
+/* ============================================================
+   PLANO 7 · Cuesta arriba por las venas
+   ============================================================ */
+const yR7 = t => lerp(2980, 120, E.io(seg(t, 57.2, 67.6)));
+const VY = [2700, 2200, 1700, 1250, 800, 350];
+const sq7 = t => .5 + .5 * Math.sin(TAU * (t - 57) / 1.6);
+function shVein(t) {
+  const yR = yR7(t), c = { x: 960, y: yR - 60, z: 1.1, r: 0 }, sq = sq7(t);
+  ctx.fillStyle = '#2b1731'; ctx.fillRect(0, 0, W, H);
+  para(c, .5, () => scatter(231, 26, '#3a2040', -800, -1200, 2800, 3600, 100, 240));
+  ctx.save(); applyCam(c);
+  const wv = y => 190 - 70 * sq * (gauss(y - 2450, 300) + gauss(y - 1050, 300));
+  // músculos que aprietan
+  [[2450, 250, 470], [1050, 290, 520]].forEach(([my, rx, ry], k) => [-1, 1].forEach(s => {
+    const x = 960 + s * (95 + rx - 40 * sq);
+    cut(ellP(x, my, rx, ry, s * .05), s < 0 ? C.muscle : '#d9576f', { seed: 240 + k * 2 + s, torn: 5 });
+    ctx.strokeStyle = 'rgba(110,20,40,.25)'; ctx.lineWidth = 5; ctx.beginPath(); for (let j = -3; j <= 3; j++) { ctx.moveTo(x - rx * .7, my + j * ry * .22); ctx.quadraticCurveTo(x, my + j * ry * .22 + 20, x + rx * .7, my + j * ry * .22); } ctx.stroke();
+  }));
+  const L = [], R = [], Li = [], Ri = [];
+  for (let y = -500; y <= 3400; y += 30) { const w = wv(y) / 2; L.push([960 - w - 18, y]); R.push([960 + w + 18, y]); Li.push([960 - w, y]); Ri.push([960 + w, y]); }
+  cut(L.concat(R.reverse()), C.vein, { seed: 250, torn: 4 });
+  cut(Li.concat(Ri.reverse()), '#2f2358', { seed: 251, sh: 0 });
+  // válvulas
+  VY.forEach((vy, i) => {
+    const op = clamp(1 - Math.abs(yR - (vy + 40)) / 260), w = wv(vy) / 2;
+    [-1, 1].forEach(s => { const bx = 960 + s * w, tip = [960 + s * lerp(10, w - 22, op), vy - lerp(46, 80, op)]; cut(densify([[bx, vy + 70], [bx, vy + 20], tip]), C.cream, { seed: 260 + i * 2 + s, amp: 1, sh: .5 }); });
+  });
+  for (let k = -5; k <= 6; k++) { if (!k) continue; cellS(960 + (hash(k, 9) - .5) * 70, yR + k * 230, 44, .05, 270 + k, { rot: k }); }
+  drawRoja(960, yR, 62, { t, load: 0, co2: 4, mood: t < 60 ? 'tired' : 'determined', look: [0, -1], sx: 1 - .05 * sq, sy: 1 + .05 * sq, rot: Math.sin(t * 2.2) * .06 });
+  const y59 = yR7(59.4);
+  tag(inout(t, 58.3, 61), 'vena', 1250, y59 + 20, 1070, y59 + 60, { size: 50 });
+  tag(inout(t, 60.2, 62.8), 'válvula: no deja que la sangre baje', 1250, 2090, 1000, 2170, { size: 42 });
+  tag(inout(t, 62.2, 64.8), 'los músculos aprietan la vena', 600, 960, 720, 1060, { size: 42 });
+  ctx.restore();
+  // flecha "arriba" en pantalla
+  const ua = inout(t, 57.6, 66.8, .5); if (ua > 0) { ctx.save(); ctx.globalAlpha = ua * .9; ctx.translate(1700, 560 - 20 * frac(t * 1.2)); cut(densify([[0, -90], [60, 0], [22, 0], [22, 90], [-22, 90], [-22, 0], [-60, 0]]), C.cream, { seed: 280, sh: 1 }); ctx.restore(); }
+}
+
+/* ============================================================
+   PLANO 8 · Vuelta completa
+   ============================================================ */
+const RP8 = makePath([[440, 1600], [510, 1050], [585, 720], [650, 520], [735, 450], [770, 440]]);
+const u8 = t => kf(t, [[67.5, 0], [72.6, .93], [73.9, 1]], E.io);
+function shArrive(t) {
+  const c = kf(t, [[67.5, { x: 500, y: 1150, z: 1.3, r: .03 }], [70.5, { x: 580, y: 720, z: 1.3, r: 0 }], [72.8, { x: 740, y: 470, z: 1.6 }], [74, { x: 780, y: 440, z: 1.9 }], [76.5, { x: 780, y: 440, z: 2.05 }]]);
+  heartSet(t, c);
+  ctx.save(); applyCam(c);
+  crowd(RP8, u8, t, 9, .05, 34, 36, 1);
+  const p = at(RP8, u8(t)), flop = seg(t, 74, 74.2) * (1 - seg(t, 75, 75.4));
+  drawRoja(p.x, p.y, 62, { t, load: 0, co2: 4, mood: t < 74 ? 'tired' : t < 75.2 ? 'wow' : 'grin', sx: 1 + .18 * flop, sy: 1 - .2 * flop, sweat: seg(t, 74, 74.4), thumb: E.back(seg(t, 75.2, 75.6)), look: [0, -.3] });
+  tag(inout(t, 68.2, 71.4), 'vena cava', 330, 900, 520, 960, { size: 44 });
+  ctx.restore();
+  // sello
+  const sp = seg(t, 74, 74.18);
+  if (sp > 0) {
+    ctx.save(); ctx.translate(960, 215); ctx.rotate(-.08); const s = lerp(2.4, 1, E.out(sp)); ctx.scale(s, s); ctx.globalAlpha = sp * .94;
+    ctx.strokeStyle = '#d62828'; ctx.lineWidth = 14; ctx.lineJoin = 'round'; poly(rough(rrP(-470, -115, 940, 230, 26), 2.5, 7 + BOIL)); ctx.stroke();
+    ctx.lineWidth = 5; poly(rough(rrP(-445, -92, 890, 184, 18), 2, 8 + BOIL)); ctx.stroke();
+    ctx.font = `400 138px ${FC}`; ctx.fillStyle = '#d62828'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('¡1 MINUTO!', 0, 8);
+    ctx.restore();
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); tag(seg(t, 74.5, 75), 'más o menos, en reposo', 1000, 372, null, null, { size: 52 }); ctx.restore();
+  }
+}
+
+/* ============================================================
+   PLANO 9 · Cifras y final
+   ============================================================ */
+const dots = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+function card(x, y, w, h, rot, a, big, small, col, seed) {
+  if (a <= 0) return; const p = E.back(clamp(a));
+  ctx.save(); ctx.translate(x, y + (1 - clamp(a)) * 200); ctx.rotate(rot + (1 - clamp(a)) * .3); ctx.scale(p, p);
+  cut(rrP(-w / 2, -h / 2, w, h, 12), C.cream, { seed, torn: 6, sh: 1.6 });
+  cut(rrP(-w / 2 + 24, -h / 2 + 24, w - 48, 16, 4), col, { seed: seed + 1, sh: 0 });
+  ctx.font = `400 ${big.length > 7 ? 92 : 112}px ${FC}`; ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(big, 0, -20);
+  hand(small, 0, 95, { size: 50 });
+  ctx.restore();
+}
+function shOutro(t) {
+  ctx.fillStyle = '#d4b48c'; ctx.fillRect(0, 0, W, H);
+  const c = { x: 960, y: 540, z: 1 + (t - 76) * .006, r: 0 };
+  para(c, .4, () => { for (let k = 0; k < 8; k++) cellS(lerp(-300, 2200, hash(k, 14)), lerp(-100, 1200, hash(k, 15)) + Math.sin(t * .7 + k) * 16, 70 + 50 * hash(k, 16), .9, 320 + k, { rot: t * .1 + k, alpha: .4, sh: 0 }); });
+  ctx.save(); applyCam(c);
+  const n1 = Math.round(1440 * E.out(seg(t, 76.7, 78.2))), n3 = Math.round(170000 * E.out(seg(t, 80.4, 82)) / 1000) * 1000;
+  card(430, 380, 480, 400, -.06, seg(t, 76.6, 77.1), dots(n1), 'vueltas al día', C.red, 400);
+  card(960, 360, 480, 400, .03, seg(t, 78.4, 78.9), '120 días', 'vive un glóbulo rojo', C.teal, 410);
+  card(1490, 380, 480, 400, -.03, seg(t, 80.2, 80.7), '≈' + dots(n3), 'vueltas en su vida', C.vein, 420);
+  cutWord('Y VUELTA A EMPEZAR', 960, 770, 76, 83, t, { cols: [C.ink, C.red, C.cream], gap: .06 });
+  const px = lerp(-300, 2400, seg(t, 84, 90));
+  for (let k = 1; k < 7; k++) cellS(px - k * 170, 960 + Math.sin(t * 4 + k) * 8, 44, .95, 330 + k, { rot: t * 2 + k });
+  drawRoja(px, 950 + Math.abs(Math.sin(t * 5)) * -16, 60, { t, load: 1, mood: 'grin', wave: 1, look: [1, 0] });
+  ctx.restore();
+  hand('Ciencias Naturales 5.º · El aparato circulatorio', 960, 1045, { size: 40, alpha: seg(t, 85.4, 86), col: '#4a3a2c' });
+  const fo = seg(t, 88.6, 90); if (fo > 0) { ctx.fillStyle = `rgba(0,0,0,${fo})`; ctx.fillRect(0, 0, W, H); }
+}
+
+/* ============================================================
+   MONTAJE
+   ============================================================ */
+const SHOTS = [
+  { t0: 0, draw: shTitle }, { t0: 7, draw: shKid, tr: 'wipe' }, { t0: 12, draw: shHeartR, tr: 'hole' },
+  { t0: 19.6, draw: shLungs, tr: 'wipe' }, { t0: 24.4, draw: shAlv, tr: 'hole' }, { t0: 32, draw: shHeartL, tr: 'wipe' },
+  { t0: 39.6, draw: shMap, tr: 'wipe' }, { t0: 47.8, draw: shCap, tr: 'hole' }, { t0: 57, draw: shVein, tr: 'wipe' },
+  { t0: 67.5, draw: shArrive, tr: 'wipe' }, { t0: 76, draw: shOutro, tr: 'wipe' }
+];
+const NARR = [
+  [7.6, 11.4, 'Este es Leo. Vamos a mirar dentro de su corazón.'],
+  [12.4, 15.4, 'Roja es un glóbulo rojo. Llega cansada y cargada de dióxido de carbono.'],
+  [15.6, 19.3, 'El lado derecho del corazón la empuja hacia los pulmones.'],
+  [19.9, 24.2, 'La arteria pulmonar se divide en tubos cada vez más finos.'],
+  [24.9, 27.6, 'En los alvéolos suelta el dióxido de carbono…'],
+  [27.7, 31.7, '…y se carga de oxígeno. ¡Ahora sí que está roja!'],
+  [32.3, 35.1, 'Vuelve al corazón, ahora por el lado izquierdo.'],
+  [35.4, 39.3, '¡El ventrículo izquierdo la lanza por la aorta, la arteria más grande!'],
+  [40, 43.4, 'Las arterias llevan la sangre a todo el cuerpo, como carreteras.'],
+  [43.6, 47.5, 'Roja va hacia las piernas. Los tubos son cada vez más estrechos.'],
+  [48.3, 51.6, 'En los capilares, los glóbulos rojos pasan en fila de uno.'],
+  [51.8, 56.7, 'Roja reparte el oxígeno y recoge el dióxido de carbono.'],
+  [57.4, 59.7, 'De vuelta por las venas. Ahora toca subir.'],
+  [59.9, 62.4, 'Las válvulas se cierran detrás: la sangre no puede bajar.'],
+  [62.6, 67.3, 'Y los músculos, al moverse, aprietan las venas y la ayudan a subir.'],
+  [68, 73.7, 'Por la vena cava vuelve al corazón. ¿Cuánto ha tardado?']
+];
+const TIMER0 = 14;
+function drawNarr(t) {
+  const n = NARR.find(([a, b]) => t >= a && t < b); if (!n) return;
+  const a = inout(t, n[0], n[1], .3), size = 52, w = measure(n[2], size) + 70, h = 84;
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(960, 1000 + 20 * (1 - a)); ctx.rotate(-.008);
+  cut(rrP(-w / 2, -h / 2, w, h, 8), C.cream, { seed: n[0] * 10, amp: 1.6, sh: 1 });
+  hand(n[2], 0, 3, { size });
+  ctx.restore();
+}
+function drawTimer(t) {
+  if (t < 5.3 || t >= 76) return;
+  const p = E.back(seg(t, 5.3, 5.65)), secs = clamp(t - TIMER0, 0, 60), done = t >= 74;
+  const s = Math.floor(secs), txtT = secs >= 60 ? '01:00' : '00:' + String(s).padStart(2, '0');
+  const pulse = done ? 1 + .06 * Math.sin(t * 10) : 1;
+  ctx.save(); ctx.translate(1665, 98); ctx.rotate(-.035); ctx.scale(p * pulse, p * pulse);
+  cut(rrP(-175, -62, 350, 124, 10), done ? '#ffd7d2' : C.cream, { seed: 600, sh: 1.2, torn: 0 });
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 7; circle(-110, 6, 36); ctx.stroke();
+  ctx.fillStyle = C.ink; ctx.fillRect(-120, -46, 20, 12);
+  const an = secs / 60 * TAU - Math.PI / 2; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-110, 6); ctx.lineTo(-110 + Math.cos(an) * 26, 6 + Math.sin(an) * 26); ctx.strokeStyle = C.red; ctx.stroke();
+  ctx.font = `400 68px ${FC}`; ctx.fillStyle = done ? '#d62828' : C.ink; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(txtT, -58, 8);
+  ctx.restore();
+  hand('la vuelta de Roja', 1665, 188, { size: 34, col: '#fff3dc', alpha: p * (1 - seg(t, 16, 17)) + seg(t, 73.6, 74) });
+}
+function sheet(p) {
+  if (p <= 0 || p >= 1) return;
+  ctx.save(); ctx.translate(lerp(-1500, W + 1500, p), H / 2); ctx.rotate(-.07);
+  cut(densify([[-1350, -850], [1350, -850], [1350, 850], [-1350, 850]], 20), '#c9302c', { seed: 500, torn: 14, amp: 6, sh: 3 });
+  cut(densify([[-1080, -850], [1080, -850], [1080, 850], [-1080, 850]], 20), '#e8d6b6', { seed: 501, amp: 7, sh: 1.5 });
+  ctx.restore();
+}
+function drawShot(i, t) { ctx.save(); try { SHOTS[i].draw(t); } catch (e) { console.error(e); } ctx.restore(); }
+function render(t) {
+  BOIL = Math.floor(t * 8);
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  let i = SHOTS.length - 1; for (let k = 0; k < SHOTS.length - 1; k++) if (t < SHOTS[k + 1].t0) { i = k; break; }
+  const s = SHOTS[i], nx = SHOTS[i + 1], TRW = .45;
+  if (s.tr === 'hole' && t - s.t0 < .8) {
+    drawShot(i - 1, t);
+    const R = E.io((t - s.t0) / .8) * 1250, ring = rough(ellP(W / 2, H / 2, R, R), 6, 9 + BOIL);
+    ctx.save(); poly(ring); ctx.clip(); drawShot(i, t); ctx.restore();
+    ctx.save(); poly(ring); ctx.strokeStyle = C.cream; ctx.lineWidth = 16; ctx.stroke(); ctx.restore();
+  } else drawShot(i, t);
+  if (s.tr === 'wipe' && t - s.t0 < TRW) sheet(.5 + (t - s.t0) / (2 * TRW));
+  else if (nx && nx.tr === 'wipe' && nx.t0 - t < TRW) sheet(.5 - (nx.t0 - t) / (2 * TRW));
+  drawTimer(t); drawNarr(t);
+  finish(t);
+}
+/* ============================================================
+   BANDA SONORA — todo sintetizado con Web Audio, al pulso del corazón
+   ============================================================ */
+let AC = null, MASTER = null, REV = null, NOISE = null, soundOn = true;
+function ensureAudio() {
+  try {
+    if (!AC) {
+      AC = new (window.AudioContext || window.webkitAudioContext)();
+      const comp = AC.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 3; comp.connect(AC.destination);
+      MASTER = AC.createGain(); MASTER.gain.value = soundOn ? .8 : 0; MASTER.connect(comp);
+      const len = AC.sampleRate * 2.4, ir = AC.createBuffer(2, len, AC.sampleRate);
+      for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
+      REV = AC.createConvolver(); REV.buffer = ir; const rg = AC.createGain(); rg.gain.value = .35; REV.connect(rg); rg.connect(MASTER);
+      NOISE = AC.createBuffer(1, AC.sampleRate, AC.sampleRate); const nd = NOISE.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    }
+    if (AC.state === 'suspended') AC.resume();
+  } catch (e) { AC = null; }
+}
+function env(g, w, a, peak, dec) { g.gain.setValueAtTime(.0001, w); g.gain.exponentialRampToValueAtTime(Math.max(.0002, peak), w + a); g.gain.exponentialRampToValueAtTime(.0001, w + a + dec); }
+function osc(w, B, type, f0, f1, a, dec, v, rev = 0, dst = null) {
+  const o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.setValueAtTime(f0, w); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, w + a + dec);
+  env(g, w, a, v, dec); o.connect(g); g.connect(dst || B.d); if (rev) { const s = AC.createGain(); s.gain.value = rev; g.connect(s); s.connect(B.r); }
+  o.start(w); o.stop(w + a + dec + .05); return o;
+}
+function nz(w, B, dur, v, type, f0, f1, q = 1, a = .004, rev = 0) {
+  const s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain(); s.buffer = NOISE; s.loop = true;
+  f.type = type; f.Q.value = q; f.frequency.setValueAtTime(f0, w); f.frequency.exponentialRampToValueAtTime(f1, w + a + dur); env(g, w, a, v, dur);
+  s.connect(f); f.connect(g); g.connect(B.d); if (rev) { const r = AC.createGain(); r.gain.value = rev; g.connect(r); r.connect(B.r); }
+  s.start(w); s.stop(w + a + dur + .05);
+}
+const I = {
+  kick: (w, B, v) => { osc(w, B, 'sine', 150, 42, .003, .32, v); nz(w, B, .02, v * .25, 'lowpass', 3000, 1000); },
+  hat: (w, B, v, open) => nz(w, B, open ? .16 : .04, v * .35, 'highpass', 7500, 7000, .7),
+  bass: (w, B, f, dur, v) => { const o = AC.createOscillator(), fl = AC.createBiquadFilter(), g = AC.createGain(); o.type = 'sawtooth'; o.frequency.value = f; fl.type = 'lowpass'; fl.Q.value = 4; fl.frequency.setValueAtTime(900, w); fl.frequency.exponentialRampToValueAtTime(180, w + dur); env(g, w, .01, v * .5, dur); o.connect(fl); fl.connect(g); g.connect(B.d); o.start(w); o.stop(w + dur + .1); },
+  pad: (w, B, ch, dur, v) => ch.forEach(f => [-7, 7].forEach(dt => { const o = AC.createOscillator(), fl = AC.createBiquadFilter(), g = AC.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 1100; g.gain.setValueAtTime(.0001, w); g.gain.linearRampToValueAtTime(v * .05, w + .7); g.gain.setValueAtTime(v * .05, w + dur - .4); g.gain.linearRampToValueAtTime(.0001, w + dur + .3); o.connect(fl); fl.connect(g); g.connect(B.d); const s = AC.createGain(); s.gain.value = .8; g.connect(s); s.connect(B.r); o.start(w); o.stop(w + dur + .4); })),
+  pluck: (w, B, f, v) => osc(w, B, 'triangle', f, f, .004, .35, v, .6),
+  bell: (w, B) => { [1, 2.76, 5.4].forEach((m, k) => osc(w, B, 'sine', 880 * m, 880 * m, .004, 2.6 / (k + 1), .35 / (k + 1), .9)); },
+  impact: (w, B) => { osc(w, B, 'sine', 110, 30, .003, .9, 1.2); nz(w, B, .9, .7, 'lowpass', 2500, 200, 1, .003, .6); nz(w, B, 1.4, .25, 'highpass', 6000, 3000, .7, .003, .8); },
+  riser: (w, B, d) => nz(w, B, d, .28, 'bandpass', 300, 5000, 2, d * .9, .5),
+  whoosh: (w, B) => nz(w, B, .45, .35, 'bandpass', 2200, 300, 1.2, .12),
+  swoosh: (w, B) => nz(w, B, .7, .3, 'bandpass', 400, 2400, 1.4, .3, .4),
+  thud: (w, B) => { osc(w, B, 'sine', 120, 55, .002, .14, .6); nz(w, B, .06, .35, 'lowpass', 900, 300); },
+  pop: (w, B) => osc(w, B, 'sine', 560, 1150, .003, .09, .35, .3),
+  blip: (w, B) => osc(w, B, 'square', 420, 260, .003, .08, .12),
+  sparkle: (w, B) => [0, 1, 2, 3, 4].forEach(k => osc(w + k * .05, B, 'triangle', 1320 * Math.pow(1.19, k), 1320 * Math.pow(1.19, k), .003, .25, .12, .7)),
+  clack: (w, B) => { nz(w, B, .05, .5, 'bandpass', 1400, 900, 3); osc(w, B, 'square', 260, 180, .002, .05, .1); },
+  tick: (w, B) => osc(w, B, 'square', 1800, 1800, .001, .02, .05),
+  stamp: (w, B) => { osc(w, B, 'sine', 90, 40, .002, .3, .9); nz(w, B, .2, .5, 'lowpass', 1200, 200); }
+};
+const EV = []; const ev = (t, f) => EV.push({ t, f });
+const PROG = [[110, [220, 261.63, 329.63]], [87.31, [174.61, 220, 261.63]], [130.81, [261.63, 329.63, 392]], [98, [196, 246.94, 293.66]]];
+const barAt = t => PROG[Math.floor(t / 3.2 + 1e-6) % 4];
+const inS = (t, a, b) => t >= a && t < b;
+for (let k = 0; k * BEAT < END; k++) {
+  const t = +(k * BEAT).toFixed(3), full = inS(t, 35.2, 48);
+  if (inS(t, 7, 74) || inS(t, 76.8, 87.2)) {
+    const kv = t < 12 ? .45 : full ? 1 : inS(t, 48, 57) ? .6 : inS(t, 57, 67.5) ? .7 : t >= 76 ? .45 * (1 - seg(t, 82, 87.2)) + .05 : .8;
+    ev(t, (w, B) => I.kick(w, B, kv)); if (!full) ev(t + .26, (w, B) => I.kick(w, B, kv * .5));
+  }
+  if (full || inS(t, 70.4, 74)) { ev(t, (w, B) => I.hat(w, B, .7)); ev(t + .2, (w, B) => I.hat(w, B, .35)); ev(t + .4, (w, B) => I.hat(w, B, .8, true)); ev(t + .6, (w, B) => I.hat(w, B, .35)); }
+  if (inS(t, 12, 74)) {
+    const f = barAt(t)[0], bi = k % 4;
+    if (full) { ev(t, (w, B) => I.bass(w, B, f, .34, .55)); ev(t + .4, (w, B) => I.bass(w, B, f * (bi % 2 ? 1.5 : 2), .3, .4)); }
+    else if (inS(t, 57, 67.5)) { if (bi === 0) ev(t, (w, B) => I.bass(w, B, f / 2, 2.9, .6)); }
+    else if (bi === 0 || bi === 2) ev(t, (w, B) => I.bass(w, B, f, .7, .5));
+  }
+}
+for (let b = 0; b * 3.2 < END - 2.5; b++) {
+  const t = +(b * 3.2).toFixed(3); if (inS(t, 73.6, 76.8)) continue;
+  const ch = PROG[b % 4][1], v = t < 7 ? .45 : t >= 76.8 ? .5 : .32;
+  ev(t, (w, B) => I.pad(w, B, ch, 3.3, v));
+}
+[[48, 57], [76.8, 87]].forEach(([a, b]) => { for (let t = a; t < b - .01; t += .2) { const ch = barAt(t)[1], i = Math.round(t / .2) % 6, f = [ch[0] * 2, ch[1] * 2, ch[2] * 2, ch[2] * 4, ch[1] * 2, ch[0] * 4][i]; const tt = +t.toFixed(3); ev(tt, (w, B) => I.pluck(w, B, f, .1)); } });
+ev(32.4, (w, B) => I.riser(w, B, 2.8)); ev(35.2, I.impact); ev(70.8, (w, B) => I.riser(w, B, 3.2));
+ev(74, I.bell); ev(74, I.stamp); ev(74.05, (w, B) => I.pad(w, B, [220, 277.18, 329.63, 440], 2.8, .55));
+ev(87.2, (w, B) => I.pad(w, B, [220, 261.63, 329.63, 440], 2.8, .55));
+// efectos de la acción
+[...'ELVIAJE'].forEach((_, k) => ev(.3 + k * .09 + .33, I.thud)); [...'DEROJA'].forEach((_, k) => ev(.93 + k * .09 + .33, I.thud));
+ev(2.2, I.pop); ev(5.35, I.stamp);
+SHOTS.forEach(s => { if (s.tr === 'wipe') ev(s.t0 - .35, I.whoosh); if (s.tr === 'hole') ev(s.t0 - .05, I.swoosh); });
+ev(16.0, I.impact);
+CO2T.forEach(t => ev(t, I.blip)); O2T.forEach(t => ev(t, I.pop)); ev(29.2, I.sparkle);
+TS6.forEach(t => { ev(t, I.pop); ev(t + .5, I.sparkle); ev(t + .8, I.blip); });
+VY.forEach(vy => { for (let t = 57.2; t < 67.6; t += .01) if (yR7(t) < vy - 220) { ev(+t.toFixed(3), I.clack); break; } });
+for (let t = 76.7; t < 78.2; t += .09) ev(+t.toFixed(3), I.tick); for (let t = 80.4; t < 82; t += .09) ev(+t.toFixed(3), I.tick);
+[76.6, 78.4, 80.2].forEach(t => ev(t, I.thud)); [...'YVUELTAAEMPEZAR'].forEach((_, k) => ev(83 + k * .06 + .33, I.thud));
+EV.sort((a, b) => a.t - b.t);
+
+/* ============================================================
+   REPRODUCTOR
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const startBtn = $('start'), playBtn = $('play'), track = $('track'), fillEl = $('fill'), knob = $('knob'), timeEl = $('time'), sndBtn = $('snd'), stageEl = $('stage');
+let T = 0, playing = false, started = false, dirty = true, lastNow = null, sess = null;
+const POSTER_T = 6.3;
+const fmt = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+function startSess() {
+  if (!AC) { sess = null; return; }
+  const d = AC.createGain(), r = AC.createGain(); d.connect(MASTER); r.connect(REV);
+  sess = { B: { d, r }, filmT0: T, acT0: AC.currentTime + .06, upTo: T - .001 };
+}
+function stopSess() {
+  if (!sess) return; const s = sess; sess = null; const now = AC.currentTime;
+  s.B.d.gain.setTargetAtTime(0, now, .03); s.B.r.gain.setTargetAtTime(0, now, .06);
+  setTimeout(() => { try { s.B.d.disconnect(); s.B.r.disconnect(); } catch (e) {} }, 500);
+}
+function schedule() {
+  if (!sess) return; const hz = T + .3;
+  for (const e of EV) { if (e.t <= sess.upTo) continue; if (e.t > hz) break; const w = sess.acT0 + (e.t - sess.filmT0); if (w >= AC.currentTime - .02) { try { e.f(Math.max(w, AC.currentTime + .005), sess.B); } catch (err) {} } }
+  sess.upTo = hz;
+}
+function play() {
+  ensureAudio(); if (T >= END - .05) T = 0;
+  playing = true; started = true; startBtn.hidden = true; lastNow = null; startSess(); dirty = true;
+}
+function pause() { playing = false; stopSess(); dirty = true; }
+function seek(t) { T = clamp(t, 0, END - .001); started = true; startBtn.hidden = true; if (playing) { stopSess(); startSess(); } dirty = true; }
+function toggle() { playing ? pause() : play(); }
+function updateUI() {
+  const t = started ? T : 0, pc = t / END * 100;
+  fillEl.style.width = pc + '%'; knob.style.left = pc + '%'; timeEl.textContent = fmt(t) + ' / ' + fmt(END);
+  track.setAttribute('aria-valuenow', Math.round(t)); track.setAttribute('aria-valuemax', END);
+  playBtn.textContent = playing ? '❚❚' : '▶'; playBtn.setAttribute('aria-label', playing ? 'Pausa' : 'Reproducir');
+}
+function tick(now) {
+  if (playing) {
+    if (sess) T = Math.max(T, sess.filmT0 + (AC.currentTime - sess.acT0));
+    else { T += lastNow == null ? 0 : Math.min(.1, (now - lastNow) / 1000); lastNow = now; }
+    schedule();
+    if (T >= END) { T = END - .001; pause(); }
+    dirty = true;
+  }
+  if (dirty) { render(started ? T : POSTER_T); updateUI(); dirty = false; }
+  requestAnimationFrame(tick);
+}
+startBtn.addEventListener('click', play);
+playBtn.addEventListener('click', toggle);
+cv.addEventListener('click', () => started ? toggle() : play());
+sndBtn.addEventListener('click', () => { soundOn = !soundOn; ensureAudio(); if (MASTER) MASTER.gain.setTargetAtTime(soundOn ? .8 : 0, AC.currentTime, .03); sndBtn.firstChild.textContent = soundOn ? '🔊 ' : '🔇 '; sndBtn.setAttribute('aria-pressed', soundOn); });
+function toggleFS() {
+  if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); return; }
+  if (stageEl.classList.contains('theater')) { stageEl.classList.remove('theater'); return; }
+  const r = stageEl.requestFullscreen ? stageEl.requestFullscreen() : null;
+  if (r && r.catch) r.catch(() => stageEl.classList.add('theater')); else if (!r) stageEl.classList.add('theater');
+}
+$('fs').addEventListener('click', toggleFS);
+let scrub = false, wasPlaying = false;
+const seekX = e => { const r = track.getBoundingClientRect(); seek(clamp((e.clientX - r.left) / r.width) * END); };
+track.addEventListener('pointerdown', e => { scrub = true; wasPlaying = playing; if (playing) pause(); track.setPointerCapture(e.pointerId); seekX(e); });
+track.addEventListener('pointermove', e => { if (scrub) seekX(e); });
+track.addEventListener('pointerup', () => { if (scrub) { scrub = false; if (wasPlaying) play(); } });
+document.addEventListener('keydown', e => {
+  if (e.key === ' ' || e.code === 'Space') { if (e.target.tagName === 'BUTTON' && e.target !== playBtn && e.target !== startBtn) return; e.preventDefault(); toggle(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); seek(T + 5); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); seek(T - 5); }
+  else if (e.key === 'f' || e.key === 'F') toggleFS();
+  else if (e.key === 'Escape' && stageEl.classList.contains('theater')) stageEl.classList.remove('theater');
+});
+if (document.fonts) { document.fonts.ready.then(() => dirty = true); ['400 40px "Archivo Black"', '700 40px Caveat'].forEach(f => { try { document.fonts.load(f).then(() => dirty = true); } catch (e) {} }); }
+requestAnimationFrame(tick);
+window.__frame = t => { started = true; render(t); };
+</script>

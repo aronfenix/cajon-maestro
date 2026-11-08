@@ -1,0 +1,1503 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<title>El viaje de la miga</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#110b12; --panel:#1c1420; --panel2:#271c2c; --line:#3b2b41;
+  --ink:#f7eef2; --muted:#b9a6b4; --gold:#f2b33d;
+  --dig:#ff8a3d; --res:#5cc8ff; --cir:#ff3b5c; --exc:#b58cff;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',system-ui,sans-serif;font-size:16px;line-height:1.45}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:16px;padding-block:18px 40px;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px}
+header h1{font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:clamp(28px,4vw,42px);line-height:1;margin:0;color:var(--gold);text-wrap:balance}
+header p{margin:0;color:var(--muted)}
+.stage-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#07040a;border-radius:14px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.55);container-type:inline-size}
+.stage-wrap:fullscreen{border-radius:0;aspect-ratio:auto;width:100vw;height:100vh}
+.stage-wrap.theater{position:fixed;inset:0;z-index:50;border-radius:0;aspect-ratio:auto;width:100vw;height:100vh}
+canvas{display:block;width:100%;height:100%;object-fit:contain}
+#bigplay{position:absolute;inset:0;margin:auto;width:clamp(64px,11cqw,130px);height:clamp(64px,11cqw,130px);border-radius:50%;border:0;background:var(--gold);color:#2a1606;font-size:clamp(26px,4.5cqw,54px);cursor:pointer;box-shadow:0 10px 40px rgba(0,0,0,.5);display:grid;place-items:center;padding-left:.2em}
+#bigplay:hover{transform:scale(1.05)}
+#qcard{position:absolute;inset:0;display:grid;place-items:center;background:rgba(10,6,12,.55);backdrop-filter:blur(3px)}
+#qcard .card{width:min(76%,1000px);background:#1f1524;border:2px solid var(--gold);border-radius:18px;padding:2.4cqw 3cqw;display:flex;flex-direction:column;gap:1.4cqw;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+#qcard .eyebrow{font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-size:max(12px,1.5cqw)}
+#qcard .q{font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:max(20px,3.5cqw);line-height:1.12;margin:0;text-wrap:balance}
+#qcard .row{display:flex;flex-wrap:wrap;gap:10px}
+.btn{font:inherit;font-weight:700;border-radius:999px;border:1.5px solid var(--line);background:var(--panel2);color:var(--ink);padding:10px 18px;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:#2a1606}
+#qcard .btn{font-size:max(14px,1.6cqw)}
+.btn:focus-visible,.chap:focus-visible,.track:focus-visible,#bigplay:focus-visible{outline:3px solid var(--res);outline-offset:2px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.icon{width:46px;height:46px;padding:0;justify-content:center;font-size:18px}
+.track{position:relative;flex:1 1 260px;height:44px;cursor:pointer;touch-action:none}
+.track .rail{position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;border-radius:4px;background:#3a2b40;overflow:hidden}
+.track .fill{position:absolute;left:0;top:0;bottom:0;background:var(--gold)}
+.track .tick{position:absolute;top:50%;width:2px;height:16px;margin-top:-8px;background:#110b12}
+.track .knob{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.time{font-variant-numeric:tabular-nums;color:var(--muted);min-width:92px;text-align:center}
+.toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--ink);font-weight:700;min-height:44px;padding:0 6px}
+.toggle input{width:20px;height:20px;accent-color:var(--gold)}
+.chapters{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.chap{width:100%;text-align:left;font:inherit;background:var(--panel);border:1.5px solid var(--line);color:var(--ink);border-radius:12px;padding:9px 12px;cursor:pointer;display:flex;gap:10px;align-items:center;min-height:52px}
+.chap .n{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;color:#1a0f14;background:var(--c,#888)}
+.chap .l{font-weight:700;line-height:1.15}
+.chap.on{border-color:var(--c,#fff);background:var(--panel2)}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;color:var(--muted)}
+.notes div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.notes b{color:var(--ink)}
+kbd{font:inherit;font-size:.85em;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--ink)}
+@media (max-width:560px){.time{min-width:0}.hide-s{display:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>El viaje de la miga</h1>
+    <p>Ciencias Naturales 5.º · Tema 1 · La función de nutrición</p>
+  </header>
+
+  <div class="stage-wrap" id="stageWrap">
+    <canvas id="stage" width="1920" height="1080" aria-label="Animación: el viaje de una miga de pan por los aparatos de la nutrición"></canvas>
+    <button id="bigplay" aria-label="Reproducir">▶</button>
+    <div id="qcard" hidden>
+      <div class="card" role="dialog" aria-live="polite">
+        <div class="eyebrow" id="qEye">Pregunta para la clase</div>
+        <p class="q" id="qText"></p>
+        <div class="row">
+          <button class="btn primary" id="qGo">Seguir ▶</button>
+          <button class="btn" id="qAgain">↺ Ver otra vez esta parte</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button class="btn icon" id="prev" aria-label="Escena anterior" title="Escena anterior (←)">⏮</button>
+    <button class="btn icon primary" id="play" aria-label="Reproducir" title="Reproducir / pausa (espacio)">▶</button>
+    <button class="btn icon" id="next" aria-label="Escena siguiente" title="Escena siguiente (→)">⏭</button>
+    <div class="track" id="track" tabindex="0" role="slider" aria-label="Línea de tiempo" aria-valuemin="0">
+      <div class="rail"><div class="fill" id="fill"></div></div>
+      <div id="ticks"></div>
+      <div class="knob" id="knob"></div>
+    </div>
+    <span class="time" id="time">0:00 / 0:00</span>
+    <label class="toggle" title="Al final de cada escena se para y aparece una pregunta"><input type="checkbox" id="classMode" checked> Parar con preguntas</label>
+    <button class="btn" id="sound" aria-pressed="false">🔇 <span class="hide-s">Sonido</span></button>
+    <button class="btn icon" id="fs" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
+  </div>
+
+  <ol class="chapters" id="chapters"></ol>
+
+  <div class="notes">
+    <div><b>En clase.</b> Con «Parar con preguntas» activado, la animación se detiene al final de cada escena y lanza una pregunta. Pulsa <b>Seguir</b> cuando hayáis hablado.</div>
+    <div><b>En casa.</b> Desactiva las preguntas y se ve de corrido, como un corto de unos dos minutos y medio.</div>
+    <div><b>Teclado.</b> <kbd>Espacio</kbd> reproduce o pausa, <kbd>←</kbd> <kbd>→</kbd> saltan de escena y <kbd>F</kbd> pone pantalla completa.</div>
+  </div>
+</div>
+
+<script>
+/* ===========================================================
+   El viaje de la miga — cada fotograma es una función del tiempo.
+   render(t) dibuja exactamente el mismo fotograma para el mismo t.
+   =========================================================== */
+const W = 1920, H = 1080, TAU = Math.PI * 2;
+const cv = document.getElementById('stage');
+const ctx = cv.getContext('2d');
+
+const COL = { dig:'#ff8a3d', res:'#5cc8ff', cir:'#ff3b5c', exc:'#b58cff', gold:'#f2b33d', ink:'#f7eef2', muted:'#b9a6b4', vein:'#7b6cff' };
+const FD = "'Baloo 2', 'Trebuchet MS', system-ui, sans-serif";
+const FB = "'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif";
+
+/* ---------- utilidades ---------- */
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const frac = x => x - Math.floor(x);
+const E = {
+  io: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  out: t => 1 - Math.pow(1 - t, 3),
+  in: t => t * t * t,
+  back: t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
+  sine: t => .5 - .5 * Math.cos(Math.PI * t)
+};
+const rnd = i => frac(Math.sin(i * 127.1 + 311.7) * 43758.5453);
+const gauss = (x, s) => Math.exp(-(x * x) / (2 * s * s));
+const bump = (t, c, w) => { const x = (t - c) / w; return Math.abs(x) >= 1 ? 0 : .5 + .5 * Math.cos(Math.PI * x); };
+const mixHex = (a, b, t) => {
+  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+  const r = Math.round(lerp(pa >> 16, pb >> 16, t)), g = Math.round(lerp((pa >> 8) & 255, (pb >> 8) & 255, t)), bl = Math.round(lerp(pa & 255, pb & 255, t));
+  return `rgb(${r},${g},${bl})`;
+};
+/* fade in at a, optional fade out at b */
+const inout = (t, a, b = 1e9, f = .5) => seg(t, a, a + f) * (1 - seg(t, b, b + f));
+
+/* ---------- trayectorias suaves (Catmull-Rom con longitud de arco) ---------- */
+function makePath(ctrl, closed = false, samples = 18) {
+  const n = ctrl.length, pts = [];
+  const get = i => closed ? ctrl[(i + n) % n] : ctrl[Math.max(0, Math.min(n - 1, i))];
+  const segs = closed ? n : n - 1;
+  for (let i = 0; i < segs; i++) {
+    const p0 = get(i - 1), p1 = get(i), p2 = get(i + 1), p3 = get(i + 2);
+    for (let s = 0; s < samples; s++) {
+      const t = s / samples, t2 = t * t, t3 = t2 * t;
+      const f = k => .5 * ((2 * p1[k]) + (-p0[k] + p2[k]) * t + (2 * p0[k] - 5 * p1[k] + 4 * p2[k] - p3[k]) * t2 + (-p0[k] + 3 * p1[k] - 3 * p2[k] + p3[k]) * t3);
+      pts.push([f(0), f(1)]);
+    }
+  }
+  pts.push(closed ? [pts[0][0], pts[0][1]] : [...ctrl[n - 1]]);
+  const len = [0];
+  for (let i = 1; i < pts.length; i++) len.push(len[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  return { pts, len, total: len[len.length - 1] };
+}
+function at(P, u) {
+  const d = clamp(u) * P.total; let lo = 0, hi = P.len.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (P.len[m] < d) lo = m; else hi = m; }
+  const a = P.pts[lo], b = P.pts[hi], sl = (P.len[hi] - P.len[lo]) || 1, k = (d - P.len[lo]) / sl;
+  return { x: lerp(a[0], b[0], k), y: lerp(a[1], b[1], k), ang: Math.atan2(b[1] - a[1], b[0] - a[0]) };
+}
+function tracePath(P, u0 = 0, u1 = 1) {
+  ctx.beginPath(); let first = true;
+  const d0 = u0 * P.total, d1 = u1 * P.total;
+  for (let i = 0; i < P.pts.length; i++) {
+    if (P.len[i] < d0 || P.len[i] > d1) continue;
+    const p = P.pts[i]; if (first) { const s = at(P, u0); ctx.moveTo(s.x, s.y); first = false; } ctx.lineTo(p[0], p[1]);
+  }
+  if (!first) { const e = at(P, u1); ctx.lineTo(e.x, e.y); }
+}
+function fillPoly(P) { ctx.beginPath(); P.pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); }
+/* tubo: pared + luz interior */
+function tube(P, w, wall, lumen, wallW = 18) {
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  tracePath(P); ctx.strokeStyle = wall; ctx.lineWidth = w + wallW * 2; ctx.stroke();
+  tracePath(P); ctx.strokeStyle = lumen; ctx.lineWidth = w; ctx.stroke();
+}
+
+/* ---------- formas básicas ---------- */
+function rr(x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function circle(x, y, r) { ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, TAU); }
+function radial(x, y, r0, r1, stops) { const g = ctx.createRadialGradient(x, y, r0, x, y, r1); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; }
+function linear(x0, y0, x1, y1, stops) { const g = ctx.createLinearGradient(x0, y0, x1, y1); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; }
+function bg(c0, c1, cx = W / 2, cy = H * .42) { ctx.fillStyle = radial(cx, cy, 40, 1250, [[0, c0], [1, c1]]); ctx.fillRect(0, 0, W, H); }
+function blobPath(R, seed, amp = .09, wob = 0, t = 0, n = 44) {
+  ctx.beginPath();
+  for (let k = 0; k <= n; k++) {
+    const a = k / n * TAU;
+    const r = R * (1 + amp * (Math.sin(3 * a + seed) * .6 + Math.sin(5 * a + seed * 2.1) * .3 + Math.sin(8 * a + seed * .7) * .22) + wob * Math.sin(4 * a + t * 3 + seed));
+    const px = Math.cos(a) * r, py = Math.sin(a) * r;
+    k ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+  }
+  ctx.closePath();
+}
+/* motas que flotan en el fondo */
+function floaters(t, n, col, seed = 1, rMax = 5, speed = 14) {
+  ctx.save(); ctx.fillStyle = col;
+  for (let k = 0; k < n; k++) {
+    const x = frac(rnd(k + seed) + t * speed / W * (.4 + rnd(k * 3 + seed))) * (W + 40) - 20;
+    const y = rnd(k * 7 + seed) * H + Math.sin(t * .7 + k) * 12;
+    ctx.globalAlpha = .25 + .35 * rnd(k * 11 + seed);
+    circle(x, y, 1.5 + rMax * rnd(k * 5 + seed)); ctx.fill();
+  }
+  ctx.restore();
+}
+
+/* ---------- texto ---------- */
+function font(size, w = 400, fam = FB) { return `${w} ${size}px ${fam}`; }
+function txt(s, x, y, o = {}) {
+  const { size = 32, w = 400, fam = FB, color = COL.ink, align = 'left', base = 'alphabetic', alpha = 1, ls = 0 } = o;
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.font = font(size, w, fam); ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = base;
+  if (ls && 'letterSpacing' in ctx) ctx.letterSpacing = ls + 'px';
+  ctx.fillText(s, x, y); ctx.restore();
+}
+function wrapLines(s, maxW, f) {
+  ctx.save(); ctx.font = f; const words = s.split(' '), lines = []; let line = '';
+  for (const w of words) { const test = line ? line + ' ' + w : w; if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; } else line = test; }
+  if (line) lines.push(line); ctx.restore(); return lines;
+}
+/* etiqueta con línea guía: a = progreso 0..1 */
+function label(a, text, ax, ay, lx, ly, col = COL.ink, sub = null, size = 30) {
+  if (a <= 0) return;
+  ctx.save();
+  const pl = E.out(seg(a, 0, .55)), pp = E.back(seg(a, .3, 1));
+  // punto y línea
+  ctx.globalAlpha = Math.min(1, a * 2);
+  ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(lerp(ax, lx, pl), lerp(ay, ly, pl)); ctx.stroke();
+  ctx.fillStyle = col; circle(ax, ay, 7); ctx.fill();
+  ctx.fillStyle = '#fff'; circle(ax, ay, 3); ctx.fill();
+  if (pp > 0) {
+    ctx.font = font(size, 700);
+    const tw = ctx.measureText(text).width;
+    let sw = 0; if (sub) { ctx.font = font(size * .75, 400); sw = ctx.measureText(sub).width; }
+    const bw = Math.max(tw, sw) + 36, bh = sub ? size * 2.25 : size * 1.5;
+    const left = lx >= ax ? lx : lx - bw, top = ly - bh / 2;
+    ctx.translate(lx, ly); ctx.scale(pp, pp); ctx.translate(-lx, -ly);
+    ctx.globalAlpha = clamp(pp);
+    rr(left, top, bw, bh, 14); ctx.fillStyle = 'rgba(18,10,20,.9)'; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = col; ctx.stroke();
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    ctx.font = font(size, 700); ctx.fillStyle = '#fff';
+    ctx.fillText(text, left + 18, sub ? top + size * .78 : ly + 1);
+    if (sub) { ctx.font = font(size * .75, 400); ctx.fillStyle = '#e7d9e2'; ctx.fillText(sub, left + 18, top + size * 1.58); }
+  }
+  ctx.restore();
+}
+function bubble(a, text, x, y, dir = -1, col = '#fff', size = 34) {
+  if (a <= 0) return;
+  ctx.save(); const p = E.back(clamp(a));
+  ctx.font = font(size, 700); const tw = ctx.measureText(text).width, bw = tw + 44, bh = size * 1.7;
+  ctx.translate(x, y); ctx.scale(p, p); ctx.globalAlpha = clamp(a * 1.5);
+  const left = dir < 0 ? -bw + 30 : -30, top = -bh - 26;
+  rr(left, top, bw, bh, bh / 2); ctx.fillStyle = col; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-8, top + bh - 2); ctx.lineTo(0, 0); ctx.lineTo(16, top + bh - 2); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#26151c'; ctx.textBaseline = 'middle'; ctx.fillText(text, left + 22, top + bh / 2 + 2);
+  ctx.restore();
+}
+
+/* ---------- personajes ---------- */
+/* Miga: miga de pan con cara */
+function eyes(R, t, mood, look = [0, 0], seed = 0) {
+  const ex = R * .3, ey = -R * .1, blink = frac((t + seed) / 3.3) < .045;
+  ctx.lineCap = 'round';
+  [-1, 1].forEach(s => {
+    const x = s * ex;
+    if (mood === 'dizzy') {
+      ctx.strokeStyle = '#2b1a12'; ctx.lineWidth = R * .05; ctx.beginPath();
+      for (let k = 0; k < 40; k++) { const a = k / 40 * TAU * 2.2 + t * 6 * s, r = k / 40 * R * .15; k ? ctx.lineTo(x + Math.cos(a) * r, ey + Math.sin(a) * r) : ctx.moveTo(x, ey); }
+      ctx.stroke(); return;
+    }
+    if (blink || mood === 'closed') { ctx.strokeStyle = '#2b1a12'; ctx.lineWidth = R * .06; ctx.beginPath(); ctx.arc(x, ey, R * .12, .15 * Math.PI, .85 * Math.PI); ctx.stroke(); return; }
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(x, ey, R * .16, R * (mood === 'surprised' ? .22 : .19), 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#26160e'; circle(x + look[0] * R * .06, ey + look[1] * R * .07 + R * .02, R * .09); ctx.fill();
+    ctx.fillStyle = '#fff'; circle(x + look[0] * R * .06 - R * .03, ey + look[1] * R * .07 - R * .02, R * .03); ctx.fill();
+  });
+}
+function mouth(R, mood) {
+  ctx.strokeStyle = '#3a1e12'; ctx.fillStyle = '#6b2a2a'; ctx.lineWidth = R * .055; ctx.lineCap = 'round';
+  if (mood === 'surprised') { ctx.beginPath(); ctx.ellipse(0, R * .28, R * .09, R * .12, 0, 0, TAU); ctx.fill(); }
+  else if (mood === 'grin') { ctx.beginPath(); ctx.arc(0, R * .16, R * .2, .05 * Math.PI, .95 * Math.PI); ctx.closePath(); ctx.fill(); }
+  else if (mood === 'grumpy') { ctx.beginPath(); ctx.arc(0, R * .42, R * .14, 1.2 * Math.PI, 1.8 * Math.PI); ctx.stroke(); }
+  else { ctx.beginPath(); ctx.arc(0, R * .16, R * .15, .15 * Math.PI, .85 * Math.PI); ctx.stroke(); }
+}
+function drawMiga(x, y, R, o = {}) {
+  const { t = 0, mood = 'happy', rot = 0, look = [0, 0], sx = 1, sy = 1, face = true, seed = 1.3, alpha = 1, wet = 0, glow = 0 } = o;
+  if (alpha <= 0 || R <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sx, sy);
+  if (glow > 0) { ctx.fillStyle = radial(0, 0, R * .5, R * 2.4, [[0, `rgba(255,210,90,${.55 * glow})`], [1, 'rgba(255,210,90,0)']]); circle(0, 0, R * 2.4); ctx.fill(); }
+  blobPath(R, seed);
+  const c1 = wet ? mixHex('#f7dc9a', '#f1d7a8', wet) : '#f7dc9a', c2 = wet ? mixHex('#c7812f', '#c99a5e', wet) : '#c7812f';
+  ctx.fillStyle = radial(-R * .25, -R * .3, R * .1, R * 1.1, [[0, c1], [.7, mixHex(c1, c2, .35)], [1, c2]]); ctx.fill();
+  ctx.lineWidth = R * .1; ctx.strokeStyle = wet ? 'rgba(170,110,50,.7)' : '#a9621f'; ctx.stroke();
+  // poros de la miga
+  ctx.fillStyle = 'rgba(170,108,40,.35)';
+  for (let k = 0; k < 9; k++) { const a = rnd(k + seed * 10) * TAU, r = rnd(k * 3 + seed) * R * .62; ctx.beginPath(); ctx.ellipse(Math.cos(a) * r, Math.sin(a) * r + R * .1, R * (.04 + .04 * rnd(k)), R * (.03 + .03 * rnd(k + 2)), a, 0, TAU); ctx.fill(); }
+  ctx.fillStyle = `rgba(255,255,255,${.22 + wet * .35})`; ctx.beginPath(); ctx.ellipse(-R * .35, -R * .45, R * .28, R * .13, -.5, 0, TAU); ctx.fill();
+  if (face) {
+    ctx.fillStyle = 'rgba(255,120,120,.35)'; [-1, 1].forEach(s => { ctx.beginPath(); ctx.ellipse(s * R * .5, R * .15, R * .12, R * .08, 0, 0, TAU); ctx.fill(); });
+    eyes(R, t, mood, look, seed); mouth(R, mood);
+  }
+  ctx.restore();
+}
+/* Oxi: molécula de oxígeno (O2) */
+function drawOxi(x, y, R, o = {}) {
+  const { t = 0, rot = 0, alpha = 1, mood = 'happy', lab = false, face = true } = o;
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.rotate(rot);
+  [-1, 1].forEach(s => { ctx.fillStyle = radial(s * R * .55 - R * .2, -R * .25, R * .05, R * .8, [[0, '#e9fbff'], [.5, '#8fdcff'], [1, '#2a9ad8']]); circle(s * R * .52, 0, R * .74); ctx.fill(); ctx.strokeStyle = '#1b6d9e'; ctx.lineWidth = R * .07; ctx.stroke(); });
+  ctx.fillStyle = radial(0, -R * .1, 1, R * .6, [[0, '#c9f1ff'], [1, '#6cc9f5']]); circle(0, 0, R * .5); ctx.fill();
+  if (face) {
+    ctx.save(); ctx.translate(0, R * .02);
+    const s = R * .9; ctx.scale(.9, .9);
+    ctx.fillStyle = '#10324a';
+    if (frac((t + 1.7) / 3.1) < .05) { ctx.strokeStyle = '#10324a'; ctx.lineWidth = s * .06; [-1, 1].forEach(k => { ctx.beginPath(); ctx.moveTo(k * s * .28 - s * .08, -s * .08); ctx.lineTo(k * s * .28 + s * .08, -s * .08); ctx.stroke(); }); }
+    else [-1, 1].forEach(k => { circle(k * s * .28, -s * .08, s * .085); ctx.fill(); });
+    ctx.strokeStyle = '#10324a'; ctx.lineWidth = s * .06; ctx.lineCap = 'round';
+    ctx.beginPath(); if (mood === 'surprised') { ctx.arc(0, s * .2, s * .07, 0, TAU); } else ctx.arc(0, s * .1, s * .14, .2 * Math.PI, .8 * Math.PI); ctx.stroke();
+    ctx.restore();
+  }
+  if (lab) { ctx.rotate(-rot); txt('O₂', 0, R * 1.35, { size: R * .75, w: 700, align: 'center', base: 'middle', color: '#bfeeff' }); }
+  ctx.restore();
+}
+/* CO2: dióxido de carbono, un poco gruñón */
+function drawCO2(x, y, R, o = {}) {
+  const { t = 0, rot = 0, alpha = 1, lab = false, face = true } = o;
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.rotate(rot);
+  [-1, 1].forEach(s => { ctx.fillStyle = radial(s * R * .95 - R * .15, -R * .2, 2, R * .6, [[0, '#eef2f6'], [1, '#8d98a8']]); circle(s * R * .95, 0, R * .55); ctx.fill(); ctx.strokeStyle = '#5b6474'; ctx.lineWidth = R * .06; ctx.stroke(); });
+  ctx.fillStyle = radial(-R * .2, -R * .25, 2, R * .8, [[0, '#7c7a88'], [1, '#2d2b35']]); circle(0, 0, R * .72); ctx.fill(); ctx.strokeStyle = '#1b1a20'; ctx.lineWidth = R * .06; ctx.stroke();
+  if (face) {
+    ctx.strokeStyle = '#fff'; ctx.fillStyle = '#fff'; ctx.lineWidth = R * .07; ctx.lineCap = 'round';
+    [-1, 1].forEach(k => { circle(k * R * .24, -R * .02, R * .08); ctx.fill(); ctx.beginPath(); ctx.moveTo(k * R * .38, -R * .28); ctx.lineTo(k * R * .1, -R * .18); ctx.stroke(); });
+    ctx.beginPath(); ctx.arc(0, R * .38, R * .15, 1.2 * Math.PI, 1.8 * Math.PI); ctx.stroke();
+  }
+  if (lab) { ctx.rotate(-rot); txt('CO₂', 0, R * 1.1, { size: R * .62, w: 700, align: 'center', base: 'middle', color: '#dfe5ec' }); }
+  ctx.restore();
+}
+/* glóbulo rojo */
+function drawRBC(x, y, R, o = {}) {
+  const { tilt = .55, rot = 0, alpha = 1, tint = 0 } = o;
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.rotate(rot); ctx.scale(1, tilt);
+  const edge = tint ? mixHex('#e8354f', '#8a4fd0', tint) : '#e8354f', mid = tint ? mixHex('#a3122c', '#4d2a86', tint) : '#a3122c';
+  ctx.fillStyle = radial(0, 0, R * .1, R, [[0, mid], [.55, mid], [.8, edge], [1, edge]]); circle(0, 0, R); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,0,15,.55)'; ctx.lineWidth = R * .08; ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.beginPath(); ctx.ellipse(-R * .35, -R * .55, R * .35, R * .15, -.3, 0, TAU); ctx.fill();
+  ctx.restore();
+}
+/* nutriente: punto dorado que brilla */
+function drawNut(x, y, R, o = {}) {
+  const { alpha = 1, face = false, t = 0 } = o;
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha;
+  ctx.fillStyle = radial(x, y, R * .3, R * 2.8, [[0, 'rgba(255,214,90,.55)'], [1, 'rgba(255,214,90,0)']]); circle(x, y, R * 2.8); ctx.fill();
+  ctx.fillStyle = radial(x - R * .3, y - R * .3, 1, R * 1.1, [[0, '#fffbe6'], [.45, '#ffd35a'], [1, '#e79a1c']]); circle(x, y, R); ctx.fill();
+  if (face) { ctx.translate(x, y); eyes(R * 1.2, t, 'happy', [0, 0], 1.3); mouth(R * 1.2, 'happy'); }
+  ctx.restore();
+}
+function drawWaste(x, y, R, o = {}) {
+  const { alpha = 1, rot = 0 } = o; if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.rotate(rot);
+  blobPath(R, 4.2, .18); ctx.fillStyle = radial(-R * .3, -R * .3, 1, R * 1.1, [[0, '#d8b46a'], [1, '#7a5a26']]); ctx.fill();
+  ctx.strokeStyle = '#4d3714'; ctx.lineWidth = R * .12; ctx.stroke(); ctx.restore();
+}
+/* ---------- piezas anatómicas reutilizables ---------- */
+function heartPath(s) {
+  ctx.beginPath(); ctx.moveTo(0, s * .9);
+  ctx.bezierCurveTo(-s * .2, s * .7, -s * 1.0, s * .2, -s * .8, -s * .35);
+  ctx.bezierCurveTo(-s * .6, -s * .85, -s * .1, -s * .8, 0, -s * .42);
+  ctx.bezierCurveTo(s * .1, -s * .8, s * .6, -s * .85, s * .8, -s * .35);
+  ctx.bezierCurveTo(s * 1.0, s * .2, s * .2, s * .7, 0, s * .9); ctx.closePath();
+}
+function beanPath(w, h) {
+  ctx.beginPath(); ctx.moveTo(0, -h / 2);
+  ctx.bezierCurveTo(w * .78, -h / 2, w * .78, h / 2, 0, h / 2);
+  ctx.bezierCurveTo(-w * .46, h / 2, -w * .5, h * .2, -w * .17, h * .08);
+  ctx.quadraticCurveTo(-w * .04, 0, -w * .17, -h * .08);
+  ctx.bezierCurveTo(-w * .5, -h * .2, -w * .46, -h / 2, 0, -h / 2); ctx.closePath();
+}
+function glowStroke(P, col, a, w = 4) {
+  if (a <= 0) return; ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = col;
+  ctx.globalAlpha = a * .28; ctx.lineWidth = w * 3.2; tracePath(P); ctx.stroke();
+  ctx.globalAlpha = a; ctx.lineWidth = w; tracePath(P); ctx.stroke(); ctx.restore();
+}
+function glowFill(P, col, a) {
+  if (a <= 0) return; ctx.save(); fillPoly(P); ctx.globalAlpha = a * .25; ctx.fillStyle = col; ctx.fill();
+  ctx.globalAlpha = a; ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+}
+const mirror = pts => pts.map(([x, y]) => [-x, y]);
+/* cuerpo humano esquemático, coordenadas locales (0 = eje del cuerpo, 0..810 de alto) */
+const BODY = {
+  eso: makePath([[0, 86], [0, 120], [3, 200], [8, 270], [18, 296]]),
+  stom: makePath([[18, 296], [48, 288], [78, 298], [84, 322], [66, 344], [32, 346], [8, 336], [-4, 322]], true, 10),
+  duo: makePath([[-4, 322], [-28, 336], [-40, 360]]),
+  small: makePath([[-40, 360], [40, 364], [40, 378], [-40, 380], [-40, 394], [40, 394], [40, 408], [-40, 408], [-58, 424], [-66, 434]], false, 10),
+  large: makePath([[-66, 434], [-72, 396], [-68, 356], [0, 350], [68, 356], [72, 396], [68, 432], [30, 444], [6, 454], [0, 484]]),
+  airway: makePath([[0, 64], [-4, 78], [0, 98], [0, 176]]),
+  bronL: makePath([[0, 176], [-24, 188], [-42, 206]]), bronR: makePath([[0, 176], [24, 188], [42, 206]]),
+  lungL: makePath([[-12, 160], [-40, 150], [-74, 172], [-88, 226], [-84, 280], [-50, 288], [-16, 278], [-10, 220]], true, 10),
+  lungR: makePath([[12, 160], [40, 150], [74, 172], [88, 226], [84, 280], [52, 288], [36, 278], [26, 256], [14, 220]], true, 10),
+  art: [
+    makePath([[16, 226], [8, 160], [6, 100], [4, 36]]),
+    makePath([[10, 170], [-60, 168], [-104, 190], [-128, 320], [-148, 450]]),
+    makePath([[10, 170], [60, 168], [104, 190], [128, 320], [148, 450]]),
+    makePath([[18, 262], [6, 330], [4, 440], [-50, 470], [-54, 620], [-54, 792]]),
+    makePath([[4, 440], [50, 470], [54, 620], [54, 792]])
+  ],
+  ureL: makePath([[-50, 350], [-28, 400], [-8, 446]]), ureR: makePath([[50, 350], [28, 400], [8, 446]]),
+  ureth: makePath([[0, 466], [0, 490]])
+};
+function silhouette(fill, stroke) {
+  const parts = [
+    () => circle(0, 60, 56), () => rr(-22, 100, 44, 56, 10), () => rr(-108, 145, 216, 300, 70), () => rr(-100, 382, 200, 110, 50),
+    () => rr(-96, 440, 84, 370, 42), () => rr(12, 440, 84, 370, 42),
+    () => { ctx.save(); ctx.translate(-104, 172); ctx.rotate(.16); rr(-27, 0, 54, 292, 27); ctx.restore(); },
+    () => { ctx.save(); ctx.translate(104, 172); ctx.rotate(-.16); rr(-27, 0, 54, 292, 27); ctx.restore(); }
+  ];
+  parts.forEach(p => { p(); ctx.lineWidth = 9; ctx.strokeStyle = stroke; ctx.stroke(); });
+  parts.forEach(p => { p(); ctx.fillStyle = fill; ctx.fill(); });
+}
+function drawBody(ox, oy, S, rev, t, bodyA = 1) {
+  ctx.save(); ctx.translate(ox, oy); ctx.scale(S, S); ctx.globalAlpha = bodyA;
+  silhouette(linear(0, 0, 0, 810, [[0, '#34263b'], [1, '#1f1725']]), '#5b4463');
+  const { dig = 0, res = 0, cir = 0, exc = 0 } = rev;
+  // respiratorio
+  glowFill(BODY.lungL, COL.res, res * .9); glowFill(BODY.lungR, COL.res, res * .9);
+  glowStroke(BODY.airway, COL.res, res, 5); glowStroke(BODY.bronL, COL.res, res, 4); glowStroke(BODY.bronR, COL.res, res, 4);
+  // circulatorio
+  if (cir > 0) {
+    ctx.save(); ctx.translate(9, 0); BODY.art.forEach(P => glowStroke(P, COL.vein, cir * .9, 3)); ctx.restore();
+    BODY.art.forEach(P => glowStroke(P, COL.cir, cir, 3.4));
+    const beat = 1 + .12 * gauss(frac(t / .8) - .08, .05);
+    ctx.save(); ctx.globalAlpha = cir; ctx.translate(16, 244); ctx.scale(beat, beat); ctx.rotate(.3);
+    ctx.fillStyle = radial(0, 0, 2, 40, [[0, 'rgba(255,59,92,.6)'], [1, 'rgba(255,59,92,0)']]); circle(0, 0, 40); ctx.fill();
+    heartPath(20); ctx.fillStyle = COL.cir; ctx.fill(); ctx.restore();
+  }
+  // digestivo
+  glowStroke(BODY.eso, COL.dig, dig, 5); glowFill(BODY.stom, COL.dig, dig); glowStroke(BODY.duo, COL.dig, dig, 4);
+  glowStroke(BODY.small, COL.dig, dig, 4); glowStroke(BODY.large, COL.dig, dig, 6);
+  // excretor
+  if (exc > 0) {
+    [-1, 1].forEach(s => { ctx.save(); ctx.translate(s * 56, 336); ctx.scale(-s, 1); beanPath(18, 30);
+      ctx.globalAlpha = exc * .35; ctx.fillStyle = COL.exc; ctx.fill(); ctx.globalAlpha = exc; ctx.strokeStyle = COL.exc; ctx.lineWidth = 3; ctx.stroke(); ctx.restore(); });
+    glowStroke(BODY.ureL, COL.exc, exc, 3); glowStroke(BODY.ureR, COL.exc, exc, 3);
+    ctx.save(); ctx.globalAlpha = exc; circle(0, 454, 14); ctx.fillStyle = 'rgba(181,140,255,.35)'; ctx.fill(); ctx.strokeStyle = COL.exc; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+    glowStroke(BODY.ureth, COL.exc, exc, 3);
+  }
+  ctx.restore();
+}
+/* célula genérica pequeña (fondos, tipos de célula) */
+function miniCell(x, y, r, col = 'rgba(200,160,255,', a = .5, seed = 1, t = 0) {
+  ctx.save(); ctx.translate(x, y); blobPath(r, seed, .07, .03, t);
+  ctx.fillStyle = col + (a * .35) + ')'; ctx.fill(); ctx.strokeStyle = col + a + ')'; ctx.lineWidth = 3; ctx.stroke();
+  circle(r * .15, -r * .1, r * .32); ctx.fillStyle = col + (a * .8) + ')'; ctx.fill(); ctx.restore();
+}
+
+/* =========================================================
+   ESCENA 0 · Presentación
+   ========================================================= */
+function sIntro(lt) {
+  bg('#2c1633', '#0c060e', 560, 420);
+  for (let k = 0; k < 7; k++) miniCell(frac(rnd(k + 2) + lt * .006) * 2100 - 100, 120 + rnd(k + 9) * 700, 40 + 40 * rnd(k), 'rgba(200,160,255,', .12, k, lt);
+  floaters(lt, 40, 'rgba(255,200,220,.6)', 3, 3.5, 10);
+  const rv = k => E.out(seg(lt, 1 + k, 2 + k));
+  const rev = { dig: rv(0), res: rv(1), cir: rv(2), exc: rv(3) };
+  drawBody(560, 42, .98, rev, lt, E.out(seg(lt, 0, .8)));
+  // título
+  const ta = E.out(seg(lt, .2, 1.2));
+  txt('El viaje', 1000 - 40 * (1 - ta), 210, { size: 128, w: 800, fam: FD, color: COL.gold, alpha: ta });
+  txt('de la miga', 1000 - 40 * (1 - ta), 330, { size: 128, w: 800, fam: FD, color: COL.gold, alpha: ta });
+  txt('La función de nutrición', 1004, 410, { size: 44, w: 700, color: COL.ink, alpha: E.out(seg(lt, .7, 1.6)) });
+  const rows = [
+    ['Aparato digestivo', 'transforma los alimentos en nutrientes', COL.dig],
+    ['Aparato respiratorio', 'consigue el oxígeno', COL.res],
+    ['Aparato circulatorio', 'lo reparte por todo el cuerpo', COL.cir],
+    ['Aparato excretor', 'expulsa los desechos', COL.exc]
+  ];
+  rows.forEach(([n, r, c], k) => {
+    const a = rv(k), y = 500 + k * 88;
+    if (a <= 0) return;
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(30 * (1 - a), 0);
+    ctx.fillStyle = c; circle(1022, y - 11, 13); ctx.fill();
+    txt(n, 1050, y, { size: 36, w: 700, color: c });
+    txt(r, 1050, y + 36, { size: 28, color: '#d9c9d4' });
+    ctx.restore();
+  });
+  // Miga se presenta
+  const ma = E.back(seg(lt, 6.2, 7));
+  if (ma > 0) {
+    const bob = Math.sin(lt * 3) * 8;
+    drawMiga(1770, 600 + bob, 72 * ma, { t: lt, mood: 'grin', look: [-1, .3], rot: Math.sin(lt * 2) * .08 });
+    bubble(seg(lt, 7, 7.5), '¡Hola! Soy Miga.', 1740, 520 + bob, -1, '#fff', 32);
+  }
+}
+
+/* =========================================================
+   ESCENA 1 · Boca
+   ========================================================= */
+function teethRow(yTip, upper) {
+  const n = 12, teeth = [];
+  for (let i = 0; i < n; i++) {
+    const u = (i + .5) / n * 2 - 1, sc = 1 - .38 * u * u, w = 136 * sc, h = 205 * sc, off = u * u * 110;
+    const x = 960 + u * 880, tip = upper ? yTip - off : yTip + off;
+    teeth.push({ x, w, h, tip });
+  }
+  // encía
+  ctx.beginPath();
+  if (upper) { ctx.moveTo(-20, -20); teeth.forEach(T => ctx.lineTo(T.x, T.tip - T.h + 36)); ctx.lineTo(W + 20, teeth[n - 1].tip - teeth[n - 1].h + 20); ctx.lineTo(W + 20, -20); }
+  else { ctx.moveTo(-20, H + 20); teeth.forEach(T => ctx.lineTo(T.x, T.tip + T.h - 36)); ctx.lineTo(W + 20, teeth[n - 1].tip + teeth[n - 1].h - 20); ctx.lineTo(W + 20, H + 20); }
+  ctx.closePath(); ctx.fillStyle = upper ? '#d9587a' : '#cf4f72'; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,170,190,.5)'; ctx.lineWidth = 4; ctx.stroke();
+  teeth.forEach(T => {
+    const top = upper ? T.tip - T.h : T.tip;
+    rr(T.x - T.w / 2 + 3, top, T.w - 6, T.h, T.w * .32);
+    ctx.fillStyle = linear(0, top, 0, top + T.h, upper ? [[0, '#e6d6b4'], [.75, '#fffaf0'], [1, '#ffffff']] : [[0, '#ffffff'], [.25, '#fffaf0'], [1, '#e6d6b4']]);
+    ctx.fill(); ctx.strokeStyle = 'rgba(120,90,60,.4)'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.beginPath(); ctx.ellipse(T.x - T.w * .18, upper ? T.tip - T.h * .35 : T.tip + T.h * .3, T.w * .08, T.h * .18, 0, 0, TAU); ctx.fill();
+  });
+}
+function sMouth(lt) {
+  bg('#8e2b48', '#200610', 960, 470);
+  ctx.save(); ctx.strokeStyle = 'rgba(255,170,190,.14)'; ctx.lineWidth = 12;
+  for (let k = 0; k < 5; k++) { ctx.beginPath(); ctx.ellipse(960, -150, 980 - k * 110, 360 - k * 45, 0, .1 * Math.PI, .9 * Math.PI); ctx.stroke(); }
+  ctx.restore();
+  // garganta y campanilla
+  ctx.fillStyle = radial(960, 480, 10, 290, [[0, '#070105'], [.65, '#2a0914'], [1, 'rgba(110,25,50,0)']]);
+  ctx.beginPath(); ctx.ellipse(960, 480, 270, 300, 0, 0, TAU); ctx.fill();
+  ctx.save(); ctx.translate(960, 190); ctx.rotate(Math.sin(lt * 1.3) * .04);
+  ctx.beginPath(); ctx.moveTo(-38, 0); ctx.bezierCurveTo(-38, 100, -22, 150, 0, 150); ctx.bezierCurveTo(22, 150, 38, 100, 38, 0); ctx.closePath();
+  ctx.fillStyle = linear(0, 0, 0, 150, [[0, '#b83c58'], [1, '#e2657f']]); ctx.fill(); ctx.restore();
+
+  const chomps = [2.6, 3.9, 5.2];
+  let close = 0; chomps.forEach(c => close = Math.max(close, bump(lt, c, .6)));
+  const yUp = lerp(250, 395, close), yLo = lerp(730, 548, close);
+  // lengua
+  const tp = E.io(seg(lt, 8, 10.2)) * (1 - .5 * E.io(seg(lt, 11.2, 12.4)));
+  const tTop = lerp(790, 600, tp);
+  ctx.beginPath(); ctx.ellipse(960, tTop + 290, 590, 300, 0, 0, TAU);
+  ctx.fillStyle = linear(0, tTop, 0, tTop + 300, [[0, '#f27d98'], [1, '#b0365a']]); ctx.fill();
+  ctx.strokeStyle = 'rgba(120,20,50,.35)'; ctx.lineWidth = 9; ctx.beginPath(); ctx.moveTo(960, tTop + 40); ctx.quadraticCurveTo(965, tTop + 120, 960, tTop + 230); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,200,215,.35)';
+  for (let k = 0; k < 40; k++) { const a = rnd(k + 70) * Math.PI + Math.PI, r = 100 + 440 * rnd(k + 90); circle(960 + Math.cos(a) * r, tTop + 290 + Math.sin(a) * r * .5, 4); ctx.fill(); }
+
+  // Miga y sus trocitos
+  const wet = seg(lt, 5, 9);
+  if (lt < 2.2) {
+    const p = E.io(seg(lt, 0, 2.2));
+    drawMiga(lerp(-160, 960, p), 470 - Math.sin(p * Math.PI) * 230, 74, { t: lt, rot: (1 - p) * -5, look: [1, -.4], mood: 'grin' });
+  } else if (lt < 10.4) {
+    const n = lt < 2.6 ? 1 : lt < 3.9 ? 3 : lt < 5.2 ? 6 : 10;
+    const tc = lt < 2.6 ? 2.2 : lt < 3.9 ? 2.6 : lt < 5.2 ? 3.9 : 5.2;
+    const gather = 1 - E.io(seg(lt, 8.1, 10.2));
+    const spread = (1 - Math.exp(-(lt - tc) * 6)) * gather;
+    const sx = 1 + close * .35, sy = 1 - close * .3;
+    const mood = lt < 2.6 ? 'happy' : lt < 3.9 ? 'surprised' : lt < 6.6 ? 'dizzy' : lt < 8 ? 'surprised' : 'happy';
+    const fadeOut = 1 - seg(lt, 10, 10.4);
+    for (let j = n - 1; j >= 0; j--) {
+      const a = j * 2.399 + .5, r = j === 0 ? 0 : (40 + 30 * Math.sqrt(j)) * spread;
+      const R = j === 0 ? 74 / Math.sqrt(n) * 1.3 : 74 / Math.sqrt(n) * (.75 + .3 * rnd(j));
+      drawMiga(960 + Math.cos(a) * r * 1.5, 470 + Math.sin(a) * r * .9, R, { t: lt, face: j === 0, mood, sx, sy, seed: 1.3 + j * .7, wet, rot: j * .8 + (j ? lt * .2 : 0), look: [0, -1], alpha: fadeOut });
+    }
+  }
+  if (lt >= 10) {
+    const app = E.back(seg(lt, 10, 10.5)), p = seg(lt, 11.3, 12.8);
+    drawMiga(960, lerp(470, 440, p), lerp(82, 26, E.in(p)) * app, { t: lt, wet: 1, seed: 2.9, mood: p > .2 ? 'surprised' : 'grin', alpha: 1 - seg(lt, 12.4, 12.9) });
+  }
+  teethRow(yUp, true); teethRow(yLo, false);
+  // saliva
+  for (let k = 0; k < 14; k++) {
+    const ts = 4.4 + k * .33, p = seg(lt, ts, ts + .9);
+    if (p <= 0 || p >= 1) continue;
+    const side = k % 2 ? 1 : -1, x0 = 960 + side * (520 + 60 * rnd(k)), y0 = 330 + 90 * rnd(k + 5), x1 = 960 + side * 50 * rnd(k + 2), y1 = 470;
+    const x = lerp(x0, x1, E.io(p)), y = lerp(y0, y1, p) - Math.sin(p * Math.PI) * 120;
+    ctx.save(); ctx.globalAlpha = 1 - seg(p, .8, 1);
+    ctx.fillStyle = 'rgba(200,236,255,.8)'; circle(x, y, 15); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = '#fff'; circle(x - 5, y - 5, 4); ctx.fill(); ctx.restore();
+  }
+  label(inout(lt, 2.9, 12.4), 'Dientes', 1294, yUp - 76, 1500, 140, '#fff', 'cortan y trituran');
+  label(inout(lt, 5.2, 12.4), 'Saliva', 700, 430, 380, 140, COL.res, 'moja y ablanda');
+  label(inout(lt, 8.3, 12.4), 'Lengua', 1180, tTop + 50, 1480, 690, '#ff9db4', 'junta y empuja');
+  label(inout(lt, 10.5, 12.4), 'Bolo alimenticio', 1020, 430, 1300, 330, COL.dig);
+}
+
+/* =========================================================
+   ESCENA 2 · Faringe y esófago
+   ========================================================= */
+const TH = {
+  mouth: makePath([[100, 190], [500, 200], [800, 230], [915, 320], [930, 420]]),
+  nose: makePath([[420, 30], [700, 90], [860, 190], [915, 300]]),
+  trach: makePath([[880, 420], [862, 560], [846, 760], [846, 980]]),
+  eso: makePath([[985, 430], [1035, 560], [1055, 760], [1055, 980]]),
+  air: makePath([[420, 30], [700, 90], [860, 190], [905, 320], [885, 470], [858, 620], [846, 800], [846, 1000]]),
+  bolo: makePath([[100, 190], [500, 200], [800, 230], [900, 320], [965, 430], [1030, 560], [1052, 760], [1055, 1000]])
+};
+function sThroat(lt) {
+  const m = E.io(seg(lt, 5.8, 6.7));
+  if (m < 1) { ctx.save(); ctx.translate(0, -H * m); throatA(lt); ctx.restore(); }
+  if (m > 0) { ctx.save(); ctx.translate(0, H * (1 - m)); throatB(lt); ctx.restore(); }
+}
+function throatA(lt) {
+  ctx.fillStyle = linear(0, 0, W, H, [[0, '#8a2f4a'], [1, '#4a1428']]); ctx.fillRect(0, 0, W, H);
+  floaters(lt, 20, 'rgba(255,190,210,.35)', 8, 3, 6);
+  const tubes = [[TH.nose, 88], [TH.mouth, 150], [TH.trach, 112], [TH.eso, 104]];
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  tubes.forEach(([P, w]) => { tracePath(P); ctx.strokeStyle = '#d0647d'; ctx.lineWidth = w + 40; ctx.stroke(); });
+  tubes.forEach(([P, w]) => { tracePath(P); ctx.strokeStyle = '#1c0710'; ctx.lineWidth = w; ctx.stroke(); });
+  // anillos de la tráquea
+  ctx.strokeStyle = 'rgba(245,215,225,.45)'; ctx.lineWidth = 9;
+  for (let k = 0; k < 8; k++) { const p = at(TH.trach, .2 + k * .1), nx = Math.cos(p.ang + Math.PI / 2), ny = Math.sin(p.ang + Math.PI / 2); ctx.beginPath(); ctx.moveTo(p.x - nx * 54, p.y - ny * 54 - 6); ctx.quadraticCurveTo(p.x, p.y + 8, p.x + nx * 54, p.y + ny * 54 - 6); ctx.stroke(); }
+  txt('nariz', 380, 70, { size: 28, w: 700, color: '#ffd0dc', align: 'right' });
+  txt('boca', 90, 265, { size: 28, w: 700, color: '#ffd0dc' });
+  // aire
+  const airT = lt - clamp(lt - 1.9, 0, 3.2);
+  for (let k = 0; k < 18; k++) {
+    const u = frac(k / 18 + airT * .2), p = at(TH.air, u);
+    ctx.fillStyle = 'rgba(92,200,255,.25)'; circle(p.x, p.y, 16); ctx.fill();
+    ctx.fillStyle = '#9fe0ff'; circle(p.x, p.y, 7); ctx.fill();
+  }
+  // bolo
+  const u = E.io(seg(lt, .3, 5.6)) * .74, bp = at(TH.bolo, u);
+  drawMiga(bp.x, bp.y, 54, { t: lt, wet: 1, seed: 2.9, mood: u > .28 && u < .46 ? 'surprised' : 'happy', rot: Math.sin(lt * 3) * .1, look: [.5, 1] });
+  // epiglotis
+  const c = E.io(seg(lt, 1.5, 2.3)) * (1 - E.io(seg(lt, 4.8, 5.6)));
+  const ang = lerp(-1.3, .22, c), hx = 838, hy = 405, L = 140;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#7e2440'; ctx.lineWidth = 36; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + Math.cos(ang) * L, hy + Math.sin(ang) * L); ctx.stroke();
+  ctx.strokeStyle = '#f28ca3'; ctx.lineWidth = 24; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + Math.cos(ang) * L, hy + Math.sin(ang) * L); ctx.stroke();
+  label(inout(lt, .4, 5.5), 'Faringe', 920, 320, 1240, 250, '#ffd0dc', 'cruce del aire y la comida');
+  label(inout(lt, 1.9, 5.5), 'Epiglotis', hx + Math.cos(ang) * 90, hy + Math.sin(ang) * 90, 520, 520, '#f28ca3', 'tapa la tráquea al tragar');
+  label(inout(lt, .8, 5.5), 'Tráquea', 848, 740, 520, 740, COL.res, 'camino del aire');
+  label(inout(lt, 1.2, 5.5), 'Esófago', 1056, 690, 1320, 660, COL.dig, 'camino de la comida');
+}
+function throatB(lt) {
+  ctx.fillStyle = linear(0, 0, W, 0, [[0, '#4a1428'], [.5, '#6d2340'], [1, '#4a1428']]); ctx.fillRect(0, 0, W, H);
+  const by = lerp(-40, 900, E.sine(seg(lt, 6.3, 12.8))), sy = by - 125;
+  const hwAt = y => 96 - 52 * gauss(y - sy, 55);
+  // pared musculosa
+  ctx.beginPath();
+  for (let y = -40; y <= H + 40; y += 8) ctx.lineTo(960 - hwAt(y) - 70, y);
+  for (let y = H + 40; y >= -40; y -= 8) ctx.lineTo(960 + hwAt(y) + 70, y);
+  ctx.closePath(); ctx.fillStyle = linear(820, 0, 1100, 0, [[0, '#a83a58'], [.5, '#d4617c'], [1, '#a83a58']]); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,190,205,.5)'; ctx.lineWidth = 4; ctx.stroke();
+  // fibras musculares
+  for (let y = -30; y < H + 40; y += 24) {
+    const hw = hwAt(y), sq = gauss(y - sy, 55);
+    ctx.strokeStyle = `rgba(120,20,50,${.18 + .4 * sq})`; ctx.lineWidth = 5 + 5 * sq;
+    [-1, 1].forEach(s => { ctx.beginPath(); ctx.moveTo(960 + s * (hw + 6), y); ctx.quadraticCurveTo(960 + s * (hw + 36), y + 6, 960 + s * (hw + 66), y); ctx.stroke(); });
+  }
+  // luz del tubo
+  ctx.beginPath();
+  for (let y = -40; y <= H + 40; y += 8) ctx.lineTo(960 - hwAt(y), y);
+  for (let y = H + 40; y >= -40; y -= 8) ctx.lineTo(960 + hwAt(y), y);
+  ctx.closePath(); ctx.fillStyle = '#23080f'; ctx.fill();
+  drawMiga(960, by, 64, { t: lt, wet: 1, seed: 2.9, sx: .92, sy: 1.08, mood: 'grin', look: [0, 1] });
+  // flechas de empuje
+  const pa = seg(lt, 6.8, 7.4) * (1 - seg(lt, 12.6, 13));
+  ctx.save(); ctx.globalAlpha = pa; ctx.strokeStyle = COL.dig; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  [-1, 1].forEach(s => { const x = 960 + s * 230, pulse = 10 * Math.sin(lt * 8); ctx.beginPath(); ctx.moveTo(x + s * (30 + pulse), sy - 30); ctx.lineTo(x - s * (10 - pulse), sy); ctx.lineTo(x + s * (30 + pulse), sy + 30); ctx.stroke(); });
+  ctx.beginPath(); ctx.moveTo(1180, by - 60); ctx.lineTo(1180, by + 40); ctx.moveTo(1150, by + 10); ctx.lineTo(1180, by + 40); ctx.lineTo(1210, by + 10); ctx.stroke();
+  ctx.restore();
+  label(inout(lt, 7.2, 12.6), 'Músculos del esófago', 960 - hwAt(sy) - 40, sy, 640, sy, COL.dig, 'se aprietan y empujan');
+  txt('↓ hacia el estómago', 1250, 820, { size: 34, w: 700, color: '#ffd9c2', alpha: seg(lt, 9, 9.6) });
+}
+
+/* =========================================================
+   ESCENA 3 · Estómago
+   ========================================================= */
+const ST_CTRL = [[820, 110], [910, 110], [1060, 160], [1250, 250], [1340, 420], [1290, 600], [1130, 720], [900, 770], [700, 720], [545, 640], [470, 600], [485, 540], [600, 565], [760, 560], [860, 470], [872, 320], [845, 200]];
+const ST_C = [930, 450];
+const ST_EXIT = makePath([[930, 540], [760, 600], [560, 612], [470, 585], [380, 650], [300, 770], [260, 940]]);
+function sStomach(lt) {
+  bg('#3d1024', '#0d0408', 930, 450);
+  floaters(lt, 26, 'rgba(255,190,210,.3)', 12, 3, 8);
+  tube(makePath([[865, -60], [865, 60], [865, 140]]), 84, '#c9546f', '#2a0a14', 18);
+  tube(makePath([[490, 575], [380, 650], [300, 770], [260, 960]]), 70, '#c9546f', '#2a0a14', 18);
+  const A = 14 + 8 * Math.sin(lt * 1.7);
+  const ctrl = ST_CTRL.map(([x, y], k) => {
+    const dx = x - ST_C[0], dy = y - ST_C[1], d = Math.hypot(dx, dy) || 1;
+    const damp = (k <= 1 || k === 10 || k === 11) ? .15 : 1;
+    const o = A * damp * Math.sin(lt * 2.4 - k * .9);
+    return [x + dx / d * o, y + dy / d * o];
+  });
+  const P = makePath(ctrl, true, 10);
+  fillPoly(P); ctx.fillStyle = '#3b1020'; ctx.fill();
+  ctx.save(); fillPoly(P); ctx.clip();
+  // pliegues
+  for (let r = 0; r < 8; r++) {
+    ctx.strokeStyle = 'rgba(255,150,175,.16)'; ctx.lineWidth = 12; ctx.beginPath();
+    for (let x = 440; x <= 1360; x += 20) { const y = 180 + r * 78 + 22 * Math.sin(x * .018 + r + lt * .8); x === 440 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+    ctx.stroke();
+  }
+  // jugo gástrico
+  const lev = lerp(660, 470, E.io(seg(lt, 2.5, 9)));
+  ctx.beginPath(); ctx.moveTo(400, H);
+  for (let x = 400; x <= 1400; x += 16) ctx.lineTo(x, lev + 14 * Math.sin(x * .012 + lt * 2.6) + 8 * Math.sin(x * .031 - lt * 3.1));
+  ctx.lineTo(1400, H); ctx.closePath();
+  ctx.fillStyle = linear(0, lev - 20, 0, 800, [[0, 'rgba(210,240,100,.5)'], [1, 'rgba(120,165,40,.65)']]); ctx.fill();
+  for (let k = 0; k < 18; k++) { const x = 520 + 780 * rnd(k + 30), y = 760 - frac(rnd(k + 50) + lt * .25) * (760 - lev); ctx.strokeStyle = 'rgba(240,255,190,.55)'; ctx.lineWidth = 2; circle(x, y, 4 + 6 * rnd(k)); ctx.stroke(); }
+  // quimo: remolino
+  const dg = seg(lt, 3, 10), q = E.io(seg(lt, 10, 13.8));
+  const cx = 930 + 20 * Math.sin(lt * 1.3), cy = 540 + 14 * Math.sin(lt * 1.9);
+  const nB = Math.floor(4 + 34 * dg);
+  for (let j = 0; j < nB; j++) {
+    const ang = j * .58 + lt * 1.4, rad = 30 + j * 6.5 * (.4 + dg);
+    let x = cx + Math.cos(ang) * rad, y = cy + Math.sin(ang) * rad * .75;
+    if (q > 0) { const e = at(ST_EXIT, Math.max(0, q * 1.1 - j * .014)), k2 = clamp(q * 3); x = lerp(x, e.x + 12 * Math.sin(j), k2); y = lerp(y, e.y + 12 * Math.cos(j), k2); }
+    ctx.fillStyle = 'rgba(236,212,160,.42)'; circle(x, y, 24 + 12 * rnd(j)); ctx.fill();
+  }
+  // salpicadura
+  const sp = seg(lt, 2.45, 3.4);
+  if (sp > 0 && sp < 1) {
+    ctx.strokeStyle = `rgba(230,255,160,${1 - sp})`; ctx.lineWidth = 6;
+    [1, .6].forEach(f => { ctx.beginPath(); ctx.ellipse(930, 560, 240 * sp * f, 50 * sp * f, 0, 0, TAU); ctx.stroke(); });
+    for (let k = 0; k < 9; k++) { const a = -Math.PI * (.15 + .7 * k / 8), v = 260 + 80 * rnd(k); ctx.fillStyle = `rgba(230,255,160,${1 - sp})`; circle(930 + Math.cos(a) * v * sp, 560 + Math.sin(a) * v * sp + 500 * sp * sp, 9); ctx.fill(); }
+  }
+  ctx.restore();
+  // chorritos desde la pared
+  for (let k = 0; k < 26; k++) {
+    const te = 3 + k * .2, p = seg(lt, te, te + 1);
+    if (p <= 0 || p >= 1) continue;
+    const w = at(P, .12 + .66 * rnd(k + 3)), x = lerp(w.x, ST_C[0], p * .4), y = lerp(w.y, ST_C[1] + 80, p * .4);
+    ctx.fillStyle = `rgba(220,255,110,${1 - p})`; circle(x, y, 10); ctx.fill();
+  }
+  // paredes
+  ctx.lineJoin = 'round';
+  fillPoly(P); ctx.strokeStyle = '#c9546f'; ctx.lineWidth = 52; ctx.stroke();
+  ctx.strokeStyle = 'rgba(250,160,180,.7)'; ctx.lineWidth = 6; ctx.stroke();
+  // bolo cayendo y Miga dentro del quimo
+  if (lt < 3) {
+    const p = seg(lt, .3, 2.5);
+    drawMiga(lerp(865, 930, p), lerp(-60, 560, E.in(p)), 62, { t: lt, wet: 1, seed: 2.9, mood: p > .6 ? 'surprised' : 'grin', rot: p * 2 });
+  } else {
+    let x = cx, y = cy;
+    if (q > 0) { const e = at(ST_EXIT, clamp(q * 1.1)); x = lerp(cx, e.x, clamp(q * 3)); y = lerp(cy, e.y, clamp(q * 3)); }
+    const mood = lt < 4 ? 'surprised' : lt < 9.4 ? 'dizzy' : 'grin';
+    drawMiga(x, y, lerp(62, 40, dg), { t: lt, wet: 1, seed: 2.9 + dg, mood, rot: Math.sin(lt * 2) * .5 * (1 - q), alpha: 1 - seg(q, .85, 1) });
+  }
+  label(inout(lt, .5, 13.4), 'Estómago', 1300, 320, 1500, 170, '#ffb0c2', 'bolsa de paredes musculosas');
+  label(inout(lt, 3.2, 13.4), 'Jugos gástricos', 1180, lerp(560, 520, dg), 1500, 440, '#d7f25e', 'deshacen el alimento');
+  label(inout(lt, 7.8, 13.4), 'Quimo', 1000, 600, 1500, 690, '#f3d9a4', 'una papilla espesa');
+  label(inout(lt, 10.4, 13.8), 'Hacia el intestino', 430, 640, 360, 420, COL.dig);
+}
+
+/* =========================================================
+   ESCENA 4 · Intestino delgado
+   ========================================================= */
+const VB = Array.from({ length: 18 }, (_, k) => ({ x: 60 + k * 108, h: 190 + 40 * rnd(k + 20) }));
+const VT = Array.from({ length: 18 }, (_, k) => ({ x: 114 + k * 108, h: 140 + 30 * rnd(k + 40) }));
+const V_BASE = 770, V_W = 78;
+const vTip = (k, lt) => ({ x: VB[k].x + 10 * Math.sin(lt * 1.4 + k * .8), y: V_BASE - VB[k].h });
+function villus(h, dx, withCap, cap = 1) {
+  const w = V_W;
+  ctx.beginPath(); ctx.moveTo(-w / 2, 0);
+  ctx.quadraticCurveTo(-w / 2, -h * .5, dx - w / 2, -h + w / 2);
+  ctx.arc(dx, -h + w / 2, w / 2, Math.PI, TAU);
+  ctx.quadraticCurveTo(w / 2, -h * .5, w / 2, 0); ctx.closePath();
+  ctx.fillStyle = linear(0, -h, 0, 0, [[0, '#ffb6c5'], [1, '#d65a78']]); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,215,225,.65)'; ctx.lineWidth = 3; ctx.stroke();
+  if (withCap) {
+    ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.strokeStyle = `rgba(255,59,92,${.9 * cap})`; ctx.beginPath(); ctx.moveTo(-w * .24, 0); ctx.quadraticCurveTo(-w * .24, -h * .5, dx * .9 - w * .2, -h + w * .5); ctx.arc(dx * .9, -h + w * .5, w * .2, Math.PI, TAU); ctx.stroke();
+    ctx.strokeStyle = `rgba(123,108,255,${.8 * cap})`; ctx.beginPath(); ctx.moveTo(dx * .9 + w * .2, -h + w * .5); ctx.quadraticCurveTo(w * .24, -h * .5, w * .24, 0); ctx.stroke();
+  }
+}
+const NUTS = Array.from({ length: 24 }, (_, k) => ({ ts: .8 + k * .42, v: (k * 7 + 3) % 16 + 1, sx: rnd(k + 60), sy: rnd(k + 80) }));
+function nutPos(n, lt) {
+  const l = lt - n.ts; if (l < 0) return null;
+  const vx = VB[n.v].x, tip = vTip(n.v, lt);
+  if (l < 1.2) { const p = E.io(l / 1.2), x0 = vx - 240 - 160 * n.sx + l * 60, y0 = 300 + 170 * n.sy; return { x: lerp(x0, tip.x, p), y: lerp(y0, tip.y - 6, p), ph: 1 }; }
+  if (l < 2.1) { const p = E.io((l - 1.2) / .9); return { x: lerp(tip.x, vx, p), y: lerp(tip.y + 30, 790, p), ph: 2 }; }
+  const x = vx + (l - 2.1) * 190; if (x > W + 40) return null;
+  return { x, y: 815 + 5 * Math.sin(l * 4), ph: 3 };
+}
+const MIGA_NUT = { ts: 3.2, v: 8, sx: .3, sy: .4 };
+function sIntestine(lt) {
+  ctx.fillStyle = linear(0, 0, 0, H, [[0, '#5a1a33'], [.5, '#2a0b18'], [1, '#4a1428']]); ctx.fillRect(0, 0, W, H);
+  // quimo que fluye
+  for (let k = 0; k < 42; k++) {
+    const x = frac(rnd(k) + lt * .05) * (W + 300) - 150, y = 290 + 250 * rnd(k + 9) + 18 * Math.sin(lt * 1.3 + k), r = 34 + 30 * rnd(k + 3);
+    ctx.fillStyle = 'rgba(236,214,166,.15)'; circle(x, y, r); ctx.fill();
+  }
+  const fa = seg(lt, 9.4, 10.4);
+  if (fa > 0) for (let k = 0; k < 16; k++) {
+    const x = frac(rnd(k + 200) + lt * .09) * (W + 200) - 100, y = 330 + 200 * rnd(k + 210);
+    ctx.save(); ctx.globalAlpha = fa; ctx.translate(x, y); ctx.rotate(lt * (1 + rnd(k)) + k);
+    rr(-22, -6, 44, 12, 5); ctx.fillStyle = '#8a5a2b'; ctx.fill(); ctx.restore();
+  }
+  // vellosidades de arriba (colgando)
+  VT.forEach((v, k) => { ctx.save(); ctx.translate(v.x, 40); ctx.scale(1, -1); villus(v.h, 8 * Math.sin(lt * 1.2 + k), true, .5); ctx.restore(); });
+  ctx.fillStyle = '#b8405e'; ctx.fillRect(0, 0, W, 44);
+  // vaso sanguíneo inferior
+  tube(makePath([[-60, 815], [W + 60, 815]]), 46, '#7a1024', '#b5183a', 12);
+  for (let k = 0; k < 16; k++) { const x = frac(k / 16 + lt * .085) * (W + 200) - 100; drawRBC(x, 815, 19, { tilt: .55, rot: .3 }); }
+  // vellosidades de abajo
+  VB.forEach((v, k) => { ctx.save(); ctx.translate(v.x, V_BASE); villus(v.h, 10 * Math.sin(lt * 1.4 + k * .8), true); ctx.restore(); });
+  ctx.fillStyle = '#b8405e'; ctx.fillRect(0, V_BASE - 2, W, 12);
+  // nutrientes
+  NUTS.forEach(n => { const p = nutPos(n, lt); if (p) drawNut(p.x, p.y, 11, { alpha: p.ph === 1 ? seg(lt - n.ts, 0, .3) : 1 }); });
+  const mp = nutPos(MIGA_NUT, lt);
+  if (mp) {
+    drawNut(mp.x, mp.y, 20, { face: true, t: lt });
+    bubble(inout(lt, 3.5, 6.6, .3), '¡Ahora soy un nutriente!', mp.x, mp.y - 22, mp.x > 1300 ? -1 : 1, '#ffe7a3', 28);
+  }
+  txt('sangre →', 1880, 824, { size: 24, w: 700, color: '#ffd6de', align: 'right' });
+  label(inout(lt, 1.4, 10.2), 'Vellosidades intestinales', VB[13].x, vTip(13, lt).y + 60, 1290, 330, '#ffb6c5');
+  label(inout(lt, 4.3, 10.2), 'Capilares sanguíneos', VB[4].x - 18, 700, 700, 480, COL.cir, 'aquí los nutrientes pasan a la sangre');
+  // tarjeta: tamaño del intestino
+  const ca = inout(lt, .6, 7);
+  if (ca > 0) {
+    ctx.save(); ctx.globalAlpha = ca; rr(60, 70, 580, 150, 16); ctx.fillStyle = 'rgba(24,14,26,.93)'; ctx.fill(); ctx.strokeStyle = COL.dig; ctx.lineWidth = 3; ctx.stroke();
+    txt('Dentro del intestino delgado', 88, 120, { size: 32, w: 700, color: COL.dig });
+    txt('Un tubo de más de 6 metros', 88, 162, { size: 26, color: '#eadde5' });
+    txt('enrollado dentro de tu barriga.', 88, 196, { size: 26, color: '#eadde5' });
+    ctx.restore();
+  }
+  // tarjeta: intestino grueso
+  const ia = E.out(seg(lt, 10.6, 11.4));
+  if (ia > 0) {
+    ctx.save(); ctx.globalAlpha = ia; ctx.translate(0, 30 * (1 - ia));
+    rr(1230, 70, 630, 370, 18); ctx.fillStyle = 'rgba(24,14,26,.95)'; ctx.fill(); ctx.strokeStyle = COL.dig; ctx.lineWidth = 3; ctx.stroke();
+    txt('Intestino grueso', 1262, 124, { size: 36, w: 800, fam: FD, color: COL.dig });
+    const LI = makePath([[1300, 400], [1290, 280], [1300, 180], [1380, 170], [1460, 180], [1470, 280], [1455, 360], [1400, 380], [1385, 420]]);
+    ctx.lineCap = 'round'; tracePath(LI); ctx.strokeStyle = '#a2475f'; ctx.lineWidth = 30; ctx.stroke(); tracePath(LI); ctx.strokeStyle = '#3a1020'; ctx.lineWidth = 18; ctx.stroke();
+    for (let k = 0; k < 7; k++) { const p = at(LI, frac(k / 7 + lt * .12)); ctx.fillStyle = mixHex('#c79a5b', '#6b4420', p.y > 360 ? 1 : .3); circle(p.x, p.y, 7); ctx.fill(); }
+    txt('ano', 1400, 432, { size: 22, w: 700, color: '#ffd9c2', base: 'middle' });
+    ['Recupera el agua.', 'Con lo que no sirve', 'se forman las heces,', 'que salen por el', 'recto y el ano.'].forEach((s, i) => txt(s, 1530, 200 + i * 42, { size: 28, color: '#f1e4ea' }));
+    ctx.restore();
+  }
+}
+/* =========================================================
+   ESCENA 5 · Aparato respiratorio
+   ========================================================= */
+const TREE = (() => {
+  const segs = [];
+  function br(x, y, a, len, w, d, lin) {
+    const x2 = x + Math.cos(a) * len, y2 = y + Math.sin(a) * len;
+    segs.push({ x, y, x2, y2, w, d, lin });
+    if (d >= 6) return;
+    const sp = .36 + .12 * rnd(segs.length * 3.1);
+    br(x2, y2, a - sp, len * .74, w * .7, d + 1, lin + '0');
+    br(x2, y2, a + sp, len * .74, w * .7, d + 1, lin + '1');
+  }
+  br(1060, 470, Math.PI * .72, 118, 30, 1, 'L');
+  br(1060, 470, Math.PI * .28, 118, 30, 1, 'R');
+  return segs;
+})();
+const OXI_LINE = 'R01011';
+const OXI_PATH = (() => {
+  const pts = [[1060, 0], [1060, 150], [1060, 300], [1060, 470]];
+  for (let i = 1; i <= OXI_LINE.length; i++) { const s = TREE.find(s => s.lin === OXI_LINE.slice(0, i)); pts.push([s.x2, s.y2]); }
+  return makePath(pts, false, 14);
+})();
+const OXI_D3 = (() => { let best = 0; OXI_PATH.pts.forEach((p, i) => { if (Math.abs(p[1] - 470) < 2 && Math.abs(p[0] - 1060) < 2) best = OXI_PATH.len[i]; }); return best / OXI_PATH.total; })();
+const LUNG_L = makePath([[1010, 480], [900, 440], [760, 500], [680, 640], [690, 800], [800, 852], [960, 842], [1022, 760], [1032, 600]], true, 12);
+const LUNG_R = makePath([[1110, 480], [1220, 440], [1360, 500], [1440, 640], [1430, 800], [1320, 852], [1190, 845], [1140, 790], [1125, 700], [1098, 600]], true, 12);
+const ROUTE = ['Fosas nasales', 'Faringe', 'Laringe', 'Tráquea', 'Bronquios', 'Bronquiolos', 'Alvéolos'];
+function lungsA(lt) {
+  bg('#1c2238', '#08070f', 1060, 520);
+  floaters(lt, 30, 'rgba(160,220,255,.5)', 21, 3, 20);
+  const u = E.io(seg(lt, .6, 8.6)), op = at(OXI_PATH, u);
+  const bs = 1 + .035 * Math.sin(lt * 1.6);
+  // pulmones + árbol bronquial (respiran)
+  ctx.save(); ctx.translate(1060, 470); ctx.scale(bs, bs); ctx.translate(-1060, -470);
+  [LUNG_L, LUNG_R].forEach(P => { fillPoly(P); ctx.fillStyle = radial(1060, 650, 40, 520, [[0, 'rgba(255,170,190,.30)'], [1, 'rgba(255,140,170,.12)']]); ctx.fill(); ctx.strokeStyle = '#f6a3b8'; ctx.lineWidth = 6; ctx.stroke(); });
+  ctx.lineCap = 'round';
+  const passed = u > OXI_D3 ? (u - OXI_D3) / (1 - OXI_D3) : -1;
+  TREE.forEach(s => {
+    const onLine = OXI_LINE.startsWith(s.lin) && passed >= 0 && (s.d - 1) / 6 <= passed;
+    ctx.strokeStyle = onLine ? COL.res : 'rgba(250,215,225,.8)'; ctx.lineWidth = s.w + (onLine ? 3 : 0);
+    ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x2, s.y2); ctx.stroke();
+    if (s.d === 6) { ctx.fillStyle = 'rgba(255,190,205,.85)'; circle(s.x2, s.y2, 8); ctx.fill(); }
+  });
+  ctx.restore();
+  // vía aérea superior
+  tube(makePath([[1060, 40], [1060, 150]]), 64, '#e7a3b3', '#2a1426', 14);
+  tube(makePath([[1060, 150], [1060, 235]]), 78, '#e7a3b3', '#2a1426', 14);
+  tube(makePath([[1060, 235], [1060, 300]]), 88, '#e7a3b3', '#2a1426', 14);
+  tube(makePath([[1060, 300], [1060, 478]]), 66, '#e7a3b3', '#2a1426', 14);
+  ctx.strokeStyle = 'rgba(245,215,225,.5)'; ctx.lineWidth = 8;
+  for (let y = 318; y < 470; y += 22) { ctx.beginPath(); ctx.moveTo(1030, y); ctx.quadraticCurveTo(1060, y + 8, 1090, y); ctx.stroke(); }
+  ctx.fillStyle = '#e7a3b3'; [-1, 1].forEach(s => { ctx.beginPath(); ctx.moveTo(1060 + s * 44, 255); ctx.lineTo(1060 + s * 8, 268); ctx.lineTo(1060 + s * 44, 281); ctx.fill(); });
+  // nariz
+  ctx.fillStyle = '#f0b4a4'; ctx.beginPath(); ctx.moveTo(1060, -20); ctx.quadraticCurveTo(1110, 40, 1120, 62); ctx.quadraticCurveTo(1060, 86, 1000, 62); ctx.quadraticCurveTo(1010, 40, 1060, -20); ctx.fill();
+  ctx.fillStyle = '#5a2a33'; [-1, 1].forEach(s => { ctx.beginPath(); ctx.ellipse(1060 + s * 26, 58, 14, 8, s * .3, 0, TAU); ctx.fill(); });
+  // aire que entra
+  for (let k = 0; k < 12; k++) { const p = frac(k / 12 + lt * .35); ctx.fillStyle = `rgba(159,224,255,${.7 * (1 - p)})`; circle(1060 + 14 * Math.sin(k * 2 + lt * 3), 20 + p * 440, 5); ctx.fill(); }
+  drawOxi(op.x, op.y, 30, { t: lt, rot: Math.sin(lt * 2) * .2, lab: true });
+  // ruta
+  let step = 0;
+  if (op.y < 150) step = 0; else if (op.y < 235) step = 1; else if (op.y < 300) step = 2; else if (u <= OXI_D3 + .001) step = 3;
+  else step = ((u - OXI_D3) / (1 - OXI_D3) < .54) ? 4 : 5;
+  if (u >= .999) step = 6;
+  txt('La ruta del aire', 80, 110, { size: 42, w: 800, fam: FD, color: COL.res, alpha: seg(lt, .2, .8) });
+  ROUTE.forEach((r, k) => {
+    const y = 180 + k * 80, a = seg(lt, .3 + k * .12, .8 + k * .12); if (a <= 0) return;
+    ctx.save(); ctx.globalAlpha = a;
+    const done = k < step, cur = k === step;
+    if (cur) { ctx.strokeStyle = COL.res; ctx.lineWidth = 4; circle(106, y - 11, 18 + 4 * Math.sin(lt * 6)); ctx.stroke(); }
+    ctx.fillStyle = done || cur ? COL.res : 'rgba(255,255,255,.15)'; circle(106, y - 11, 13); ctx.fill();
+    if (done) { ctx.strokeStyle = '#08131f'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(99, y - 11); ctx.lineTo(104, y - 5); ctx.lineTo(114, y - 17); ctx.stroke(); }
+    txt(r, 140, y, { size: 34, w: cur ? 700 : 400, color: cur ? '#fff' : done ? '#bfe9ff' : '#8f8198' });
+    ctx.restore();
+  });
+  label(inout(lt, 1.2, 9), 'Pulmones', 1400, 600, 1560, 470, '#f6a3b8', 'se hinchan y se deshinchan');
+}
+const ALV = [[960, 300, 105], [838, 375, 100], [1082, 375, 100], [885, 505, 105], [1035, 505, 105], [960, 420, 95], [760, 485, 80], [1160, 485, 80]];
+const CAPL = makePath([[240, 870], [520, 700], [760, 640], [960, 652], [1160, 640], [1400, 700], [1680, 870]]);
+function lungsB(lt) {
+  bg('#1a1830', '#07060e', 960, 480);
+  floaters(lt, 30, 'rgba(160,220,255,.4)', 31, 3, 10);
+  tube(makePath([[960, -60], [960, 120], [960, 230]]), 62, '#e7a3b3', '#2a1426', 14);
+  // capilar: llega con poco oxígeno (violeta) y sale con mucho (rojo)
+  tracePath(CAPL); ctx.lineCap = 'round'; ctx.strokeStyle = '#3a0f1e'; ctx.lineWidth = 84; ctx.stroke();
+  for (let i = 0; i < 60; i++) { tracePath(CAPL, i / 60, (i + 1.3) / 60); ctx.strokeStyle = mixHex('#5b4ad0', '#c8203e', clamp((i / 60 - .3) / .4)); ctx.lineWidth = 64; ctx.lineCap = 'butt'; ctx.stroke(); }
+  const bs = 1 + .03 * Math.sin(lt * 1.6);
+  ALV.forEach(([x, y, r], k) => {
+    const rr2 = r * bs;
+    ctx.fillStyle = radial(x - rr2 * .3, y - rr2 * .3, 4, rr2, [[0, 'rgba(255,225,235,.20)'], [1, 'rgba(255,160,185,.45)']]); circle(x, y, rr2); ctx.fill();
+    ctx.strokeStyle = '#ffc2d0'; ctx.lineWidth = 4; ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,70,105,.5)'; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.ellipse(x, y, rr2 * .95, rr2 * .45, .4 + k, 0, Math.PI); ctx.stroke();
+  });
+  for (let k = 0; k < 12; k++) { const u = frac(k / 12 + lt * .07), p = at(CAPL, u); drawRBC(p.x, p.y, 22, { tint: 1 - clamp((u - .3) / .4), rot: p.ang, tilt: .5 }); }
+  // intercambio de gases (pequeñas partículas)
+  for (let k = 0; k < 10; k++) {
+    const p = frac(k / 10 + lt * .35), x = 820 + 300 * rnd(k + 5);
+    ctx.fillStyle = `rgba(159,224,255,${.8 * Math.sin(p * Math.PI)})`; circle(x, lerp(540, 640, p), 6); ctx.fill();
+    ctx.fillStyle = `rgba(190,196,206,${.8 * Math.sin(p * Math.PI)})`; circle(x + 30, lerp(640, 540, p), 6); ctx.fill();
+  }
+  // glóbulo rojo especial que recoge a Oxi
+  const us = .5 + (lt - 12.8) * .07;
+  let sp = null;
+  if (us >= 0 && us <= 1) { sp = at(CAPL, us); drawRBC(sp.x, sp.y, 28, { tint: 1 - clamp((us - .3) / .4), rot: sp.ang, tilt: .55 }); }
+  let ox, oy;
+  if (lt < 11.5) { const p = E.io(seg(lt, 9.8, 11.5)); ox = 960; oy = lerp(-50, 330, p); }
+  else if (lt < 12.8) { const p = E.io(seg(lt, 11.5, 12.8)), c = at(CAPL, .5); ox = lerp(960, c.x, p); oy = lerp(330, c.y - 30, p); }
+  else { ox = sp ? sp.x : 2000; oy = sp ? sp.y - 30 : 0; }
+  drawOxi(ox, oy, 30, { t: lt, lab: lt < 12.8 });
+  // CO2 saliendo
+  if (lt > 10.4) {
+    let cx2, cy2; const c0 = at(CAPL, .36);
+    if (lt < 12) { const p = E.io(seg(lt, 10.4, 12)); cx2 = lerp(c0.x, 880, p); cy2 = lerp(c0.y, 470, p); }
+    else { const p = E.io(seg(lt, 12, 15)); cx2 = lerp(880, 960, p); cy2 = lerp(470, -80, p); }
+    drawCO2(cx2, cy2, 28, { t: lt, lab: true });
+  }
+  label(inout(lt, 10.2, 16.6), 'Alvéolos', 1110, 330, 1400, 200, '#ffc2d0', 'saquitos llenos de aire');
+  label(inout(lt, 10.6, 16.6), 'Capilar sanguíneo', 1400, 700, 1480, 520, COL.cir);
+  label(inout(lt, 12.2, 16.6), 'El oxígeno pasa a la sangre', 960, 600, 560, 300, COL.res);
+  label(inout(lt, 12.9, 16.6), 'El dióxido de carbono sale', 900, 420, 560, 160, '#dfe5ec', 'con el aire que expulsas');
+}
+function sLungs(lt) {
+  const A0 = 9.3, A1 = 10.1;
+  if (lt < A0) return lungsA(lt);
+  if (lt >= A1) return lungsB(lt);
+  lungsA(A0);
+  const end = at(OXI_PATH, 1), p = E.io(seg(lt, A0, A1));
+  ctx.save(); circle(end.x, end.y, p * 2300); ctx.clip(); lungsB(lt); ctx.restore();
+}
+
+/* =========================================================
+   ESCENA 6 · Aparato circulatorio
+   ========================================================= */
+const PUL = makePath([[905, 385], [820, 300], [780, 190], [840, 110], [960, 95], [1080, 110], [1140, 190], [1100, 300], [1015, 385]]);
+const BOD = makePath([[1010, 520], [1180, 560], [1380, 650], [1420, 760], [1250, 805], [960, 815], [670, 805], [500, 760], [540, 650], [740, 560], [910, 520]]);
+const CELLS6 = [[700, 735], [800, 745], [900, 732], [1020, 745], [1120, 735], [1220, 745]];
+function vessel(P, colAt, w = 38) {
+  ctx.lineCap = 'round'; tracePath(P); ctx.strokeStyle = '#2a0a14'; ctx.lineWidth = w + 14; ctx.stroke();
+  ctx.lineCap = 'butt';
+  for (let i = 0; i < 80; i++) { tracePath(P, i / 80, Math.min(1, (i + 1.4) / 80)); ctx.strokeStyle = colAt(i / 80); ctx.lineWidth = w; ctx.stroke(); }
+}
+const bodyTint = u => u < .38 ? 0 : u > .62 ? 1 : (u - .38) / .24;
+const pulTint = u => u < .45 ? 1 : u > .55 ? 0 : 1 - (u - .45) / .1;
+function beatAt(t) { const f = frac(t / .8); return gauss(f - .06, .035) + .6 * gauss(f - .28, .035); }
+function sHeart(lt) {
+  bg('#2a0a16', '#09030a', 960, 460);
+  floaters(lt, 24, 'rgba(255,120,150,.4)', 41, 3, 8);
+  // pulmones (arriba)
+  [[905, 95], [1015, 95]].forEach(([x, y]) => { ctx.beginPath(); ctx.ellipse(x, y, 52, 62, 0, 0, TAU); ctx.fillStyle = 'rgba(92,200,255,.18)'; ctx.fill(); ctx.strokeStyle = COL.res; ctx.lineWidth = 4; ctx.stroke(); });
+  txt('pulmones', 960, 22, { size: 26, w: 700, color: COL.res, align: 'center', base: 'top' });
+  // células del cuerpo
+  CELLS6.forEach(([x, y], k) => miniCell(x, y, 36, 'rgba(202,166,255,', .75, k + 3, lt));
+  ctx.strokeStyle = 'rgba(255,90,120,.45)'; ctx.lineWidth = 4;
+  CELLS6.forEach(([x, y]) => { ctx.beginPath(); ctx.moveTo(x, y + 34); ctx.quadraticCurveTo(x + 14, y + 55, x, 808); ctx.stroke(); });
+  txt('células del cuerpo', 960, 680, { size: 28, w: 700, color: '#d9c6ff', align: 'center' });
+  vessel(PUL, u => mixHex('#6b5cff', '#e0263f', 1 - pulTint(u)));
+  vessel(BOD, u => mixHex('#e0263f', '#6b5cff', bodyTint(u)));
+  const surge = .012 * Math.sin(TAU * lt / .8);
+  for (let k = 0; k < 26; k++) {
+    const u = frac(k / 26 + lt * .06 + surge), p = at(BOD, u), tn = bodyTint(u);
+    drawRBC(p.x, p.y, 16, { tint: tn, rot: p.ang, tilt: .5 });
+    if (u < .4 && k % 2 === 0) { ctx.fillStyle = '#9fe0ff'; circle(p.x + 9, p.y - 11, 6); ctx.fill(); }
+    if (u < .4 && k % 3 === 0) drawNut(p.x - 10, p.y + 10, 5);
+    if (u > .6 && k % 2 === 0) { ctx.fillStyle = '#b9bfca'; circle(p.x + 9, p.y - 11, 6); ctx.fill(); }
+  }
+  for (let k = 0; k < 14; k++) {
+    const u = frac(k / 14 + lt * .07 + surge), p = at(PUL, u), tn = pulTint(u);
+    drawRBC(p.x, p.y, 16, { tint: tn, rot: p.ang, tilt: .5 });
+    if (k % 2 === 0) { ctx.fillStyle = u < .5 ? '#b9bfca' : '#9fe0ff'; circle(p.x + 9, p.y - 11, 6); ctx.fill(); }
+  }
+  // corazón
+  const sc = 1 + .075 * beatAt(lt);
+  ctx.save(); ctx.translate(960, 452); ctx.scale(sc, sc);
+  ctx.fillStyle = radial(0, 0, 20, 220, [[0, 'rgba(255,59,92,.35)'], [1, 'rgba(255,59,92,0)']]); circle(0, 0, 220); ctx.fill();
+  heartPath(118); ctx.fillStyle = radial(-30, -40, 10, 170, [[0, '#ff6d86'], [.6, '#d4203f'], [1, '#8f0f28']]); ctx.fill();
+  ctx.save(); heartPath(118); ctx.clip(); ctx.fillStyle = 'rgba(107,92,255,.33)'; ctx.fillRect(-200, -200, 200, 400); ctx.restore();
+  heartPath(118); ctx.strokeStyle = '#5c0a1c'; ctx.lineWidth = 5; ctx.stroke();
+  ctx.strokeStyle = 'rgba(90,10,30,.6)'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(0, -46); ctx.quadraticCurveTo(10, 30, 0, 100); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,.28)'; ctx.beginPath(); ctx.ellipse(-60, -55, 26, 14, -.6, 0, TAU); ctx.fill();
+  ctx.restore();
+  // Miga (nutriente) viaja hasta una célula
+  const um = lerp(0, .45, E.io(seg(lt, 2, 11.5))), mp = at(BOD, um);
+  let mx = mp.x, my = mp.y - 4;
+  const cellT = CELLS6[3], pc = E.io(seg(lt, 11.5, 13.5));
+  mx = lerp(mx, cellT[0], pc); my = lerp(my, cellT[1], pc);
+  drawNut(mx, my, 17 + 6 * pc, { face: true, t: lt });
+  bubble(inout(lt, 8.8, 11.2, .3), '¡Ya casi llego!', mx, my - 20, -1, '#ffe7a3', 28);
+  // leyenda
+  const la = seg(lt, .6, 1.2);
+  ctx.save(); ctx.globalAlpha = la;
+  ctx.save(); ctx.translate(96, 82); const bs2 = 1 + .15 * beatAt(lt); ctx.scale(bs2, bs2); heartPath(20); ctx.fillStyle = COL.cir; ctx.fill(); ctx.restore();
+  txt('Late entre 70 y 100 veces', 136, 80, { size: 30, w: 700 });
+  txt('por minuto (en reposo)', 136, 116, { size: 26, color: '#d9c9d4' });
+  ctx.fillStyle = '#e0263f'; circle(96, 172, 12); ctx.fill(); txt('sangre con oxígeno', 136, 182, { size: 26, color: '#f1e4ea' });
+  ctx.fillStyle = '#6b5cff'; circle(96, 218, 12); ctx.fill(); txt('sangre con dióxido de carbono', 136, 228, { size: 26, color: '#f1e4ea' });
+  ctx.restore();
+  const pa = at(BOD, .12), pv = at(BOD, .9);
+  label(inout(lt, .5, 14.4), 'Corazón', 1050, 400, 1290, 300, '#ff8fa3', 'bombea la sangre sin parar');
+  label(inout(lt, 3.6, 14.4), 'Arterias', pa.x, pa.y, 1480, 470, '#ff8fa3', 'la sangre sale del corazón');
+  label(inout(lt, 4.6, 14.4), 'Venas', pv.x, pv.y, 440, 470, '#a79cff', 'la sangre vuelve al corazón');
+  const pc2 = at(BOD, .44);
+  label(inout(lt, 9, 14.4), 'Capilares', pc2.x, pc2.y, 1560, 740, '#ffb0c0', 'llegan a cada célula');
+}
+
+/* =========================================================
+   ESCENA 7 · La célula
+   ========================================================= */
+const CC = [1000, 450], CRX = 470, CRY = 320;
+const memPt = (a, f = 1) => [CC[0] + Math.cos(a) * CRX * f, CC[1] + Math.sin(a) * CRY * f];
+const A_IN = 3.08, A_OUT = 2.72;
+const CAPC = makePath([[250, -60], [300, 250], [330, 520], [290, 800], [240, 1000]]);
+const IN_N = makePath([[at(CAPC, .42).x, at(CAPC, .42).y], [440, 440], memPt(A_IN), [700, 520], [800, 552]]);
+const IN_O = makePath([[at(CAPC, .47).x, at(CAPC, .47).y], [440, 500], memPt(A_IN + .06), [700, 570], [812, 574]]);
+const OUT_C = makePath([[830, 560], [690, 600], memPt(A_OUT), [430, 650], [at(CAPC, .66).x, at(CAPC, .66).y]]);
+const OUT_W = makePath([[810, 575], [680, 630], memPt(A_OUT + .05), [430, 690], [at(CAPC, .7).x, at(CAPC, .7).y]]);
+function mito(x, y, rot, s = 1, glow = 0) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s);
+  if (glow > 0) { ctx.fillStyle = radial(0, 0, 10, 180, [[0, `rgba(255,224,102,${.7 * glow})`], [1, 'rgba(255,224,102,0)']]); circle(0, 0, 180); ctx.fill(); }
+  ctx.beginPath(); ctx.ellipse(0, 0, 58, 28, 0, 0, TAU); ctx.fillStyle = glow > 0 ? mixHex('#ffb48a', '#ffe066', glow) : '#ffb48a'; ctx.fill(); ctx.strokeStyle = '#d0643a'; ctx.lineWidth = 5; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-44, 0); for (let i = 0; i < 8; i++) ctx.lineTo(-44 + (i + .5) * 11, i % 2 ? 16 : -16); ctx.lineTo(44, 0);
+  ctx.strokeStyle = '#d0643a'; ctx.lineWidth = 4; ctx.stroke(); ctx.restore();
+}
+function cellType(k, x, y, lt) {
+  ctx.save(); ctx.translate(x, y);
+  if (k === 0) { // neurona
+    ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    for (let i = 0; i < 6; i++) { const a = i / 6 * TAU + .3; ctx.beginPath(); ctx.moveTo(0, 0); const ex = Math.cos(a) * 34, ey = Math.sin(a) * 34; ctx.lineTo(ex, ey); ctx.lineTo(ex + Math.cos(a + .5) * 12, ey + Math.sin(a + .5) * 12); ctx.moveTo(ex, ey); ctx.lineTo(ex + Math.cos(a - .5) * 12, ey + Math.sin(a - .5) * 12); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(18, 6); ctx.bezierCurveTo(40, 20, 50, -10, 64, 4); ctx.stroke();
+    circle(0, 0, 18); ctx.fillStyle = '#ffd166'; ctx.fill(); circle(2, -1, 7); ctx.fillStyle = '#9a6a00'; ctx.fill();
+  } else if (k === 1) { drawRBC(0, 0, 32, { tilt: .62, rot: .4 }); }
+  else if (k === 2) { // muscular
+    ctx.beginPath(); ctx.ellipse(0, 0, 66, 18, 0, 0, TAU); ctx.fillStyle = '#ff7a8a'; ctx.fill(); ctx.strokeStyle = '#b8344a'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.ellipse(0, 0, 66, 18, 0, 0, TAU); ctx.clip(); ctx.strokeStyle = 'rgba(140,20,40,.55)'; ctx.lineWidth = 3;
+    for (let i = -60; i < 66; i += 9) { ctx.beginPath(); ctx.moveTo(i, -20); ctx.lineTo(i, 20); ctx.stroke(); } ctx.restore();
+    [-26, 22].forEach(nx => { ctx.beginPath(); ctx.ellipse(nx, 0, 8, 5, 0, 0, TAU); ctx.fillStyle = '#6b1e3a'; ctx.fill(); });
+  } else { // piel
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) { rr(-60 + i * 40 + j * 20, -26 + j * 26, 38, 24, 8); ctx.fillStyle = '#f3c6a5'; ctx.fill(); ctx.strokeStyle = '#b87a5a'; ctx.lineWidth = 3; ctx.stroke(); circle(-41 + i * 40 + j * 20, -14 + j * 26, 4); ctx.fillStyle = '#8a4a36'; ctx.fill(); }
+  }
+  ctx.restore();
+}
+function sCell(lt) {
+  bg('#1d1230', '#07040c', 1000, 450);
+  floaters(lt, 30, 'rgba(210,180,255,.35)', 51, 3, 6);
+  // capilar
+  tube(CAPC, 84, '#6e1026', '#b5183a', 12);
+  for (let k = 0; k < 9; k++) { const u = frac(k / 9 + lt * .09), p = at(CAPC, u); drawRBC(p.x, p.y, 24, { rot: p.ang, tilt: .5 }); }
+  // membrana con hoyuelo cuando algo la atraviesa
+  const pin = bump(lt, 5.2, .9), pout = bump(lt, 11.4, .9);
+  const flash = bump(lt, 8, 1.2);
+  ctx.beginPath();
+  for (let k = 0; k <= 120; k++) {
+    const a = k / 120 * TAU;
+    let f = 1 + .03 * Math.sin(3 * a + lt) + .02 * Math.sin(5 * a - lt * 1.3);
+    const dIn = Math.atan2(Math.sin(a - A_IN), Math.cos(a - A_IN)), dOut = Math.atan2(Math.sin(a - A_OUT), Math.cos(a - A_OUT));
+    f *= 1 - .06 * pin * gauss(dIn, .08) - .06 * pout * gauss(dOut, .08);
+    const [x, y] = memPt(a, f); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = radial(1000, 450, 40, 520, [[0, `rgba(210,180,255,${.24 + .25 * flash})`], [1, `rgba(170,120,240,${.14 + .15 * flash})`]]); ctx.fill();
+  ctx.strokeStyle = '#e7c8ff'; ctx.lineWidth = 12; ctx.stroke(); ctx.strokeStyle = '#8e62cf'; ctx.lineWidth = 4; ctx.stroke();
+  // citoplasma: granitos y retículo
+  for (let k = 0; k < 60; k++) { const a = rnd(k + 300) * TAU, r = Math.sqrt(rnd(k + 400)) * .85; const [x, y] = memPt(a, r); ctx.fillStyle = 'rgba(230,210,255,.35)'; circle(x + 3 * Math.sin(lt + k), y, 3 + 2 * rnd(k)); ctx.fill(); }
+  ctx.strokeStyle = 'rgba(200,160,255,.35)'; ctx.lineWidth = 5;
+  for (let r = 0; r < 3; r++) { ctx.beginPath(); for (let a = -1.2; a < .6; a += .05) { const R = 150 + r * 22 + 8 * Math.sin(a * 12 + r); const x = 1130 + Math.cos(a) * R, y = 400 + Math.sin(a) * R; a === -1.2 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); }
+  // núcleo
+  ctx.beginPath(); ctx.arc(1130, 400, 120, 0, TAU); ctx.fillStyle = radial(1100, 370, 10, 130, [[0, '#a07ae0'], [1, '#5d3aa0']]); ctx.fill();
+  ctx.setLineDash([22, 10]); ctx.strokeStyle = '#d9c2ff'; ctx.lineWidth = 6; ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle = 'rgba(255,220,250,.6)'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+  for (let j = 0; j < 6; j++) { ctx.beginPath(); for (let i = 0; i < 14; i++) { const x = 1060 + 140 * rnd(j * 20 + i) , y = 340 + 120 * rnd(j * 20 + i + 7); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); }
+  circle(1150, 390, 26); ctx.fillStyle = '#3d2170'; ctx.fill();
+  // orgánulos
+  const g1 = clamp(bump(lt, 8.2, 1.8) * 1.2);
+  mito(760, 300, .9); mito(1290, 610, -.4); mito(1330, 280, .2, .8);
+  [[930, 690], [1180, 170], [640, 420], [1430, 460]].forEach(([x, y], k) => { circle(x, y, 16 + 4 * k % 3); ctx.fillStyle = 'rgba(255,190,140,.5)'; ctx.fill(); ctx.strokeStyle = '#e8a070'; ctx.lineWidth = 3; ctx.stroke(); });
+  // nutriente (Miga) y oxígeno entran
+  const pe = E.io(seg(lt, 3, 6.8)), inside = lt < 7.3;
+  if (lt >= 2.6 && inside) {
+    const n = at(IN_N, pe), o = at(IN_O, clamp(pe * 1.02));
+    const shrink = 1 - seg(lt, 6.8, 7.3);
+    drawOxi(o.x, o.y, 26 * shrink, { t: lt, lab: shrink > .9 });
+    drawNut(n.x, n.y, 18 * shrink, { face: true, t: lt });
+  }
+  mito(820, 560, .3, 1 + .15 * g1, g1);
+  // ¡energía!
+  const eb = seg(lt, 7.3, 10);
+  if (eb > 0 && eb < 1) {
+    ctx.save(); ctx.lineCap = 'round';
+    for (let k = 0; k < 18; k++) { const a = k / 18 * TAU + .2, l0 = 60 + 200 * E.out(eb) * .3, l1 = 60 + 260 * E.out(eb); ctx.strokeStyle = `rgba(255,224,102,${1 - eb})`; ctx.lineWidth = 8 * (1 - eb) + 2; ctx.beginPath(); ctx.moveTo(820 + Math.cos(a) * l0, 560 + Math.sin(a) * l0); ctx.lineTo(820 + Math.cos(a) * l1, 560 + Math.sin(a) * l1); ctx.stroke(); }
+    for (let k = 0; k < 14; k++) { const a = rnd(k + 900) * TAU, d = 80 + 360 * E.out(eb) * (.5 + .5 * rnd(k + 910)); ctx.fillStyle = `rgba(255,240,170,${1 - eb})`; circle(820 + Math.cos(a) * d, 560 + Math.sin(a) * d, 6); ctx.fill(); }
+    ctx.restore();
+  }
+  const ea = E.back(seg(lt, 7.5, 8.1)) * (1 - seg(lt, 10.6, 11.2));
+  if (ea > 0) {
+    ctx.save(); ctx.translate(820, 395); ctx.scale(ea, ea); ctx.rotate(-.06);
+    ctx.lineJoin = 'round'; ctx.font = font(104, 800, FD); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.strokeStyle = '#5a2a00'; ctx.lineWidth = 16; ctx.strokeText('¡ENERGÍA!', 0, 0);
+    ctx.fillStyle = '#ffe066'; ctx.fillText('¡ENERGÍA!', 0, 0); ctx.restore();
+  }
+  // desechos salen
+  if (lt > 9.8) {
+    const po = E.io(seg(lt, 9.8, 13)), c = at(OUT_C, po), w = at(OUT_W, clamp(po * .97));
+    const cont = seg(lt, 13, 16), cc2 = at(CAPC, lerp(.66, .95, cont)), cw = at(CAPC, lerp(.7, .99, cont));
+    const cx2 = po >= 1 ? cc2.x : c.x, cy2 = po >= 1 ? cc2.y : c.y, wx = po >= 1 ? cw.x : w.x, wy = po >= 1 ? cw.y : w.y;
+    drawCO2(cx2, cy2, 24, { t: lt, lab: po < 1 });
+    drawWaste(wx, wy, 16, { rot: lt });
+  }
+  // ecuación
+  const parts = [['nutrientes', COL.gold, 3], [' + ', '#fff', 4], ['oxígeno', COL.res, 4], ['  →  ', '#fff', 7.6], ['energía', '#ffe066', 7.6], [' + ', '#fff', 10.4], ['desechos', '#d9c4a0', 10.4]];
+  const eqA = seg(lt, 2.8, 3.3);
+  if (eqA > 0) {
+    ctx.save(); ctx.globalAlpha = eqA; rr(520, 22, 960, 84, 42); ctx.fillStyle = 'rgba(14,8,20,.88)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.18)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.font = font(42, 700); const tot = parts.reduce((s, p) => s + ctx.measureText(p[0]).width, 0); let x = 1000 - tot / 2;
+    parts.forEach(([s, c, t0]) => { const a = seg(lt, t0, t0 + .4); txt(s, x, 64, { size: 42, w: 700, color: c, base: 'middle', alpha: a }); ctx.font = font(42, 700); x += ctx.measureText(s).width; });
+    ctx.restore();
+  }
+  // etiquetas de las partes
+  const lo = 12.8;
+  const mem = memPt(-.75);
+  label(inout(lt, .3, lo), 'Membrana', mem[0], mem[1], 1560, 150, '#e7c8ff', 'controla lo que entra y sale');
+  label(inout(lt, .9, lo), 'Citoplasma', 1180, 660, 1560, 720, '#d7c2ff', 'un líquido con orgánulos');
+  label(inout(lt, 1.5, lo), 'Núcleo', 1200, 330, 1560, 430, '#b996ff', 'guarda el material genético');
+  label(inout(lt, 2.1, lo), 'Orgánulos', 760, 300, 480, 190, '#ffb48a', 'como las mitocondrias');
+  label(inout(lt, 5.6, 10.4), 'Mitocondria', 800, 590, 600, 760, '#ffe066', 'la central de energía');
+  // tipos de célula
+  const ta = seg(lt, 13.1, 13.6);
+  if (ta > 0) txt('Hay muchos tipos de células', 1700, 104, { size: 30, w: 800, fam: FD, color: COL.gold, align: 'center', alpha: ta });
+  ['Neurona', 'Glóbulo rojo', 'Célula muscular', 'Célula de la piel'].forEach((nm, k) => {
+    const a = E.out(seg(lt, 13.3 + k * .3, 13.8 + k * .3)); if (a <= 0) return;
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(40 * (1 - a), 0);
+    const y = 130 + k * 172; rr(1515, y, 370, 156, 18); ctx.fillStyle = 'rgba(20,12,28,.92)'; ctx.fill(); ctx.strokeStyle = 'rgba(210,180,255,.4)'; ctx.lineWidth = 2; ctx.stroke();
+    cellType(k, 1590, y + 78, lt);
+    txt(nm, 1668, y + 88, { size: 28, w: 700 });
+    ctx.restore();
+  });
+}
+
+/* =========================================================
+   ESCENA 8 · Excreción
+   ========================================================= */
+const EX_CO2 = makePath([[300, 380], [300, 250], [330, 196], [380, 172], [520, 150], [760, 120]]);
+const EX_ART = makePath([[930, 280], [1040, 290], [1160, 300]]);
+const EX_VEIN = makePath([[1160, 360], [1040, 375], [930, 390]]);
+const EX_URE = makePath([[1165, 370], [1200, 470], [1262, 560], [1360, 622], [1405, 640]]);
+const EX_DUCT = makePath([[430, 790], [480, 750], [468, 700], [492, 640], [480, 560]]);
+function sExcretion(lt) {
+  bg('#1d1026', '#07040a', 960, 450);
+  ctx.strokeStyle = 'rgba(255,255,255,.1)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(930, 40); ctx.lineTo(930, 840); ctx.moveTo(60, 462); ctx.lineTo(900, 462); ctx.stroke();
+  txt('Por los pulmones', 80, 72, { size: 32, w: 800, fam: FD, color: COL.res });
+  txt('Por la piel', 80, 512, { size: 32, w: 800, fam: FD, color: '#f3c6a5' });
+  txt('Por los riñones', 980, 72, { size: 32, w: 800, fam: FD, color: COL.exc });
+  // --- pulmones: espiración
+  ctx.fillStyle = '#34263b'; circle(300, 170, 80); ctx.fill(); ctx.strokeStyle = '#5b4463'; ctx.lineWidth = 6; ctx.stroke();
+  ctx.fillStyle = '#34263b'; ctx.beginPath(); ctx.moveTo(372, 150); ctx.lineTo(392, 176); ctx.lineTo(370, 186); ctx.fill();
+  tube(makePath([[300, 240], [300, 330]]), 30, '#e7a3b3', '#2a1426', 8);
+  const bsx = 1 - .05 * Math.sin(lt * 1.6);
+  [[250, 370], [350, 370]].forEach(([x, y]) => { ctx.beginPath(); ctx.ellipse(x, y, 46 * bsx, 64 * bsx, 0, 0, TAU); ctx.fillStyle = 'rgba(255,170,190,.25)'; ctx.fill(); ctx.strokeStyle = '#f6a3b8'; ctx.lineWidth = 5; ctx.stroke(); });
+  [0.3, 1.0, 1.7].forEach((t0, k) => { const p = E.io(seg(lt, t0, t0 + 3)); if (p <= 0 || p >= 1) return; const q = at(EX_CO2, p); drawCO2(q.x, q.y, 22, { t: lt, alpha: 1 - seg(p, .85, 1) }); });
+  const pf = seg(lt, 2.4, 5);
+  if (pf > 0 && pf < 1) { for (let k = 0; k < 7; k++) { ctx.fillStyle = `rgba(230,236,245,${.35 * (1 - pf)})`; circle(470 + pf * 200 + k * 26, 150 + 14 * Math.sin(k * 1.7), 24 + 40 * pf); ctx.fill(); } }
+  txt('¡Fuuu!', 640, 250, { size: 44, w: 800, fam: FD, color: '#e6ecf5', alpha: inout(lt, 2.4, 5.2) });
+  label(inout(lt, 1.2, 15.4), 'Dióxido de carbono', 440, 165, 520, 360, '#dfe5ec', 'sale al espirar');
+  // --- piel: sudor
+  ctx.fillStyle = '#e0a088'; ctx.globalAlpha = .55; ctx.fillRect(80, 600, 820, 230); ctx.globalAlpha = 1;
+  for (let i = 0; i < 20; i++) { rr(80 + i * 41, 560, 40, 40, 8); ctx.fillStyle = '#f3c6a5'; ctx.fill(); ctx.strokeStyle = '#b87a5a'; ctx.lineWidth = 2; ctx.stroke(); }
+  ctx.strokeStyle = '#d32a48'; ctx.lineWidth = 8; ctx.beginPath(); for (let x = 80; x <= 900; x += 10) { const y = 800 + 8 * Math.sin(x * .03); x === 80 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke();
+  ctx.strokeStyle = '#c96b78'; ctx.lineWidth = 12; ctx.lineCap = 'round';
+  for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.ellipse(480 + (k - 1.5) * 12, 750 + (k % 2) * 8, 40, 18, k * .4, 0, TAU); ctx.stroke(); }
+  tracePath(EX_DUCT, .25, 1); ctx.lineWidth = 12; ctx.stroke();
+  for (let k = 0; k < 6; k++) { const p = frac(k / 6 + lt * .25), q = at(EX_DUCT, p); ctx.fillStyle = `rgba(190,231,255,${seg(lt, 8.5, 9) * Math.sin(p * Math.PI)})`; circle(q.x, q.y, 6); ctx.fill(); }
+  const dr = E.out(seg(lt, 9, 12)) * 26;
+  if (dr > 0) { ctx.save(); ctx.translate(480, 552 - dr); ctx.beginPath(); ctx.moveTo(0, -dr * 1.5); ctx.bezierCurveTo(dr * .9, -dr * .4, dr, dr * .5, 0, dr); ctx.bezierCurveTo(-dr, dr * .5, -dr * .9, -dr * .4, 0, -dr * 1.5); ctx.fillStyle = 'rgba(190,231,255,.9)'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore(); }
+  label(inout(lt, 8.6, 15.4), 'Glándula sudorípara', 520, 750, 640, 690, '#f3c6a5', 'fabrica el sudor');
+  // --- riñón y vías urinarias
+  tube(EX_ART, 36, '#6e1026', '#d0243f', 8); tube(EX_VEIN, 36, '#2e2366', '#6b5cff', 8);
+  tube(EX_URE, 22, '#8a6a2a', '#3b2a10', 8);
+  tube(makePath([[1450, 800], [1450, 870]]), 20, '#8a6a2a', '#3b2a10', 8);
+  ctx.save(); ctx.translate(1230, 330); beanPath(260, 380);
+  ctx.fillStyle = radial(40, -40, 20, 240, [[0, '#c65a72'], [1, '#7c2640']]); ctx.fill(); ctx.strokeStyle = '#4d1426'; ctx.lineWidth = 6; ctx.stroke();
+  for (let i = 0; i < 5; i++) { const by = (i - 2) * 66; ctx.beginPath(); ctx.moveTo(-8, by * .4); ctx.lineTo(88, by - 26); ctx.lineTo(88, by + 26); ctx.closePath(); ctx.fillStyle = '#8a2c44'; ctx.fill(); }
+  ctx.beginPath(); ctx.ellipse(-24, 0, 26, 70, 0, 0, TAU); ctx.fillStyle = 'rgba(240,217,138,.75)'; ctx.fill();
+  ctx.restore();
+  for (let k = 0; k < 8; k++) { const u = frac(k / 8 + lt * .35); const p = at(EX_ART, u); drawRBC(p.x, p.y, 13, { tilt: .5 }); const v = at(EX_VEIN, u); drawRBC(v.x, v.y, 13, { tilt: .5, tint: .8 }); }
+  // desechos: sangre → riñón → orina
+  let arrived = 0;
+  for (let k = 0; k < 16; k++) {
+    const ts = 2.8 + k * .55, l = lt - ts; if (l < 0) continue;
+    let x, y, yellow = 0;
+    if (l < 1.2) { const p = at(EX_ART, E.io(l / 1.2)); x = p.x; y = p.y; const q = seg(l, .8, 1.2); x = lerp(x, 1290, q); y = lerp(y, 330 + ((k % 5) - 2) * 50, q); }
+    else if (l < 2.2) { const p = E.io((l - 1.2)); x = lerp(1290, 1206, p); y = lerp(330 + ((k % 5) - 2) * 50, 330 + ((k % 3) - 1) * 24, p); yellow = p; }
+    else if (l < 4.2) { const p = at(EX_URE, E.io((l - 2.2) / 2)); x = p.x; y = p.y; yellow = 1; }
+    else { arrived++; continue; }
+    if (yellow < .5) drawWaste(x, y, 9, { rot: l * 3 });
+    else { ctx.fillStyle = '#f5d547'; circle(x, y, 9); ctx.fill(); ctx.strokeStyle = '#a88a10'; ctx.lineWidth = 2; ctx.stroke(); }
+  }
+  // vejiga
+  let lvl = .1; for (let k = 0; k < 16; k++) lvl += .045 * seg(lt - (2.8 + k * .55), 4, 4.4);
+  lvl = clamp(lvl, 0, .8); const br2 = 100 * (1 + .1 * lvl), bx = 1450, byy = 700;
+  ctx.save(); ctx.beginPath(); ctx.ellipse(bx, byy, br2, br2 * .95, 0, 0, TAU); ctx.fillStyle = 'rgba(245,213,71,.10)'; ctx.fill(); ctx.clip();
+  const sy = byy + br2 - 2 * br2 * lvl;
+  ctx.beginPath(); ctx.moveTo(bx - br2, byy + br2);
+  for (let x = bx - br2; x <= bx + br2; x += 10) ctx.lineTo(x, sy + 6 * Math.sin(x * .05 + lt * 3));
+  ctx.lineTo(bx + br2, byy + br2); ctx.closePath(); ctx.fillStyle = 'rgba(245,213,71,.85)'; ctx.fill(); ctx.restore();
+  ctx.beginPath(); ctx.ellipse(bx, byy, br2, br2 * .95, 0, 0, TAU); ctx.strokeStyle = '#e8b8c8'; ctx.lineWidth = 8; ctx.stroke();
+  const um = at(EX_URE, .5);
+  label(inout(lt, 3, 15.4), 'Riñón', 1340, 250, 1540, 130, '#e6a0b4', 'filtra la sangre');
+  label(inout(lt, 5.6, 15.4), 'Uréter', um.x, um.y, 1560, 470, '#f5d547', 'lleva la orina');
+  label(inout(lt, 7.5, 15.4), 'Vejiga', bx + br2 - 10, byy - 30, 1620, 640, '#f5d547', 'la guarda');
+  label(inout(lt, 9.5, 15.4), 'Uretra', 1450, 840, 1620, 800, '#f5d547', 'la expulsa');
+}
+
+/* =========================================================
+   ESCENA 9 · Resumen
+   ========================================================= */
+const JOURNEY = makePath([[0, 82], [0, 150], [4, 230], [14, 290], [45, 315], [0, 330], [-30, 368], [30, 380], [-30, 396], [30, 404], [16, 250], [40, 172], [100, 180], [126, 320], [148, 452]]);
+function sFinal(lt) {
+  bg('#2c1633', '#0c060e', 470, 420);
+  floaters(lt, 40, 'rgba(255,200,220,.6)', 3, 3.5, 10);
+  const a = E.out(seg(lt, 0, 1.5));
+  drawBody(470, 42, .98, { dig: a, res: a, cir: a, exc: a }, lt);
+  // cometa: el viaje completo
+  const u = E.io(seg(lt, 1, 7.5));
+  if (u > 0) {
+    ctx.save(); ctx.translate(470, 42); ctx.scale(.98, .98);
+    ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,214,90,.35)'; ctx.lineWidth = 16; tracePath(JOURNEY, Math.max(0, u - .18), u); ctx.stroke();
+    ctx.strokeStyle = '#ffe07a'; ctx.lineWidth = 6; tracePath(JOURNEY, Math.max(0, u - .18), u); ctx.stroke();
+    const h = at(JOURNEY, u); drawNut(h.x, h.y, 10 + 8 * seg(lt, 7.2, 7.8));
+    if (lt > 7.5) { const b = seg(lt, 7.5, 9); for (let k = 0; k < 10; k++) { const an = k / 10 * TAU; ctx.strokeStyle = `rgba(255,224,102,${1 - b})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(148 + Math.cos(an) * 20, 452 + Math.sin(an) * 20); ctx.lineTo(148 + Math.cos(an) * (20 + 70 * b), 452 + Math.sin(an) * (20 + 70 * b)); ctx.stroke(); } }
+    ctx.restore();
+  }
+  txt('Nutrición', 960, 170, { size: 112, w: 800, fam: FD, color: COL.gold, alpha: E.out(seg(lt, .3, 1.1)) });
+  txt('cuatro aparatos, un solo equipo', 966, 232, { size: 42, w: 700, alpha: E.out(seg(lt, .7, 1.5)) });
+  const cards = [
+    ['Digestivo', 'Transforma los alimentos en nutrientes.', COL.dig],
+    ['Respiratorio', 'Toma oxígeno y expulsa dióxido de carbono.', COL.res],
+    ['Circulatorio', 'Reparte nutrientes y oxígeno a cada célula.', COL.cir],
+    ['Excretor', 'Filtra la sangre y expulsa los desechos.', COL.exc]
+  ];
+  cards.forEach(([n, d, c], k) => {
+    const ca = E.out(seg(lt, 1.6 + k * .5, 2.3 + k * .5)); if (ca <= 0) return;
+    const x = 960 + (k % 2) * 450, y = 280 + Math.floor(k / 2) * 190;
+    ctx.save(); ctx.globalAlpha = ca; ctx.translate(0, 24 * (1 - ca));
+    rr(x, y, 430, 170, 18); ctx.fillStyle = '#1f1624'; ctx.fill(); ctx.strokeStyle = c; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = c; circle(x + 36, y + 44, 12); ctx.fill();
+    txt(n, x + 60, y + 56, { size: 38, w: 800, fam: FD, color: c });
+    wrapLines(d, 380, font(27)).forEach((l, i) => txt(l, x + 26, y + 104 + i * 34, { size: 27, color: '#eadde5' }));
+    ctx.restore();
+  });
+  const qa = E.out(seg(lt, 8.6, 9.3));
+  if (qa > 0) {
+    ctx.save(); ctx.globalAlpha = qa; rr(960, 670, 880, 120, 20); ctx.fillStyle = 'rgba(242,179,61,.12)'; ctx.fill(); ctx.strokeStyle = COL.gold; ctx.lineWidth = 3; ctx.stroke();
+    txt('Para pensar', 990, 712, { size: 24, w: 700, color: COL.gold, ls: 2 });
+    txt('¿Y si uno de los cuatro dejara de funcionar?', 990, 758, { size: 36, w: 700 });
+    ctx.restore();
+  }
+  const ma = E.back(seg(lt, 9.6, 10.3));
+  if (ma > 0) {
+    const bob = Math.sin(lt * 3) * 6;
+    drawMiga(1780, 170 + bob, 56 * ma, { t: lt, mood: 'grin', glow: .8 + .2 * Math.sin(lt * 5), rot: Math.sin(lt * 4) * .15, look: [-1, 0] });
+    for (let k = 0; k < 6; k++) { const an = lt * 1.5 + k / 6 * TAU; ctx.fillStyle = '#ffe066'; circle(1780 + Math.cos(an) * 90, 170 + bob + Math.sin(an) * 90, 4 + 2 * Math.sin(lt * 6 + k)); ctx.fill(); }
+    bubble(seg(lt, 10.3, 10.8), '¡Gracias por acompañarme!', 1740, 104 + bob, -1, '#ffe7a3', 28);
+  }
+}
+/* =========================================================
+   GUION
+   ========================================================= */
+const beats = []; for (let b = .3; b < 15; b += .8) beats.push([b, 'beat']);
+const SC = [
+  { short: 'Inicio', eye: 'Tema 1 · Una vida en común', title: 'La función de nutrición', num: null, sym: '▶', col: COL.gold, dur: 10, draw: sIntro,
+    cap: [[0, 'Cada célula de tu cuerpo necesita nutrientes y oxígeno para vivir.'], [4.5, 'Cuatro aparatos trabajan en equipo para conseguirlos, repartirlos y limpiar los desechos.']],
+    q: 'Cuando te comes un trozo de pan, ¿adónde crees que va? ¿Qué camino seguirá?', cues: [[6.3, 'pop']] },
+  { short: 'Boca', eye: 'Aparato digestivo', title: 'Boca', num: 1, col: COL.dig, dur: 13, draw: sMouth,
+    cap: [[0, 'Los dientes cortan y trituran los alimentos en trocitos.'], [5, 'La saliva los moja y los ablanda. ¡Aquí empieza la digestión!'], [8.5, 'La lengua junta los trocitos en una bola: el bolo alimenticio. Y… ¡a tragar!']],
+    q: '¿Por qué crees que es importante masticar bien la comida?', cues: [[2.6, 'chomp'], [3.9, 'chomp'], [5.2, 'chomp'], [4.8, 'drop'], [5.9, 'drop'], [7, 'drop'], [11.9, 'gulp']] },
+  { short: 'Faringe y esófago', eye: 'Aparato digestivo', title: 'Faringe y esófago', num: 2, col: COL.dig, dur: 13, draw: sThroat,
+    cap: [[0, 'En la faringe se cruzan dos caminos: el del aire y el de la comida.'], [2, 'Al tragar, la epiglotis tapa la tráquea para que la comida no se vaya «por el otro lado».'], [6.4, 'El esófago es un tubo con músculos: se aprietan detrás del bolo y lo empujan hasta el estómago.']],
+    q: 'Si el aire y la comida comparten la faringe, ¿qué pasa cuando algo «se nos va por el otro lado»?', cues: [[.3, 'whoosh'], [2.1, 'gulp'], [8, 'squish'], [10, 'squish'], [12, 'squish']] },
+  { short: 'Estómago', eye: 'Aparato digestivo', title: 'Estómago', num: 3, col: COL.dig, dur: 14, draw: sStomach,
+    cap: [[0, 'El estómago es una bolsa con paredes musculosas.'], [3, 'Sus paredes sueltan jugos gástricos y se mueven para mezclarlo todo, como una batidora.'], [7.6, 'El bolo se convierte en una papilla, el quimo, que pasa poco a poco al intestino.']],
+    q: '¿En qué se parece el estómago a una batidora? ¿Y en qué se diferencia?', cues: [[2.5, 'splash'], [3.4, 'drop'], [4.4, 'drop'], [5.6, 'drop'], [10.6, 'squish'], [12, 'squish']] },
+  { short: 'Intestino', eye: 'Aparato digestivo', title: 'Intestino delgado', num: 4, col: COL.dig, dur: 16, draw: sIntestine,
+    cap: [[0, 'La pared del intestino delgado está llena de pliegues con forma de dedo: las vellosidades.'], [4, 'Los nutrientes atraviesan la pared y pasan a la sangre. Esto se llama absorción.'], [10.4, 'Lo que no sirve sigue hasta el intestino grueso y sale del cuerpo en forma de heces.']],
+    q: '¿Por qué crees que el intestino tiene tantos pliegues y vellosidades?', cues: [...NUTS.filter((n, k) => k % 3 === 0).map(n => [n.ts + 1.2, 'pop']), [MIGA_NUT.ts + 1.2, 'pop'], [10.6, 'whoosh']] },
+  { short: 'Pulmones', eye: 'Aparato respiratorio', title: 'Nariz, tráquea y pulmones', num: 5, col: COL.res, dur: 17, draw: sLungs,
+    cap: [[0, 'Mientras tanto, el aire entra por la nariz y baja hasta los pulmones.'], [4.6, 'La tráquea se divide en bronquios y bronquiolos, cada vez más finos, como las ramas de un árbol.'], [10, 'En los alvéolos, el oxígeno pasa a la sangre y el dióxido de carbono sale para ser expulsado.']],
+    q: '¿Por qué respiramos más deprisa cuando corremos?', cues: [[.3, 'whoosh'], [4.2, 'whoosh'], [8, 'whoosh'], [11.6, 'pop'], [12.8, 'pop']] },
+  { short: 'Corazón', eye: 'Aparato circulatorio', title: 'Corazón y vasos sanguíneos', num: 6, col: COL.cir, dur: 15, draw: sHeart,
+    cap: [[0, 'El corazón es un músculo que bombea la sangre sin parar.'], [3.5, 'Las arterias llevan la sangre con nutrientes y oxígeno a todo el cuerpo. Las venas la traen de vuelta.'], [9, 'Los capilares, finísimos, llegan hasta cada célula. ¡Miga está a punto de llegar!']],
+    q: 'Pon dos dedos en tu muñeca o en tu cuello. ¿Notas el latido? ¿Por qué va más rápido al correr?', cues: beats },
+  { short: 'Célula', eye: 'Destino: la célula', title: 'La célula', num: 7, col: '#caa6ff', dur: 17, draw: sCell,
+    cap: [[0, 'Cada célula tiene membrana, citoplasma y núcleo. En el citoplasma flotan los orgánulos.'], [3, 'El nutriente y el oxígeno atraviesan la membrana y llegan a un orgánulo: la mitocondria.'], [7.3, '¡Ahí se combinan y liberan energía! También se producen desechos, que vuelven a la sangre.'], [13.2, 'Todas tus células se nutren así: neuronas, glóbulos rojos, células musculares, de la piel…']],
+    q: 'La célula necesita nutrientes y oxígeno. ¿Qué aparatos se los han llevado hasta allí?', cues: [[5, 'pop'], [7.4, 'sparkle'], [11.3, 'pop'], [13.4, 'pop']] },
+  { short: 'Excreción', eye: 'Aparato excretor', title: 'Pulmones, riñones y piel', num: 8, col: COL.exc, dur: 16, draw: sExcretion,
+    cap: [[0, 'El dióxido de carbono vuelve a los pulmones y sale cuando espiras.'], [3.2, 'Los riñones filtran la sangre: separan los desechos y forman la orina.'], [7.8, 'La orina baja por los uréteres a la vejiga y sale por la uretra. La piel también expulsa desechos con el sudor.']],
+    q: '¿Qué desechos expulsa tu cuerpo? ¿Por dónde sale cada uno?', cues: [[1, 'whoosh'], [2.6, 'whoosh'], [7.2, 'drop'], [8.3, 'drop'], [9.4, 'drop'], [10.5, 'drop'], [11.6, 'drop'], [12.7, 'drop']] },
+  { short: 'Resumen', eye: 'Tema 1 · Una vida en común', title: 'Cuatro aparatos, un equipo', num: null, sym: '★', col: COL.gold, dur: 14, draw: sFinal,
+    cap: [[0, 'La nutrición es trabajo en equipo: cuatro aparatos colaboran para que cada célula tenga energía.'], [8, 'Miga ya es energía: la que usas para correr, pensar y crecer.']],
+    q: null, cues: [[1, 'whoosh'], [7.6, 'sparkle'], [9.8, 'pop']] }
+];
+const starts = []; let TOTAL = 0; SC.forEach(s => { starts.push(TOTAL); TOTAL += s.dur; });
+const CUES = []; SC.forEach((s, i) => (s.cues || []).forEach(([t, k]) => CUES.push([starts[i] + t, k])));
+const sceneAt = t => { for (let k = 0; k < SC.length; k++) if (t < starts[k] + SC[k].dur) return k; return SC.length - 1; };
+
+/* ---------- subtítulos ---------- */
+function drawCaption(i, lt) {
+  const s = SC[i], a = E.out(seg(lt, 0, .6));
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(0, 20 * (1 - a));
+  rr(40, 866, 1840, 194, 24); ctx.fillStyle = 'rgba(14,8,16,.9)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 2; ctx.stroke();
+  let x = 84; const y1 = 914;
+  if (s.num) { ctx.fillStyle = s.col; circle(x + 24, y1 - 11, 26); ctx.fill(); txt(String(s.num), x + 24, y1 - 8, { size: 36, w: 800, fam: FD, color: '#1a0f14', align: 'center', base: 'middle' }); x += 66; }
+  const eye = s.eye.toUpperCase();
+  txt(eye, x, y1, { size: 24, w: 700, color: s.col, ls: 2 });
+  ctx.save(); ctx.font = font(24, 700); if ('letterSpacing' in ctx) ctx.letterSpacing = '2px'; x += ctx.measureText(eye).width + 18; ctx.restore();
+  txt(s.title, x, y1 + 2, { size: 38, w: 800, fam: FD });
+  let c = 0; s.cap.forEach(([t0], k) => { if (lt >= t0) c = k; });
+  const p = seg(lt, s.cap[c][0], s.cap[c][0] + .45);
+  const drawBody = (text, al) => wrapLines(text, 1770, font(36)).slice(0, 2).forEach((l, k) => txt(l, 84, 972 + k * 46, { size: 36, color: '#f7eef2', alpha: al }));
+  if (c > 0 && p < 1) drawBody(s.cap[c - 1][1], 1 - p);
+  drawBody(s.cap[c][1], c === 0 ? 1 : p);
+  ctx.restore();
+}
+
+/* ---------- render: t → fotograma ---------- */
+function drawScene(i, lt) { ctx.save(); try { SC[i].draw(lt, SC[i].dur); } catch (e) { console.error(e); } ctx.restore(); }
+function render(t) {
+  const i = sceneAt(t), lt = t - starts[i];
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.clearRect(0, 0, W, H);
+  const TR = .8;
+  if (i > 0 && lt < TR) {
+    drawScene(i - 1, SC[i - 1].dur - .001);
+    const p = E.io(lt / TR), r = p * 1250;
+    ctx.save(); circle(W / 2, H * .44, r); ctx.clip(); drawScene(i, lt); ctx.restore();
+    ctx.save(); ctx.globalAlpha = 1 - p; ctx.strokeStyle = SC[i].col; ctx.lineWidth = 14; circle(W / 2, H * .44, r); ctx.stroke(); ctx.restore();
+  } else drawScene(i, lt);
+  drawCaption(i, lt);
+}
+
+/* ---------- sonido sintetizado (Web Audio) ---------- */
+let AC = null, MASTER = null, NOISE = null;
+function ensureAudio() {
+  try {
+    if (!AC) {
+      AC = new (window.AudioContext || window.webkitAudioContext)();
+      MASTER = AC.createGain(); MASTER.gain.value = .55; MASTER.connect(AC.destination);
+      NOISE = AC.createBuffer(1, AC.sampleRate, AC.sampleRate); const d = NOISE.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    if (AC.state === 'suspended') AC.resume();
+  } catch (e) { AC = null; }
+}
+function env(g, t0, a, peak, dec) { g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + a); g.gain.exponentialRampToValueAtTime(.0001, t0 + a + dec); }
+function tone(type, f0, f1, dur, vol, delay = 0) {
+  if (!AC) return; const t0 = AC.currentTime + delay, o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(f1, t0 + dur); env(g, t0, .008, vol, dur);
+  o.connect(g).connect(MASTER); o.start(t0); o.stop(t0 + dur + .05);
+}
+function noise(dur, vol, type, f0, f1, q = 1, delay = 0, attack = .005) {
+  if (!AC) return; const t0 = AC.currentTime + delay, s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain();
+  s.buffer = NOISE; f.type = type; f.Q.value = q; f.frequency.setValueAtTime(f0, t0); f.frequency.exponentialRampToValueAtTime(f1, t0 + dur); env(g, t0, attack, vol, dur);
+  s.connect(f).connect(g).connect(MASTER); s.start(t0); s.stop(t0 + dur + attack + .05);
+}
+const SFX = {
+  chomp: () => { noise(.12, .6, 'lowpass', 1400, 500, 1); tone('square', 140, 60, .08, .1); },
+  drop: () => tone('sine', 1100, 320, .16, .22),
+  gulp: () => { tone('sine', 320, 90, .28, .4); noise(.2, .12, 'lowpass', 600, 200, 1, .05); },
+  squish: () => noise(.25, .18, 'lowpass', 500, 150, 2),
+  splash: () => { noise(.45, .45, 'bandpass', 900, 300, 1.2); tone('sine', 500, 180, .2, .15); },
+  whoosh: () => noise(1.1, .2, 'bandpass', 400, 1600, .8, 0, .45),
+  pop: () => tone('sine', 520, 980, .09, .22),
+  sparkle: () => [0, 1, 2, 3, 4].forEach(i => tone('triangle', 1200 + i * 260, 1300 + i * 260, .18, .13, i * .06)),
+  beat: () => { tone('sine', 80, 42, .18, .8); tone('sine', 72, 40, .15, .5, .22); }
+};
+function fireCues(a, b) { if (!soundOn || !AC || b - a > .3) return; CUES.forEach(([t, k]) => { if (t > a && t <= b && SFX[k]) SFX[k](); }); }
+
+/* ---------- reproductor ---------- */
+const $ = id => document.getElementById(id);
+const bigplay = $('bigplay'), playBtn = $('play'), track = $('track'), fillEl = $('fill'), knob = $('knob'), timeEl = $('time');
+const qcard = $('qcard'), classMode = $('classMode'), soundBtn = $('sound'), wrapEl = $('stageWrap');
+let T = 0, playing = false, last = null, poster = true, started = false, dirty = true, qScene = -1, soundOn = false;
+const POSTER_T = 9.6;
+const fmt = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+const chapEl = $('chapters');
+SC.forEach((s, i) => {
+  const li = document.createElement('li'), b = document.createElement('button');
+  b.className = 'chap'; b.style.setProperty('--c', s.col); b.dataset.i = i;
+  b.innerHTML = `<span class="n">${s.num ?? s.sym}</span><span class="l">${s.short}</span>`;
+  b.addEventListener('click', () => { seek(starts[i]); if (!playing) play(); });
+  li.appendChild(b); chapEl.appendChild(li);
+});
+const ticks = $('ticks');
+starts.slice(1).forEach(s => { const d = document.createElement('div'); d.className = 'tick'; d.style.left = (s / TOTAL * 100) + '%'; ticks.appendChild(d); });
+track.setAttribute('aria-valuemax', Math.round(TOTAL));
+
+function updateUI() {
+  const t = poster ? 0 : T, pc = t / TOTAL * 100;
+  fillEl.style.width = pc + '%'; knob.style.left = pc + '%';
+  timeEl.textContent = fmt(t) + ' / ' + fmt(TOTAL);
+  track.setAttribute('aria-valuenow', Math.round(t));
+  playBtn.textContent = playing ? '❚❚' : '▶'; playBtn.setAttribute('aria-label', playing ? 'Pausa' : 'Reproducir');
+  const i = poster ? -1 : sceneAt(T);
+  chapEl.querySelectorAll('.chap').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+}
+function openQ(i) {
+  qScene = i; $('qText').textContent = SC[i].q;
+  $('qEye').textContent = `Pregunta para la clase · ${SC[i].short}`;
+  qcard.hidden = false; $('qGo').focus({ preventScroll: true });
+}
+function closeQ() { qcard.hidden = true; qScene = -1; }
+function play() {
+  if (poster) { poster = false; }
+  if (T >= TOTAL - .05) T = 0;
+  started = true; bigplay.hidden = true; closeQ(); playing = true; last = null; dirty = true;
+}
+function pause() { playing = false; dirty = true; }
+function seek(t) { T = clamp(t, 0, TOTAL - .001); poster = false; closeQ(); dirty = true; }
+function toggle() { playing ? pause() : play(); }
+
+function tick(now) {
+  if (playing) {
+    const dt = last == null ? 0 : Math.min(.1, (now - last) / 1000); last = now;
+    let nt = T + dt; const i = sceneAt(T), end = starts[i] + SC[i].dur;
+    if (classMode.checked && SC[i].q && T < end - .02 && nt >= end - .02) { nt = end - .02; fireCues(T, nt); T = nt; pause(); openQ(i); }
+    else { fireCues(T, nt); T = nt; if (T >= TOTAL) { T = TOTAL - .001; pause(); } }
+    dirty = true;
+  }
+  if (dirty) { render(poster ? POSTER_T : T); updateUI(); dirty = false; }
+  requestAnimationFrame(tick);
+}
+
+bigplay.addEventListener('click', play);
+playBtn.addEventListener('click', toggle);
+cv.addEventListener('click', () => { if (started) toggle(); else play(); });
+$('next').addEventListener('click', () => { const i = poster ? -1 : sceneAt(T); seek(starts[Math.min(i + 1, SC.length - 1)]); });
+$('prev').addEventListener('click', () => { const i = sceneAt(T), lt = T - starts[i]; seek(starts[lt > 1.5 ? i : Math.max(0, i - 1)]); });
+$('qGo').addEventListener('click', () => { const i = qScene; closeQ(); T = Math.min(starts[i] + SC[i].dur + .01, TOTAL - .001); play(); });
+$('qAgain').addEventListener('click', () => { const i = qScene; closeQ(); T = starts[i]; play(); });
+soundBtn.addEventListener('click', () => {
+  soundOn = !soundOn; if (soundOn) { ensureAudio(); SFX.pop(); }
+  soundBtn.firstChild.textContent = soundOn ? '🔊 ' : '🔇 '; soundBtn.setAttribute('aria-pressed', soundOn);
+});
+function toggleFS() {
+  if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); return; }
+  if (wrapEl.classList.contains('theater')) { wrapEl.classList.remove('theater'); return; }
+  const r = wrapEl.requestFullscreen ? wrapEl.requestFullscreen() : null;
+  if (r && r.catch) r.catch(() => wrapEl.classList.add('theater')); else if (!r) wrapEl.classList.add('theater');
+}
+$('fs').addEventListener('click', toggleFS);
+// línea de tiempo
+let scrub = false, wasPlaying = false;
+function seekFromX(e) { const r = track.getBoundingClientRect(); seek(clamp((e.clientX - r.left) / r.width) * TOTAL); }
+track.addEventListener('pointerdown', e => { scrub = true; wasPlaying = playing; pause(); started = true; bigplay.hidden = true; track.setPointerCapture(e.pointerId); seekFromX(e); });
+track.addEventListener('pointermove', e => { if (scrub) seekFromX(e); });
+track.addEventListener('pointerup', () => { if (scrub) { scrub = false; if (wasPlaying) play(); } });
+document.addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('input,textarea')) return;
+  const onTrack = e.target === track;
+  if (e.key === ' ' || e.code === 'Space') { if (e.target.tagName === 'BUTTON' && e.target !== playBtn) return; e.preventDefault(); if (!qcard.hidden) $('qGo').click(); else toggle(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); if (onTrack) seek(T + 5); else $('next').click(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); if (onTrack) seek(T - 5); else $('prev').click(); }
+  else if (e.key === 'f' || e.key === 'F') toggleFS();
+  else if (e.key === 'Escape' && wrapEl.classList.contains('theater')) wrapEl.classList.remove('theater');
+});
+// enlace directo a una escena: #e3
+const hm = /^#e(\d+)$/.exec(location.hash || '');
+if (hm) { const n = clamp(+hm[1], 0, SC.length - 1); T = starts[n]; poster = false; }
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; });
+['800 40px "Baloo 2"', '400 30px "Atkinson Hyperlegible"', '700 30px "Atkinson Hyperlegible"'].forEach(f => { try { document.fonts.load(f).then(() => dirty = true); } catch (e) {} });
+requestAnimationFrame(tick);
+window.__seek = t => { poster = false; T = t; render(t); };
+</script>

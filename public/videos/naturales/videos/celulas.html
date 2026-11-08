@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<title>Celia y las células</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<style>
+:root{color-scheme:dark;--bg:#0f1516;--panel:#172022;--line:#2c3b3e;--ink:#fbefe0;--muted:#a9bcbc;--acc:#b596e6;--acc2:#ff9150}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Grandstander',system-ui,sans-serif;font-size:16px}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:16px;padding-block:18px 36px;display:flex;flex-direction:column;gap:12px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 18px}
+h1{font-family:'Titan One',system-ui,sans-serif;font-weight:400;font-size:clamp(26px,3.6vw,40px);margin:0;color:var(--acc);text-wrap:balance}
+header p{margin:0;color:var(--muted);font-weight:700}
+.stage{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7);container-type:inline-size}
+.stage:fullscreen{border-radius:0;aspect-ratio:auto;width:100vw;height:100vh}
+.stage.theater{position:fixed;inset:0;z-index:50;border-radius:0;aspect-ratio:auto;width:100vw;height:100vh}
+canvas{display:block;width:100%;height:100%;object-fit:contain;cursor:pointer}
+#start{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,14,15,.3);border:0;cursor:pointer;color:inherit;font:inherit;padding:0}
+#start .pill{display:inline-flex;align-items:center;gap:.5em;background:var(--acc2);color:#2b1204;font-family:'Titan One',system-ui,sans-serif;font-size:clamp(16px,3cqw,36px);padding:.65em 1.3em;border-radius:999px;box-shadow:0 10px 0 #b8561d,0 18px 40px rgba(0,0,0,.5)}
+#start .pill small{font-family:'Grandstander',system-ui,sans-serif;font-weight:700;font-size:.62em}
+#start:hover .pill{transform:translateY(-2px)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.btn{font:inherit;font-weight:800;border-radius:999px;border:1.5px solid var(--line);background:#1f2b2d;color:var(--ink);padding:0 16px;min-height:44px;min-width:44px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{border-color:var(--muted)}
+.btn.main{background:var(--acc2);border-color:var(--acc2);color:#2b1204}
+.btn:focus-visible,.track:focus-visible,#start:focus-visible,.chap:focus-visible{outline:3px solid #ffd24d;outline-offset:2px}
+.track{position:relative;flex:1 1 240px;height:44px;cursor:pointer;touch-action:none}
+.rail{position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;border-radius:4px;background:#2c3b3e;overflow:hidden}
+.fill{position:absolute;left:0;top:0;bottom:0;background:var(--acc2)}
+.knob{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.time{font-variant-numeric:tabular-nums;color:var(--muted);min-width:88px;text-align:center}
+.chaps{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.chap{font:inherit;font-weight:700;background:var(--panel);border:1.5px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 14px;min-height:40px;cursor:pointer}
+.chap.on{border-color:var(--acc);background:#231f33}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;color:var(--muted);line-height:1.45;font-family:system-ui,sans-serif}
+.notes div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.notes b{color:var(--ink)}
+@media (max-width:540px){.hide-s{display:none}.time{min-width:0}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Celia y las células</h1>
+    <p>Tema 1 · La organización humana · Ciencias Naturales 5.º</p>
+  </header>
+  <div class="stage" id="stage">
+    <canvas id="cv" width="1920" height="1080" aria-label="Cortometraje de plastilina sobre las células: partes, división, tipos y niveles de organización"></canvas>
+    <button id="start" aria-label="Ver la película con sonido"><span class="pill">▶ Ver la película <small>(con sonido)</small></span></button>
+  </div>
+  <div class="bar">
+    <button class="btn main" id="play" aria-label="Reproducir">▶</button>
+    <div class="track" id="track" tabindex="0" role="slider" aria-label="Línea de tiempo" aria-valuemin="0">
+      <div class="rail"><div class="fill" id="fill"></div></div><div class="knob" id="knob"></div>
+    </div>
+    <span class="time" id="time">0:00 / 1:43</span>
+    <button class="btn" id="snd" aria-pressed="true">🔊 <span class="hide-s">Sonido</span></button>
+    <button class="btn" id="fs" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
+  </div>
+  <ol class="chaps" id="chaps"></ol>
+  <div class="notes">
+    <div><b>Qué cuenta.</b> Qué es una célula, sus partes (membrana, citoplasma con orgánulos y núcleo), cómo se divide, seres unicelulares y pluricelulares, tipos de células y los niveles de organización: célula, tejido, órgano, sistema y organismo.</div>
+    <div><b>En clase.</b> Haz clic en la imagen para pausar. Los capítulos de arriba te llevan directamente a cada parte.</div>
+    <div><b>Hecho con código.</b> Es plastilina «de mentira»: cada fotograma, la música y los efectos se generan en el navegador, a 12 imágenes por segundo, como en el stop motion.</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Celia y las células — «plastilina» dibujada con código.
+   Stop motion a 12 fps: cada fotograma es una función de t.
+   ============================================================ */
+const W = 1920, H = 1080, TAU = Math.PI * 2, END = 103;
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const FT = "'Titan One', 'Arial Rounded MT Bold', 'Trebuchet MS', sans-serif", FG = "'Grandstander', 'Comic Sans MS', 'Trebuchet MS', sans-serif";
+const K = { mem: '#9a73d9', cyto: '#e9dcff', nuc: '#6c45b8', nucD: '#3d2270', noodle: '#f27ba7', mito: '#ff9150', green: '#62c370', yellow: '#ffd24d', teal: '#3f8f8a', cream: '#fff4e2', ink: '#2a1a2e', red: '#e0393e', skin: '#f0b48a', blue: '#4aa3e8' };
+
+/* ---------- utilidades ---------- */
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const frac = x => x - Math.floor(x);
+const hash = (a, b = 0) => frac(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453);
+const gauss = (x, s) => Math.exp(-(x * x) / (2 * s * s));
+const E = {
+  io: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  out: t => 1 - Math.pow(1 - t, 3), in: t => t * t * t,
+  back: t => { const c1 = 2.1, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
+  elastic: t => t === 0 || t === 1 ? t : Math.pow(2, -9 * t) * Math.sin((t * 10 - .75) * TAU / 3) + 1
+};
+const inout = (t, a, b, f = .3) => seg(t, a, a + f) * (1 - seg(t, b - f, b));
+const angd = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
+function kf(t, keys, ease = E.io) {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 0; i < keys.length - 1; i++) {
+    const [t0, a] = keys[i], [t1, b] = keys[i + 1];
+    if (t <= t1) {
+      const p = ease((t - t0) / (t1 - t0));
+      if (typeof a === 'number') return lerp(a, b, p);
+      const o = {}; for (const k in b) { const va = a[k] ?? (k === 'z' ? 1 : 0), vb = b[k]; o[k] = k === 'z' ? Math.exp(lerp(Math.log(va), Math.log(vb), p)) : lerp(va, vb, p); } return o;
+    }
+  }
+  return keys[keys.length - 1][1];
+}
+function rgbOf(hex) { const p = parseInt(hex.slice(1), 16); return [p >> 16, (p >> 8) & 255, p & 255]; }
+function shade(hex, k) { return '#' + rgbOf(hex).map(v => clamp(Math.round(k > 0 ? v + (255 - v) * k : v * (1 + k)), 0, 255).toString(16).padStart(2, '0')).join(''); }
+function rgba(hex, a) { const c = rgbOf(hex); return `rgba(${c[0]},${c[1]},${c[2]},${a})`; }
+function mix(a, b, t) { const A = rgbOf(a), B = rgbOf(b); t = clamp(t); return '#' + A.map((v, i) => Math.round(lerp(v, B[i], t)).toString(16).padStart(2, '0')).join(''); }
+
+/* ---------- stop motion ---------- */
+let FRAME = 0, CZ = 1;       // fotograma actual (12 fps) y zoom de cámara para las sombras
+const jit = (id, a = 1.4) => [(hash(id, FRAME) - .5) * a, (hash(id + 7, FRAME) - .5) * a];
+
+/* ---------- formas ---------- */
+function ellP(cx, cy, rx, ry, rot = 0, n = 0) {
+  n = n || Math.max(18, Math.min(90, Math.round((rx + ry) / 7))); const c = Math.cos(rot), s = Math.sin(rot), out = [];
+  for (let i = 0; i < n; i++) { const a = i / n * TAU, x = Math.cos(a) * rx, y = Math.sin(a) * ry; out.push([cx + x * c - y * s, cy + x * s + y * c]); }
+  return out;
+}
+function blobP(cx, cy, r, seed, amp = .08, sx = 1, sy = 1, wob = 0) {
+  const n = Math.max(20, Math.min(90, Math.round(r / 5))), out = [];
+  for (let i = 0; i < n; i++) {
+    const a = i / n * TAU, rr = r * (1 + amp * (Math.sin(3 * a + seed) * .6 + Math.sin(5 * a + seed * 1.7) * .3 + Math.sin(2 * a + seed * .3) * .4) + wob * (hash(seed + i, FRAME) - .5) * .012);
+    out.push([cx + Math.cos(a) * rr * sx, cy + Math.sin(a) * rr * sy]);
+  }
+  return out;
+}
+function rrP(x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2); const out = [], cs = [[x + w - r, y + r, -Math.PI / 2], [x + w - r, y + h - r, 0], [x + r, y + h - r, Math.PI / 2], [x + r, y + r, Math.PI]];
+  cs.forEach(([cx, cy, a0]) => { for (let i = 0; i <= 6; i++) { const a = a0 + i / 6 * Math.PI / 2; out.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); } });
+  return out;
+}
+function smooth(pts, closed = true) {
+  const p = new Path2D(), n = pts.length;
+  if (closed) {
+    p.moveTo((pts[n - 1][0] + pts[0][0]) / 2, (pts[n - 1][1] + pts[0][1]) / 2);
+    for (let i = 0; i < n; i++) { const a = pts[i], b = pts[(i + 1) % n]; p.quadraticCurveTo(a[0], a[1], (a[0] + b[0]) / 2, (a[1] + b[1]) / 2); }
+    p.closePath();
+  } else {
+    p.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < n - 1; i++) { const a = pts[i], b = pts[i + 1]; p.quadraticCurveTo(a[0], a[1], (a[0] + b[0]) / 2, (a[1] + b[1]) / 2); }
+    p.lineTo(pts[n - 1][0], pts[n - 1][1]);
+  }
+  return p;
+}
+function bbox(pts) { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const [x, y] of pts) { if (x < x0) x0 = x; if (y < y0) y0 = y; if (x > x1) x1 = x; if (y > y1) y1 = y; } return [x0, y0, x1, y1]; }
+
+/* ---------- plastilina ---------- */
+/* relleno con volumen: sombra proyectada, degradado, bisel iluminado arriba-izquierda,
+   brillo, huellas dactilares y borde de contacto */
+function clay(pts, col, o = {}) {
+  const { sh = 1, inset = false, fp = 1, seed = 1, spec = 1, alpha = 1, edge = 1 } = o;
+  if (alpha <= 0 || pts.length < 3) return;
+  const P = smooth(pts), [x0, y0, x1, y1] = bbox(pts), w = x1 - x0, h = y1 - y0, s = Math.max(4, Math.min(w, h));
+  ctx.save(); ctx.globalAlpha *= alpha;
+  if (sh) { ctx.save(); ctx.shadowColor = `rgba(35,15,40,${.34 * Math.min(1, sh)})`; ctx.shadowBlur = 20 * sh * CZ; ctx.shadowOffsetX = 9 * sh * CZ; ctx.shadowOffsetY = 13 * sh * CZ; ctx.fillStyle = col; ctx.fill(P); ctx.restore(); }
+  const g = ctx.createLinearGradient(x0, y0, x1, y1);
+  g.addColorStop(0, shade(col, inset ? -.14 : .2)); g.addColorStop(1, shade(col, inset ? .14 : -.22));
+  ctx.fillStyle = g; ctx.fill(P);
+  ctx.save(); ctx.clip(P); ctx.lineJoin = 'round';
+  const d = Math.max(2, s * .045), L = inset ? -1 : 1;
+  ctx.save(); ctx.translate(d * L, d * 1.2 * L);
+  [[.16, .06], [.09, .08], [.04, .11]].forEach(([k, a]) => { ctx.lineWidth = s * k; ctx.strokeStyle = `rgba(255,250,240,${a})`; ctx.stroke(P); });
+  ctx.restore(); ctx.save(); ctx.translate(-d * L, -d * 1.2 * L);
+  [[.22, .06], [.11, .08], [.05, .1]].forEach(([k, a]) => { ctx.lineWidth = s * k; ctx.strokeStyle = `rgba(40,10,45,${a})`; ctx.stroke(P); });
+  ctx.restore();
+  if (fp) {
+    ctx.strokeStyle = 'rgba(40,10,40,.07)'; ctx.lineWidth = Math.max(1, s * .007);
+    const fx = x0 + w * (.25 + .5 * hash(seed, 1)), fy = y0 + h * (.25 + .5 * hash(seed, 2)), fr = s * .14, fa = hash(seed, 3) * 3;
+    for (let k = 1; k <= 6; k++) { ctx.beginPath(); ctx.ellipse(fx, fy, fr * k / 6 * 1.35, fr * k / 6, fa, .3, 4.9); ctx.stroke(); }
+    ctx.fillStyle = 'rgba(40,10,40,.08)'; for (let k = 0; k < 6; k++) { ctx.beginPath(); ctx.arc(x0 + w * hash(seed, k + 10), y0 + h * hash(seed, k + 20), Math.max(1, s * .008), 0, TAU); ctx.fill(); }
+  }
+  if (spec && !inset) { const sx = x0 + w * .3, sy = y0 + h * .25, rg = ctx.createRadialGradient(sx, sy, 0, sx, sy, s * .24); rg.addColorStop(0, 'rgba(255,255,255,.42)'); rg.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = rg; ctx.fillRect(x0, y0, w, h); }
+  ctx.restore();
+  if (edge) { ctx.lineWidth = Math.max(1.2, s * .008); ctx.strokeStyle = 'rgba(40,15,40,.28)'; ctx.stroke(P); }
+  ctx.restore();
+}
+/* churro de plastilina */
+function clayLine(pts, w, col, o = {}) {
+  const { sh = 1, alpha = 1 } = o; if (alpha <= 0 || pts.length < 2) return;
+  const P = smooth(pts, false);
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (sh) { ctx.save(); ctx.shadowColor = `rgba(35,15,40,${.3 * sh})`; ctx.shadowBlur = 14 * sh * CZ; ctx.shadowOffsetX = 7 * sh * CZ; ctx.shadowOffsetY = 10 * sh * CZ; ctx.strokeStyle = col; ctx.lineWidth = w; ctx.stroke(P); ctx.restore(); }
+  ctx.strokeStyle = shade(col, -.2); ctx.lineWidth = w; ctx.stroke(P);
+  ctx.save(); ctx.translate(-w * .07, -w * .09); ctx.strokeStyle = col; ctx.lineWidth = w * .7; ctx.stroke(P); ctx.restore();
+  ctx.save(); ctx.translate(-w * .17, -w * .2); ctx.strokeStyle = 'rgba(255,255,255,.32)'; ctx.lineWidth = w * .2; ctx.stroke(P); ctx.restore();
+  ctx.restore();
+}
+const ball = (x, y, r, col, o = {}) => clay(ellP(x, y, r, r * (o.sy || 1)), col, o);
+
+/* ---------- ojos, bocas, estrellitas ---------- */
+function gEye(x, y, r, look = [0, 0], blink = false, lid = '#9a73d9') {
+  ctx.save(); ctx.shadowColor = 'rgba(35,15,40,.35)'; ctx.shadowBlur = 8 * CZ; ctx.shadowOffsetX = 3 * CZ; ctx.shadowOffsetY = 5 * CZ;
+  const g = ctx.createRadialGradient(x - r * .35, y - r * .4, r * .1, x, y, r); g.addColorStop(0, '#ffffff'); g.addColorStop(1, '#e3dbd0');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); ctx.restore();
+  if (blink) { ctx.fillStyle = shade(lid, .05); ctx.beginPath(); ctx.arc(x, y, r * 1.02, 0, TAU); ctx.fill(); ctx.strokeStyle = shade(lid, -.4); ctx.lineWidth = r * .14; ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(x, y, r * .6, .2 * Math.PI, .8 * Math.PI); ctx.stroke(); return; }
+  const px = x + look[0] * r * .42, py = y + look[1] * r * .42;
+  const pg = ctx.createRadialGradient(px - r * .15, py - r * .18, 1, px, py, r * .5); pg.addColorStop(0, '#4a3a55'); pg.addColorStop(1, '#120a16');
+  ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(px, py, r * .48, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(px - r * .16, py - r * .18, r * .14, 0, TAU); ctx.fill();
+}
+function mouthC(x, y, w, mood = 'happy') {
+  ctx.save(); ctx.translate(x, y);
+  if (mood === 'o') { ctx.fillStyle = '#5a1024'; ctx.beginPath(); ctx.ellipse(0, 0, w * .22, w * .3, 0, 0, TAU); ctx.fill(); }
+  else if (mood === 'flat') { ctx.strokeStyle = '#3a1024'; ctx.lineWidth = w * .12; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-w * .3, 0); ctx.lineTo(w * .3, 0); ctx.stroke(); }
+  else {
+    const big = mood === 'grin';
+    ctx.beginPath(); ctx.moveTo(-w * .5, -w * .08); ctx.quadraticCurveTo(0, w * (big ? .75 : .5), w * .5, -w * .08); ctx.quadraticCurveTo(0, w * (big ? .2 : .12), -w * .5, -w * .08);
+    ctx.fillStyle = '#5a1024'; ctx.fill();
+    if (big) { ctx.save(); ctx.clip(); ctx.fillStyle = '#f07a8a'; ctx.beginPath(); ctx.arc(0, w * .55, w * .25, 0, TAU); ctx.fill(); ctx.restore(); }
+  }
+  ctx.restore();
+}
+function star(x, y, r, p, col = K.yellow) {
+  if (p <= 0 || p >= 1) return;
+  for (let k = 0; k < 7; k++) { const a = k / 7 * TAU + .4, d = r * (.4 + 1.1 * E.out(p)), s = r * .16 * (1 - p) + 2; ball(x + Math.cos(a) * d, y + Math.sin(a) * d, s, col, { sh: .4, fp: 0 }); }
+}
+/* ---------- texto de plastilina y rótulos ---------- */
+function measure(s, size, fam = FG, w = 800) { ctx.save(); ctx.font = `${w} ${size}px ${fam}`; const m = ctx.measureText(s).width; ctx.restore(); return m; }
+function clayText(s, x, y, size, col, o = {}) {
+  const { align = 'center', alpha = 1, depth = .09, rot = 0, sx = 1, sy = 1 } = o; if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sx, sy);
+  ctx.font = `400 ${size}px ${FT}`; ctx.textAlign = align; ctx.textBaseline = 'middle';
+  const D = Math.max(2, Math.round(size * depth)), dark = shade(col, -.38);
+  ctx.save(); ctx.shadowColor = 'rgba(35,15,40,.35)'; ctx.shadowBlur = 16 * CZ; ctx.shadowOffsetX = 8 * CZ; ctx.shadowOffsetY = 12 * CZ; ctx.fillStyle = dark; ctx.fillText(s, D * .55, D * .7); ctx.restore();
+  ctx.fillStyle = dark; for (let k = D; k > 0; k -= 1.5) ctx.fillText(s, k * .55, k * .7);
+  ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.fillText(s, -size * .018, -size * .024);
+  const g = ctx.createLinearGradient(0, -size * .5, 0, size * .5); g.addColorStop(0, shade(col, .25)); g.addColorStop(1, shade(col, -.1));
+  ctx.fillStyle = g; ctx.fillText(s, 0, 0); ctx.restore();
+}
+function txt(s, x, y, o = {}) {
+  const { size = 40, col = K.ink, align = 'center', fam = FG, w = 800, alpha = 1 } = o; if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.font = `${w} ${size}px ${fam}`; ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(s, x, y); ctx.restore();
+}
+/* letras de plastilina que caen y se aplastan al tocar el suelo */
+function dropWord(s, cx, cy, size, t0, t, o = {}) {
+  const { cols = ['#ff9150', '#b596e6', '#62c370', '#ffd24d', '#4aa3e8', '#f27ba7'], gap = .07, shift = 0 } = o;
+  const ch = [...s]; ctx.save(); ctx.font = `400 ${size}px ${FT}`; const ws = ch.map(c => ctx.measureText(c).width + size * .06); ctx.restore();
+  let x = cx - ws.reduce((a, b) => a + b, 0) / 2, k = 0;
+  ch.forEach((c, i) => {
+    const w = ws[i]; if (c === ' ') { x += w; return; }
+    const ts = t0 + k * gap, p = seg(t, ts, ts + .3), after = t - ts - .3; k++;
+    if (p > 0) {
+      const y = lerp(cy - 700, cy, E.in(p)), sq = after > 0 ? 1 - .28 * Math.exp(-after * 9) * Math.cos(after * 26) : 1;
+      clayText(c, x + w / 2, y + size * .5 * (1 - sq) * .5, size, cols[(i + shift) % cols.length], { sx: 2 - sq, sy: sq, rot: (hash(i, s.length) - .5) * .14 });
+    }
+    x += w;
+  });
+}
+function plaque(a, title, sub, x, y, o = {}) {
+  if (a <= 0) return;
+  const { col = K.mem, size = 62, subSize = 34, rot = -.02 } = o, p = E.back(clamp(a * 1.4));
+  ctx.save(); ctx.font = `400 ${size}px ${FT}`; const tw = ctx.measureText(title).width; ctx.restore();
+  const sw = sub ? measure(sub, subSize) : 0, w = Math.max(tw, sw) + 80, h = size * 1.25 + (sub ? subSize * 1.35 : 0) + 34;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(p, p); ctx.globalAlpha *= clamp(a * 2);
+  clay(rrP(-w / 2, -h / 2, w, h, 30), K.cream, { seed: title.length + 3 });
+  clayText(title, 0, -h / 2 + 22 + size * .6, size, col, { depth: .07 });
+  if (sub) txt(sub, 0, h / 2 - 22 - subSize * .55, { size: subSize });
+  ctx.restore();
+}
+function bubble(a, s, x, y, o = {}) {
+  if (a <= 0) return; const { size = 40, dir = 1 } = o, p = E.back(clamp(a * 1.5)), w = measure(s, size) + 56, h = size * 1.7;
+  ctx.save(); ctx.translate(x, y); ctx.scale(p, p); ctx.globalAlpha *= clamp(a * 2);
+  const L = dir > 0 ? -40 : -w + 40;
+  clay([[-14, -h * .3 - 40], [dir * 34, -h * .3 - 40], [dir * 4, 0]], '#fffaf2', { seed: 5, fp: 0, spec: 0, edge: 0 });
+  clay(rrP(L, -h - 30, w, h, h / 2), '#fffaf2', { seed: s.length, fp: 0 });
+  txt(s, L + w / 2, -h / 2 - 28, { size }); ctx.restore();
+}
+
+/* ---------- cámara ---------- */
+function applyCam(c) { CZ = c.z; ctx.translate(W / 2, H / 2); ctx.rotate(c.r || 0); ctx.scale(c.z, c.z); ctx.translate(-c.x, -c.y); }
+function para(c, f, fn) { ctx.save(); ctx.translate(W / 2, H / 2); const z = Math.pow(c.z, f); ctx.scale(z, z); ctx.translate(-c.x * f, -c.y * f); fn(); ctx.restore(); }
+
+/* ============================================================
+   PERSONAJES
+   ============================================================ */
+const NOODLES = Array.from({ length: 7 }, (_, j) => { let a = hash(j, 5) * TAU, r = .15 + .5 * hash(j, 6), pts = []; for (let i = 0; i < 6; i++) { a += (hash(j, i + 10) - .3) * 1.6; r = clamp(r + (hash(j, i + 20) - .5) * .35, .1, .75); pts.push([Math.cos(a) * r, Math.sin(a) * r]); } return pts; });
+function mito(x, y, L, rot, glow = 0) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+  if (glow > 0) { const g = ctx.createRadialGradient(0, 0, L * .3, 0, 0, L * 2.6); g.addColorStop(0, `rgba(255,220,90,${.75 * glow})`); g.addColorStop(1, 'rgba(255,220,90,0)'); ctx.fillStyle = g; ctx.fillRect(-L * 2.6, -L * 2.6, L * 5.2, L * 5.2); }
+  clay(ellP(0, 0, L, L * .5), glow > .3 ? mix(K.mito, '#ffd24d', glow) : K.mito, { seed: 31, sh: .6 });
+  const pts = [[-L * .75, 0]]; for (let i = 0; i < 7; i++) pts.push([-L * .6 + i * L * .2, (i % 2 ? 1 : -1) * L * .24]); pts.push([L * .75, 0]);
+  clayLine(pts, L * .1, shade(K.mito, -.28), { sh: 0 });
+  ctx.restore();
+}
+function nucleus(x, y, r, lid, t) {
+  if (lid <= .01) {
+    clay(ellP(x, y, r, r * .96), K.nuc, { seed: 9 });
+    for (let k = 0; k < 11; k++) { const a = k / 11 * TAU + .3; ctx.fillStyle = shade(K.nuc, -.35); ctx.beginPath(); ctx.arc(x + Math.cos(a) * r * .83, y + Math.sin(a) * r * .8, r * .045, 0, TAU); ctx.fill(); }
+    NOODLES.slice(0, 3).forEach(pl => clayLine(pl.map(([u, v]) => [x + u * r * .65, y + v * r * .65]), r * .075, K.noodle, { sh: .25 }));
+    ball(x + r * .32, y + r * .28, r * .17, shade(K.nuc, -.3), { sh: .3, fp: 0 });
+    return;
+  }
+  clay(ellP(x, y, r, r * .96), K.nucD, { inset: true, seed: 10, sh: 1 });
+  NOODLES.forEach((pl, j) => clayLine(pl.map(([u, v]) => [x + u * r * .85 + Math.sin(t * 2 + j) * r * .02, y + v * r * .85]), r * .1, j % 3 ? K.noodle : '#ffb3cf', { sh: .3 }));
+  ball(x + r * .32, y + r * .3, r * .17, '#2b1552', { sh: .3, fp: 0 });
+  ctx.save(); ctx.translate(x + r, y); ctx.rotate(lid * 2.2);
+  const lp = []; for (let i = 0; i <= 30; i++) { const a = Math.PI + i / 30 * Math.PI; lp.push([-r + Math.cos(a) * r, Math.sin(a) * r * .96]); } lp.push([0, r * .06]); lp.push([-2 * r, r * .06]);
+  clay(lp, K.nuc, { seed: 11 }); ctx.restore();
+}
+const MITOS = [[-.46, .3, .5], [.42, .44, -.4], [-.5, -.3, 1.2]];
+function celiaPts(R, o, k = 1) {
+  const { wob = 0, dent = 0, dentA = Math.PI, t = 0, pea = null } = o, out = [];
+  for (let i = 0; i < 84; i++) {
+    const a = i / 84 * TAU, r = R * k * (1 + .035 * Math.sin(3 * a + 1) + .025 * Math.sin(5 * a + 2) + wob * .035 * Math.sin(4 * a + t * 5)) * (1 - dent * gauss(angd(a, dentA), .2));
+    if (pea) { const sn = Math.sin(a); out.push([Math.cos(a) * r * pea[0], sn * r * .94 * (1 - pea[1] * Math.pow(Math.cos(a * 1) * 0 + 1 - Math.abs(Math.cos(a)), 1.4))]); }
+    else out.push([Math.cos(a) * r, Math.sin(a) * r * .94]);
+  }
+  return out;
+}
+function drawCelia(x, y, R, o = {}) {
+  const { t = 0, mood = 'happy', look = [0, 0], lid = 0, nuc = [[.12, -.08]], eyes = true, parts = 1, col = K.mem, cyto = K.cyto, sx = 1, sy = 1, mitoGlow = [0, 0, 0], memGlow = 0, alpha = 1 } = o;
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.scale(sx, sy);
+  if (memGlow > 0) { ctx.save(); ctx.globalAlpha *= memGlow; ctx.lineWidth = R * .12; ctx.strokeStyle = 'rgba(255,230,120,.7)'; ctx.stroke(smooth(celiaPts(R * 1.02, o))); ctx.restore(); }
+  clay(celiaPts(R, o), col, { seed: 3 });
+  clay(celiaPts(R, o, .86), cyto, { inset: true, sh: 0, seed: 4, spec: 0 });
+  if (parts > 0) {
+    ctx.save(); ctx.globalAlpha *= parts;
+    for (let k = 0; k < 28; k++) { const gx = (hash(k, 1) * 1.4 - .7) * R, gy = (hash(k, 2) * 1.3 - .65) * R; if (Math.hypot(gx, gy / .94) > .7 * R) continue; ctx.fillStyle = 'rgba(154,115,217,.35)'; ctx.beginPath(); ctx.arc(gx, gy, R * .013, 0, TAU); ctx.fill(); }
+    clayLine([[-R * .2, -R * .45], [-R * .05, -R * .52], [R * .25, -R * .48], [R * .48, -R * .3], [R * .52, -R * .05]], R * .04, '#f7a8c8', { sh: .3 });
+    MITOS.forEach(([mx, my, rot], k) => mito(mx * R, my * R, R * .16, rot + Math.sin(t * 1.5 + k) * .08, mitoGlow[k]));
+    ball(.16 * R, .6 * R, R * .055, K.green, { sh: .4, fp: 0 }); ball(-.1 * R, .64 * R, R * .04, K.green, { sh: .4, fp: 0 });
+    ball(.56 * R, -.18 * R, R * .045, K.yellow, { sh: .4, fp: 0 }); ball(-.28 * R, -.58 * R, R * .035, K.yellow, { sh: .4, fp: 0 }); ball(.6 * R, .16 * R, R * .03, '#f7a8c8', { sh: .4, fp: 0 });
+    ctx.restore();
+  }
+  nuc.forEach(([nx, ny, ns = 1]) => nucleus(nx * R, ny * R, R * .3 * ns, lid, t));
+  if (eyes) {
+    const faces = o.faces || [[0, 1]];
+    faces.forEach(([fx, fs], j) => { const blink = frac((t + .7 + j * 1.3) / 3.3) < .05, cx = fx * R, cy = -R * .93 * (o.faceY || 1); gEye(cx - R * .2 * fs, cy, R * .12 * fs, look, blink, col); gEye(cx + R * .2 * fs, cy, R * .12 * fs, look, blink, col); mouthC(cx, cy + R * .07 * fs, R * .16 * fs, mood); });
+  }
+  ctx.restore();
+}
+function drawLeo(x, y, s, o = {}) {
+  const { t = 0, wave = 0, look = [0, 0], mood = 'grin', rot = 0, ghost = false } = o; const G = c => ghost ? '#f3e6d4' : c;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s);
+  clayLine([[-45, -330], [-50, -160], [-52, -20]], 62, G('#3a5fa0')); clayLine([[45, -330], [50, -160], [52, -20]], 62, G('#3a5fa0'));
+  ball(-60, -10, 44, G('#2a2530'), { sy: .55 }); ball(60, -10, 44, G('#2a2530'), { sy: .55 });
+  const wv = wave ? Math.sin(t * 9) * .5 : 0;
+  clayLine([[-110, -560], [-150, -430], [-150, -300]], 50, G(K.yellow)); ball(-150, -285, 32, G(K.skin));
+  clayLine([[110, -560], [170 + wave * 60, -640 - wave * 40 + wv * 20], [180 + wave * 90 + wv * 50, -760 - wave * 20]], 50, G(K.yellow)); ball(185 + wave * 90 + wv * 50, -775 - wave * 20, 32, G(K.skin));
+  clay(rrP(-130, -620, 260, 320, 80), G(K.yellow), { seed: 71 });
+  clay(rrP(-130, -520, 260, 44, 10), G('#e76f51'), { seed: 72, sh: .3 });
+  ball(0, -660, 36, G(shade(K.skin, -.08)));
+  ball(-112, -800, 30, G(shade(K.skin, -.08))); ball(112, -800, 30, G(shade(K.skin, -.08)));
+  ball(0, -800, 118, G(K.skin), { seed: 73 });
+  clay(blobP(0, -890, 120, 3, .12, 1.05, .5), G('#5a3622'), { seed: 74 });
+  if (ghost) { ctx.restore(); return; }
+  const blink = frac((t + .3) / 2.9) < .05;
+  gEye(-42, -805, 26, look, blink, G(K.skin)); gEye(42, -805, 26, look, blink, G(K.skin));
+  ball(0, -772, 14, shade(K.skin, -.05), { fp: 0, sh: .3 }); mouthC(0, -740, 52, mood);
+  ctx.fillStyle = 'rgba(240,110,110,.35)'; [-72, 72].forEach(cx => { ctx.beginPath(); ctx.ellipse(cx, -760, 20, 12, 0, 0, TAU); ctx.fill(); });
+  ctx.restore();
+}
+function drawMicroscope(x, y, s) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  clay(rrP(-190, -60, 380, 70, 30), '#3d4a57', { seed: 81 });
+  clayLine([[120, -60], [150, -220], [120, -420], [40, -520]], 70, '#4f5d6b');
+  clay(rrP(-150, -250, 260, 34, 12), '#2f3a45', { seed: 82 });
+  clay(rrP(-100, -262, 150, 16, 4), '#bfe6f5', { seed: 83, sh: .3, fp: 0, alpha: .9 });
+  ball(-25, -205, 16, '#ffd24d', { fp: 0, sh: .3 });
+  clay(rrP(-55, -380, 60, 110, 14), '#8a98a6', { seed: 84 });
+  clay(rrP(-80, -540, 110, 180, 30), '#5a6875', { seed: 85 });
+  ctx.save(); ctx.translate(-45, -560); ctx.rotate(-.5); clay(rrP(-30, -150, 60, 160, 16), '#6b7a88', { seed: 86 }); clay(ellP(0, -150, 36, 14), '#1a2026', { seed: 87, sh: 0 }); ctx.restore();
+  ctx.restore();
+}
+function neuron(x, y, s, t, o = {}) {
+  const { axon = 560, spark = 1, eyes = true, col = '#ffcf4a', sh = 1 } = o;
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  const ax = [[60, 10]]; for (let i = 1; i <= 8; i++) ax.push([60 + i * axon / 8, 10 + Math.sin(i * 1.3) * 18]);
+  clayLine(ax, 22, col, { sh });
+  if (axon > 300) for (let i = 1; i < 7; i++) { const p = ax[i]; clay(rrP(p[0] - 22, p[1] - 17, 44, 34, 16), '#fff0c2', { seed: 90 + i, sh: .4 * sh, fp: 0 }); }
+  const e = ax[ax.length - 1]; [[-.5, 60], [0, 70], [.6, 58]].forEach(([a, l]) => { clayLine([e, [e[0] + Math.cos(a) * l, e[1] + Math.sin(a) * l]], 12, col, { sh: .5 * sh }); ball(e[0] + Math.cos(a) * l, e[1] + Math.sin(a) * l, 11, col, { sh: .4 * sh, fp: 0 }); });
+  for (let k = 0; k < 6; k++) { const a = Math.PI * .55 + k * .45 + (k > 2 ? .5 : 0), l = 100 + 30 * hash(k, 4), px = Math.cos(a) * l, py = Math.sin(a) * l; clayLine([[0, 0], [px * .6, py * .6], [px, py]], 18, col, { sh: .6 * sh }); clayLine([[px * .6, py * .6], [px * .75 + Math.cos(a + .9) * 40, py * .75 + Math.sin(a + .9) * 40]], 11, col, { sh: .5 * sh }); }
+  clay(blobP(0, 0, 72, 2.2, .18), col, { seed: 95, sh });
+  ball(10, -4, 26, '#e0a92a', { sh: .3, fp: 0 });
+  if (eyes) { const bl = frac((t + 1.1) / 3) < .05; gEye(-22, -30, 14, [.6, 0], bl, col); gEye(14, -32, 14, [.6, 0], bl, col); mouthC(-4, 18, 22, 'grin'); }
+  if (spark) { for (let k = 0; k < 2; k++) { const u = frac(t * .9 + k * .5), i = u * (ax.length - 1), i0 = Math.floor(i), p0 = ax[i0], p1 = ax[Math.min(ax.length - 1, i0 + 1)], px = lerp(p0[0], p1[0], i - i0), py = lerp(p0[1], p1[1], i - i0); const g = ctx.createRadialGradient(px, py, 2, px, py, 46); g.addColorStop(0, 'rgba(255,255,230,1)'); g.addColorStop(.35, 'rgba(255,230,90,.8)'); g.addColorStop(1, 'rgba(255,230,90,0)'); ctx.fillStyle = g; ctx.fillRect(px - 46, py - 46, 92, 92); } }
+  ctx.restore();
+}
+function brain(x, y, s, t, glow = 0) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  clayLine([[60, 110], [50, 200], [36, 290]], 70, '#f0a0b2');
+  const shape = blobP(0, 0, 300, 1.2, .05, 1.22, .82).map(([px, py]) => [px, py > 0 ? py * .72 : py]);
+  clay(shape, '#f5a3b5', { seed: 102 });
+  ctx.save(); ctx.clip(smooth(shape));
+  for (let k = 0; k < 16; k++) { let px = -320 + 640 * hash(k, 31), py = -220 + 360 * hash(k, 32), a = hash(k, 33) * TAU; const pts = [[px, py]]; for (let i = 0; i < 6; i++) { a += (hash(k, i + 40) - .5) * 2.4; px += Math.cos(a) * 60; py += Math.sin(a) * 60; pts.push([px, py]); } clayLine(pts, 15, '#e7859c', { sh: .25 }); }
+  ctx.restore();
+  clay(ellP(190, 150, 110, 70, -.2), '#e98ea3', { seed: 101 });
+  ctx.save(); ctx.clip(smooth(ellP(190, 150, 110, 70, -.2))); for (let k = 0; k < 5; k++) clayLine([[90, 110 + k * 22], [190, 100 + k * 24], [290, 120 + k * 20]], 8, '#d87790', { sh: 0 }); ctx.restore();
+  if (glow > 0) { const g = ctx.createRadialGradient(170, -110, 10, 170, -110, 170); g.addColorStop(0, `rgba(255,230,120,${.8 * glow})`); g.addColorStop(1, 'rgba(255,230,120,0)'); ctx.fillStyle = g; ctx.fillRect(0, -280, 340, 340); }
+  ctx.restore();
+}
+function rojaClay(x, y, s, t, o = {}) {
+  const { shrug = 0, o2 = 4 } = o;
+  ctx.save(); ctx.translate(x, y);
+  [-1, 1].forEach(k => clayLine([[k * s * .85, s * .1], [k * s * (1.1 + .1 * shrug), -s * (.1 + .45 * shrug)], [k * s * (1.05 + .15 * shrug), -s * (.25 + .6 * shrug)]], s * .13, '#c12a33', { sh: .5 }));
+  clay(ellP(0, 0, s, s * .92), K.red, { seed: 111 });
+  clay(ellP(0, s * .08, s * .5, s * .4), '#b3242e', { inset: true, sh: 0, seed: 112, spec: 0 });
+  const bl = frac((t + .4) / 3.2) < .05; gEye(-s * .3, -s * .4, s * .16, [0, -.2], bl, K.red); gEye(s * .3, -s * .4, s * .16, [0, -.2], bl, K.red);
+  mouthC(0, -s * .15, s * .22, shrug > .5 ? 'o' : 'grin');
+  for (let k = 0; k < o2; k++) { const a = -2.4 + k * .55 + (k > 1 ? 2.4 : 0) - (k > 1 ? .55 : 0); ball(Math.cos(a) * s * 1.15, Math.sin(a) * s * 1.1 + s * .6, s * .2, K.blue, { sh: .5, fp: 0 }); }
+  ctx.restore();
+}
+function muscleCell(x, y, L, t, c) {
+  ctx.save(); ctx.translate(x, y);
+  const Lx = L * (1 - .22 * c), Hh = 70 * (1 + .45 * c), pts = [];
+  for (let i = 0; i < 70; i++) { const a = i / 70 * TAU, sn = Math.sin(a); pts.push([Math.cos(a) * Lx, sn * Hh * Math.pow(Math.abs(sn), .35)]); }
+  clay(pts, '#f07d8f', { seed: 121 });
+  ctx.save(); ctx.clip(smooth(pts)); ctx.strokeStyle = 'rgba(140,30,60,.28)'; ctx.lineWidth = 6; for (let xx = -Lx; xx < Lx; xx += 26) { ctx.beginPath(); ctx.moveTo(xx, -Hh); ctx.lineTo(xx + 6, Hh); ctx.stroke(); } ctx.restore();
+  [-.5, .05, .55].forEach((u, k) => clay(ellP(u * Lx, 8, 26, 12), '#8a2f55', { seed: 122 + k, sh: .3, fp: 0 }));
+  const bl = frac((t + .2) / 2.7) < .05; gEye(-40, -Hh * .35, 16, [0, 0], bl, '#f07d8f'); gEye(8, -Hh * .35, 16, [0, 0], bl, '#f07d8f'); mouthC(-16, Hh * .12, 26, c > .5 ? 'o' : 'grin');
+  ctx.restore();
+}
+function skinWall(x, y, t, peel) {
+  ctx.save(); ctx.translate(x, y);
+  const cols = ['#f3c3a0', '#ecb58f', '#e3a67f'];
+  for (let r = 2; r >= 0; r--) for (let i = 0; i < 4; i++) {
+    const tx = -390 + i * 200 + (r % 2) * 100, ty = -40 + r * 72;
+    if (r === 0 && i === 1) continue;
+    clay(rrP(tx, ty, 190, 64, 28), cols[r], { seed: 130 + r * 5 + i, sh: .6 });
+    clay(ellP(tx + 95, ty + 34, 24, 10), '#b8735a', { seed: 140 + i, sh: 0, fp: 0 });
+  }
+  const pp = E.io(peel);
+  ctx.save(); ctx.translate(-90 + 20 * pp + Math.sin(t * 5) * 20 * pp, -8 - 330 * pp); ctx.rotate(pp * .5 + Math.sin(t * 4) * .15 * pp);
+  clay(rrP(-95, -32, 190, 64, 28), cols[0], { seed: 131 }); clay(ellP(0, 2, 24, 10), '#b8735a', { seed: 141, sh: 0, fp: 0 });
+  const bl = frac((t + .5) / 3) < .05; gEye(-30, -8, 13, [0, pp > .3 ? -1 : 0], bl, cols[0]); gEye(10, -8, 13, [0, pp > .3 ? -1 : 0], bl, cols[0]); mouthC(-10, 14, 22, pp > .2 ? 'grin' : 'happy');
+  ctx.restore(); ctx.restore();
+}
+function ovum(x, y, r, t) {
+  for (let k = 0; k < 22; k++) { const a = k / 22 * TAU + t * .05; ball(x + Math.cos(a) * r * 1.13, y + Math.sin(a) * r * 1.1, r * .09, '#ffe08a', { sh: .4, fp: 0 }); }
+  ball(x, y, r, '#ffd9b8', { seed: 151 }); ball(x + r * .25, y + r * .1, r * .26, '#e79a86', { seed: 152, sh: .4 });
+  const bl = frac((t + 2) / 3.4) < .05; gEye(x - r * .3, y - r * .3, r * .1, [.6, 0], bl, '#ffd9b8'); gEye(x - r * .05, y - r * .32, r * .1, [.6, 0], bl, '#ffd9b8'); mouthC(x - r * .18, y - r * .12, r * .14, 'grin');
+}
+function sperm(x, y, s, t) {
+  const pts = []; for (let i = 0; i <= 10; i++) pts.push([x + 18 * s + i * 14 * s, y + Math.sin(i * .9 - t * 14) * 8 * s * (i / 10)]);
+  clayLine(pts, 6 * s, '#eaf0f8', { sh: .4 });
+  ball(x, y, 20 * s, '#eaf0f8', { sy: .72, seed: 161 });
+  ctx.fillStyle = '#120a16'; ctx.beginPath(); ctx.arc(x - 6 * s, y - 4 * s, 3 * s, 0, TAU); ctx.fill();
+}
+function paramecium(x, y, s, t) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(t * .8) * .12); ctx.scale(s, s);
+  const pts = []; for (let i = 0; i < 70; i++) { const a = i / 70 * TAU; pts.push([Math.cos(a) * 200, Math.sin(a) * 82 * (1 + .25 * Math.cos(a)) - (Math.cos(a) > 0 ? 0 : 0)]); }
+  ctx.strokeStyle = '#4f8a3d'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  for (let i = 0; i < 70; i += 2) { const [px, py] = pts[i], a = Math.atan2(py, px), w = Math.sin(t * 10 - i * .35) * .5; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + Math.cos(a + w) * 26, py + Math.sin(a + w) * 26); ctx.stroke(); }
+  clay(pts, '#9ad17a', { seed: 171 });
+  clay(ellP(40, 30, 60, 22, .3), '#6fae55', { inset: true, sh: 0, seed: 172, spec: 0 });
+  ball(-40, 0, 34, '#5c8f45', { seed: 173, sh: .4 }); ball(-120, -20, 18, '#cfeabb', { sh: .3, fp: 0 }); ball(120, -30, 16, '#cfeabb', { sh: .3, fp: 0 });
+  const bl = frac((t + .9) / 3) < .05; gEye(130, -40, 22, [.5, 0], bl, '#9ad17a'); gEye(170, -30, 20, [.5, 0], bl, '#9ad17a'); mouthC(160, 10, 30, 'grin');
+  ctx.restore();
+}
+function bacterium(x, y, s, rot, t) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s);
+  const tail = []; for (let i = 0; i <= 8; i++) tail.push([-60 - i * 14, Math.sin(i * .9 - t * 12) * 8]); clayLine(tail, 5, '#a8b84a', { sh: .3 });
+  clay(rrP(-60, -26, 120, 52, 26), '#c9d86b', { seed: 181 }); gEye(20, -6, 10, [.5, 0], false, '#c9d86b'); gEye(40, -6, 9, [.5, 0], false, '#c9d86b');
+  ctx.restore();
+}
+function jellyfish(x, y, s, t) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  const pulse = 1 + .05 * Math.sin(t * 3);
+  for (let k = 0; k < 7; k++) { const x0 = -170 + k * 57, pts = []; for (let i = 0; i <= 8; i++) pts.push([x0 + Math.sin(i * .8 - t * 3 + k) * 18, 10 + i * 36]); clayLine(pts, 12, '#d6a8f0', { sh: .5 }); }
+  const cells = []; for (let r = 0; r < 6; r++) { const yy = -r * 34, half = 205 * Math.sqrt(1 - Math.pow((r * 34 + 10) / 205, 2)); for (let xx = -half + 20; xx <= half - 20; xx += 40) cells.push([xx + (r % 2) * 20, yy]); }
+  clay(ellP(0, -40, 212 * pulse, 170, 0).filter(p => p[1] <= 12), '#c79be6', { seed: 191 });
+  cells.forEach(([cx, cy], k) => { ball(cx * pulse, cy - 6, 17, k % 3 ? '#e2c4f7' : '#f7b6d2', { sh: .35, fp: 0, spec: 1 }); });
+  const bl = frac((t + .4) / 3) < .05; gEye(-40, -90, 20, [0, 0], bl, '#c79be6'); gEye(40, -90, 20, [0, 0], bl, '#c79be6'); mouthC(0, -50, 34, 'grin');
+  ctx.restore();
+}
+/* ============================================================
+   DECORADOS
+   ============================================================ */
+function studio(c) {
+  const g = ctx.createRadialGradient(W / 2 - (c.x - 960) * .08, H * .38, 60, W / 2, H * .45, 1250);
+  g.addColorStop(0, '#6cbab1'); g.addColorStop(.55, '#2f7a78'); g.addColorStop(1, '#123235'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  para(c, .3, () => { for (let k = 0; k < 7; k++) clay(blobP(lerp(-600, 2500, hash(k, 3)), lerp(-300, 700, hash(k, 4)), 120 + 120 * hash(k, 5), k, .12), '#4f9d97', { sh: 0, fp: 0, spec: 0, edge: 0, alpha: .35 }); });
+}
+function table(y0) {
+  clay(rrP(-3000, y0, 8000, 1600, 40), '#d49a6a', { seed: 201, sh: .6, spec: 0 });
+  ctx.strokeStyle = 'rgba(120,60,30,.18)'; ctx.lineWidth = 5;
+  for (let k = 0; k < 9; k++) { ctx.beginPath(); const yy = y0 + 30 + k * 34; ctx.moveTo(-3000, yy); for (let x = -3000; x < 5000; x += 200) ctx.lineTo(x, yy + Math.sin(x * .004 + k) * 8); ctx.stroke(); }
+}
+function microBg(c, tint = '#fbe9d6') {
+  const g = ctx.createRadialGradient(W / 2, H / 2, 80, W / 2, H / 2, 1200); g.addColorStop(0, tint); g.addColorStop(1, shade(tint, -.14)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  para(c, .35, () => { const cols = ['rgba(190,160,240,', 'rgba(255,170,140,', 'rgba(140,210,190,']; for (let k = 0; k < 14; k++) { const x = lerp(-900, 2800, hash(k, 11)), y = lerp(-500, 1600, hash(k, 12)), r = 80 + 180 * hash(k, 13), g2 = ctx.createRadialGradient(x, y, 0, x, y, r); g2.addColorStop(0, cols[k % 3] + '.28)'); g2.addColorStop(1, cols[k % 3] + '0)'); ctx.fillStyle = g2; ctx.fillRect(x - r, y - r, r * 2, r * 2); } });
+}
+function stageSet(c, t, spot = 1) {
+  ctx.fillStyle = '#2a1830'; ctx.fillRect(0, 0, W, H);
+  ctx.save(); applyCam(c);
+  const g = ctx.createRadialGradient(960, 420, 50, 960, 460, 900); g.addColorStop(0, '#5a3470'); g.addColorStop(1, '#231229'); ctx.fillStyle = g; ctx.fillRect(-200, -200, 2320, 1500);
+  clay(rrP(-300, 830, 2520, 500, 30), '#b7794a', { seed: 211, sh: .5, spec: 0 });
+  ctx.strokeStyle = 'rgba(90,40,15,.25)'; ctx.lineWidth = 5; for (let k = 0; k < 5; k++) { ctx.beginPath(); ctx.moveTo(-300, 860 + k * 50); ctx.lineTo(2220, 860 + k * 50); ctx.stroke(); }
+  if (spot > 0) {
+    ctx.save(); ctx.globalAlpha = spot;
+    const sg = ctx.createRadialGradient(960, 900, 20, 960, 900, 460); sg.addColorStop(0, 'rgba(255,236,170,.55)'); sg.addColorStop(1, 'rgba(255,236,170,0)'); ctx.fillStyle = sg; ctx.beginPath(); ctx.ellipse(960, 900, 460, 110, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = 'rgba(255,240,190,.10)'; ctx.beginPath(); ctx.moveTo(880, -100); ctx.lineTo(1040, -100); ctx.lineTo(1420, 900); ctx.lineTo(500, 900); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+function curtains(c, open = 1) {
+  ctx.save(); applyCam(c);
+  [-1, 1].forEach(s => { for (let i = 0; i < 6; i++) { const x = s < 0 ? -220 + i * 70 + (1 - open) * 500 : 2140 - i * 70 - 70 - (1 - open) * 500; clay(rrP(x, -120, 76, 1300, 34), i % 2 ? '#c8323c' : '#a82630', { seed: 220 + i + (s > 0 ? 10 : 0), sh: .5, fp: i === 2 ? 1 : 0 }); } });
+  clay(rrP(-300, -140, 2520, 170, 40), '#b52a34', { seed: 240 });
+  for (let i = 0; i < 16; i++) ball(-120 + i * 140, 40, 60, i % 2 ? '#c8323c' : '#a82630', { sy: .7, fp: 0, sh: .6 });
+  ctx.restore();
+}
+/* rótulo de subtítulos */
+function wrapLines(s, maxW, size) { ctx.save(); ctx.font = `800 ${size}px ${FG}`; const words = s.split(' '), out = []; let line = ''; for (const w of words) { const tt = line ? line + ' ' + w : w; if (ctx.measureText(tt).width > maxW && line) { out.push(line); line = w; } else line = tt; } if (line) out.push(line); ctx.restore(); return out; }
+const NARR = [
+  [7, 10.6, 'Leo va a mirar por el microscopio unas células de su boca.'],
+  [13.2, 16.6, 'Todos los seres vivos están formados por células: la parte más pequeña de un ser vivo.'],
+  [16.8, 19.8, 'Son tan pequeñas que solo se ven con microscopio.'],
+  [20.3, 25.8, 'La membrana envuelve la célula y controla lo que entra y lo que sale.'],
+  [26.2, 30.8, 'Dentro está el citoplasma, un líquido espeso donde flotan los orgánulos.'],
+  [31.2, 36.8, 'Los orgánulos son como pequeñas máquinas: unos obtienen energía, otros eliminan desechos.'],
+  [37.2, 43.8, 'El núcleo guarda el material genético, que controla cómo funciona la célula.'],
+  [44.4, 51.8, 'Cada célula procede de la división de otra célula.'],
+  [52.4, 55.8, 'Algunos seres vivos tienen una sola célula, como las bacterias o este paramecio.'],
+  [56.2, 59.8, 'Otros tienen muchísimas células que trabajan juntas: la medusa… ¡o tú!'],
+  [60.4, 64.4, 'Las neuronas llevan mensajes. Son largas, como cables.'],
+  [64.8, 68.4, 'Los glóbulos rojos llevan el oxígeno. Son de las pocas células sin núcleo.'],
+  [68.8, 72.4, 'Las células musculares se encogen y se estiran para que te muevas.'],
+  [72.8, 76.4, 'Las de la piel son planas y están muy juntas. Se renuevan continuamente.'],
+  [76.8, 80.3, 'El óvulo es la célula más grande del cuerpo. El espermatozoide, de las más pequeñas.'],
+  [80.8, 83.2, 'Una neurona es una célula.'],
+  [84.2, 87.0, 'Muchas neuronas juntas forman un tejido: el tejido nervioso.'],
+  [87.8, 90.2, 'Varios tejidos forman un órgano, como el cerebro.'],
+  [91, 93, 'Varios órganos que trabajan juntos forman un sistema: el sistema nervioso.'],
+  [93.4, 95, 'Y todos juntos forman el organismo: ¡Leo!'],
+  [95.6, 101.8, 'Tu cuerpo tiene unos 30 billones de células. ¡Y todas vienen de una sola!']
+];
+function drawNarr(t) {
+  const n = NARR.find(([a, b]) => t >= a && t < b); if (!n) return;
+  const a = inout(t, n[0], n[1], .25), size = 42, lines = wrapLines(n[2], 1500, size);
+  const w = Math.max(...lines.map(l => measure(l, size))) + 80, h = lines.length * size * 1.25 + 38;
+  ctx.save(); ctx.translate(960, 1030 - h / 2 + 20 * (1 - a)); ctx.scale(lerp(.9, 1, E.back(a)), lerp(.9, 1, E.back(a))); ctx.globalAlpha = a;
+  CZ = 1; clay(rrP(-w / 2, -h / 2, w, h, 26), '#fff4e2', { seed: 300 + n[0], sh: .7 });
+  lines.forEach((l, i) => txt(l, 0, -h / 2 + 19 + size * .62 + i * size * 1.25, { size }));
+  ctx.restore();
+}
+
+/* ============================================================
+   PLANO 0 · Título
+   ============================================================ */
+function shTitle(t) {
+  const c = kf(t, [[0, { x: 960, y: 540, z: 1 }], [7, { x: 960, y: 520, z: 1.06 }]]);
+  studio(c); ctx.save(); applyCam(c);
+  dropWord('¿DE QUÉ', 960, 270, 170, .3, t);
+  dropWord('ESTÁS HECHO?', 960, 480, 170, .3 + 6 * .07, t, { shift: 2 });
+  const pk = E.back(seg(t, 3.6, 4.3));
+  drawCelia(1480, lerp(1080, 790, pk), 150, { t, mood: 'grin', look: [-.5, -.8], parts: 1 });
+  table(820);
+  bubble(inout(t, 4.5, 6.6), '¡De células!', 1430, 640, { size: 48, dir: -1 });
+  ctx.restore();
+}
+
+/* ============================================================
+   PLANO 1 · El microscopio
+   ============================================================ */
+const EYEPIECE = [1027, 273];
+function shMicro(t) {
+  const c = kf(t, [[6.5, { x: 900, y: 560, z: 1 }], [8.8, { x: 920, y: 540, z: 1.02 }], [12.2, { x: EYEPIECE[0], y: EYEPIECE[1], z: 7 }]]);
+  studio(c); ctx.save(); applyCam(c);
+  table(950);
+  const lean = E.io(seg(t, 7.8, 8.8));
+  drawLeo(640, 960, .9, { t, rot: lerp(.02, .42, lean), look: lean > .5 ? [1, -.4] : [.6, 0], mood: lean > .5 ? 'o' : 'grin' });
+  drawMicroscope(1150, 1000, 1.05);
+  bubble(inout(t, 6.7, 8.4), '¡Voy a mirar mis células!', 560, 180, { size: 42 });
+  ctx.restore();
+  // se abre el campo del microscopio
+  const r = E.io(seg(t, 10.9, 12.8)) * 1150;
+  if (r > 0) {
+    ctx.save(); ctx.beginPath(); ctx.arc(W / 2, H / 2, r, 0, TAU); ctx.clip(); shCelia(Math.max(t, 12.8) - (12.8 - t) * 0 ); ctx.restore();
+    ctx.save(); ctx.lineWidth = 60; ctx.strokeStyle = '#1a2026'; ctx.beginPath(); ctx.arc(W / 2, H / 2, r + 28, 0, TAU); ctx.stroke(); ctx.restore();
+  }
+}
+
+/* ============================================================
+   PLANOS 2-4 · Celia: presentación, partes y división
+   ============================================================ */
+const TISSUE = (() => { const out = []; for (let j = -3; j <= 3; j++) for (let i = -4; i <= 4; i++) { if (!i && !j) continue; out.push([960 + (i + (j & 1) * .5) * 300 + (hash(i, j) - .5) * 40, 560 + j * 262 + (hash(j, i) - .5) * 40, 140 + 20 * hash(i + 9, j), i * 7 + j]); } return out; })();
+const CC = [960, 560], RC = 380;
+function shCelia(t) {
+  const c = kf(t, [
+    [12.8, { x: 960, y: 560, z: .8 }], [16.4, { x: 960, y: 560, z: .9 }], [19.6, { x: 960, y: 580, z: 1 }],
+    [22, { x: 920, y: 580, z: 1.04 }], [25.6, { x: 960, y: 580, z: 1 }],
+    [27, { x: 880, y: 650, z: 1.55 }], [30.6, { x: 880, y: 640, z: 1.6 }],
+    [32, { x: 790, y: 680, z: 2.1 }], [34.2, { x: 785, y: 690, z: 2.2 }], [35.2, { x: 960, y: 640, z: 1.1 }], [36.8, { x: 960, y: 640, z: 1.1 }],
+    [38, { x: 1010, y: 530, z: 2.2 }], [43, { x: 1030, y: 530, z: 2.25 }], [44.4, { x: 960, y: 560, z: .85 }], [52, { x: 960, y: 560, z: .8 }]]);
+  microBg(c);
+  ctx.save(); applyCam(c);
+  // tejido: células vecinas de la mucosa de la boca
+  const away = E.io(seg(t, 16.6, 18.4));
+  if (away < 1) TISSUE.forEach(([x, y, r, s], k) => {
+    const dx = x - CC[0], dy = y - CC[1], d = Math.hypot(dx, dy) || 1, push = away * 700;
+    const px = x + dx / d * push, py = y + dy / d * push;
+    clay(blobP(px, py, r, s, .12, 1, 1, 1), mix('#e8c3f0', '#d7b3f3', hash(k, 4)), { seed: s + 50, sh: .6, alpha: 1 - away });
+    ball(px + r * .1, py - r * .05, r * .26, '#9f79d6', { sh: .4, alpha: 1 - away, fp: 0 });
+  });
+  // Celia
+  const grow = E.io(seg(t, 16.8, 19.4)), R0 = lerp(150, RC, grow);
+  const wake = seg(t, 14.2, 14.5), hop = Math.sin(clamp((t - 14.6) / .5) * Math.PI) * 50;
+  let o = { t, mood: 'grin', look: [0, 0], parts: seg(t, 17.6, 19), nuc: [[.12, -.08, lerp(.85, 1, grow)]] };
+  if (t < 17.6) o.nuc = [[.1, -.05, .87]];
+  if (t < 14.2) { o.eyes = false; }
+  // membrana: entra el nutriente, el bicho rebota
+  const nIn = seg(t, 20.8, 23.4), bIn = seg(t, 23.1, 24.7);
+  o.dent = .16 * Math.sin(clamp((t - 21.9) / .9) * Math.PI) - .08 * Math.sin(clamp((t - 35.4) / .7) * Math.PI);
+  o.dentA = t < 30 ? Math.PI : Math.PI / 2;
+  if (t > 23.6 && t < 24.4) { o.dent = .07 * Math.sin(clamp((t - 23.7) / .6) * Math.PI); o.dentA = 0; }
+  o.memGlow = .7 * inout(t, 20.3, 22) + .5 * Math.max(0, Math.sin(t * 6)) * inout(t, 20.3, 21.6);
+  o.wob = inout(t, 26.8, 30.4, .4) * (1 + Math.sin(t * 7));
+  o.mitoGlow = [clamp(1.3 * Math.exp(-Math.pow((t - 33) / .9, 2))), 0, 0];
+  o.lid = E.io(seg(t, 38.4, 39.2)) * (1 - E.io(seg(t, 42.6, 43.4)));
+  o.look = t > 20.6 && t < 22.4 ? [-1, .3] : t > 23 && t < 24.6 ? [1, .2] : t > 34.6 && t < 36.4 ? [0, 1] : [0, 0];
+  o.mood = t > 23.6 && t < 24.8 ? 'o' : t > 26.8 && t < 30.4 ? 'o' : 'grin';
+  // división
+  const st = E.io(seg(t, 44.6, 46.4)), s2 = E.io(seg(t, 45.6, 47.2)), pin = E.io(seg(t, 47, 49)), split = t >= 49;
+  if (t >= 44.6 && !split) {
+    o.pea = [1 + .3 * st, .95 * pin]; o.parts = 1 - seg(t, 46.3, 47);
+    o.nuc = s2 > 0 ? [[-.46 * s2, -.02, 1 - .2 * s2], [.46 * s2, -.02, 1 - .2 * s2]] : [[lerp(.12, 0, st), lerp(-.08, -.02, st), 1]];
+    o.faces = pin > .5 ? [[-.62, .8], [.62, lerp(.2, .8, seg(t, 48, 48.5))]] : [[lerp(0, -.62 * pin * 2, 1), 1]];
+    o.faceY = lerp(1, .78, pin);
+  }
+  if (!split) drawCelia(CC[0], CC[1] - hop, R0 * (1 + .06 * wake * (1 - seg(t, 14.5, 15))), o);
+  else {
+    const e = E.elastic(seg(t, 49, 50.4)), R2 = RC * .66, dx = lerp(RC * .6, RC * .82, e);
+    [-1, 1].forEach((s, k) => drawCelia(CC[0] + s * dx, CC[1] - Math.abs(Math.sin((t - 49.8) * 5)) * 14 * inout(t, 49.8, 51.6), R2, { t: t + k * .6, mood: 'grin', look: [-s * .6, 0], parts: seg(t, 49.3, 50.2), nuc: [[.1, -.05, 1]] }));
+  }
+  // nutriente verde y bicho con pinchos
+  if (t > 20.6 && t < 31) { const x = t < 22.9 ? lerp(300, 620, E.io(seg(t, 20.8, 22.2))) + lerp(0, 150, E.io(seg(t, 22, 22.9))) : 770 + Math.sin(t * 2) * 10, y = 560 + Math.sin(t * 3) * 8; const sq = 1 - .3 * Math.sin(clamp((t - 21.9) / .9) * Math.PI); ctx.save(); ctx.translate(x, y); ctx.scale(sq, 1 / sq); ball(0, 0, 36, K.green, { seed: 260 }); gEye(-10, -8, 8, [1, 0], false, K.green); gEye(10, -8, 8, [1, 0], false, K.green); ctx.restore(); }
+  if (t > 23 && t < 25.2) { const x = t < 23.9 ? lerp(1700, 1372, E.in(seg(t, 23.1, 23.9))) : lerp(1372, 1900, E.out(seg(t, 23.9, 25))), y = 540 - Math.sin(clamp((t - 23.9) / 1.1) * Math.PI) * 120; ctx.save(); ctx.translate(x, y); ctx.rotate(t * 3); for (let k = 0; k < 9; k++) { const a = k / 9 * TAU; clayLine([[Math.cos(a) * 30, Math.sin(a) * 30], [Math.cos(a) * 58, Math.sin(a) * 58]], 12, '#6d7180', { sh: .4 }); } ball(0, 0, 40, '#8d8f99', { seed: 261 }); ctx.restore(); gEye(x - 12, y - 8, 10, [-1, 0], false, '#8d8f99'); gEye(x + 12, y - 8, 10, [-1, 0], false, '#8d8f99'); }
+  // estrellitas de energía y desecho que sale
+  star(CC[0] - .46 * RC, CC[1] + .3 * RC, 90, seg(t, 32.8, 33.8));
+  if (t > 34.4 && t < 37) { const p = E.io(seg(t, 34.6, 36.6)); ball(lerp(1030, 960, p), lerp(720, 1080, p), 26, '#9b7b4b', { seed: 262 }); }
+  // material genético que se desenrolla
+  const un = E.io(seg(t, 39.6, 41)) * (1 - E.io(seg(t, 42.2, 42.9)));
+  if (un > 0) { const n0 = [CC[0] + .12 * RC, CC[1] - .08 * RC], pts = []; for (let i = 0; i <= 24; i++) { const u = i / 24 * un; pts.push([n0[0] + u * 520, n0[1] - 60 * u + Math.sin(i * .8 + t * 3) * 22]); } clayLine(pts, 16, K.noodle, { sh: .5 }); const bc = [K.blue, K.yellow, K.green, '#ff9150']; pts.forEach((p, i) => { if (i % 2) ball(p[0], p[1], 10, bc[(i >> 1) % 4], { sh: .3, fp: 0 }); }); }
+  ctx.restore();
+  // rótulos (en pantalla)
+  CZ = 1;
+  bubble(inout(t, 14.7, 16.6), '¡Hola! Soy Celia, una célula.', 1080, 330, { size: 44 });
+  bubble(inout(t, 23.9, 25.4), '¡Tú no pasas!', 1290, 440, { size: 44, dir: -1 });
+  bubble(inout(t, 35.3, 36.8), '¡Fuera desechos!', 1260, 360, { size: 42 });
+  bubble(inout(t, 49.8, 51.8), '¡Ahora somos dos!', 1330, 330, { size: 44 });
+  plaque(inout(t, 20.3, 25.9), 'MEMBRANA', 'decide qué entra y qué sale', 1600, 170, { col: K.mem });
+  plaque(inout(t, 26.3, 30.9), 'CITOPLASMA', 'un líquido espeso', 1620, 170, { col: '#9a73d9' });
+  plaque(inout(t, 31.3, 34.4), 'ORGÁNULOS', 'la mitocondria da energía', 1600, 170, { col: '#e8701f' });
+  plaque(inout(t, 34.5, 36.9), 'ORGÁNULOS', 'otros eliminan desechos', 1600, 170, { col: '#e8701f' });
+  plaque(inout(t, 37.4, 43.8), 'NÚCLEO', 'guarda el material genético', 1580, 170, { col: '#6c45b8' });
+  plaque(inout(t, 45, 51.9), 'DIVISIÓN CELULAR', 'de una célula salen dos', 960, 150, { col: '#e8701f' });
+  plaque(inout(t, 40.6, 42.6), 'instrucciones', null, 1500, 760, { col: K.noodle, size: 46 });
+}
+
+/* ============================================================
+   PLANO 5 · Unicelulares y pluricelulares
+   ============================================================ */
+function shUni(t) {
+  const c = kf(t, [[52, { x: 620, y: 540, z: 1.02 }], [55.6, { x: 640, y: 540, z: 1.04 }], [56.6, { x: 1580, y: 540, z: 1.04 }], [60, { x: 1590, y: 540, z: 1.08 }]]);
+  microBg(c, '#e9f3ec');
+  ctx.save(); applyCam(c);
+  clay(ellP(620, 580, 520, 380), '#bfe6f5', { seed: 271, sh: .5, alpha: .75, fp: 0 });
+  paramecium(620 + Math.sin(t * .9) * 90, 580 + Math.sin(t * 1.3) * 30, 1, t);
+  [[330, 380, .3], [900, 760, -.5], [880, 380, 2.6]].forEach(([x, y, r], k) => bacterium(x + Math.sin(t + k) * 20, y, .8, r + Math.sin(t * 2 + k) * .2, t));
+  clay(ellP(1580, 600, 500, 400), '#ead7f7', { seed: 272, sh: .5, alpha: .8, fp: 0 });
+  jellyfish(1580, 560 + Math.sin(t * 2) * 20, 1.25, t);
+  ctx.restore();
+  CZ = 1;
+  const k = seg(c.x, 700, 1500);
+  plaque(1 - k, 'UNICELULARES', 'una sola célula', 960 - k * 900, 130, { col: '#4f8a3d' });
+  plaque(k, 'PLURICELULARES', 'muchísimas células', 960 + (1 - k) * 900, 130, { col: '#9a73d9' });
+}
+
+/* ============================================================
+   PLANO 6 · Tipos de células (el escenario)
+   ============================================================ */
+const ACTS = [[60.2, 64.6], [64.6, 68.6], [68.6, 72.6], [72.6, 76.6], [76.6, 80.5]];
+function actX(t, a0, a1) { if (t < a0 + .7) return lerp(2500, 960, E.back(seg(t, a0, a0 + .7))); if (t > a1 - .6) return lerp(960, -700, E.in(seg(t, a1 - .6, a1))); return 960; }
+function shTypes(t) {
+  const c = { x: 960, y: 540, z: 1 + .02 * Math.sin(t * .5) };
+  stageSet(c, t, seg(t, 60, 60.6));
+  ctx.save(); applyCam(c);
+  const i = ACTS.findIndex(([a, b]) => t >= a && t < b), [a0, a1] = ACTS[Math.max(0, i)], X = actX(t, a0, a1), bob = Math.abs(Math.sin(t * 5)) * 10;
+  if (i === 0) neuron(X - 330, 600 - bob, 1, t, { axon: 780 });
+  if (i === 1) rojaClay(X, 640 - bob, 150, t, { shrug: inout(t, 66.2, 68.2) });
+  if (i === 2) muscleCell(X, 650, 330, t, .5 + .5 * Math.sin((t - 69) * 4.2));
+  if (i === 3) skinWall(X, 700, t, seg(t, 74.4, 76.2));
+  if (i === 4) { ovum(X - 130, 620 - bob * .5, 190, t); sperm(X + 260 + Math.sin(t * 3) * 20, 700, 1.1, t); }
+  ctx.restore();
+  curtains(c, 1);
+  CZ = 1;
+  const pl = [['NEURONA', 'lleva mensajes', '#e0a92a'], ['GLÓBULO ROJO', 'transporta el oxígeno', K.red], ['CÉLULA MUSCULAR', 'se encoge y se estira', '#e0566c'], ['CÉLULAS DE LA PIEL', 'planas y muy juntas', '#c9855f'], ['ÓVULO Y ESPERMATOZOIDE', 'la más grande y de las más pequeñas', '#e08a5a']];
+  if (i >= 0) plaque(inout(t, a0 + .5, a1 - .3), pl[i][0], pl[i][1], 960, 230, { col: pl[i][2], size: 58 });
+  bubble(inout(t, 62.3, 64.3), '¡Algunas miden casi un metro!', 700, 460, { size: 40 });
+  bubble(inout(t, 66.3, 68.3), '¡Yo no tengo núcleo!', 1100, 470, { size: 42 });
+  bubble(inout(t, 70, 72.3), '¡Hup! ¡Hup!', 1130, 520, { size: 44 });
+  bubble(inout(t, 75, 76.4), '¡Me toca irme!', 1000, 440, { size: 42 });
+}
+
+/* ============================================================
+   PLANO 7 · Niveles de organización (zoom hacia fuera)
+   ============================================================ */
+const LV = [[80.5, 83.2], [84.4, 86.6], [87.8, 90], [91.2, 93], [93.8, 95.2]];
+const TRN = [[83.2, 84.4, [960, 540], 4.5], [86.6, 87.8, [1120, 400], 4.5], [90, 91.2, [960, 200], 4.5], [93, 93.8, [960, 540], 1]];
+const TISSUE_N = (() => { const o = []; for (let j = -4; j <= 4; j++) for (let i = -5; i <= 5; i++) { if (!i && !j) continue; o.push([903 + i * 185 + (j & 1) * 90 + (hash(i, j) - .5) * 60, 540 + j * 128 + (hash(j, i) - .5) * 50, (hash(i + 3, j) - .5) * 1.4]); } return o; })();
+function level(k, t, bg = true) {
+  if (k === 0) { if (bg) microBg({ x: 960, y: 540, z: 1 }, '#fff0cf'); neuron(700, 540, 1, t, { axon: 620 }); }
+  if (k === 1) { if (bg) microBg({ x: 960, y: 540, z: 1 }, '#ffe6d2'); TISSUE_N.forEach(([x, y, r], i) => { ctx.save(); ctx.translate(x, y); ctx.rotate(r); neuron(0, 0, .22, t + i * .3, { axon: 620, eyes: false, sh: .5 }); ctx.restore(); }); neuron(903, 540, .22, t, { axon: 620, sh: .5 }); }
+  if (k === 2) { if (bg) { const g = ctx.createRadialGradient(960, 520, 40, 960, 540, 1100); g.addColorStop(0, '#ffe3e8'); g.addColorStop(1, '#e6a9b8'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); } brain(930, 520, 1, t, .8); }
+  if (k === 3 || k === 4) {
+    if (bg) { studio({ x: 960, y: 540, z: 1 }); table(1000); }
+    drawLeo(960, 1000, 1, { t, ghost: k === 3, wave: k === 4 ? 1 : 0, mood: 'grin' });
+    if (k === 3) { brain(960, 200, .22, t); clayLine([[975, 260], [972, 420], [968, 640]], 22, '#ffcf4a', { sh: .4 }); [[-1, 1], [1, 1]].forEach(([s]) => { clayLine([[968, 420], [960 + s * 110, 470], [960 + s * 150, 690]], 12, '#ffcf4a', { sh: .4 }); clayLine([[968, 640], [960 + s * 50, 760], [960 + s * 52, 980]], 14, '#ffcf4a', { sh: .4 }); }); }
+  }
+}
+function shLevels(t) {
+  const tr = TRN.find(([a, b]) => t >= a && t < b);
+  if (!tr) { let k = 0; LV.forEach(([a], i) => { if (t >= a - .01) k = i; }); if (t >= 93) k = 4; ctx.save(); level(k, t); ctx.restore(); }
+  else {
+    const i = TRN.indexOf(tr), e = E.io(seg(t, tr[0], tr[1])), [ax, ay] = tr[2], Z = tr[3];
+    const sx = lerp(960, ax, e), sy = lerp(540, ay, e), S = lerp(Z, 1, e);
+    ctx.save(); ctx.translate(sx, sy); ctx.scale(S, S); ctx.translate(-ax, -ay); CZ = S; level(i + 1, t); ctx.restore();
+    ctx.save(); ctx.globalAlpha = 1 - seg(e, .35, .95); ctx.translate(sx, sy); ctx.scale(S / Z, S / Z); ctx.translate(-960, -540); CZ = S / Z;
+    level(i, t, false); ctx.restore();
+  }
+  CZ = 1;
+  // escalera de niveles
+  const names = ['CÉLULA', 'TEJIDO', 'ÓRGANO', 'SISTEMA', 'ORGANISMO'], cols = ['#ffcf4a', '#ff9150', '#f27ba7', '#9a73d9', '#4aa3e8'];
+  let cur = 0; LV.forEach(([a], i) => { if (t >= a) cur = i; });
+  names.forEach((nm, i) => {
+    const a = E.back(seg(t, LV[i][0], LV[i][0] + .4)); if (a <= 0) return;
+    const y = 900 - i * 92, x = 1560 + i * 10;
+    ctx.save(); ctx.translate(x + 150, y); ctx.scale(a, a);
+    clay(rrP(-150, -38, 300, 76, 20), i === cur ? cols[i] : '#fff4e2', { seed: 400 + i, sh: .6 });
+    txt(`${i + 1} · ${nm}`, 0, 2, { size: 30, col: K.ink, fam: FT, w: 400 });
+    ctx.restore();
+  });
+  const pl = [['1 · CÉLULA', 'una neurona'], ['2 · TEJIDO', 'tejido nervioso'], ['3 · ÓRGANO', 'el cerebro'], ['4 · SISTEMA', 'el sistema nervioso'], ['5 · ORGANISMO', '¡Leo!']];
+  plaque(inout(t, LV[cur][0] + .1, (TRN[cur] ? TRN[cur][0] : 95.3)), pl[cur][0], pl[cur][1], 400, 150, { col: shade(cols[cur], -.25), size: 54 });
+}
+
+/* ============================================================
+   PLANO 8 · Final
+   ============================================================ */
+function shFinal(t) {
+  const c = kf(t, [[95, { x: 960, y: 540, z: 1.05 }], [103, { x: 960, y: 540, z: 1 }]]);
+  studio(c); ctx.save(); applyCam(c);
+  drawLeo(560, 980, .82, { t, wave: 1, mood: 'grin', look: [.5, 0] });
+  const pk = E.back(seg(t, 96.2, 96.9));
+  drawCelia(1180, lerp(1150, 790, pk), 120, { t, mood: 'grin', look: [-.6, -.4] });
+  rojaClay(1470, lerp(1150, 790, E.back(seg(t, 96.5, 97.2))), 80, t, { o2: 2 });
+  neuron(1700, lerp(1200, 800, E.back(seg(t, 96.8, 97.5))), .5, t, { axon: 200 });
+  table(830);
+  ctx.restore(); CZ = 1;
+  const n = Math.round(30 * E.out(seg(t, 95.8, 97.6)));
+  clayText(n + ' BILLONES', 1270, 330, 110, '#ff9150', { alpha: seg(t, 95.6, 95.9) });
+  txt('de células en tu cuerpo', 1270, 430, { size: 48, col: '#fff4e2', alpha: seg(t, 97.6, 98), fam: FG });
+  dropWord('LAS CÉLULAS', 1270, 150, 120, 98.6, t);
+  txt('Ciencias Naturales 5.º · La organización humana', 960, 1060, { size: 30, col: 'rgba(255,244,226,.85)', alpha: seg(t, 100, 100.6) });
+  const fo = seg(t, 101.9, 103); if (fo > 0) { ctx.fillStyle = `rgba(0,0,0,${fo})`; ctx.fillRect(0, 0, W, H); }
+}
+
+/* ============================================================
+   MONTAJE
+   ============================================================ */
+const SHOTS = [
+  { t0: 0, draw: shTitle, name: 'Inicio' }, { t0: 6.5, draw: shMicro, wipe: '#ff9150', name: 'Microscopio' },
+  { t0: 12.8, draw: shCelia, name: 'Celia' }, { t0: 52, draw: shUni, wipe: '#62c370', name: 'Uni y pluricelulares' },
+  { t0: 60, draw: shTypes, wipe: '#b596e6', name: 'Tipos de células' }, { t0: 80.5, draw: shLevels, wipe: '#4aa3e8', name: 'Niveles' },
+  { t0: 95, draw: shFinal, wipe: '#ffd24d', name: 'Final' }
+];
+const CHAPS = [['Inicio', 0], ['Microscopio', 6.5], ['Celia', 12.8], ['Membrana', 20], ['Citoplasma', 26], ['Orgánulos', 31], ['Núcleo', 37], ['División', 44], ['Uni y pluricelulares', 52], ['Tipos de células', 60], ['Niveles', 80.5], ['Final', 95]];
+function blob(p, col) {
+  if (p <= 0 || p >= 1) return; CZ = 1;
+  const grow = p < .5, q = grow ? E.in(p * 2) : 1 - E.out((p - .5) * 2), R = q * 1300, cx = grow ? 1500 : 420, cy = grow ? 800 : 300;
+  clay(blobP(cx, cy, Math.max(4, R), 7, .08, 1, 1, 1), col, { sh: 1, seed: 500 });
+}
+function drawShot(i, t) { ctx.save(); try { SHOTS[i].draw(t); } catch (e) { console.error(e); } ctx.restore(); CZ = 1; }
+function render(t) {
+  FRAME = Math.floor(t * 12); const tq = FRAME / 12;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; CZ = 1;
+  let i = SHOTS.length - 1; for (let k = 0; k < SHOTS.length - 1; k++) if (tq < SHOTS[k + 1].t0) { i = k; break; }
+  drawShot(i, tq);
+  const s = SHOTS[i], nx = SHOTS[i + 1], TW = .5;
+  if (s.wipe && tq - s.t0 < TW) blob(.5 + (tq - s.t0) / (2 * TW), s.wipe);
+  else if (nx && nx.wipe && nx.t0 - tq < TW) blob(.5 - (nx.t0 - tq) / (2 * TW), nx.wipe);
+  drawNarr(tq);
+  // grano de película y viñeta
+  ctx.save(); const v = ctx.createRadialGradient(W / 2, H / 2, H * .5, W / 2, H / 2, H * 1.05); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(10,5,15,.42)'); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+  ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .06; ctx.translate(hash(FRAME) * 256, hash(FRAME, 3) * 256); ctx.fillStyle = GRAIN; ctx.fillRect(-256, -256, W + 512, H + 512); ctx.restore();
+}
+const GRAIN = (() => { const n = document.createElement('canvas'); n.width = n.height = 256; const h = n.getContext('2d'), d = h.createImageData(256, 256); for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } h.putImageData(d, 0, 0); return ctx.createPattern(n, 'repeat'); })();
+/* ============================================================
+   BANDA SONORA: marimba, bajo pizzicato, silbido y percusión de madera
+   ============================================================ */
+let AC = null, MASTER = null, REV = null, NOISE = null, soundOn = true;
+function ensureAudio() {
+  try {
+    if (!AC) {
+      AC = new (window.AudioContext || window.webkitAudioContext)();
+      const comp = AC.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 3; comp.connect(AC.destination);
+      MASTER = AC.createGain(); MASTER.gain.value = soundOn ? .85 : 0; MASTER.connect(comp);
+      const len = AC.sampleRate * 1.8, ir = AC.createBuffer(2, len, AC.sampleRate);
+      for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2); }
+      REV = AC.createConvolver(); REV.buffer = ir; const rg = AC.createGain(); rg.gain.value = .3; REV.connect(rg); rg.connect(MASTER);
+      NOISE = AC.createBuffer(1, AC.sampleRate, AC.sampleRate); const nd = NOISE.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    }
+    if (AC.state === 'suspended') AC.resume();
+  } catch (e) { AC = null; }
+}
+function env(g, w, a, peak, dec) { g.gain.setValueAtTime(.0001, w); g.gain.exponentialRampToValueAtTime(Math.max(.0002, peak), w + a); g.gain.exponentialRampToValueAtTime(.0001, w + a + dec); }
+function osc(w, B, type, f0, f1, a, dec, v, rev = 0, vib = 0) {
+  const o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.setValueAtTime(f0, w); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, w + a + dec);
+  if (vib) { const l = AC.createOscillator(), lg = AC.createGain(); l.frequency.value = 5.5; lg.gain.value = vib; l.connect(lg); lg.connect(o.frequency); l.start(w); l.stop(w + a + dec + .05); }
+  env(g, w, a, v, dec); o.connect(g); g.connect(B.d); if (rev) { const s = AC.createGain(); s.gain.value = rev; g.connect(s); s.connect(B.r); }
+  o.start(w); o.stop(w + a + dec + .05);
+}
+function nz(w, B, dur, v, type, f0, f1, q = 1, a = .004, rev = 0) {
+  const s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain(); s.buffer = NOISE; s.loop = true;
+  f.type = type; f.Q.value = q; f.frequency.setValueAtTime(f0, w); f.frequency.exponentialRampToValueAtTime(f1, w + a + dur); env(g, w, a, v, dur);
+  s.connect(f); f.connect(g); g.connect(B.d); if (rev) { const r = AC.createGain(); r.gain.value = rev; g.connect(r); r.connect(B.r); }
+  s.start(w); s.stop(w + a + dur + .05);
+}
+const I = {
+  marimba: (w, B, f, v) => { osc(w, B, 'sine', f, f, .002, .45, v, .35); osc(w, B, 'sine', f * 4, f * 4, .001, .06, v * .25); nz(w, B, .015, v * .12, 'bandpass', f * 3, f * 3, 2); },
+  bass: (w, B, f, v) => { osc(w, B, 'triangle', f, f, .003, .32, v); osc(w, B, 'sine', f * 2, f * 2, .002, .08, v * .3); },
+  block: (w, B, v, f = 1700) => nz(w, B, .04, v, 'bandpass', f, f, 8),
+  shaker: (w, B, v) => nz(w, B, .05, v, 'highpass', 6500, 6000, .7, .01),
+  kick: (w, B, v) => osc(w, B, 'sine', 130, 48, .003, .22, v),
+  whistle: (w, B, f, d, v) => osc(w, B, 'sine', f, f, .04, d, v, .5, 6),
+  pad: (w, B, ch, d, v) => ch.forEach(f => { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.value = f; g.gain.setValueAtTime(.0001, w); g.gain.linearRampToValueAtTime(v * .05, w + .5); g.gain.setValueAtTime(v * .05, w + d - .3); g.gain.linearRampToValueAtTime(.0001, w + d + .3); o.connect(g); g.connect(B.d); const s = AC.createGain(); s.gain.value = .9; g.connect(s); s.connect(B.r); o.start(w); o.stop(w + d + .4); }),
+  pop: (w, B) => osc(w, B, 'sine', 500, 1100, .002, .08, .35, .3),
+  squish: (w, B) => { nz(w, B, .22, .35, 'lowpass', 900, 200, 4); osc(w, B, 'sine', 180, 90, .01, .18, .2); },
+  boing: (w, B) => osc(w, B, 'sine', 160, 620, .005, .5, .5, .3, 25),
+  bonk: (w, B) => { osc(w, B, 'triangle', 300, 120, .002, .15, .5); nz(w, B, .05, .3, 'bandpass', 800, 600, 3); },
+  zap: (w, B) => { for (let k = 0; k < 5; k++) osc(w + k * .03, B, 'sawtooth', 900 + 500 * Math.random(), 300, .002, .05, .08); },
+  ding: (w, B) => { osc(w, B, 'sine', 1318, 1318, .002, 1, .25, .8); osc(w, B, 'sine', 2637, 2637, .002, .4, .1, .8); },
+  whoosh: (w, B) => nz(w, B, .5, .35, 'bandpass', 500, 2500, 1.2, .15, .3),
+  roll: (w, B, d) => { for (let t = 0; t < d; t += .045) nz(w + t, B, .03, .08 + .22 * t / d, 'bandpass', 1800, 1500, 1.5); },
+  crash: (w, B) => nz(w, B, 1.3, .3, 'highpass', 5000, 3000, .6, .003, .6),
+  squeak: (w, B) => osc(w, B, 'sine', 700, 1300, .01, .18, .18, 0, 30),
+  hup: (w, B) => osc(w, B, 'square', 220, 330, .005, .1, .08),
+  flutter: (w, B) => { for (let k = 0; k < 6; k++) nz(w + k * .07, B, .04, .12, 'bandpass', 3000, 2500, 2); },
+  whirr: (w, B) => osc(w, B, 'sawtooth', 90, 110, .02, .5, .06, 0, 12),
+  tada: (w, B) => [523.25, 659.25, 783.99, 1046.5].forEach((f, k) => I.marimba(w + k * .05, B, f, .3))
+};
+const BT = .6, BAR = 2.4;
+const CH = [[87.31, [349.23, 440, 523.25]], [73.42, [293.66, 349.23, 440]], [116.54, [293.66, 349.23, 466.16]], [130.81, [329.63, 392, 523.25]]];
+const chAt = t => CH[Math.floor(t / BAR + 1e-6) % 4];
+const EV = []; const ev = (t, f) => EV.push({ t: +t.toFixed(3), f });
+const inS = (t, a, b) => t >= a && t < b;
+const ARP = [0, 1, 2, 1, 0, 2, 1, 2];
+for (let k = 0; k * .3 < END - 1.5; k++) {
+  const t = k * .3;
+  const dense = inS(t, 0, 6.5) || inS(t, 12.8, 52) || inS(t, 52, 60) || inS(t, 93, 101.5);
+  const sparse = inS(t, 6.5, 12.8) || inS(t, 60, 93);
+  const [bass, ch] = chAt(t), i = k % 8, f = ch[ARP[i]] * (i === 4 ? 2 : 1);
+  if (dense || (sparse && k % 2 === 0)) ev(t, (w, B) => I.marimba(w, B, f, dense ? .28 : .2));
+  if (k % 2 === 0) {
+    const beat = (k / 2) % 4;
+    if (!inS(t, 6.5, 12.8) && t < 101) {
+      if (beat === 0 || beat === 2) ev(t, (w, B) => I.bass(w, B, bass, .45));
+      if (beat === 1 || beat === 3) ev(t, (w, B) => I.block(w, B, .35, beat === 1 ? 1700 : 1300));
+      if (beat === 0 && (inS(t, 12.8, 52) || inS(t, 84, 101))) ev(t, (w, B) => I.kick(w, B, .55));
+      if (inS(t, 87, 101)) ev(t, (w, B) => I.kick(w, B, .5));
+    }
+  }
+  if ((inS(t, 52, 60) || inS(t, 90, 101)) && k % 1 === 0) ev(t + .15, (w, B) => I.shaker(w, B, .12));
+}
+for (let b = 0; b * BAR < END - 1; b++) { const t = b * BAR; ev(t, (w, B) => I.pad(w, B, CH[b % 4][1].map(f => f / 2), BAR, .35)); }
+const MEL = [[0, 440, .5], [.5, 523.25, .5], [1, 587.33, 1], [2, 523.25, .5], [2.5, 440, .5], [3, 392, 1], [4, 349.23, .5], [4.5, 392, .5], [5, 440, 1], [6, 523.25, 1.5], [7.5, 587.33, .5]];
+[0.6, 95.2].forEach(s0 => { for (let r = 0; r < 2; r++) MEL.forEach(([b, f, d]) => ev(s0 + (r * 8 + b) * BT, (w, B) => I.whistle(w, B, f * (r ? 1 : 1), d * BT, .2))); });
+MEL.forEach(([b, f, d]) => ev(49.4 + b * BT * .5, (w, B) => I.whistle(w, B, f * 2, d * BT * .5, .14)));
+// efectos
+[...'¿DEQUÉ'].forEach((_, k) => ev(.3 + k * .07 + .3, I.squish)); [...'ESTÁSHECHO?'].forEach((_, k) => ev(.72 + k * .07 + .3, I.squish));
+ev(3.7, I.boing); ev(4.5, I.pop); ev(7.8, I.squeak); ev(10.9, I.whoosh); ev(11.5, I.ding);
+ev(14.2, I.pop); ev(14.6, I.boing); ev(16.7, I.whoosh); ev(20.3, I.ding); ev(22, I.squish); ev(23.9, I.bonk); ev(26.3, I.ding); ev(27.2, I.squish); ev(28.8, I.squish);
+ev(31.3, I.ding); ev(32.8, I.tada); ev(35.5, I.squish); ev(37.4, I.ding); ev(38.5, I.squeak); ev(39.6, I.whirr); ev(42.8, I.pop);
+ev(45, I.ding); ev(45.8, I.squeak); ev(47.4, I.squish); ev(48.2, I.squish); ev(49, I.boing); ev(49.3, I.tada);
+ev(52.4, I.ding); ev(56, I.whoosh); ev(56.6, I.ding);
+ACTS.forEach(([a], k) => { ev(a - .75, (w, B) => I.roll(w, B, .75)); ev(a + .1, I.crash); ev(a + .55, I.tada); });
+[61, 61.9, 62.8, 63.7].forEach(t => ev(t, I.zap)); ev(66.4, I.squeak);
+for (let t = 69.35; t < 72.3; t += 1.5) { ev(t, I.hup); ev(t + .1, I.squish); } ev(74.5, I.flutter); ev(77.5, I.whirr);
+LV.forEach(([a]) => ev(a, I.ding)); TRN.forEach(([a]) => ev(a, I.whoosh));
+ev(95.8, I.pop); ev(96.2, I.boing); ev(96.5, I.boing); ev(96.8, I.boing); ev(97.6, I.tada); [...'LASCÉLULAS'].forEach((_, k) => ev(98.6 + k * .07 + .3, I.squish));
+SHOTS.forEach(s => { if (s.wipe) ev(s.t0 - .45, I.whoosh); });
+ev(101, (w, B) => { I.pad(w, B, [349.23, 440, 523.25, 698.46], 2.2, .8); I.marimba(w, B, 698.46, .3); });
+EV.sort((a, b) => a.t - b.t);
+
+/* ============================================================
+   REPRODUCTOR
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const startBtn = $('start'), playBtn = $('play'), track = $('track'), fillEl = $('fill'), knob = $('knob'), timeEl = $('time'), sndBtn = $('snd'), stageEl = $('stage');
+let T = 0, playing = false, started = false, dirty = true, lastNow = null, sess = null, lastFrame = -1;
+const POSTER_T = 6.2;
+const fmt = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+const chapEl = $('chaps');
+CHAPS.forEach(([n, t0]) => { const li = document.createElement('li'), b = document.createElement('button'); b.className = 'chap'; b.textContent = n; b.dataset.t = t0; b.addEventListener('click', () => { seek(t0); if (!playing) play(); }); li.appendChild(b); chapEl.appendChild(li); });
+function startSess() { if (!AC) { sess = null; return; } const d = AC.createGain(), r = AC.createGain(); d.connect(MASTER); r.connect(REV); sess = { B: { d, r }, filmT0: T, acT0: AC.currentTime + .06, upTo: T - .001 }; }
+function stopSess() { if (!sess) return; const s = sess; sess = null; const now = AC.currentTime; s.B.d.gain.setTargetAtTime(0, now, .03); s.B.r.gain.setTargetAtTime(0, now, .06); setTimeout(() => { try { s.B.d.disconnect(); s.B.r.disconnect(); } catch (e) {} }, 500); }
+function schedule() {
+  if (!sess) return; const hz = T + .3;
+  for (const e of EV) { if (e.t <= sess.upTo) continue; if (e.t > hz) break; const w = sess.acT0 + (e.t - sess.filmT0); if (w >= AC.currentTime - .02) { try { e.f(Math.max(w, AC.currentTime + .005), sess.B); } catch (err) {} } }
+  sess.upTo = hz;
+}
+function play() { ensureAudio(); if (T >= END - .05) T = 0; playing = true; started = true; startBtn.hidden = true; lastNow = null; startSess(); dirty = true; }
+function pause() { playing = false; stopSess(); dirty = true; }
+function seek(t) { T = clamp(t, 0, END - .001); started = true; startBtn.hidden = true; if (playing) { stopSess(); startSess(); } dirty = true; }
+function toggle() { playing ? pause() : play(); }
+function updateUI() {
+  const t = started ? T : 0, pc = t / END * 100;
+  fillEl.style.width = pc + '%'; knob.style.left = pc + '%'; timeEl.textContent = fmt(t) + ' / ' + fmt(END);
+  track.setAttribute('aria-valuenow', Math.round(t)); track.setAttribute('aria-valuemax', END);
+  playBtn.textContent = playing ? '❚❚' : '▶'; playBtn.setAttribute('aria-label', playing ? 'Pausa' : 'Reproducir');
+  let cur = 0; CHAPS.forEach(([, t0], i) => { if (t >= t0) cur = i; }); chapEl.querySelectorAll('.chap').forEach((b, i) => b.classList.toggle('on', started && i === cur));
+}
+function tick(now) {
+  if (playing) {
+    if (sess) T = Math.max(T, sess.filmT0 + (AC.currentTime - sess.acT0));
+    else { T += lastNow == null ? 0 : Math.min(.1, (now - lastNow) / 1000); lastNow = now; }
+    schedule(); if (T >= END) { T = END - .001; pause(); }
+  }
+  const tt = started ? T : POSTER_T, f = Math.floor(tt * 12);
+  if (dirty || f !== lastFrame) { render(tt); lastFrame = f; updateUI(); dirty = false; }
+  requestAnimationFrame(tick);
+}
+startBtn.addEventListener('click', play);
+playBtn.addEventListener('click', toggle);
+cv.addEventListener('click', () => started ? toggle() : play());
+sndBtn.addEventListener('click', () => { soundOn = !soundOn; ensureAudio(); if (MASTER) MASTER.gain.setTargetAtTime(soundOn ? .85 : 0, AC.currentTime, .03); sndBtn.firstChild.textContent = soundOn ? '🔊 ' : '🔇 '; sndBtn.setAttribute('aria-pressed', soundOn); });
+function toggleFS() {
+  if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); return; }
+  if (stageEl.classList.contains('theater')) { stageEl.classList.remove('theater'); return; }
+  const r = stageEl.requestFullscreen ? stageEl.requestFullscreen() : null;
+  if (r && r.catch) r.catch(() => stageEl.classList.add('theater')); else if (!r) stageEl.classList.add('theater');
+}
+$('fs').addEventListener('click', toggleFS);
+let scrub = false, wasPlaying = false;
+const seekX = e => { const r = track.getBoundingClientRect(); seek(clamp((e.clientX - r.left) / r.width) * END); };
+track.addEventListener('pointerdown', e => { scrub = true; wasPlaying = playing; if (playing) pause(); track.setPointerCapture(e.pointerId); seekX(e); });
+track.addEventListener('pointermove', e => { if (scrub) seekX(e); });
+track.addEventListener('pointerup', () => { if (scrub) { scrub = false; if (wasPlaying) play(); } });
+document.addEventListener('keydown', e => {
+  if (e.key === ' ' || e.code === 'Space') { if (e.target.tagName === 'BUTTON' && e.target !== playBtn && e.target !== startBtn) return; e.preventDefault(); toggle(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); seek(T + 5); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); seek(T - 5); }
+  else if (e.key === 'f' || e.key === 'F') toggleFS();
+  else if (e.key === 'Escape' && stageEl.classList.contains('theater')) stageEl.classList.remove('theater');
+});
+if (document.fonts) { document.fonts.ready.then(() => dirty = true); ['400 40px "Titan One"', '800 40px Grandstander'].forEach(f => { try { document.fonts.load(f).then(() => dirty = true); } catch (e) {} }); }
+requestAnimationFrame(tick);
+window.__frame = t => { started = true; render(t); };
+</script>

@@ -10,5 +10,5 @@ paginas: 2
 ia: Las ilustraciones son modelos didácticos generados con IA.
 relacionados:
   - laboratorio-vivo
-orden: 6
+orden: 7
 ---

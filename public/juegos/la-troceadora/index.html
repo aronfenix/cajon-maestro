@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La troceadora · dividir descomponiendo</title>
+<meta name="description" content="Divide troceando el dividendo en partes que sabes dividir de cabeza. Para 5.º de Primaria.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'Rotulo';src:url('fonts/big-shoulders-stencil-latin-wght-normal.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Texto';src:url('fonts/atkinson-hyperlegible-next-latin-400-normal.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Texto';src:url('fonts/atkinson-hyperlegible-next-latin-700-normal.woff2') format('woff2');font-weight:700;font-display:swap}
+:root{
+  --bandeja:#d9dcd6; --folio:#fff; --toner:#000; --gris:#4a4d49; --linea:#c9ccc6;
+  --azul:#1e3fb0; --rojo:#c8201a; --naranja:#ffb054; --naranja2:#ffd29c; --mates:#7fd6ff;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bandeja);color:var(--toner);font-family:'Texto',Verdana,sans-serif;font-size:18px;line-height:1.45}
+button,input{font:inherit}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+.folio{max-width:1100px;margin:24px auto 48px;background:var(--folio);padding:28px 40px 36px;box-shadow:3px 3px 0 #c3c7c0,6px 6px 0 #b3b7b0}
+.cab{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:18px;border-bottom:3px solid var(--toner)}
+.cab h1{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:clamp(48px,7vw,84px);line-height:.85;margin:0}
+.cab p{margin:6px 0 0;color:var(--gris);max-width:30em}
+.volver{font-size:15px;color:var(--azul)}
+.modos{display:flex;gap:8px;flex-wrap:wrap}
+.modo,.chip,.btn,.btn-sec{min-height:48px;padding:0 16px;border-radius:4px;cursor:pointer;font-weight:700}
+.modo{border:2px solid var(--toner);background:#fff;color:var(--toner)}
+.modo[aria-pressed="true"]{background:var(--toner);color:#fff}
+.btn{border:0;background:var(--toner);color:#fff}
+.btn:hover{background:var(--azul)}
+.btn-sec{border:2px solid var(--toner);background:#fff;color:var(--toner)}
+.btn:disabled,.btn-sec:disabled{opacity:.4;cursor:default}
+.marcador{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-size:16px;color:var(--gris)}
+.marcador strong{color:var(--toner)}
+.division{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:clamp(64px,11vw,128px);line-height:1;margin:14px 0 6px;letter-spacing:.01em}
+.division .por{color:var(--gris);font-weight:600}
+.regla{margin:0 0 18px;color:var(--gris);font-size:16px}
+/* la barra */
+.barra{display:flex;height:76px;border:2px solid var(--toner);background:repeating-linear-gradient(135deg,#f1f2ef 0 8px,#e4e6e2 8px 16px);overflow:hidden}
+.seg{display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;border-right:2px solid var(--toner);font-weight:700;font-size:17px;min-width:0;transition:flex-basis .25s ease-out}
+.seg.sabido{background:var(--naranja)}
+.seg.sabido:nth-child(even){background:var(--naranja2)}
+.seg.resto{background:var(--rojo);color:#fff}
+.seg.queda{background:transparent;color:var(--gris);border-right:0;font-weight:400}
+.seg.pequeno span{display:none}
+.quedan{margin:10px 0 0;font-size:18px}
+.quedan strong{font-size:22px}
+/* cortar */
+.mesa{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px;margin-top:24px}
+.etiqueta{font-weight:700;font-size:15px;margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{border:2px solid var(--toner);background:#fff;color:var(--toner);display:inline-flex;flex-direction:column;align-items:flex-start;justify-content:center;line-height:1.1;padding:6px 12px}
+.chip small{font-weight:400;font-size:13px;color:var(--gris)}
+.chip:hover{background:var(--naranja2)}
+.otro{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+.otro label{display:block;font-weight:700;font-size:15px;margin-bottom:6px;width:100%}
+.otro input{width:150px;min-height:48px;padding:8px 12px;border:2px solid var(--toner);border-radius:4px;font-size:22px;font-weight:700}
+.aviso{min-height:1.5em;margin:12px 0 0;font-size:17px}
+.aviso.mal{color:var(--rojo)}
+.acciones{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+/* cuentas */
+.cuentas h2,.final h2{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:30px;line-height:1;margin:0 0 10px}
+.filas{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.filas li{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;font-size:20px;font-variant-numeric:tabular-nums;border-left:8px solid var(--naranja);background:#fff7ec}
+.filas li.resto{border-left-color:var(--rojo);background:#fbe9e8}
+.filas .vacia{border-left-color:var(--linea);background:transparent;color:var(--gris);font-size:16px}
+.leyenda{font-size:14px;color:var(--gris);margin:10px 0 0}
+.leyenda b.n{color:#b86a00}
+.leyenda b.r{color:var(--rojo)}
+/* final */
+.final{margin-top:28px;padding-top:22px;border-top:3px solid var(--toner)}
+.resultado{font-size:clamp(26px,4vw,40px);font-weight:700;margin:0 0 6px;font-variant-numeric:tabular-nums}
+.resultado .r{color:var(--rojo)}
+.compro{margin:0 0 12px;color:var(--gris)}
+.estrellas{font-size:34px;letter-spacing:4px;margin:0}
+.estrellas .off{color:var(--linea)}
+.pregunta{margin:16px 0 0;padding:14px 16px;background:#eef9ff;border-left:8px solid var(--mates);max-width:40em}
+.pizarra-config{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-top:18px}
+.pizarra-config label{display:block;font-weight:700;font-size:15px;margin-bottom:6px}
+.pizarra-config input{width:150px;min-height:48px;padding:8px 12px;border:2px solid var(--toner);border-radius:4px;font-size:22px;font-weight:700}
+[hidden]{display:none!important}
+@media (max-width:760px){
+  .folio{margin:0;padding:20px 16px 28px;box-shadow:none}
+  .mesa{grid-template-columns:minmax(0,1fr)}
+  .barra{height:60px}
+}
+@media (prefers-reduced-motion:reduce){.seg{transition:none}}
+</style>
+</head>
+<body>
+<div class="folio">
+  <header class="cab">
+    <div>
+      <a class="volver" href="../../materiales/la-troceadora/">Cajón maestro</a>
+      <h1>La troceadora</h1>
+      <p>Para dividir un número grande, córtalo en trozos que sepas dividir de cabeza. Al final, suma lo que da cada trozo.</p>
+    </div>
+    <div class="modos" role="group" aria-label="Modo de juego">
+      <button type="button" class="modo" data-modo="reto" aria-pressed="true">Reto por parejas</button>
+      <button type="button" class="modo" data-modo="pizarra" aria-pressed="false">Pizarra libre</button>
+    </div>
+  </header>
+
+  <form class="pizarra-config" id="config" hidden>
+    <div><label for="cfg-dvd">Dividendo</label><input id="cfg-dvd" inputmode="numeric" value="440" autocomplete="off"></div>
+    <div><label for="cfg-dvs">Divisor</label><input id="cfg-dvs" inputmode="numeric" value="3" autocomplete="off"></div>
+    <button class="btn" type="submit">Poner en la pizarra</button>
+    <p class="aviso mal" id="cfg-aviso" role="status"></p>
+  </form>
+
+  <p class="marcador" id="marcador"><span>División <strong id="ronda">1</strong> de 8</span><span>Estrellas: <strong id="total">0</strong></span></p>
+
+  <h2 class="division" aria-live="polite"><span id="dvd">440</span> <span class="por">:</span> <span id="dvs">3</span></h2>
+  <p class="regla">Regla de la troceadora: cada trozo tiene que dar justo, sin resto. El resto solo puede salir en el último trozo.</p>
+
+  <div class="barra" id="barra" aria-hidden="true"></div>
+  <p class="quedan" id="quedan" aria-live="polite"></p>
+
+  <div class="mesa">
+    <section aria-labelledby="t-cortar" id="zona-cortar">
+      <h2 class="etiqueta" id="t-cortar">Trozos que ya sabes dividir</h2>
+      <div class="chips" id="chips"></div>
+      <form class="otro" id="form-otro">
+        <label for="otro">Otro trozo (por ejemplo, 3 × 40 = 120)</label>
+        <input id="otro" inputmode="numeric" autocomplete="off">
+        <button class="btn" type="submit">Cortar</button>
+      </form>
+      <p class="aviso" id="aviso" role="status"></p>
+      <div class="acciones">
+        <button type="button" class="btn-sec" id="deshacer">Deshacer el último corte</button>
+      </div>
+    </section>
+
+    <section class="cuentas" aria-labelledby="t-cuentas">
+      <h2 id="t-cuentas">Las cuentas</h2>
+      <ol class="filas" id="filas"></ol>
+      <p class="leyenda"><b class="n">Naranja</b>: lo que ya sé. <b class="r">Rojo</b>: lo que sobra.</p>
+    </section>
+  </div>
+
+  <section class="final" id="final" hidden aria-live="polite">
+    <h2 id="final-titulo">Resultado</h2>
+    <p class="resultado" id="resultado"></p>
+    <p class="compro" id="compro"></p>
+    <p class="estrellas" id="estrellas" aria-hidden="true"></p>
+    <p id="estrellas-texto"></p>
+    <div class="acciones">
+      <button type="button" class="btn" id="siguiente">Siguiente división</button>
+      <button type="button" class="btn-sec" id="repetir">Repetir esta con menos trozos</button>
+    </div>
+    <p class="pregunta" id="pregunta" hidden></p>
+  </section>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => n.toLocaleString('es-ES');
+  const RONDAS = 8;
+  let modo = 'reto';
+  let D = 440, d = 3, trozos = [], ronda = 0, problemas = [], estrellasTotal = 0, terminado = false;
+
+  // Un trozo "de cabeza": divisor × (una cifra seguida de ceros): 3×100, 3×40, 3×6…
+  function esDeCabeza(q) {
+    if (q < 1 || !Number.isInteger(q)) return false;
+    return /^[1-9]0*$/.test(String(q));
+  }
+  const cifrasNoCero = (n) => String(n).split('').filter((c) => c !== '0').length;
+  const azar = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+
+  function generar() {
+    const lista = [];
+    const tramos = [[2, 5, 11, 19], [2, 5, 11, 19], [3, 9, 21, 99], [3, 9, 21, 99], [3, 9, 21, 99], [3, 9, 101, 249], [3, 9, 101, 249], [4, 9, 251, 999]];
+    for (const [d0, d1, q0, q1] of tramos) {
+      const dv = azar(d0, d1), q = azar(q0, q1), r = azar(0, dv - 1);
+      lista.push({ D: q * dv + r, d: dv });
+    }
+    return lista;
+  }
+
+  const resto = () => D - trozos.reduce((a, b) => a + b, 0);
+
+  function cargar(nD, nd) {
+    D = nD; d = nd; trozos = []; terminado = false;
+    $('dvd').textContent = fmt(D);
+    $('dvs').textContent = fmt(d);
+    $('final').hidden = true;
+    $('zona-cortar').hidden = false;
+    aviso('');
+    pintar();
+  }
+
+  function aviso(t, mal) {
+    const a = $('aviso');
+    a.textContent = t;
+    a.classList.toggle('mal', !!mal);
+  }
+
+  function pintar() {
+    const q = resto();
+    // barra
+    const barra = $('barra');
+    barra.innerHTML = '';
+    trozos.forEach((t) => barra.appendChild(segmento(t, 'sabido', fmt(t))));
+    if (terminado) {
+      if (q > 0) barra.appendChild(segmento(q, 'resto', 'sobra ' + fmt(q)));
+    } else if (q > 0) {
+      barra.appendChild(segmento(q, 'queda', 'quedan ' + fmt(q)));
+    }
+    $('quedan').innerHTML = terminado
+      ? 'Ya no se puede cortar más.'
+      : `Quedan <strong>${fmt(q)}</strong> por trocear.`;
+    // trozos amigos
+    const chips = $('chips');
+    chips.innerHTML = '';
+    if (!terminado) {
+      const mults = [1000, 500, 200, 100, 50, 20, 10, 5, 2, 1].filter((m) => d * m <= q);
+      mults.slice(0, 6).forEach((m) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.innerHTML = `${fmt(d * m)}<small>${d} × ${fmt(m)}</small>`;
+        b.addEventListener('click', () => cortar(d * m));
+        chips.appendChild(b);
+      });
+    }
+    // cuentas
+    const filas = $('filas');
+    filas.innerHTML = '';
+    if (!trozos.length && !terminado) {
+      const li = document.createElement('li');
+      li.className = 'vacia';
+      li.textContent = 'Aquí saldrá cada trozo con su división.';
+      filas.appendChild(li);
+    }
+    trozos.forEach((t) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${fmt(t)} : ${d}</span><strong>${fmt(t / d)}</strong>`;
+      filas.appendChild(li);
+    });
+    if (terminado && q > 0) {
+      const li = document.createElement('li');
+      li.className = 'resto';
+      li.innerHTML = `<span>${fmt(q)} : ${d}</span><strong>sobra ${fmt(q)}</strong>`;
+      filas.appendChild(li);
+    }
+    $('deshacer').disabled = trozos.length === 0;
+  }
+
+  function segmento(valor, clase, texto) {
+    const s = document.createElement('div');
+    s.className = 'seg ' + clase;
+    s.style.flexBasis = (valor / D) * 100 + '%';
+    if (valor / D < 0.07) s.classList.add('pequeno');
+    const sp = document.createElement('span');
+    sp.textContent = texto;
+    s.appendChild(sp);
+    s.title = texto;
+    return s;
+  }
+
+  function cortar(v) {
+    if (terminado) return;
+    const q = resto();
+    if (!Number.isInteger(v) || v <= 0) return aviso('Escribe un número para cortar.', true);
+    if (v > q) return aviso(`No cabe: solo quedan ${fmt(q)}.`, true);
+    if (v % d !== 0) return aviso(`${fmt(v)} : ${d} no da justo. El resto solo puede salir en el último trozo: busca un trozo que dé justo.`, true);
+    if (!esDeCabeza(v / d)) {
+      return aviso(`${fmt(v)} da justo, pero ${fmt(v)} : ${d} = ${fmt(v / d)} no es de cabeza. Usa trozos como ${d} × 100, ${d} × 40 o ${d} × 6.`, true);
+    }
+    trozos.push(v);
+    aviso(`Cortado: ${fmt(v)} : ${d} = ${fmt(v / d)}.`);
+    if (resto() < d) terminar();
+    else pintar();
+  }
+
+  function terminar() {
+    terminado = true;
+    pintar();
+    const Q = trozos.reduce((a, t) => a + t / d, 0);
+    const R = resto();
+    $('zona-cortar').hidden = true;
+    $('final').hidden = false;
+    $('final-titulo').textContent = 'Lo que deduzco';
+    const suma = trozos.map((t) => fmt(t / d)).join(' + ');
+    $('resultado').innerHTML = `${suma}${trozos.length > 1 ? ' = ' + fmt(Q) : ''}` +
+      (R ? ` <span class="r">y sobran ${fmt(R)}</span>` : ', y no sobra nada');
+    $('compro').textContent = `Comprobación: ${fmt(Q)} × ${d}${R ? ' + ' + fmt(R) : ''} = ${fmt(Q * d + R)}. ${Q * d + R === D ? 'Cuadra.' : ''}`;
+    const optimo = cifrasNoCero(Q);
+    if (modo === 'reto') {
+      const n = trozos.length <= optimo ? 3 : trozos.length <= optimo + 2 ? 2 : 1;
+      estrellasTotal += n;
+      $('total').textContent = estrellasTotal;
+      $('estrellas').innerHTML = '★'.repeat(n) + '<span class="off">' + '★'.repeat(3 - n) + '</span>';
+      $('estrellas-texto').textContent = n === 3
+        ? `${trozos.length} ${trozos.length === 1 ? 'trozo' : 'trozos'}: no se puede hacer con menos.`
+        : `${trozos.length} trozos. Se puede hacer con ${optimo}.`;
+      $('repetir').hidden = n === 3;
+      const ultima = ronda === RONDAS - 1;
+      $('siguiente').textContent = ultima ? 'Ver cómo ha ido' : 'Siguiente división';
+      $('pregunta').hidden = true;
+    } else {
+      $('estrellas').innerHTML = '';
+      $('estrellas-texto').textContent = trozos.length > optimo ? `Se puede hacer con ${optimo} trozos.` : '';
+      $('repetir').hidden = trozos.length <= optimo;
+      $('siguiente').textContent = 'Otra división';
+      $('pregunta').hidden = false;
+      $('pregunta').textContent = '¿Qué observas? ¿Qué trozos convienen más? ¿Por qué el resto solo puede salir en el último?';
+    }
+    $('siguiente').focus({ preventScroll: true });
+  }
+
+  function cierreReto() {
+    $('final-titulo').textContent = 'Fin del reto';
+    $('resultado').textContent = `${estrellasTotal} de ${RONDAS * 3} estrellas.`;
+    $('compro').textContent = '';
+    $('estrellas').innerHTML = '';
+    $('estrellas-texto').textContent = '';
+    $('repetir').hidden = true;
+    $('siguiente').textContent = 'Otra ronda';
+    $('pregunta').hidden = false;
+    $('pregunta').textContent = 'Para hablarlo en pareja: ¿qué trozos os han servido más? ¿Cómo sabíais cuál era el trozo más grande que se podía cortar?';
+    $('barra').innerHTML = '';
+    $('quedan').textContent = '';
+    $('filas').innerHTML = '';
+    ronda = RONDAS;
+  }
+
+  function empezarReto() {
+    problemas = generar();
+    ronda = 0;
+    estrellasTotal = 0;
+    $('total').textContent = '0';
+    $('ronda').textContent = '1';
+    cargar(problemas[0].D, problemas[0].d);
+  }
+
+  $('siguiente').addEventListener('click', () => {
+    if (modo === 'pizarra') {
+      $('cfg-dvd').focus();
+      $('final').hidden = true;
+      return;
+    }
+    if (ronda >= RONDAS) return empezarReto();
+    if (ronda === RONDAS - 1) return cierreReto();
+    ronda++;
+    $('ronda').textContent = ronda + 1;
+    cargar(problemas[ronda].D, problemas[ronda].d);
+  });
+  $('repetir').addEventListener('click', () => {
+    if (modo === 'reto') {
+      // repetir no da estrellas extra: se descuentan las de este intento
+      const Q = trozos.reduce((a, t) => a + t / d, 0), optimo = cifrasNoCero(Q);
+      estrellasTotal -= trozos.length <= optimo ? 3 : trozos.length <= optimo + 2 ? 2 : 1;
+      $('total').textContent = estrellasTotal;
+    }
+    cargar(D, d);
+  });
+  $('deshacer').addEventListener('click', () => {
+    trozos.pop();
+    aviso('');
+    pintar();
+  });
+  $('form-otro').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = Number($('otro').value.replace(/\D/g, ''));
+    cortar(v);
+    $('otro').value = '';
+  });
+  $('config').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nD = Number($('cfg-dvd').value.replace(/\D/g, ''));
+    const nd = Number($('cfg-dvs').value.replace(/\D/g, ''));
+    const a = $('cfg-aviso');
+    if (!(nd >= 2 && nd <= 12)) return (a.textContent = 'El divisor tiene que estar entre 2 y 12.');
+    if (!(nD >= nd && nD <= 99999)) return (a.textContent = 'El dividendo tiene que ser mayor que el divisor y menor que 100 000.');
+    a.textContent = '';
+    cargar(nD, nd);
+  });
+  document.querySelectorAll('.modo').forEach((b) =>
+    b.addEventListener('click', () => {
+      modo = b.dataset.modo;
+      document.querySelectorAll('.modo').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      $('config').hidden = modo !== 'pizarra';
+      $('marcador').hidden = modo !== 'reto';
+      if (modo === 'reto') empezarReto();
+      else cargar(440, 3);
+    }),
+  );
+
+  empezarReto();
+})();
+</script>
+</body>
+</html>
