@@ -3,6 +3,9 @@
 //   ordenar  → colgar etiquetas en su sitio (ordenar + estimar a la vez)
 //   saltos   → llevar la rana de un número a otro con el menor número de saltos
 import { el, svg, num, azar, barajar, redondea, suena } from './nucleo.js';
+import { polvo, chispasEn, cuentaArriba, espera, mano, bote, temblor } from './efectos.js';
+const bloquea = (ctx) => ctx.acciones.querySelectorAll('button').forEach((b) => (b.disabled = true));
+function polvoBajo(nodo) { const r = nodo.getBoundingClientRect(); polvo(r.left + r.width / 2, r.bottom - 4); }
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fmt = (d, v) => num(v, d.decimales) + (d.unidad ? ' ' + d.unidad : '');
@@ -61,7 +64,10 @@ function estimar(d, ctx) {
 
   const mueve = (v, primera) => {
     g = clamp(v, d.min, d.max);
-    if (pin.hidden || primera) { pin.hidden = false; pin.classList.remove('cae'); void pin.offsetWidth; pin.classList.add('cae'); suena('pon'); }
+    if (pin.hidden || primera) {
+      pin.hidden = false; pin.classList.remove('cae'); void pin.offsetWidth; pin.classList.add('cae'); suena('pon');
+      setTimeout(() => { const r = pin.getBoundingClientRect(); polvo(r.left + r.width / 2, r.bottom - 20, 7); R.regla.classList.remove('golpe'); void R.regla.offsetWidth; R.regla.classList.add('golpe'); }, 170);
+    }
     pin.style.left = R.pc(g) + '%';
     mango.setAttribute('aria-valuenow', String(Math.round(R.pc(g))));
     mango.setAttribute('aria-valuetext', `${Math.round(R.pc(g))} % del camino`);
@@ -89,10 +95,11 @@ function estimar(d, ctx) {
   });
   // desde el teclado se empieza con la chincheta en el centro
   mango.addEventListener('focus', () => { if (g == null && !hecho) mueve((d.min + d.max) / 2, true); });
+  if (ctx.primera) mano(R.regla, { dx: 0.38 });
 
-  function revisar() {
-    if (g == null) return;
-    hecho = true;
+  async function revisar() {
+    if (g == null || hecho) return;
+    hecho = true; bloquea(ctx);
     mango.removeAttribute('tabindex'); mango.style.cursor = 'default';
     R.regla.style.cursor = 'default';
     R.nodo.classList.add('con-boli');
@@ -101,14 +108,23 @@ function estimar(d, ctx) {
     const pct = (err / rango) * 100;
     const ini = Math.max(d.min, d.valor - (tol[0] / 100) * rango), fin = Math.min(d.max, d.valor + (tol[0] / 100) * rango);
     R.escala.append(el('span', { class: 'fosforito', style: { left: R.pc(ini) + '%', width: R.pc(fin) - R.pc(ini) + '%' } }));
-    if (pct >= 0.6) {
-      const a = Math.min(g, d.valor), b = Math.max(g, d.valor);
-      R.escala.append(el('span', { class: 'distancia', style: { left: R.pc(a) + '%', width: R.pc(b) - R.pc(a) + '%' } },
-        el('b', { text: num(redondea(err, d.paso ?? (rango >= 1000 ? 10 : 1)), d.decimales) })));
-    }
+    suena('clic');
+    await espera(280);
     R.escala.append(el('div', { class: 'boli-azul', style: { left: R.pc(d.valor) + '%' } },
       svg('0 0 32 50', '<path class="trazo" pathLength="1" d="M16 48 C 14 34, 18 18, 16 5 M7 15 L16 3 L25 14" stroke="var(--azul)" stroke-width="3.5"/>'),
       el('span', { text: d.etiqueta ? `${d.etiqueta}: ${fmt(d, d.valor)}` : fmt(d, d.valor) })));
+    suena('pon');
+    await espera(380);
+    if (pct >= 0.6) {
+      const a = Math.min(g, d.valor), b = Math.max(g, d.valor);
+      const numero = el('b', { text: '0' });
+      R.escala.append(el('span', { class: 'distancia', style: { left: R.pc(a) + '%', width: R.pc(b) - R.pc(a) + '%' } }, numero));
+      const final = redondea(err, d.paso ?? (rango >= 1000 ? 10 : 1));
+      if (Number.isInteger(final) && !d.decimales) setTimeout(() => cuentaArriba(numero, 0, final, 500), 200); else numero.textContent = num(final, d.decimales);
+      setTimeout(() => numero.textContent = num(final, d.decimales), 760);
+      suena('salto');
+      await espera(800);
+    } else { chispasEn(pin, 18); await espera(250); }
     const tuyo = redondea(g, d.paso ?? (rango >= 1000 ? 10 : 1));
     const mensaje = pct < 0.6 ? `**Clavada.** Tu chincheta está justo en el ${fmt(d, tuyo)}.`
       : `Tu chincheta está más o menos en el ${fmt(d, tuyo)}, a ${fmt(d, redondea(err, d.paso ?? 1))} del sitio bueno: un ${pctTxt(pct)} de la recta. La franja de color es la zona de las tres estrellas.`;
@@ -153,10 +169,11 @@ function ordenar(d, ctx) {
       R.escala.append(t.hilo, t.punta, t.cuelga);
     }
     t.cuelga.append(t.nodo);
-    t.nodo.classList.remove('elegida');
+    t.nodo.classList.remove('elegida', 'cuelga'); void t.nodo.offsetWidth; t.nodo.classList.add('cuelga');
     elegida = null; ctx.aviso('');
     suena('pon');
     recolocar();
+    requestAnimationFrame(() => { const r = t.punta.getBoundingClientRect(); polvo(r.left + r.width / 2, r.top + 6, 6); });
   }
   function aBandeja(t) {
     t.g = null;
@@ -226,28 +243,34 @@ function ordenar(d, ctx) {
       if (e.key === 'ArrowLeft') { colocar(t, t.g - paso); t.nodo.focus(); e.preventDefault(); }
     });
   }
+  if (ctx.primera) mano(tarjetas[0].nodo, { dx: 0.5, demora: 3500 });
   R.regla.addEventListener('pointerdown', (e) => {
     if (hecho || !elegida) return;
     const t = elegida; colocar(t, R.valorEn(e.clientX)); t.nodo.focus({ preventScroll: true });
   });
 
-  function revisar() {
-    hecho = true;
+  async function revisar() {
+    if (hecho) return;
+    hecho = true; bloquea(ctx);
     elegida = null;
     const orden = [...tarjetas].sort((a, b) => a.g - b.g);
     let cambiadas = 0;
     for (let i = 0; i < orden.length; i++) for (let j = i + 1; j < orden.length; j++) if (orden[i].valor > orden[j].valor) cambiadas++;
     let suma = 0;
-    for (const t of tarjetas) {
+    for (const t of [...tarjetas].sort((a, b) => a.valor - b.valor)) {
+      await espera(230);
       const pct = (Math.abs(t.g - t.valor) / (d.max - d.min)) * 100;
       suma += pct;
       const a = Math.min(t.g, t.valor), b = Math.max(t.g, t.valor);
       R.escala.append(el('span', { class: 'enlace', style: { left: R.pc(a) + '%', width: R.pc(b) - R.pc(a) + '%' } }),
         el('span', { class: 'punto-bueno', style: { left: R.pc(t.valor) + '%' }, title: `${t.texto}: ${fmt(d, t.valor)}` }));
       t.cuelga.classList.add(pct <= tol[1] ? 'bien' : 'mal');
+      t.nodo.classList.remove('cuelga');
+      suena(pct <= tol[1] ? 'pon' : 'quita');
       if (conTexto && !t.nodo.querySelector('small')) t.nodo.append(el('small', { text: fmt(d, t.valor) }));
       t.nodo.style.cursor = 'default';
     }
+    await espera(350);
     const medio = suma / tarjetas.length;
     const estrellas = cambiadas === 0 ? (medio <= tol[0] ? 3 : 2) : cambiadas === 1 ? 1 : 0;
     const txtOrden = cambiadas === 0 ? '**Orden perfecto.**' : `Hay ${cambiadas} ${cambiadas === 1 ? 'pareja cambiada' : 'parejas cambiadas'} de orden.`;
@@ -290,8 +313,8 @@ const RANA = `
 <ellipse cx="27" cy="32" rx="20" ry="13.5" fill="#5bc236" stroke="#1f5c12" stroke-width="2.5"/>
 <ellipse cx="27" cy="37" rx="11" ry="5.5" fill="#c3f29e"/>
 <circle cx="17" cy="18" r="8" fill="#5bc236" stroke="#1f5c12" stroke-width="2.5"/><circle cx="37" cy="18" r="8" fill="#5bc236" stroke="#1f5c12" stroke-width="2.5"/>
-<circle cx="17" cy="18" r="4.6" fill="#fff"/><circle cx="37" cy="18" r="4.6" fill="#fff"/>
-<circle cx="18.2" cy="18.4" r="2.5" fill="#000"/><circle cx="38.2" cy="18.4" r="2.5" fill="#000"/>
+<g class="ojos"><circle cx="17" cy="18" r="4.6" fill="#fff"/><circle cx="37" cy="18" r="4.6" fill="#fff"/>
+<circle cx="18.2" cy="18.4" r="2.5" fill="#000"/><circle cx="38.2" cy="18.4" r="2.5" fill="#000"/></g>
 <path d="M19 30 Q27 36 35 30" fill="none" stroke="#1f5c12" stroke-width="2.5" stroke-linecap="round"/>`;
 const BANDERIN = `<rect x="2" y="4" width="3" height="58" rx="1.5" fill="#3b2a12"/><path d="M5 5 L36 13 L5 24Z" fill="var(--rojo)" stroke="#7a120e" stroke-width="2" stroke-linejoin="round"/>`;
 
@@ -310,7 +333,7 @@ function saltar(d, ctx) {
   ctx.escenario.append(caja, botones, cuenta);
 
   const pos = [d.inicio];
-  let hecho = false;
+  let hecho = false, ranaActual = null, banderinActual = null;
   for (const dir of restar ? [1, -1] : [1]) for (const s of [...saltos].reverse()) {
     const [c, canto, txt] = color(s);
     const estilo = dir > 0 ? { '--c': c, '--c-canto': canto, '--c-txt': txt } : { '--c': '#fff', '--c-canto': canto, '--c-txt': canto };
@@ -326,7 +349,7 @@ function saltar(d, ctx) {
     pos.push(pos.at(-1) + m);
     suena(m > 0 ? 'salto' : 'atras');
     pinta(true);
-    if (pos.at(-1) === d.meta) setTimeout(acabar, 380);
+    if (pos.at(-1) === d.meta) setTimeout(acabar, 420);
   }
 
   function pinta(nuevo) {
@@ -357,8 +380,11 @@ function saltar(d, ctx) {
       if (es) ultimo = { a, b, yTop };
     }
     R.escala.append(svg(`0 0 ${ancho} ${H}`, h, { class: 'arcos', height: H, preserveAspectRatio: 'none' }));
-    const rana = el('div', { class: 'rana', style: { left: R.pc(pos.at(-1)) + '%' } }, svg('0 0 54 48', RANA));
+    const atras = (pos.at(-1) > d.meta) || (pos.length > 1 && pos.at(-1) < pos.at(-2) && pos.at(-1) !== d.meta);
+    const rana = el('div', { class: 'rana' + (atras ? ' mira-atras' : ''), style: { left: R.pc(pos.at(-1)) + '%' } }, svg('0 0 54 48', RANA));
     R.escala.append(rana);
+    ranaActual = rana; banderinActual = R.escala.querySelector('.banderin');
+    if (ultimo) setTimeout(() => rana.isConnected && polvoBajo(rana), 400);
     if (ultimo && rana.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const { a, b, yTop } = ultimo;
       const fr = [];
@@ -380,13 +406,17 @@ function saltar(d, ctx) {
     partes.push(el('span', { text: '= ' + num(pos.at(-1)) }));
     cuenta.replaceChildren(...partes, el('span', { class: 'sr', text: pos.at(-1) === d.meta ? '. Has llegado.' : `. Faltan ${d.meta - pos.at(-1)}.` }));
   }
-  window.addEventListener('resize', () => pinta(false));
+  window.addEventListener('resize', () => !hecho && pinta(false));
   requestAnimationFrame(() => pinta(false));
+  if (ctx.primera) setTimeout(() => mano(botones.firstChild, { dx: 0.5, demora: 2800 }), 50);
 
-  function acabar() {
+  async function acabar() {
     if (hecho && !ctx.pizarra) return;
-    hecho = true;
+    hecho = true; bloquea(ctx);
     botones.querySelectorAll('button').forEach((b) => (b.disabled = true));
+    ranaActual?.classList.add('fiesta'); banderinActual?.classList.add('ondea');
+    suena('bien');
+    await espera(900);
     const n = pos.length - 1, o = optimo.length;
     const estrellas = n <= o ? 3 : n === o + 1 ? 2 : 1;
     const msg = n <= o ? `**${n} ${n === 1 ? 'salto' : 'saltos'}.** No se puede con menos.`

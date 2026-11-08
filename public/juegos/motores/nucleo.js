@@ -2,6 +2,7 @@
 // Cada motor exporta { generar(spec), ronda(datos, ctx) }. ronda() pinta en ctx.escenario y,
 // cuando el alumno comprueba, llama a ctx.fin(estrellas, mensaje).
 
+import * as fx from './efectos.js';
 export const $ = (s, r = document) => r.querySelector(s);
 const SVGNS = 'http://www.w3.org/2000/svg';
 
@@ -158,6 +159,13 @@ export async function arrancar(config, motor) {
   btnReto.onclick = () => pizarra && ponerModo(false);
   btnPiz.onclick = () => pizarra || ponerModo(true);
 
+  const cartel = el('div', { class: 'cartel', 'aria-hidden': 'true' });
+  document.body.append(cartel);
+  const claveRecord = 'cajon-record:' + location.pathname;
+  const leeRecord = () => { try { return Number(localStorage.getItem(claveRecord)) || 0; } catch { return 0; } };
+  const racha = el('span', { class: 'racha', hidden: true });
+  let primeraPartida = true;
+
   let token = 0;
   async function partida() {
     const mio = ++token;
@@ -167,17 +175,23 @@ export async function arrancar(config, motor) {
     const logros = [];
     const huecos = rondas.map((_, i) => el('li', { text: i + 1 }));
     const totalTxt = el('span', { class: 'total' });
-    pegatinas.replaceChildren(...huecos, totalTxt);
+    pegatinas.replaceChildren(...huecos, totalTxt, racha);
+    let enRacha = 0; racha.hidden = true;
 
     for (let i = 0; i < rondas.length; i++) {
       if (mio !== token) return;
       huecos.forEach((h, j) => h.classList.toggle('ahora', j === i));
       totalTxt.textContent = `Ronda ${i + 1} de ${rondas.length}`;
+      if (i > 0 && zona.animate) await zona.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateX(-60px)', opacity: 0 }], { duration: 200, easing: 'ease-in' }).finished.catch(() => {});
+      if (mio !== token) return;
       reto.replaceChildren(); pista.replaceChildren(); escenario.replaceChildren(); acciones.replaceChildren();
+      cartel.replaceChildren(el('b', { text: i + 1 === rondas.length && rondas.length > 1 ? 'Última ronda' : `Ronda ${i + 1}` }), el('span', { text: `de ${rondas.length}` }));
+      cartel.classList.remove('sale'); void cartel.offsetWidth; cartel.classList.add('sale');
+      zona.classList.remove('zona-entra'); void zona.offsetWidth; zona.classList.add('zona-entra');
       aviso.textContent = ''; aviso.className = 'aviso'; correccion.hidden = true; correccion.replaceChildren();
       const r = await new Promise((resolver) => {
         const ctx = {
-          pizarra, escenario, acciones, datos: rondas[i], num, el, suena,
+          pizarra, escenario, acciones, datos: rondas[i], num, el, suena, fx, ronda: i, primera: i === 0 && primeraPartida,
           reto: (t) => reto.replaceChildren(marca(t)),
           pista: (t) => pista.replaceChildren(marca(t)),
           aviso: (t, mal = false) => { aviso.textContent = t || ''; aviso.className = 'aviso' + (mal ? ' mal' : ''); },
@@ -196,12 +210,26 @@ export async function arrancar(config, motor) {
               sig);
             correccion.hidden = false;
             if (!pizarra) {
-              suena('sello');
-              setTimeout(() => suena(estrellas === 3 ? 'bien' : estrellas >= 1 ? 'regular' : 'mal'), 160);
+              const sello = correccion.querySelector('.sello');
+              suena('sello'); fx.vibra(estrellas ? 25 : [40, 60, 40]);
+              correccion.querySelectorAll('.estrellas .si').forEach((s, k) => setTimeout(() => { suena('estrella'); fx.chispasEn(s, 8); }, 260 + k * 140));
+              setTimeout(() => suena(estrellas === 3 ? 'bien' : estrellas >= 1 ? 'regular' : 'mal'), 300 + estrellas * 140);
+              if (estrellas === 3) setTimeout(() => fx.confetiEn(sello, 70), 380);
+              if (estrellas === 0) fx.temblor(escenario, 10);
+              // la pegatina vuela hasta su sitio en la hoja de arriba
               const h = huecos[i];
-              h.replaceChildren(pegatina(estrellas)); h.classList.add('puesta'); h.classList.remove('ahora');
-              h.style.setProperty('--giro', (Math.random() * 30 - 15).toFixed(0) + 'deg');
-              h.setAttribute('aria-label', `Ronda ${i + 1}: ${estrellas} estrellas`);
+              setTimeout(() => fx.vuela(sello, h, pegatina(estrellas), { ms: 640, escala: 'ajusta', alFinal: () => {
+                h.replaceChildren(pegatina(estrellas)); h.classList.add('puesta'); h.classList.remove('ahora');
+                h.style.setProperty('--giro', (Math.random() * 30 - 15).toFixed(0) + 'deg');
+                h.setAttribute('aria-label', `Ronda ${i + 1}: ${estrellas} estrellas`);
+                suena('pon');
+              } }), 700);
+              enRacha = estrellas === 3 ? enRacha + 1 : 0;
+              if (enRacha >= 2) {
+                racha.hidden = false;
+                racha.replaceChildren(svg('0 0 24 24', '<path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3 0-5 1-8z" fill="#ff7a1a" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 13c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1-3 1 1 2 0 2-2z" fill="#ffd23f"/>', { width: 22, height: 22 }), `Racha de ${enRacha}`);
+                fx.bote(racha, 12);
+              } else racha.hidden = true;
             }
             sig.focus({ preventScroll: true });
             correccion.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -225,7 +253,17 @@ export async function arrancar(config, motor) {
         el('button', { type: 'button', class: 'tecla primaria grande', text: 'Jugar otra partida', onclick: partida }),
         el('a', { class: 'tecla grande', href: config.volver || '../../', text: 'Volver al cajón' })));
     final.hidden = false;
-    if (!pizarra && total >= posibles * 0.7) suena('bien');
+    primeraPartida = false;
+    if (!pizarra) {
+      const strong = final.querySelector('.total strong'); fx.cuentaArriba(strong, 0, total, 900);
+      final.querySelectorAll('.hoja figure').forEach((f, k) => { f.style.animationDelay = k * 110 + 'ms'; setTimeout(() => suena('pon'), k * 110); });
+      const record = leeRecord();
+      if (total > record) {
+        try { localStorage.setItem(claveRecord, String(total)); } catch {}
+        if (record > 0) final.querySelector('.total').append(el('span', { class: 'record', text: '¡Nuevo récord en esta tablet!' }));
+      } else if (record) final.querySelector('.total').append(el('span', { class: 'record viejo', text: `Tu récord en esta tablet: ${record}` }));
+      if (total >= posibles * 0.7) setTimeout(() => { suena('bien'); fx.confeti(innerWidth / 2, innerHeight * 0.35, 140); }, 300);
+    }
   }
   partida();
 }

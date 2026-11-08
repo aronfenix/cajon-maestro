@@ -265,3 +265,47 @@ button,input{font:inherit;color:inherit}
   *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition:none!important}
 }
 .saco:empty{display:none}
+
+/* ---------- jugabilidad ---------- */
+.cartel{position:fixed;left:50%;top:38%;z-index:85;pointer-events:none;display:flex;flex-direction:column;align-items:center;padding:16px 34px 14px;border-radius:18px;background:var(--tinta);color:#fff;opacity:0;transform:translate(-50%,-50%)}
+.cartel b{font-family:'Rotulo',Impact,sans-serif;font-weight:900;font-size:clamp(46px,8vw,88px);line-height:.9}
+.cartel span{font-size:17px;color:#cfd5d1}
+.cartel.sale{animation:cartel 1s cubic-bezier(.2,1,.3,1) both}
+@keyframes cartel{0%{opacity:0;transform:translate(-50%,-50%) scale(.6) rotate(-6deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.04) rotate(1deg)}30%{transform:translate(-50%,-50%) scale(1) rotate(0)}75%{opacity:1;transform:translate(-50%,-50%)}100%{opacity:0;transform:translate(-50%,-90%) scale(.9)}}
+.racha{display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:4px 10px 4px 6px;border-radius:999px;background:#fff;font-size:15px;font-weight:700;box-shadow:0 2px 0 #9aa39d}
+.record{display:inline-block;margin-left:14px;padding:4px 12px;border-radius:8px;background:var(--oro);font-size:17px;font-weight:700;transform:rotate(-2deg);animation:pega .5s .9s both}
+.record.viejo{background:#fff;color:var(--gris);animation:none}
+.hoja figure{animation:pega .45s cubic-bezier(.2,1.6,.4,1) both}
+.mesa-juego>div{will-change:transform}
+.zona-entra{animation:entra .32s cubic-bezier(.2,1,.3,1) both}
+@keyframes entra{from{transform:translateX(70px);opacity:0}}
+/* etiquetas que se balancean al colgarlas */
+.colgada .etiqueta.cuelga{animation:balancea 1s ease-out both;transform-origin:50% 100%}
+@keyframes balancea{0%{transform:rotate(14deg)}25%{transform:rotate(-9deg)}50%{transform:rotate(5deg)}75%{transform:rotate(-2deg)}100%{transform:rotate(0)}}
+.colgada.mal .etiqueta{animation:niega .4s ease-out both}
+@keyframes niega{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px) rotate(-3deg)}75%{transform:translateX(6px) rotate(3deg)}}
+.colgada.bien .etiqueta{animation:salta .45s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes salta{40%{transform:translateY(-12px)}}
+/* la rana parpadea y celebra */
+.rana .ojos{transform-origin:50% 18px;animation:parpadea 4s infinite}
+@keyframes parpadea{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.rana.mira-atras svg{transform:scaleX(-1)}
+.rana.fiesta svg{animation:fiesta .9s cubic-bezier(.3,1.4,.5,1) 2}
+@keyframes fiesta{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-46px) rotate(-180deg)}70%{transform:translateY(-10px) rotate(-360deg)}}
+.banderin svg{transform-origin:6px 60px}
+.banderin.ondea svg{animation:ondea .5s ease-in-out 4}
+@keyframes ondea{50%{transform:rotate(-8deg)}}
+.cuenta .paso:last-of-type{animation:pega .3s both}
+/* la máquina piensa */
+.maquina.piensa{animation:runrun .09s linear infinite}
+@keyframes runrun{50%{transform:translate(1px,-1px)}}
+.maquina.piensa .luz{animation:persigue .36s infinite}
+.maquina.piensa .luz:nth-child(2){animation-delay:.12s}.maquina.piensa .luz:nth-child(3){animation-delay:.24s}
+@keyframes persigue{0%,60%,100%{background:radial-gradient(circle at 35% 30%,#56607a,#2a3146)}20%{background:radial-gradient(circle at 35% 30%,#fff,#ffe9a8);box-shadow:0 0 10px 2px rgba(255,233,168,.8)}}
+.tapete .ficha-cifra[aria-pressed="true"]{animation:menea .5s ease-in-out infinite alternate}
+@keyframes menea{from{transform:translateY(-12px) rotate(-4deg)}to{transform:translateY(-14px) rotate(3deg)}}
+/* el tablero: corrección en cascada y ola final */
+.celda.ola{animation:ola .5s ease-out both}
+@keyframes ola{40%{transform:scale(1.14);box-shadow:0 0 0 3px var(--acento-osc)}}
+.regla.golpe{animation:golpe .18s ease-out}
+@keyframes golpe{50%{transform:translateY(2px)}}

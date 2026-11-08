@@ -1,6 +1,7 @@
 // Motor «rejilla»: una cuadrícula de casillas (números o palabras) y una regla. Hay que pintar las que la cumplen.
 // Con "mantener": true, lo bueno de la ronda anterior se queda rayado debajo, para ver qué casillas coinciden.
 import { el, svg, num, barajar, suena } from './nucleo.js';
+import { espera, mano } from './efectos.js';
 
 // Marcas de boli rojo, a mano alzada
 const CIRCULO = '<path class="trazo" pathLength="1" d="M58 8 C 30 4, 6 20, 8 50 C 10 82, 42 96, 70 88 C 94 80, 98 46, 86 24 C 78 10, 62 4, 44 8"/>';
@@ -81,14 +82,21 @@ export function ronda(d, ctx) {
     b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
   });
 
+  if (ctx.primera) mano(celdas[Math.min(1, celdas.length - 1)].b, { tipo: 'arrastra', dx: 0.3 });
   ctx.boton(ctx.pizarra ? 'Ver la solución' : 'Comprobar', revisar);
   ctx.boton('Borrar todo', () => celdas.forEach((c) => pinta(c, false)), true);
 
-  function revisar() {
+  async function revisar() {
+    if (hecho) return;
     hecho = true;
+    ctx.acciones.querySelectorAll('button').forEach((b) => (b.disabled = true));
     let bien = 0, sobra = 0, falta = 0;
     const buenas = new Set();
+    const nMarcas = celdas.filter((c) => esBuena(c.it) !== (c.b.getAttribute('aria-pressed') === 'true')).length;
+    const pausa = Math.min(70, 1100 / Math.max(1, nMarcas));
     for (const c of celdas) {
+      const marca = esBuena(c.it) !== (c.b.getAttribute('aria-pressed') === 'true');
+      if (marca && !ctx.pizarra) { await espera(pausa); suena('clic'); }
       const buena = esBuena(c.it);
       const puesta = c.b.getAttribute('aria-pressed') === 'true';
       if (buena) buenas.add(String(numeros ? c.it : c.it.t));
@@ -101,6 +109,9 @@ export function ronda(d, ctx) {
       c.b.disabled = true;
       c.b.style.cursor = 'default';
     }
+    // ola sobre las buenas para que se vea el dibujo
+    celdas.forEach((c) => { if (buenas.has(String(numeros ? c.it : c.it.t))) { c.b.style.animationDelay = (c.i % (d.columnas ?? 10)) * 25 + Math.floor(c.i / (d.columnas ?? 10)) * 35 + 'ms'; c.b.classList.add('ola'); } });
+    await espera(500);
     // con «mantener» se van acumulando las rondas (sirve para clasificar por descarte)
     anterior = { clave, buenas: previas ? new Set([...previas, ...buenas]) : buenas };
     leyenda.append(el('span', {}, el('i', { style: { background: 'var(--acento)' } }), 'Bien pintadas'),

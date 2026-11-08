@@ -2,6 +2,7 @@
 // Hay que formar el número que cumple el reto (el mayor, el menor, el más cercano a…, par, impar, múltiplo de…).
 // Con "aCiegas": true las cifras salen de una en una y hay que decidir dónde va cada una sin poder cambiarla.
 import { el, num, barajar, azar, suena } from './nucleo.js';
+import { vuela, espera, mano, chispasEn, temblor } from './efectos.js';
 
 const NOMBRES_ENT = ['U', 'D', 'C', 'UM', 'DM', 'CM', 'U. millón'];
 const NOMBRES_DEC = ['d', 'c', 'm'];
@@ -106,7 +107,7 @@ export function ronda(d, ctx) {
 
   if (d.aCiegas) {
     const orden = barajar(d.cifras).slice(0, k);
-    let paso = 0;
+    let paso = 0, ocupado = false;
     const muestra = () => {
       huecos.forEach((h) => h.b.classList.toggle('espera', h.cifra == null));
       suena('clic');
@@ -115,9 +116,14 @@ export function ronda(d, ctx) {
           el('p', { class: 'quedan', text: k - paso - 1 ? `Quedan ${k - paso - 1} por salir.` : 'Es la última.' })));
     };
     huecos.forEach((h) => (h.b.onclick = () => {
-      if (hecho || h.cifra != null) return;
-      h.cifra = orden[paso]; pintaHueco(h); suena('pon'); paso++;
-      if (paso === k) { sale.replaceChildren(); huecos.forEach((x) => x.b.classList.remove('espera')); revisar(); } else muestra();
+      if (hecho || h.cifra != null || ocupado) return;
+      ocupado = true;
+      const origen = sale.querySelector('.ficha-cifra');
+      const fin = () => {
+        h.cifra = orden[paso]; pintaHueco(h); suena('pon'); paso++; ocupado = false;
+        if (paso === k) { sale.replaceChildren(); huecos.forEach((x) => x.b.classList.remove('espera')); revisar(); } else muestra();
+      };
+      if (origen) { const c = origen.cloneNode(true); origen.style.visibility = 'hidden'; vuela(origen, h.b, c, { ms: 340, escala: 'ajusta', alFinal: fin }); } else fin();
     }));
     muestra();
   } else {
@@ -140,23 +146,35 @@ export function ronda(d, ctx) {
     });
     const poner = (h) => {
       if (h.origen != null) fichas[h.origen].classList.remove('usada');
+      const f = fichas[elegida];
       h.cifra = d.cifras[elegida]; h.origen = elegida;
-      fichas[elegida].classList.add('usada'); fichas[elegida].setAttribute('aria-pressed', 'false');
-      elegida = null; pintaHueco(h); suena('pon'); listo();
+      f.setAttribute('aria-pressed', 'false');
+      const c = f.cloneNode(true); c.removeAttribute('aria-pressed');
+      f.classList.add('usada');
+      h.b.replaceChildren(); h.b.classList.add('lleno');
+      elegida = null; listo();
+      vuela(f, h.b, c, { ms: 300, escala: 'ajusta', alFinal: () => { pintaHueco(h); suena('pon'); } });
     };
     huecos.forEach((h) => (h.b.onclick = () => {
       if (hecho) return;
       if (elegida != null) return poner(h);
       if (h.cifra != null) { fichas[h.origen].classList.remove('usada'); h.cifra = null; h.origen = null; pintaHueco(h); suena('quita'); listo(); }
     }));
+    if (ctx.primera) mano(fichas[0], { dx: 0.5 });
     const comprobar = ctx.boton('Comprobar', revisar);
     comprobar.disabled = true;
     ctx.boton('Vaciar', () => { huecos.forEach((h) => { if (h.origen != null) fichas[h.origen].classList.remove('usada'); h.cifra = h.origen = null; pintaHueco(h); }); listo(); }, true);
     function listo() { comprobar.disabled = huecos.some((h) => h.cifra == null); }
   }
 
-  function revisar() {
+  async function revisar() {
+    if (hecho) return;
     hecho = true;
+    ctx.acciones.querySelectorAll('button').forEach((b) => (b.disabled = true));
+    maquina.classList.add('piensa');
+    for (let t = 0; t < 6; t++) setTimeout(() => suena('clic'), t * 120);
+    await espera(780);
+    maquina.classList.remove('piensa');
     const puestas = huecos.map((h) => h.cifra);
     const v = valorDe(puestas, dec);
     const posibles = todas(d.cifras, k, dec, d.ceroDelante);
@@ -181,7 +199,9 @@ export function ronda(d, ctx) {
         : `Tu número es el ${tuTxt}${extra}. ${d.aCiegas ? 'Sabiendo las cifras de antemano, lo mejor era' : 'Se podía'} **${mejorTxt}**${objetivo === 'cerca' ? ` (a ${num(Math.abs(mejor - d.valor), dec || undefined)})` : ''}. De ${validos.length} números posibles, el tuyo es el ${idx + 1}.º.`;
     }
     if (estrellas === 3) huecos.forEach((h) => h.caja.classList.add('bien'));
-    luces.forEach((l, j) => j < estrellas && setTimeout(() => l.classList.add('on'), 150 + j * 140));
+    luces.forEach((l, j) => j < estrellas && setTimeout(() => l.classList.add('on'), 60 + j * 140));
+    if (estrellas === 3) setTimeout(() => chispasEn(maquina, 22), 420);
+    if (estrellas === 0) temblor(maquina, 9);
     comparar.replaceChildren();
     if (estrellas < 3 && mejor != null) comparar.append('El mejor: ', el('b', { text: mejorTxt }));
     ctx.fin(estrellas, msg + (d.explica ? ' ' + d.explica : ''));
