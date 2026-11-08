@@ -76,12 +76,49 @@ const ARTE = {
     <g class="pin-portada" transform="translate(300 220)"><ellipse cx="6" cy="8" rx="16" ry="8" fill="rgba(30,10,0,.35)"/><circle r="17" fill="#d7263d" stroke="${T}" stroke-width="4"/><circle cx="-5" cy="-5" r="5" fill="#fff" opacity=".7"/></g>
     <g class="sueltas">${pieza(2, 600, 360, 16)}</g>
   </svg>`,
+  // el patio: baldosas vistas desde arriba y una que falta, flotando
+  patio: () => {
+    let t = '';
+    for (let y = 0; y < 5; y++) for (let x = 0; x < 5; x++) if (!(x === 3 && y === 1)) t += `<rect x="${170 + x * 60}" y="${70 + y * 60}" width="56" height="56" rx="6" fill="${(x + y) % 2 ? '#d9824f' : '#c66a3d'}" stroke="${T}" stroke-width="3"/>`;
+    return `<svg viewBox="0 0 640 400" class="arte arte-patio" aria-hidden="true"><defs><filter id="p-sp" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="10" dy="18" stdDeviation="12" flood-color="#2a1000" flood-opacity=".5"/></filter></defs>
+    <g filter="url(#p-sp)"><rect x="150" y="50" width="340" height="340" rx="16" fill="#6fbf3a" stroke="${T}" stroke-width="5"/></g>${t}
+    <rect x="350" y="130" width="56" height="56" rx="6" fill="#3a2412"/>
+    <g class="abertura"><g class="pieza"><rect x="430" y="10" width="56" height="56" rx="6" fill="#d9824f" stroke="${T}" stroke-width="4" transform="rotate(14 458 38)"/></g></g>
+    <g class="sueltas">${pieza(1, 90, 360, -12)}${pieza(3, 580, 360, 18)}</g></svg>`;
+  },
+  // el almacén: cajas de clips apiladas con su etiqueta
+  almacen: () => {
+    const caja = (x, y, w, h, txt) => `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="#d39a5c" stroke="${T}" stroke-width="4"/><path d="M${x} ${y + 18} h${w}" stroke="#a8743c" stroke-width="9"/><rect x="${x + w / 2 - 44}" y="${y + h / 2 - 8}" width="88" height="30" rx="4" fill="#fffdf6" stroke="${T}" stroke-width="3"/><text x="${x + w / 2}" y="${y + h / 2 + 13}" text-anchor="middle" font-family="Rotulo,sans-serif" font-weight="900" font-size="18" fill="${T}">${txt}</text></g>`;
+    const clips = [0, 1, 2].map((i) => `<g class="pieza"><path d="M${400 + i * 46} ${150 - i * 10} h26 a10 10 0 0 0 0 -20 h-30 a6 6 0 0 0 0 12 h22" fill="none" stroke="#c9cfdd" stroke-width="7" stroke-linecap="round"/></g>`).join('');
+    return `<svg viewBox="0 0 640 400" class="arte arte-almacen" aria-hidden="true"><defs><filter id="p-sa" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="10" dy="18" stdDeviation="12" flood-color="#0a1626" flood-opacity=".55"/></filter></defs>
+    <g filter="url(#p-sa)">${caja(120, 230, 200, 140, '×10')}${caja(330, 250, 170, 120, 'CLIPS')}${caja(170, 110, 150, 120, '×100')}</g>
+    <g class="abertura">${clips}</g>
+    <g class="sueltas">${pieza(0, 560, 360, 14)}</g></svg>`;
+  },
+  // la merienda: una bandeja con caramelos y la calculadora del Sacapuntas
+  merienda: () => {
+    const car = (x, y, c, cls) => `<g class="${cls}" transform="translate(${x} ${y})"><path d="M-14 0 L-26 -10 L-24 12Z M14 0 L26 -10 L24 12Z" fill="${c}" stroke="${T}" stroke-width="3"/><ellipse rx="16" ry="13" fill="${c}" stroke="${T}" stroke-width="3.5"/></g>`;
+    const col = ['#ff7fae', '#ffc531', '#5ec3ff', '#9bd84a', '#ff9f45', '#b79cff'];
+    let cs = '';
+    for (let i = 0; i < 6; i++) cs += car(180 + (i % 3) * 64, 210 + Math.floor(i / 3) * 52, col[i], 'caramelo-portada');
+    return `<svg viewBox="0 0 640 400" class="arte arte-merienda" aria-hidden="true"><defs><filter id="p-sm" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="10" dy="18" stdDeviation="12" flood-color="#3a0a00" flood-opacity=".45"/></filter></defs>
+    <g filter="url(#p-sm)"><rect x="130" y="170" width="250" height="150" rx="22" fill="#5ec3ff" stroke="${T}" stroke-width="5"/><g transform="rotate(8 500 210)"><rect x="430" y="100" width="140" height="190" rx="18" fill="#3b3f63" stroke="${T}" stroke-width="5"/><rect x="448" y="120" width="104" height="44" rx="6" fill="#b9d8a8" stroke="${T}" stroke-width="3"/><text x="544" y="152" text-anchor="end" font-family="Rotulo,sans-serif" font-weight="900" font-size="26" fill="#1b2a12">17,46</text></g></g>
+    ${cs}<g class="abertura">${car(260, 120, '#ff7fae', 'pieza')}${car(330, 100, '#ffc531', 'pieza')}</g>
+    <g class="sueltas">${pieza(2, 90, 370, -12)}</g></svg>`;
+  },
+  // recortables: un papel doblado con agujeros y, al otro lado, dónde saldrán
+  papel: () => `<svg viewBox="0 0 640 400" class="arte arte-papel" aria-hidden="true"><defs><filter id="p-spp" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="10" dy="18" stdDeviation="12" flood-color="#0a0020" flood-opacity=".5"/></filter></defs>
+    <g filter="url(#p-spp)"><path d="M160 70 H320 V350 H160Z" fill="#f3ecdc" stroke="${T}" stroke-width="5"/><path d="M320 70 L470 100 V330 L320 350Z" fill="#fffdf6" stroke="${T}" stroke-width="5"/></g>
+    <line x1="320" y1="70" x2="320" y2="350" stroke="${T}" stroke-width="4" stroke-dasharray="12 8"/>
+    <circle cx="220" cy="140" r="18" fill="#4b3a8c" stroke="${T}" stroke-width="4"/><circle cx="270" cy="250" r="18" fill="#4b3a8c" stroke="${T}" stroke-width="4"/>
+    <g class="abertura"><g class="pieza"><circle cx="420" cy="150" r="18" fill="none" stroke="#e8417a" stroke-width="5" stroke-dasharray="6 5"/></g><g class="pieza"><circle cx="370" cy="255" r="18" fill="none" stroke="#e8417a" stroke-width="5" stroke-dasharray="6 5"/></g></g>
+    <g class="sueltas">${pieza(1, 560, 360, 18)}</g></svg>`,
 };
 
 export function portada(config, { dibuja, POSES, quien, progreso = 0, record = null, sonar = () => {}, frase: fraseHola = '¿Jugamos?' }) {
   return new Promise((listo) => {
     const lento = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const tipo = config.portada?.arte || (config.escena === 'estuche' ? 'estuche' : 'cajon');
+    const tipo = config.portada?.arte || ({ estuche: 'estuche', puzle: 'puzle', corcho: 'corcho', patio: 'patio', almacen: 'almacen', merienda: 'merienda' }[config.escena] ?? 'cajon');
     const capa = h('div', 'portada-capa');
     capa.setAttribute('role', 'dialog'); capa.setAttribute('aria-modal', 'true'); capa.setAttribute('aria-label', config.titulo);
     // título letra a letra (las palabras no se parten)

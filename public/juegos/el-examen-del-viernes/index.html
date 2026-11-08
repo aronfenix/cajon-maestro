@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El examen del viernes · Cajón maestro</title>
+<meta name="description" content="El final de la Gran Limpieza: repartir cuentas entre cabeza, papel y calculadora, y un repaso de todos los compartimentos.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "examen",
+  "area": "matematicas",
+  "escena": "cajon",
+  "titulo": "El examen del viernes",
+  "subtitulo": "Es viernes. El profe va a abrir el cajón. Último repaso: cada cuenta a quien mejor la haga, y un reto de cada compartimento.",
+  "portada": {
+    "objetivo": "Reparte cada cuenta a quien mejor la haría (Goma de cabeza, Boli en papel, el Sacapuntas con calculadora) y supera un reto de cada compartimento.",
+    "frase": "Hoy no se libra nadie. Ni yo.",
+    "rotulo": "VIERNES"
+  },
+  "volver": "../la-gran-limpieza/",
+  "textoFinal": "¡Cajón ordenado!",
+  "historia": [
+    {
+      "nota": "HOY ES VIERNES. A LAS DOCE ABRO EL CAJÓN.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Último repaso. Goma calcula de cabeza, yo en papel y el Sacapuntas con su calculadora. Tú decides quién hace cada cuenta."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Y entre cuenta y cuenta, un reto de cada rincón del cajón. Si sale todo, nadie va a la papelera."
+    }
+  ],
+  "saludo": "Antes de calcular, **mira los números**.",
+  "observa": "¿Qué te hace decidir si una cuenta es de cabeza, de papel o de calculadora? ¿Alguna vez es mejor la cabeza que la calculadora?",
+  "rondas": [
+    {
+      "modo": "estrategia",
+      "generar": {
+        "tipos": [
+          "ceros",
+          "casi",
+          "media",
+          "fea",
+          "fea"
+        ]
+      }
+    },
+    {
+      "motor": "formas",
+      "modo": "clasificar",
+      "tipo": "cuadri",
+      "partes": 3,
+      "generar": {
+        "cantidad": 7,
+        "familias": [
+          "cuadradoRecto",
+          "rectanguloRecto",
+          "rombo",
+          "romboide",
+          "trapecio",
+          "cuadrilatero"
+        ]
+      }
+    },
+    {
+      "motor": "giros",
+      "modo": "puzle",
+      "generar": {
+        "cuartos": [
+          1,
+          2,
+          3
+        ],
+        "espejo": 0.3
+      }
+    },
+    {
+      "motor": "reparto",
+      "modo": "bandejas",
+      "generar": {
+        "tam": [
+          6,
+          9
+        ],
+        "llenas": [
+          4,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "estrategia",
+      "generar": {
+        "tipos": [
+          "ceros",
+          "casi",
+          "casi",
+          "media",
+          "media",
+          "fea"
+        ]
+      }
+    },
+    {
+      "motor": "ceros",
+      "modo": "consigue",
+      "generar": {
+        "ceros": 2
+      }
+    },
+    {
+      "motor": "giros",
+      "modo": "chincheta",
+      "generar": {
+        "cuartos": [
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "motor": "multiplica",
+      "modo": "cuadrado",
+      "tipo": "patio",
+      "generar": {
+        "n": [
+          5,
+          10
+        ]
+      }
+    },
+    {
+      "motor": "reparto",
+      "modo": "calculadora",
+      "generar": {
+        "tam": [
+          6,
+          8,
+          12
+        ],
+        "llenas": [
+          10,
+          40
+        ]
+      }
+    },
+    {
+      "modo": "estrategia",
+      "generar": {
+        "tipos": [
+          "ceros",
+          "casi",
+          "media",
+          "media",
+          "fea",
+          "fea"
+        ]
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

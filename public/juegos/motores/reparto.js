@@ -65,7 +65,7 @@ function bandejas(d, ctx) {
     el('label', {}, el('span', { text: 'Sobran' }), sobran));
   ctx.escenario.append(el('div', { class: 'mantel-merienda' }, monton, fila), preguntas);
   let hechas = 0, hecho = false;
-  const nuevaBandeja = () => { const b = el('div', { class: 'bandeja', style: { '--tam': Math.min(tam, 6) } }); fila.append(b); return b; };
+  const nuevaBandeja = () => { const b = el('div', { class: 'bandeja-golosinas', style: { '--tam': Math.min(tam, 6) } }); fila.append(b); return b; };
   async function llenaUna(rapido = false) {
     const libres = piezas.filter((p) => p.isConnected && p.parentNode === monton);
     if (libres.length < tam) { ctx.aviso(`Quedan ${libres.length}: no llegan para otra bandeja de ${tam}.`, true); temblor(monton, 4); return false; }

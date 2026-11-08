@@ -485,7 +485,7 @@ body[data-escena="puzle"]{--acento:var(--amarillo)}
 .geo.grande .pin.apagado{fill:rgba(255,255,255,.35);stroke:rgba(27,30,58,.3)}
 .geo .vertice{fill:var(--fucsia);stroke:var(--tinta);stroke-width:3}
 .geo .trazo-geo{stroke:var(--fucsia);stroke-width:6}
-.geo.grande{width:auto;height:min(calc(100dvh - 345px),560px);min-height:260px;max-width:min(720px,calc(100vw - 70px))}
+.geo.grande{width:auto;height:min(calc(100dvh - 380px),560px);min-height:260px;max-width:min(720px,calc(100vw - 70px))}
 @media (max-width:760px){.geo.grande{height:auto;width:calc(100vw - 70px)}}
 /* el patio: baldosas de barro */
 .fondo-escena.patio{background-color:#c66a3d;background-image:
@@ -515,11 +515,11 @@ body[data-escena="merienda"]{--acento:var(--amarillo)}
 .mantel-merienda{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:flex-start}
 .monton{display:flex;flex-wrap:wrap;gap:2px;max-width:420px;padding:16px;border:var(--borde);border-radius:50% 46% 48% 52%/40% 44% 42% 46%;background:#fffdf6 url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra)}
 .golosina{display:inline-block;width:40px;height:26px}
-.golosina svg,.bandeja svg{width:100%;height:100%;display:block;filter:drop-shadow(1px 2px 0 rgba(0,0,0,.2))}
+.golosina svg,.bandeja-golosinas svg{width:100%;height:100%;display:block;filter:drop-shadow(1px 2px 0 rgba(0,0,0,.2))}
 .golosina.sobrante{animation:late .9s ease-in-out 3}
 .fila-bandejas{display:flex;flex-wrap:wrap;gap:12px;max-width:620px}
-.bandeja{display:grid;grid-template-columns:repeat(var(--tam),34px);grid-auto-rows:24px;gap:2px;align-content:center;justify-content:center;min-width:90px;min-height:64px;padding:10px 12px;border:var(--borde);border-radius:14px;background:var(--cielo);box-shadow:inset 0 -6px 0 rgba(0,0,0,.15),var(--sombra-baja)}
-.bandeja .golosina{width:34px;height:22px}
+.bandeja-golosinas{display:grid;grid-template-columns:repeat(var(--tam),34px);grid-auto-rows:24px;gap:2px;align-content:center;justify-content:center;min-width:90px;min-height:64px;padding:10px 12px;border:var(--borde);border-radius:14px;background:var(--cielo);box-shadow:inset 0 -6px 0 rgba(0,0,0,.15),var(--sombra-baja)}
+.bandeja-golosinas .golosina{width:34px;height:22px}
 .preguntas-reparto{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-top:20px;padding:14px 18px;border:var(--borde);border-radius:16px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra-baja);width:fit-content}
 .preguntas-reparto label{display:flex;align-items:center;gap:10px;font-family:var(--fuerte);font-weight:800;font-size:20px}
 .tabla-pista{flex-basis:100%;margin:0;font-family:var(--fuerte);font-weight:700;font-size:17px;color:var(--cobalto)}
@@ -623,3 +623,49 @@ body[data-escena="merienda"]{--acento:var(--amarillo)}
 .historial-ascensor{display:flex;flex-wrap:wrap;gap:6px;margin:0;max-width:340px}
 .historial-ascensor span{padding:4px 10px;border:2px solid var(--tinta);border-radius:999px;background:var(--papel);font-weight:700;font-size:14px}
 .historial-ascensor .no{background:#ffd9de}
+
+/* =====================================================================================
+   El examen del viernes: repartir cuentas entre Goma, Boli y el Sacapuntas
+   ===================================================================================== */
+.examen-mesa{display:flex;flex-direction:column;gap:18px}
+.cola-cuentas{display:flex;flex-wrap:wrap;gap:12px;min-height:76px;padding:14px;border:3px dashed rgba(27,30,58,.45);border-radius:18px;background:rgba(255,253,246,.55)}
+.cola-cuentas:empty::before{content:"¡Todas repartidas!";font-family:var(--fuerte);font-weight:800;color:var(--gris);align-self:center}
+.mesas-quien{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.mesa-quien{display:flex;flex-direction:column;gap:8px;padding:12px;border:var(--borde);border-radius:18px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra)}
+.mesa-quien.cabeza{background-color:#ffe1ec}.mesa-quien.papel{background-color:#e3ecff}.mesa-quien.calc{background-color:#e7f5dc}
+.cab-quien{display:flex;align-items:center;gap:10px}
+.cara-quien{width:58px;height:72px;flex:none}
+.cara-quien svg{width:100%;height:100%}
+.cab-quien b{display:block;font-family:var(--fuerte);font-weight:900;font-size:21px}
+.cab-quien small{font-weight:700;color:var(--gris)}
+.zona-cuentas{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-height:150px;padding:10px;border:2.5px dashed rgba(27,30,58,.35);border-radius:12px;cursor:pointer}
+.zona-cuentas.sobre{border-color:var(--amarillo);background:rgba(255,197,49,.18);outline:none}
+.carta-cuenta{--c:var(--amarillo);padding:10px 16px;border:var(--borde);border-radius:10px 14px 12px 12px;background:var(--c);font-family:var(--fuerte);font-weight:900;font-size:22px;color:var(--tinta);cursor:grab;box-shadow:0 4px 0 var(--tinta),3px 8px 10px -4px rgba(10,20,25,.4);touch-action:none;white-space:nowrap}
+.carta-cuenta.c1{--c:var(--cielo)}.carta-cuenta.c2{--c:#ff7fae}.carta-cuenta.c3{--c:var(--lima)}.carta-cuenta.c4{--c:#ff9f45}.carta-cuenta.c5{--c:#b79cff}
+.carta-cuenta.elegida{translate:0 -6px;box-shadow:0 0 0 4px var(--papel),0 0 0 7px var(--tinta)}
+.carta-cuenta.fija{cursor:default}
+.carta-cuenta.buena::after,.carta-cuenta.regular::after,.carta-cuenta.mala::after{position:relative;margin-left:8px;font-size:18px}
+.carta-cuenta.buena::after{content:"✓"}.carta-cuenta.regular::after{content:"~"}.carta-cuenta.mala::after{content:"✗";color:var(--rojo)}
+.carta-cuenta.mala{outline:4px solid var(--rojo);outline-offset:2px}
+.calcula-cabeza{display:flex;align-items:center;gap:8px;font-family:var(--fuerte);font-weight:900;font-size:24px}
+.resultado-cuenta{font-family:var(--fuerte);font-weight:800;font-size:20px;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.7)}
+.resultado-cuenta.calc{font-variant-numeric:tabular-nums;background:#b9d8a8;border:2px solid var(--tinta)}
+@media (max-width:760px){.mesas-quien{grid-template-columns:1fr}.zona-cuentas{min-height:80px;flex-direction:row;flex-wrap:wrap}}
+
+/* ---------- arreglos de la panorámica ---------- */
+/* los botones de acción, siempre a mano: flotan abajo a la izquierda */
+.zona>.acciones{position:fixed;left:clamp(10px,2.4vw,30px);bottom:14px;z-index:60;margin:0;max-width:calc(100vw - 200px);flex-wrap:wrap}
+body.corrigiendo .zona>.acciones,.zona>.acciones:empty{display:none}
+.mesa-juego{padding-bottom:190px}
+@media (max-width:760px){.zona>.acciones{max-width:calc(100vw - 120px);bottom:10px}.mesa-juego{padding-bottom:230px}}
+/* la tabla de cien cabe a lo alto */
+.tablero{border:var(--borde);border-radius:18px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra)}
+.rejilla:not(.palabras){width:min(700px,calc(100vw - 92px),calc((100dvh - 370px) * 1.08))}
+.celda{background:#fff;box-shadow:inset 0 -3px 0 #dfe1ea,0 0 0 1.5px rgba(27,30,58,.18)}
+@media (max-height:820px){.rejilla:not(.palabras) .celda{min-height:0}}
+/* las etiquetas que se cuelgan, en cartulina */
+.etiqueta{border:var(--borde)!important}
+/* la entrada de cada ronda anima a los hijos, no a la zona: si no, la barra fija de botones se movería con ella */
+.mesa-juego>div{will-change:auto}
+.zona-entra{animation:none}
+.zona-entra>*:not(.acciones):not(.correccion){animation:entra-ronda .45s var(--muelle) both}

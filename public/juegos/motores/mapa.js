@@ -13,6 +13,8 @@ export async function montaMapa(c) {
   const visto = (() => { try { return localStorage.getItem('cajon-mapa:' + location.pathname); } catch { return null; } })();
   const comp = c.compartimentos.map((k) => ({ ...k, total: k.juegos.filter((j) => j.slug).length, hechos: k.juegos.filter((j) => j.slug && hecho(j.slug)).length }));
   const todo = comp.every((k) => k.listo !== false && k.hechos === k.total);
+  // con ?abrir en la dirección, el profe abre el final aunque no esté todo hecho
+  const abierto = todo || new URLSearchParams(location.search).has('abrir');
   const cajon = el('div', { class: 'cajon-mapa' });
   for (const k of comp) {
     const terminado = k.total > 0 && k.hechos === k.total;
@@ -34,7 +36,7 @@ export async function montaMapa(c) {
     el('main', { class: 'mesa-juego mapa' },
       el('p', { class: 'pista', text: c.subtitulo }),
       cajon,
-      c.final && el('section', { class: 'final-mapa' + (todo ? ' abierto' : '') }, el('h2', { text: c.final.nombre }), el('p', { text: todo ? c.final.abierto : c.final.cerrado }))));
+      c.final && el('section', { class: 'final-mapa' + (abierto ? ' abierto' : '') }, el('h2', { text: c.final.nombre }), el('p', { text: todo ? c.final.abierto : abierto ? 'Abierto por el profe para probarlo.' : c.final.cerrado }), abierto && c.final.slug && el('a', { class: 'tecla primaria grande', href: `../${c.final.slug}/`, text: hecho(c.final.slug) ? 'Repetir el examen' : 'Hacer el examen' }))));
   if (!visto && c.historia) { await vineta(c.historia, dibuja, POSES, c.titulo); try { localStorage.setItem('cajon-mapa:' + location.pathname, '1'); } catch {} }
   if (todo && c.final?.historia) { await vineta(c.final.historia, dibuja, POSES, c.final.nombre); gomets(40); }
 }

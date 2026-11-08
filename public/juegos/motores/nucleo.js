@@ -218,6 +218,8 @@ export async function arrancar(config, motor) {
   const dice = (clave, tipo, ms) => di(una(voz[clave]), tipo, ms);
   const calla = () => { clearTimeout(callaT); bocadillo.hidden = true; };
   bocadillo.addEventListener('click', calla);
+  // el bocadillo se aparta en cuanto el alumno se pone a jugar (salvo las pistas, que sí quiere leer)
+  addEventListener('pointerdown', (e) => { if (bocadillo.hidden || e.target.closest('.asistente') || bocadillo.classList.contains('pista')) return; setTimeout(calla, 250); }, true);
 
   document.body.prepend(
     el('header', { class: 'barra-juego' },
@@ -426,7 +428,7 @@ export async function arrancar(config, motor) {
     const previo = leeRecord();
     if (!enPizarra && adaptativo && completo && (!previo?.retos || n < previo.retos)) try { localStorage.setItem(claveRecord, JSON.stringify({ retos: n })); } catch {}
     final.replaceChildren(...[
-      el('h2', { text: enPizarra ? 'Fin de la pizarra' : !adaptativo ? 'Hoja terminada' : completo ? '¡Taller completado!' : 'Por hoy, suficiente' }),
+      el('h2', { text: enPizarra ? 'Fin de la pizarra' : !adaptativo ? (config.textoFinal ?? 'Hoja terminada') : completo ? '¡Taller completado!' : 'Por hoy, suficiente' }),
       !enPizarra && el('ul', { class: 'resumen' },
         el('li', {}, el('strong', { text: n }), ' retos'),
         el('li', {}, el('strong', { text: sinAyuda }), ' bien a la primera y sin pistas'),
