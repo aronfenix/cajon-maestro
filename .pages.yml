@@ -11,7 +11,7 @@ media:
     label: Archivos para descargar
     input: public/archivos
     output: /archivos
-    extensions: [pdf, zip, docx, odt, pptx, odp, mp3]
+    extensions: [pdf, zip, docx, odt, pptx, odp, mp3, mp4]
 
 content:
   - name: materiales
@@ -89,7 +89,7 @@ content:
       - name: video
         label: Vídeo
         type: string
-        description: Dirección del MP4 subido a Cloudflare R2.
+        description: "Dirección del MP4: en R2, o /archivos/nombre.mp4 si lo subiste como archivo."
       - name: codigo
         label: Código en GitHub
         type: string

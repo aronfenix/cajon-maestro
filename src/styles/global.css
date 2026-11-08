@@ -1,4 +1,4 @@
-/* Cajón de maestro · el archivador del profe
+/* Cajón maestro · el archivador del profe
    Bandeja #D9DCD6 · Folio #FFFFFF · Tóner #000 · Boli azul #1E3FB0 · Boli rojo #C8201A
    Los colores de área están en src/data/areas.ts */
 
@@ -347,7 +347,7 @@ a.subrayado:hover {
 .toner {
   position: absolute;
   inset: 0;
-  background-image: url('/toner.png');
+  background-image: url('./toner.png');
   background-size: 240px 240px;
   pointer-events: none;
   transition: opacity 0.18s ease-out;

@@ -6,6 +6,7 @@ import '@fontsource/atkinson-hyperlegible-next/700.css';
 import '../styles/global.css';
 import { AREAS, TODO } from '../data/areas';
 import { SITIO } from '../data/sitio';
+import { ruta } from '../lib/rutas';
 
 interface Props {
   titulo?: string;
@@ -18,7 +19,7 @@ const { titulo, descripcion = SITIO.descripcion, activo, imagen } = Astro.props;
 const tituloPagina = titulo ? `${titulo} · ${SITIO.nombre}` : SITIO.nombre;
 const pestanas = [TODO, ...AREAS].map((a) => ({
   ...a,
-  href: a.id === 'todo' ? '/' : `/${a.id}/`,
+  href: ruta(a.id === 'todo' ? '/' : `/${a.id}/`),
 }));
 const canonica = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -31,7 +32,7 @@ const canonica = new URL(Astro.url.pathname, Astro.site);
     <title>{tituloPagina}</title>
     <meta name="description" content={descripcion} />
     <link rel="canonical" href={canonica} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={ruta('/favicon.svg')} type="image/svg+xml" />
     <meta property="og:title" content={tituloPagina} />
     <meta property="og:description" content={descripcion} />
     <meta property="og:type" content="website" />

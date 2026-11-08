@@ -5,6 +5,7 @@ import Miniatura from '../../components/Miniatura.astro';
 import { catalogo, relacionadosDe, render, detalle, type Material } from '../../lib/catalogo';
 import { TIPOS } from '../../data/areas';
 import { SITIO } from '../../data/sitio';
+import { ruta } from '../../lib/rutas';
 
 export async function getStaticPaths() {
   const { materiales } = await catalogo();
@@ -34,7 +35,7 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
 
 <Archivador activo={m.tema.area.id} titulo={m.titulo} descripcion={m.resumen} imagen={og}>
   <p class="miga">
-    <a href="/">{SITIO.nombre}</a> / <a href={`/${m.tema.area.id}/`}>{m.tema.area.nombre}</a> / {m.tema.titulo}
+    <a href={ruta('/')}>{SITIO.nombre}</a> / <a href={ruta(`/${m.tema.area.id}/`)}>{m.tema.area.nombre}</a> / {m.tema.titulo}
   </p>
 
   <div class="portada-material">

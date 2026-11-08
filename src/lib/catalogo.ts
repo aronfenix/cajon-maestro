@@ -1,6 +1,7 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import { AREAS, areaPorId, type Area, type Tipo } from '../data/areas';
+import { ruta } from './rutas';
 
 // Todas las imágenes de src/media, para optimizarlas al publicar.
 const imagenes = import.meta.glob<{ default: ImageMetadata }>(
@@ -92,7 +93,7 @@ export async function catalogo() {
     const tieneDestino = !!(d.enlace || d.video || d.archivo);
     materiales.push({
       id: m.id,
-      url: `/materiales/${m.id}/`,
+      url: ruta(`/materiales/${m.id}/`),
       titulo: d.titulo,
       tipo: d.tipo,
       resumen: d.resumen,
@@ -101,8 +102,8 @@ export async function catalogo() {
       portada: imagen(d.portada, d.titulo),
       enlace: d.enlace,
       codigo: d.codigo,
-      video: d.video,
-      archivo: d.archivo,
+      video: d.video ? ruta(d.video) : undefined,
+      archivo: d.archivo ? ruta(d.archivo) : undefined,
       duracion: d.duracion,
       paginas: d.paginas,
       cambiaria: d.cambiaria,

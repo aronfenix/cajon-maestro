@@ -2,6 +2,7 @@
 import Miniatura from './Miniatura.astro';
 import { TIPOS } from '../data/areas';
 import { normaliza, type Grupo } from '../lib/catalogo';
+import { ruta } from '../lib/rutas';
 
 interface Props {
   grupos: Grupo[];
@@ -51,7 +52,7 @@ const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
     <section class="tema" aria-labelledby={`tema-${g.tema.id}`} data-tema>
       <div class="tema-cabeza">
         {mostrarArea && (
-          <a class="subrayado" href={`/${g.tema.area.id}/`} style={`background: ${g.tema.area.color}`}>
+          <a class="subrayado" href={ruta(`/${g.tema.area.id}/`)} style={`background: ${g.tema.area.color}`}>
             {g.tema.area.nombre}
           </a>
         )}
