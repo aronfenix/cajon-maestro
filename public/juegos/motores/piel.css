@@ -669,3 +669,70 @@ body.corrigiendo .zona>.acciones,.zona>.acciones:empty{display:none}
 .mesa-juego>div{will-change:auto}
 .zona-entra{animation:none}
 .zona-entra>*:not(.acciones):not(.correccion){animation:entra-ronda .45s var(--muelle) both}
+
+/* =====================================================================================
+   El mapa: el cajón visto desde arriba, con cada compartimento de su material
+   ===================================================================================== */
+body.mapa-cajon .mesa-juego{padding-bottom:60px}
+body.mapa-cajon .estado{flex:1 1 260px}
+.texto-progreso{font-family:var(--fuerte);font-weight:800;color:var(--papel);text-shadow:0 2px 0 rgba(0,0,0,.35);white-space:nowrap}
+.boton-album{gap:8px;padding:0 16px 2px 8px}
+.icono-album{display:inline-block;width:36px;height:36px}
+.icono-album svg,.pegatina-album svg{width:100%;height:100%;display:block}
+.marco-cajon{position:relative;max-width:1180px;margin:10px auto 0;padding:22px 22px 46px;border:var(--borde);border-radius:26px;
+  background:#b07a3e url('tex/madera.webp') 0 0/512px;background-blend-mode:multiply;
+  box-shadow:inset 0 0 0 10px rgba(255,255,255,.12),inset 0 18px 30px rgba(40,15,0,.5),8px 18px 0 -4px rgba(40,15,0,.35),12px 30px 40px -10px rgba(20,8,0,.6)}
+.tirador-cajon{position:absolute;left:50%;bottom:10px;width:180px;height:24px;margin-left:-90px;border:var(--borde);border-radius:0 0 30px 30px;background:linear-gradient(180deg,#ffd76a,#c98f00);box-shadow:0 4px 0 rgba(0,0,0,.3)}
+.cajon-ilustrado{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.compartimento-cajon{position:relative;display:flex;flex-direction:column;gap:12px;min-height:250px;padding:14px 14px 18px;border:var(--borde);border-radius:14px;overflow:hidden;
+  background-color:var(--fondo,#e9e4d6);background-blend-mode:multiply;box-shadow:inset 0 14px 22px -6px rgba(0,0,0,.45),inset 0 0 0 4px rgba(255,255,255,.12)}
+.mat-estuche{--fondo:#ffc531;background-image:url('tex/lona.webp');background-size:128px}
+.mat-puzle{--fondo:#6a54b8;background-image:url('tex/fieltro.webp');background-size:200px}
+.mat-corcho{--fondo:#c99658;background-image:url('tex/corcho.webp');background-size:200px}
+.mat-almacen{--fondo:#6f8fb4;background-image:url('tex/fieltro.webp');background-size:220px}
+.mat-patio{--fondo:#c66a3d;background-image:linear-gradient(rgba(70,25,5,.5) 3px,transparent 3px),linear-gradient(90deg,rgba(70,25,5,.5) 3px,transparent 3px),url('tex/cartulina.webp');background-size:46px 46px,46px 46px,256px;background-blend-mode:normal,normal,multiply}
+.mat-merienda{--fondo:#f4ede0;background-image:linear-gradient(90deg,rgba(214,52,52,.5) 50%,transparent 50%),linear-gradient(rgba(214,52,52,.5) 50%,transparent 50%);background-size:40px 40px;background-blend-mode:multiply}
+.compartimento-cajon .cab-comp{display:flex;align-items:flex-end;gap:10px}
+.figura-comp{width:74px;height:92px;flex:none;filter:drop-shadow(3px 5px 0 rgba(0,0,0,.25))}
+.figura-comp svg{width:100%;height:100%}
+.etiqueta-comp{padding:8px 14px 10px;border:var(--borde);border-radius:6px 12px 8px 10px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;transform:rotate(-1.5deg);box-shadow:var(--sombra-baja)}
+.etiqueta-comp h2{margin:0;font-family:var(--fuerte);font-weight:900;font-size:21px;line-height:1.05}
+.etiqueta-comp p{margin:3px 0 0;font-weight:700;font-size:14px;color:var(--gris)}
+.tarjetas-juego{display:flex;flex-direction:column;gap:9px;margin:0;padding:0;list-style:none}
+.tarjeta-juego{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;padding:8px 14px;border:var(--borde);border-radius:8px 12px 10px 12px;background:var(--papel);color:var(--tinta);
+  font-family:var(--fuerte);font-weight:800;font-size:17px;text-decoration:none;rotate:var(--r,0deg);box-shadow:0 4px 0 var(--tinta),3px 8px 10px -4px rgba(10,20,25,.4);transition:transform .15s var(--muelle),rotate .15s var(--muelle)}
+.tarjeta-juego:hover{transform:translateY(-3px);rotate:0deg}
+.tarjeta-juego:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tinta)}
+.tarjeta-juego.hecho{background:#e8fbe6}
+.tarjeta-juego.futuro{opacity:.75;border-style:dashed;box-shadow:none;font-weight:700}
+.pegatina-album{display:inline-block;width:64px;height:64px;filter:drop-shadow(2px 3px 0 rgba(0,0,0,.25))}
+.pegatina-album.mini{width:34px;height:34px;flex:none;margin:-6px -6px -6px 0;rotate:12deg}
+.compartimento-cajon .sello-ordenado{position:absolute;right:10px;bottom:12px;padding:6px 14px;border:5px double var(--rojo);border-radius:8px;color:var(--rojo);background:rgba(255,253,246,.7);font-family:var(--fuerte);font-weight:900;font-size:24px;rotate:-12deg;mix-blend-mode:multiply;-webkit-mask:url('tex/fieltro.webp') 0 0/150px;mask:url('tex/fieltro.webp') 0 0/150px luminance}
+.compartimento-cajon.ordenado{box-shadow:inset 0 14px 22px -6px rgba(0,0,0,.45),0 0 0 4px var(--amarillo)}
+.final-cajon{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;max-width:1180px;margin:26px auto 0;padding:18px 22px;border:3px dashed rgba(255,253,246,.6);border-radius:18px;background:rgba(27,30,58,.35)}
+.final-cajon .nota-final{padding:14px 20px;background:#fff27a;transform:rotate(-1.5deg);box-shadow:var(--sombra)}
+.final-cajon h2{margin:0;font-family:var(--fuerte);font-weight:900;font-size:28px}
+.final-cajon p{margin:4px 0 0;font-weight:700}
+.final-cajon.abierto{border:var(--borde);background:rgba(255,197,49,.35)}
+.final-cajon.hecho .nota-final{background:#c9f2c4}
+/* álbum */
+.album{width:min(760px,100%);max-height:calc(100dvh - 40px);overflow:auto;padding:22px;border:var(--borde);border-radius:18px 26px 20px 24px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:8px 10px 0 rgba(10,20,25,.35);display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.cab-album h2{margin:0;font-family:var(--fuerte);font-weight:900;font-size:34px}
+.cab-album p{margin:4px 0 0;color:var(--gris);font-weight:700}
+.hoja-album{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:14px;width:100%;margin:0;padding:16px;list-style:none;border:2px dashed rgba(27,30,58,.3);border-radius:16px;background:repeating-linear-gradient(transparent 0 29px,rgba(47,91,211,.12) 29px 31px)}
+.hoja-album li{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.hoja-album .pegatina-album{width:86px;height:86px}
+.hoja-album small{font-weight:700;font-size:13px;line-height:1.2}
+.hueco-pegatina{display:grid;place-items:center;width:86px;height:86px;border:3px dashed rgba(27,30,58,.35);border-radius:50%;font-family:var(--fuerte);font-weight:900;font-size:34px;color:rgba(27,30,58,.3)}
+.hoja-album li.falta small{color:var(--gris);opacity:.7}
+.aviso-pegatina{position:fixed;left:50%;top:40%;z-index:120;translate:-50% -50%;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 28px;border:var(--borde);border-radius:18px;background:var(--papel);box-shadow:var(--sombra);pointer-events:none}
+.aviso-pegatina b{font-family:var(--fuerte);font-weight:900;font-size:30px}
+.aviso-pegatina .nuevas{display:flex;gap:8px}
+.aviso-pegatina .pegatina-album{width:84px;height:84px}
+@media (max-width:900px){.cajon-ilustrado{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.cajon-ilustrado{grid-template-columns:1fr}.marco-cajon{padding:12px 12px 40px}.texto-progreso{display:none}}
+body.mapa-cajon .mesa-juego{padding-right:clamp(12px,2.4vw,30px)}
+.premio-pegatina{display:flex;align-items:center;gap:16px;width:fit-content;margin:0 0 18px;padding:12px 20px 12px 12px;border:var(--borde);border-radius:16px;background:#fff7d6;box-shadow:var(--sombra-baja)}
+.premio-pegatina .pegatina-album{width:96px;height:96px}
+.premio-pegatina b{display:block;font-family:var(--fuerte);font-weight:900;font-size:22px}
+.premio-pegatina small{font-weight:700;color:var(--gris)}

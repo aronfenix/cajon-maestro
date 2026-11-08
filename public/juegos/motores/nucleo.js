@@ -7,6 +7,7 @@ import { dibuja, POSES } from './personaje.js';
 import { VOCES, POSE_DE, una } from './voces.js';
 import { montaEscena, vineta, montaTeclado } from './escena.js';
 import { portada } from './portada.js';
+import { DIBUJOS, pegatina as pegatinaAlbum } from './pegatinas.js';
 export const $ = (s, r = document) => r.querySelector(s);
 const SVGNS = 'http://www.w3.org/2000/svg';
 
@@ -445,7 +446,16 @@ export async function arrancar(config, motor) {
     if (!enPizarra) {
       final.querySelectorAll('.hoja figure').forEach((f, k) => { f.style.animationDelay = k * 90 + 'ms'; setTimeout(() => suena('pon'), k * 90); });
       if (completo || !adaptativo) {
+        let yaLaTenia = false; try { yaLaTenia = !!localStorage.getItem('cajon-hecho:' + location.pathname); } catch {}
         try { localStorage.setItem('cajon-hecho:' + location.pathname, new Date().toISOString().slice(0, 10)); } catch {}
+        // la pegatina del álbum de la aventura: se ve aquí y luego vuela al álbum en el mapa
+        const slug = location.pathname.split('/').filter(Boolean).pop();
+        if (DIBUJOS[slug]) {
+          const premio = el('div', { class: 'premio-pegatina' }, pegatinaAlbum(slug), el('div', {}, el('b', { text: yaLaTenia ? 'Tu pegatina de este juego' : '¡Pegatina nueva para tu álbum!' }), el('small', { text: config.volver?.includes('limpieza') ? 'La verás en el álbum del mapa.' : 'Ya es tuya.' })));
+          final.querySelector('h2').after(premio);
+          if (!matchMedia('(prefers-reduced-motion: reduce)').matches) premio.querySelector('.pegatina-album').animate([{ transform: 'scale(3) rotate(-50deg)', opacity: 0 }, { transform: 'scale(.9) rotate(8deg)', opacity: 1, offset: 0.7 }, { transform: 'scale(1) rotate(0)' }], { duration: 650, delay: 400, easing: 'cubic-bezier(.3,1.4,.5,1)', fill: 'both' });
+          setTimeout(() => suena('sello'), 850);
+        }
         setTimeout(() => { suena('bien'); fx.gomets(34); }, 300);
       }
       setTimeout(() => dice(completo || !adaptativo ? 'finalBien' : 'finalCorto', 'perfecto', 6000), 700);
