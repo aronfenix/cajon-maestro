@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feria de combinaciones · Cajón maestro</title>
+<meta name="description" content="Problemas de multiplicar con grupos iguales, combinaciones y filas: elegir la cuenta y resolverla.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "multiplica",
+  "area": "matematicas",
+  "titulo": "Feria de combinaciones",
+  "subtitulo": "Grupos iguales, filas y combinaciones: tres historias distintas que acaban en la misma cuenta.",
+  "saludo": "Antes de calcular, piensa **qué cuenta cada número**.",
+  "volver": "../../materiales/feria-de-combinaciones/",
+  "observa": "¿Por qué con 4 sabores y 3 toppings salen 12 copas y no 7?",
+  "niveles": [
+    {
+      "modo": "problemas",
+      "generar": {
+        "estructuras": [
+          "grupos"
+        ],
+        "a": [
+          3,
+          9
+        ],
+        "b": [
+          3,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "problemas",
+      "generar": {
+        "estructuras": [
+          "filas"
+        ],
+        "a": [
+          3,
+          9
+        ],
+        "b": [
+          3,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "problemas",
+      "generar": {
+        "estructuras": [
+          "combinaciones"
+        ],
+        "a": [
+          3,
+          9
+        ],
+        "b": [
+          3,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "problemas",
+      "generar": {
+        "estructuras": [
+          "grupos",
+          "filas",
+          "combinaciones"
+        ],
+        "a": [
+          8,
+          25
+        ],
+        "b": [
+          3,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "problemas",
+      "generar": {
+        "estructuras": [
+          "grupos",
+          "filas",
+          "combinaciones"
+        ],
+        "a": [
+          8,
+          35
+        ],
+        "b": [
+          8,
+          35
+        ]
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

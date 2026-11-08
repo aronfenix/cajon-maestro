@@ -1,0 +1,55 @@
+// Lo que dice cada personaje. Las pistas las pone cada juego; esto es el carácter.
+// Goma: veterana y tranquila, los errores se borran. Boli: el corrector gruñón, orgulloso en secreto.
+// Fosforito: entusiasta, todo le parece importante.
+export const VOCES = {
+  goma: {
+    nombre: 'Goma',
+    hola: ['Soy Goma. He borrado cosas peores.', 'Hola. Aquí equivocarse está permitido: para eso estoy yo.', 'Empezamos. Si algo sale mal, se borra.'],
+    perfecto: ['Ni una miga que borrar.', 'Limpio. Así da gusto.', 'Esto no lo borro.', 'Impecable. Me quedo sin trabajo.'],
+    bien: ['Bien. Casi no he tenido que trabajar.', 'Vale. Por ahí va la cosa.', 'Bien hecho. Apenas una miga.'],
+    casi: ['Casi. Se borra y se vuelve a hacer.', 'Un pelín. Mira la corrección y otra vez.', 'Por poco. Lo repasamos.'],
+    fallo: ['Tranquilidad. Lo borramos y lo pensamos otra vez.', 'Error útil: ahora sabes dónde no está.', 'Nada que no se arregle borrando.'],
+    segunda: ['¿Ves? A la segunda.', 'Eso es: borrar y mejorar.', 'Para eso sirve borrar.'],
+    sube: ['Subimos un poco. Puedes.', 'Ahora uno más gordo.', 'Un escalón más.'],
+    baja: ['Vamos con uno más sencillo. Sin prisa.', 'Bajamos un escalón para coger impulso.'],
+    top: ['Este es de los difíciles. Respira.', 'Nivel alto. Despacio y bien.'],
+    racha: ['Llevo un rato sin borrar nada. Me aburro.', 'Racha. Yo aquí, de adorno.'],
+    techo: ['Para completar el taller hay que llegar a retos **un poco más difíciles**.'],
+    finalBien: ['Taller completado. Ni yo lo habría dejado tan limpio.'],
+    finalCorto: ['Lo dejamos aquí. La próxima vez seguimos donde lo dejaste.'],
+  },
+  boli: {
+    nombre: 'Boli',
+    hola: ['Soy el Boli. Corrijo. Hoy, además, ayudo.', 'A ver qué tenemos aquí.', 'Saco el capuchón. Empezamos.'],
+    perfecto: ['…Nada que corregir. Qué raro.', 'Perfecto. No se lo digas a nadie, pero me gusta.', 'Ni una marca roja. Vale.', 'Esto lo firmo.'],
+    bien: ['Bien. Lo apunto.', 'Aceptable. Muy aceptable.', 'Correcto. Casi sin tinta.'],
+    casi: ['Casi. Y casi no es sí.', 'Hay un fallo. Uno. Búscalo.', 'Te he rodeado una cosa. Mírala.'],
+    fallo: ['Rojo por todas partes. Mira la corrección con calma.', 'Esto lo rodeo. Pero se arregla.', 'Fallo. Ahora sabes qué mirar.'],
+    segunda: ['A la segunda. Lo dejo pasar.', '¿Ves como sabías?', 'Corregido por ti. Mejor que por mí.'],
+    sube: ['Subo la dificultad. No me mires así.', 'Más difícil. Te lo has ganado.'],
+    baja: ['Uno más sencillo. No es un castigo: es un calentamiento.', 'Bajamos un poco. Sin dramas.'],
+    top: ['Este es de los que me gusta corregir.', 'Nivel alto. Afino la punta.'],
+    racha: ['Se me está secando la tinta de no usarla.', 'Racha. Guardo el boli un rato.'],
+    techo: ['Para completar el taller faltan retos **un poco más difíciles**.'],
+    finalBien: ['Taller completado. Lo firmo.'],
+    finalCorto: ['Por hoy, suficiente. Guardo el capuchón.'],
+  },
+  fosforito: {
+    nombre: 'Fosforito',
+    hola: ['¡Hola! Soy Fosforito. ¡Todo es importante! Bueno, casi todo.', '¡Vamos! Yo subrayo, tú piensas.', '¡Qué bien, un reto nuevo!'],
+    perfecto: ['¡SUBRAYADO! ¡Perfecto!', '¡Esto va directo al resumen!', '¡Brillante! Literalmente.', '¡Lo subrayo dos veces!'],
+    bien: ['¡Bien! Lo subrayo un poco.', '¡Eso es!', '¡Muy bien visto!'],
+    casi: ['¡Casi! Te subrayo lo que falla.', '¡Uy, por poco! Otra vez.', '¡Casi casi! Mira lo rodeado.'],
+    fallo: ['¡No pasa nada! Mira dónde ha fallado.', '¡Fallar también es aprender! Lo subrayo.', '¡Ánimo! Lo importante es lo que viene ahora.'],
+    segunda: ['¡A la segunda! ¡Subrayadísimo!', '¡Eso! ¡Lo sabías!'],
+    sube: ['¡Más difícil! ¡Qué emoción!', '¡Subimos de nivel!'],
+    baja: ['Uno más tranquilo para coger ritmo.', 'Vamos con uno más fácil, ¡y luego volvemos a subir!'],
+    top: ['¡Este es importantísimo! Bueno, como todos.', '¡Nivel máximo! ¡Subrayo la pregunta entera!'],
+    racha: ['¡Racha! ¡Me quedo sin tinta de subrayar!', '¡Seguidos! ¡Seguidos!'],
+    techo: ['¡Para completar el taller hay que llegar a retos **un poco más difíciles**!'],
+    finalBien: ['¡Taller completado! ¡Esto va al resumen!'],
+    finalCorto: ['¡Lo dejamos aquí! ¡La próxima vez, más!'],
+  },
+};
+export const POSE_DE = { saludo: 'quieto', pista: 'pista', animo: 'seguro', bien: 'celebra', perfecto: 'celebra', piensa: 'piensa', fallo: 'animo', sube: 'asombro', baja: 'animo' };
+export const una = (lista) => lista[Math.floor(Math.random() * lista.length)];

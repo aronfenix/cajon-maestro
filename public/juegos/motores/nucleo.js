@@ -3,6 +3,8 @@
 // cuando el alumno comprueba, llama a ctx.fin(estrellas, mensaje).
 
 import * as fx from './efectos.js';
+import { dibuja, POSES } from './personaje.js';
+import { VOCES, POSE_DE, una } from './voces.js';
 export const $ = (s, r = document) => r.querySelector(s);
 const SVGNS = 'http://www.w3.org/2000/svg';
 
@@ -143,10 +145,19 @@ export async function arrancar(config, motor) {
   const racha = el('span', { class: 'racha', hidden: true });
   const estado = el('div', { class: 'estado' }, barra, nivelUI, racha);
 
-  // el asistente: de momento una bombilla con bocadillo; el personaje irá aquí
+  // el ayudante: uno de los tres personajes, con poses del esqueleto (se cambiará por sus dibujos definitivos)
+  const quien = VOCES[config.personaje] ? config.personaje : 'goma';
+  const voz = VOCES[quien];
   const bocadillo = el('div', { class: 'bocadillo', role: 'status', 'aria-live': 'polite', hidden: true });
-  const figura = el('div', { class: 'figura', 'aria-hidden': 'true' },
-    svg('0 0 64 64', '<circle cx="32" cy="27" r="19" fill="var(--oro)" stroke="#000" stroke-width="3"/><path d="M24 44h16v8a4 4 0 0 1-4 4h-8a4 4 0 0 1-4-4z" fill="#c9cfca" stroke="#000" stroke-width="3"/><path d="M26 49h12" stroke="#000" stroke-width="2.5"/><path d="M27 30q5 6 10 0" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><circle cx="26" cy="23" r="2.6"/><circle cx="38" cy="23" r="2.6"/>', { width: 64, height: 64 }));
+  const figura = el('div', { class: 'figura ' + quien, 'aria-hidden': 'true', title: voz.nombre });
+  let poseT = null;
+  const posa = (pose = 'quieto', ms = 0) => {
+    figura.innerHTML = dibuja(quien, POSES[pose] || POSES.quieto);
+    clearTimeout(poseT);
+    if (ms) poseT = setTimeout(() => posa('quieto'), ms);
+  };
+  posa('quieto');
+  figura.addEventListener('click', () => { posa(una(['celebra', 'asombro', 'piensa']), 1200); suena('clic'); });
   const asistente = el('aside', { class: 'asistente', 'aria-label': 'Ayudante' }, bocadillo, figura);
   let callaT = null;
   const di = (texto, tipo = 'pista', ms = 0) => {
@@ -157,7 +168,9 @@ export async function arrancar(config, motor) {
     bocadillo.classList.remove('entra'); void bocadillo.offsetWidth; bocadillo.classList.add('entra');
     figura.classList.remove('habla'); void figura.offsetWidth; figura.classList.add('habla');
     if (ms) callaT = setTimeout(() => (bocadillo.hidden = true), ms);
+    posa(POSE_DE[tipo] || 'quieto', Math.max(ms || 0, 2600));
   };
+  const dice = (clave, tipo, ms) => di(una(voz[clave]), tipo, ms);
   const calla = () => { clearTimeout(callaT); bocadillo.hidden = true; };
   bocadillo.addEventListener('click', calla);
 
@@ -227,7 +240,7 @@ export async function arrancar(config, motor) {
       const darPista = () => {
         if (usadas >= pistas.length) return;
         const p = pistas[usadas++];
-        di(typeof p === 'string' ? p : p.texto, 'pista');
+        di(typeof p === 'string' ? p : p.texto, 'pista', 12000);
         if (typeof p === 'object' && p.ver) try { p.ver(); } catch (e) { console.error(e); }
         suena('clic');
         if (btnPista) {
@@ -267,8 +280,10 @@ export async function arrancar(config, motor) {
             setTimeout(() => suena(estrellas === 3 ? 'bien' : estrellas >= 1 ? 'regular' : 'mal'), 300 + estrellas * 140);
             if (estrellas === 3) setTimeout(() => fx.confetiEn(sello, 70), 380);
             if (estrellas === 0) fx.temblor(escenario, 10);
-            if (puedeReintentar) setTimeout(() => di(estrellas ? 'Casi. Mira la corrección y prueba otra vez: **te doy una pista** al empezar.' : 'No pasa nada. Mira dónde estaba y vuelve a intentarlo: **te ayudo un poco**.', 'animo', 6000), 900);
-            else if (intento === 2 && estrellas >= 2) setTimeout(() => di('¿Ves? A la segunda ha salido.', 'bien', 3500), 900);
+            if (puedeReintentar) setTimeout(() => di(una(voz[estrellas ? 'casi' : 'fallo']) + ' Si lo repites, **te doy una pista** al empezar.', 'animo', 6000), 900);
+            else if (intento === 2 && estrellas >= 2) setTimeout(() => dice('segunda', 'bien', 3500), 900);
+            else if (estrellas === 3 && Math.random() < 0.6) setTimeout(() => dice('perfecto', 'perfecto', 3000), 900);
+            else if (estrellas === 2 && Math.random() < 0.5) setTimeout(() => dice('bien', 'bien', 3000), 900);
           }
           opciones[0].focus({ preventScroll: true });
           correccion.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -298,9 +313,9 @@ export async function arrancar(config, motor) {
     const maximo = config.maximo ?? 24;
     const historial = [];
     pintaBarra(progreso); pintaNivel(L, adaptativo ? TOP + 1 : 1);
-    if (progreso > 0 && primeraPartida) setTimeout(() => di('Seguimos donde lo dejaste.', 'saludo', 3500), 1100);
+    if (progreso > 0 && primeraPartida) setTimeout(() => di('Seguimos donde lo dejaste.', 'saludo', 3500), 8500);
     nivelUI.hidden = !adaptativo; racha.hidden = true;
-    if (primeraPartida && config.saludo && !enPizarra) setTimeout(() => di(config.saludo, 'saludo', 6000), 1100);
+    if (primeraPartida && !enPizarra) setTimeout(() => di(una(voz.hola) + (config.saludo ? ' ' + config.saludo : ''), 'saludo', 7000), 1100);
 
     while (mio === token) {
       if (secuencia ? n >= secuencia.length : progreso >= 100 || n >= maximo) break;
@@ -327,9 +342,10 @@ export async function arrancar(config, motor) {
       pintaBarra(progreso, inc > 0);
       pintaNivel(L, TOP + 1);
       if (!enPizarra) guarda();
-      if (L > antes) { fx.bote(nivelUI, 8); setTimeout(() => di(L === TOP ? 'Este es **de los difíciles**.' : 'Sube un poco la dificultad.', 'bien', 2600), 300); }
-      else if (L < antes) setTimeout(() => di('Vamos con uno **un poco más sencillo**.', 'animo', 2800), 300);
-      else if (progreso >= 78 && L < objetivo && techo === 78) setTimeout(() => di('Para completar el taller hay que llegar a retos **un poco más difíciles**.', 'animo', 3500), 300);
+      if (L > antes) { fx.bote(nivelUI, 8); setTimeout(() => dice(L === TOP ? 'top' : 'sube', 'sube', 2600), 300); }
+      else if (L < antes) setTimeout(() => dice('baja', 'baja', 2800), 300);
+      else if (progreso >= 78 && L < objetivo && techo === 78) setTimeout(() => dice('techo', 'animo', 3500), 300);
+      else if (seguidas === 3 || seguidas === 6) setTimeout(() => dice('racha', 'perfecto', 2800), 300);
       if (seguidas >= 2) {
         racha.hidden = false;
         racha.replaceChildren(svg('0 0 24 24', '<path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3 0-5 1-8z" fill="#ff7a1a" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 13c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1-3 1 1 2 0 2-2z" fill="#ffd23f"/>', { width: 22, height: 22 }), `${seguidas} seguidos`);
@@ -366,7 +382,7 @@ export async function arrancar(config, motor) {
     if (!enPizarra) {
       final.querySelectorAll('.hoja figure').forEach((f, k) => { f.style.animationDelay = k * 90 + 'ms'; setTimeout(() => suena('pon'), k * 90); });
       if (completo || !adaptativo) setTimeout(() => { suena('bien'); fx.confeti(innerWidth / 2, innerHeight * 0.35, 140); }, 300);
-      setTimeout(() => di(completo ? 'Taller completado. **Bien pensado.**' : adaptativo ? 'Lo dejamos aquí. La próxima vez, seguimos.' : '¡Hecho!', 'bien', 6000), 700);
+      setTimeout(() => dice(completo || !adaptativo ? 'finalBien' : 'finalCorto', 'perfecto', 6000), 700);
     }
   }
   partida();

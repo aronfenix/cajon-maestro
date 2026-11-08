@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patios cuadrados · Cajón maestro</title>
+<meta name="description" content="Calcular cuadrados, reconocer números cuadrados y decidir si con unas baldosas sale un patio cuadrado.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "multiplica",
+  "area": "matematicas",
+  "titulo": "Patios cuadrados",
+  "subtitulo": "Un número es cuadrado si con esas baldosas sale un patio cuadrado sin que sobre ninguna.",
+  "saludo": "Tres al cuadrado **no es tres por dos**. Es un patio de tres por tres.",
+  "volver": "../../materiales/patios-cuadrados/",
+  "observa": "Entre 25 y 36 hay diez números. ¿Alguno es cuadrado? ¿Por qué los cuadrados están cada vez más separados?",
+  "niveles": [
+    {
+      "modo": "cuadrado",
+      "tipo": "potencia",
+      "generar": {
+        "n": [
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "modo": "cuadrado",
+      "tipo": "elegir",
+      "generar": {
+        "n": [
+          1,
+          6
+        ]
+      }
+    },
+    {
+      "modo": "cuadrado",
+      "tipo": "patio",
+      "generar": {
+        "n": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "modo": "cuadrado",
+      "tipo": "potencia",
+      "generar": {
+        "n": [
+          6,
+          10
+        ]
+      }
+    },
+    {
+      "modo": "cuadrado",
+      "tipo": "elegir",
+      "generar": {
+        "n": [
+          4,
+          10
+        ],
+        "dobles": true
+      }
+    },
+    {
+      "modo": "cuadrado",
+      "tipo": "patio",
+      "generar": {
+        "n": [
+          6,
+          10
+        ]
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

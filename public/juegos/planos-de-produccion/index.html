@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planos de producción · Cajón maestro</title>
+<meta name="description" content="Multiplicar troceando los factores por valor posicional y sumando los trozos del rectángulo.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "multiplica",
+  "area": "matematicas",
+  "titulo": "Planos de producción",
+  "subtitulo": "Una multiplicación grande es un rectángulo. Partido en trozos, cada trozo es una multiplicación fácil.",
+  "saludo": "Cada trozo es una multiplicación fácil. **Cuidado con los ceros.**",
+  "volver": "../../materiales/planos-de-produccion/",
+  "observa": "¿Por qué 40 × 20 tiene dos ceros y 40 × 7 solo uno? ¿Qué pasa con los trozos cuando un factor tiene un 0 en medio?",
+  "niveles": [
+    {
+      "modo": "partir",
+      "generar": {
+        "cifras": [
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "modo": "partir",
+      "generar": {
+        "cifras": [
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "modo": "partir",
+      "generar": {
+        "cifras": [
+          2,
+          2
+        ]
+      }
+    },
+    {
+      "modo": "partir",
+      "generar": {
+        "cifras": [
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "modo": "partir",
+      "generar": {
+        "cifras": [
+          3,
+          3
+        ]
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

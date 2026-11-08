@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcelas comparables · Cajón maestro</title>
+<meta name="description" content="Ordenar parcelas rectangulares por su área cuando el dibujo no está a escala.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "multiplica",
+  "area": "matematicas",
+  "titulo": "Parcelas comparables",
+  "subtitulo": "El área se calcula con los números, no con el tamaño del dibujo. Al comprobar, las parcelas se ponen a escala.",
+  "saludo": "**¡El dibujo engaña!** Fíjate en los números.",
+  "volver": "../../materiales/parcelas-comparables/",
+  "observa": "Dos parcelas con la misma valla alrededor, ¿tienen siempre la misma área?",
+  "niveles": [
+    {
+      "modo": "areas",
+      "escala": true,
+      "generar": {
+        "lados": [
+          2,
+          8
+        ]
+      }
+    },
+    {
+      "modo": "areas",
+      "generar": {
+        "lados": [
+          2,
+          10
+        ]
+      }
+    },
+    {
+      "modo": "areas",
+      "generar": {
+        "lados": [
+          3,
+          20
+        ],
+        "cuadrados": true
+      }
+    },
+    {
+      "modo": "areas",
+      "generar": {
+        "lados": [
+          4,
+          25
+        ],
+        "mismoPerimetro": true
+      }
+    },
+    {
+      "modo": "areas",
+      "generar": {
+        "lados": [
+          4,
+          39
+        ],
+        "cuadrados": true,
+        "mismoPerimetro": true
+      }
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

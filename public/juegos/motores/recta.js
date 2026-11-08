@@ -115,7 +115,7 @@ function estimar(d, ctx) {
     const err = Math.abs(g - d.valor);
     const pct = (err / rango) * 100;
     const ini = Math.max(d.min, d.valor - (tol[0] / 100) * rango), fin = Math.min(d.max, d.valor + (tol[0] / 100) * rango);
-    R.escala.append(el('span', { class: 'fosforito', style: { left: R.pc(ini) + '%', width: R.pc(fin) - R.pc(ini) + '%' } }));
+    R.escala.append(el('span', { class: 'resalte', style: { left: R.pc(ini) + '%', width: R.pc(fin) - R.pc(ini) + '%' } }));
     suena('clic');
     await espera(280);
     R.escala.append(el('div', { class: 'boli-azul', style: { left: R.pc(d.valor) + '%' } },
