@@ -109,7 +109,35 @@ export const espera = (ms) => new Promise((r) => setTimeout(r, quieto() ? Math.m
 export function vibra(patron) { try { navigator.vibrate?.(patron); } catch {} }
 
 /* ---------- la mano que enseña qué hacer si nadie toca nada ---------- */
-const MANO = `<svg viewBox="0 0 64 72" width="64" height="72" aria-hidden="true"><path d="M24 6c4 0 6 3 6 7v20l3-1c3-1 6 1 7 3l1 2 3-1c3-1 6 1 7 4l1 2 2-1c3 0 6 2 6 6v9c0 11-8 20-19 20h-6c-7 0-12-3-16-9L6 47c-2-3-1-6 2-8 2-1 5-1 7 1l3 4V13c0-4 2-7 6-7z" fill="#fff" stroke="#000" stroke-width="3" stroke-linejoin="round"/><path d="M33 33v12M44 37v9M54 42v6" stroke="#000" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+const MANO = `<svg viewBox="0 0 64 72" width="64" height="72" aria-hidden="true"><path d="M24 6c4 0 6 3 6 7v20l3-1c3-1 6 1 7 3l1 2 3-1c3-1 6 1 7 4l1 2 2-1c3 0 6 2 6 6v9c0 11-8 20-19 20h-6c-7 0-12-3-16-9L6 47c-2-3-1-6 2-8 2-1 5-1 7 1l3 4V13c0-4 2-7 6-7z" fill="#fff" stroke="#1b1e3a" stroke-width="3.5" stroke-linejoin="round"/><path d="M33 33v12M44 37v9M54 42v6" stroke="#1b1e3a" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+// Demostración del gesto: la mano coge una copia de la pieza y la lleva hasta un punto (x, y) o un elemento.
+export function demuestra(pieza, destino, { demora = 900, veces = 1 } = {}) {
+  if (quieto()) return () => {};
+  let cancelado = false, nodos = [];
+  const fuera = () => { cancelado = true; nodos.forEach((n) => n.remove()); removeEventListener('pointerdown', fuera, true); };
+  addEventListener('pointerdown', fuera, true);
+  setTimeout(async () => {
+    for (let v = 0; v < veces && !cancelado; v++) {
+      if (!pieza.isConnected) return;
+      const r = pieza.getBoundingClientRect();
+      const q = destino.getBoundingClientRect ? destino.getBoundingClientRect() : { left: destino.x, top: destino.y, width: 0, height: 0 };
+      const mx = q.left + q.width / 2 - (r.left + r.width / 2), my = q.top + q.height / 2 - (r.top + r.height / 2);
+      const copia = pieza.cloneNode(true); copia.classList.add('fantasma', 'demo'); copia.classList.remove('elegida');
+      Object.assign(copia.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', margin: 0, zIndex: 98, pointerEvents: 'none', rotate: '0deg' });
+      const m = document.createElement('div'); m.innerHTML = MANO;
+      Object.assign(m.style, { position: 'fixed', left: r.left + r.width / 2 - 18 + 'px', top: r.top + r.height / 2 - 6 + 'px', zIndex: 99, pointerEvents: 'none', filter: 'drop-shadow(3px 6px 4px rgba(0,0,0,.3))' });
+      document.body.append(copia, m); nodos = [copia, m];
+      const k = { duration: 2300, easing: 'ease-in-out', fill: 'forwards' };
+      copia.animate([{ transform: 'none', opacity: 0 }, { transform: 'none', opacity: 0.9, offset: 0.12 }, { transform: 'translateY(-10px) rotate(-6deg) scale(1.12)', opacity: 0.9, offset: 0.25 }, { transform: `translate(${mx}px, ${my - 10}px) rotate(6deg) scale(1.12)`, opacity: 0.9, offset: 0.7 }, { transform: `translate(${mx}px, ${my}px) scale(1)`, opacity: 0.9, offset: 0.8 }, { transform: `translate(${mx}px, ${my}px) scale(1)`, opacity: 0 }], k);
+      const a = m.animate([{ transform: 'translate(0,-40px)', opacity: 0 }, { transform: 'translate(0,0)', opacity: 1, offset: 0.12 }, { transform: 'translate(0,-6px) scale(.92)', offset: 0.25 }, { transform: `translate(${mx}px, ${my - 16}px) scale(.92)`, offset: 0.7 }, { transform: `translate(${mx}px, ${my - 6}px) scale(.92)`, offset: 0.8 }, { transform: `translate(${mx + 20}px, ${my - 50}px)`, opacity: 0 }], k);
+      sonar('coge');
+      await a.finished.catch(() => {});
+      nodos.forEach((n) => n.remove());
+      await new Promise((ok) => setTimeout(ok, 500));
+    }
+  }, demora);
+  return fuera;
+}
 export function mano(objetivo, { tipo = 'toca', dx = 0.35, demora = 3200, hasta = null } = {}) {
   if (quieto()) return () => {};
   let nodo = null, t = null, cancelado = false;

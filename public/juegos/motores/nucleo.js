@@ -6,6 +6,7 @@ import * as fx from './efectos.js';
 import { dibuja, POSES } from './personaje.js';
 import { VOCES, POSE_DE, una } from './voces.js';
 import { montaEscena, vineta, montaTeclado } from './escena.js';
+import { portada } from './portada.js';
 export const $ = (s, r = document) => r.querySelector(s);
 const SVGNS = 'http://www.w3.org/2000/svg';
 
@@ -98,6 +99,7 @@ export function suena(que, k = 0) {
       bien: () => [523, 659, 784, 1046].forEach((f, i) => { nota(f, t + i * 0.08, 0.24, 'triangle', 0.07); nota(f * 2, t + i * 0.08, 0.1, 'sine', 0.02); }),
       regular: () => [523, 659].forEach((f, i) => nota(f, t + i * 0.1, 0.2, 'triangle', 0.06)),
       mal: () => { nota(220, t, 0.18, 'sawtooth', 0.035, 160); nota(165, t + 0.16, 0.26, 'sawtooth', 0.035, 120); },
+      sube: () => { [392, 523, 659, 784, 1046].forEach((f, i) => { nota(f, t + i * 0.07, 0.3, 'triangle', 0.07); nota(f * 1.5, t + i * 0.07 + 0.02, 0.18, 'sine', 0.02); }); ruido(t + 0.36, 0.5, { f: 6000, tipo: 'highpass', vol: 0.05 }); },
       cremallera: () => { for (let i = 0; i < 14; i++) ruido(t + i * 0.018, 0.02, { f: 3000 + i * 120, q: 2, tipo: 'bandpass', vol: 0.06 }); },
     }[que];
     s?.();
@@ -174,6 +176,20 @@ export async function arrancar(config, motor) {
     if (ms) poseT = setTimeout(() => posa('quieto'), ms);
   };
   posa('quieto');
+  // ojos vivos: siguen al dedo (y a la pieza que se arrastra) y parpadean de vez en cuando
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let mx = innerWidth / 2, my = innerHeight / 2, pendiente = false;
+    const mira = () => {
+      pendiente = false;
+      const r = figura.getBoundingClientRect(); if (!r.width) return;
+      const dx = mx - (r.left + r.width / 2), dy = my - (r.top + r.height * 0.35), d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 260) * 4.2;
+      figura.querySelectorAll('.pupila').forEach((p) => (p.style.transform = `translate(${((dx / d) * k).toFixed(2)}px, ${((dy / d) * k).toFixed(2)}px)`));
+    };
+    addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; if (!pendiente) { pendiente = true; requestAnimationFrame(mira); } }, { passive: true });
+    new MutationObserver(() => requestAnimationFrame(mira)).observe(figura, { childList: true });
+    const parpadea = () => { figura.classList.remove('parpadea'); void figura.offsetWidth; figura.classList.add('parpadea'); setTimeout(parpadea, 2600 + Math.random() * 3800); };
+    setTimeout(parpadea, 2000);
+  }
   let ultimaFrase = null;
   figura.addEventListener('click', () => { if (ultimaFrase) di(...ultimaFrase); else posa(una(['celebra', 'asombro', 'piensa']), 1200); suena('clic'); });
   // botón de ayuda: siempre en el mismo sitio, pegado al personaje
@@ -252,6 +268,23 @@ export async function arrancar(config, motor) {
     if (chispa) { barra.classList.remove('avanza'); void barra.offsetWidth; barra.classList.add('avanza'); setTimeout(() => fx.chispasEn(relleno.querySelector('.punta-barra'), 10, css('--acento')), 450); }
   };
   const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
+  // subir de nivel: una placa grande con los escalones, que luego vuela a su sitio en la cabecera
+  const subeNivel = async (L, total) => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const barras = el('div', { class: 'escalones' }, Array.from({ length: total }, (_, k) => el('i', { class: k < L ? 'on' : k === L ? 'nuevo' : '', style: { height: 14 + (k * 46) / Math.max(1, total - 1) + 'px' } })));
+    const placa = el('div', { class: 'placa-nivel', role: 'status' }, el('small', { text: '¡Subes de nivel!' }), el('b', { text: `Nivel ${L + 1}` }), barras);
+    document.body.append(placa);
+    suena('sube'); fx.vibra(30);
+    const { gsap } = await import('./vendor/gsap.js');
+    const q = nivelUI.getBoundingClientRect(), r = placa.getBoundingClientRect();
+    await gsap.timeline()
+      .from(placa, { scale: 0.2, rotation: -20, opacity: 0, duration: 0.5, ease: 'back.out(2)' })
+      .from(placa.querySelector('.nuevo'), { scaleY: 0, transformOrigin: '50% 100%', duration: 0.45, ease: 'elastic.out(1.1,0.4)' }, '-=0.1')
+      .add(() => fx.chispasEn(placa.querySelector('.nuevo'), 14, '#ffc531'))
+      .to(placa, { x: q.left + q.width / 2 - (r.left + r.width / 2), y: q.top + q.height / 2 - (r.top + r.height / 2), scale: 0.15, opacity: 0.2, duration: 0.5, ease: 'power3.in' }, '+=0.55')
+      .then();
+    placa.remove();
+  };
 
   let token = 0;
   // Juega un reto. Devuelve { estrellas, pistas, intento, reintentar }
@@ -370,7 +403,7 @@ export async function arrancar(config, motor) {
       pintaBarra(progreso, inc > 0);
       pintaNivel(L, TOP + 1);
       if (!enPizarra) guarda();
-      if (L > antes) { fx.bote(nivelUI, 8); setTimeout(() => dice(L === TOP ? 'top' : 'sube', 'sube', 2600), 300); }
+      if (L > antes) { await subeNivel(L, TOP + 1); fx.bote(nivelUI, 8); setTimeout(() => dice(L === TOP ? 'top' : 'sube', 'sube', 2600), 100); }
       else if (L < antes) setTimeout(() => dice('baja', 'baja', 2800), 300);
       else if (progreso >= 78 && L < objetivo && techo === 78) setTimeout(() => dice('techo', 'animo', 3500), 300);
       else if (seguidas === 3 || seguidas === 6) setTimeout(() => dice('racha', 'perfecto', 2800), 300);
@@ -416,9 +449,20 @@ export async function arrancar(config, motor) {
       setTimeout(() => dice(completo || !adaptativo ? 'finalBien' : 'finalCorto', 'perfecto', 6000), 700);
     }
   }
-  if (config.historia?.length && !pizarra && !new URLSearchParams(location.search).has('sinhistoria')) {
+  const qs = new URLSearchParams(location.search);
+  if (!qs.has('sinhistoria') && !qs.has('sinportada')) {
     escenaViva.pausa();
-    await vineta(config.historia, dibuja, POSES, config.titulo);
+    document.body.classList.add('en-portada');
+    let prog = 0; try { prog = JSON.parse(localStorage.getItem('cajon-progreso:' + location.pathname))?.progreso || 0; } catch {}
+    await portada(config, { dibuja, POSES, quien, progreso: prog, record: leeRecord()?.retos, sonar: suena, frase: una(voz.hola) });
+    document.body.classList.remove('en-portada');
+    // la historia, solo la primera vez en esta tablet
+    const claveHist = 'cajon-historia:' + location.pathname;
+    let vista = false; try { vista = !!localStorage.getItem(claveHist); } catch {}
+    if (config.historia?.length && !pizarra && !vista) {
+      await vineta(config.historia, dibuja, POSES, config.titulo);
+      try { localStorage.setItem(claveHist, '1'); } catch {}
+    }
     escenaViva.sigue();
   }
   partida();

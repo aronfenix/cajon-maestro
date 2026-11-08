@@ -54,7 +54,7 @@ function ojo(cx, cy, p, lado) {
   const mx = (p.mira?.[0] ?? 0) * 5, my = (p.mira?.[1] ?? 0) * 5;
   const parpado = p.parpado ?? 0; // 0 abierto, 1 cerrado
   let s = `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#fff" stroke="${T}" stroke-width="4"/>`;
-  s += `<circle cx="${cx + mx}" cy="${cy + my + 1}" r="${tipo === 'grande' ? 6.5 : 5.5}" fill="${T}"/><circle cx="${cx + mx - 2}" cy="${cy + my - 2}" r="1.8" fill="#fff"/>`;
+  s += `<g class="pupila"><circle cx="${cx + mx}" cy="${cy + my + 1}" r="${tipo === 'grande' ? 6.5 : 5.5}" fill="${T}"/><circle cx="${cx + mx - 2}" cy="${cy + my - 2}" r="1.8" fill="#fff"/></g>`;
   if (parpado > 0) s += `<path d="M${cx - rx - 2} ${cy - ry - 2} h${2 * rx + 4} v${(2 * ry + 4) * parpado} h${-(2 * rx + 4)}z" fill="var(--piel,#f3ede1)" stroke="none"/><path d="M${cx - rx} ${cy - ry + (2 * ry) * parpado} h${2 * rx}" stroke="${T}" stroke-width="4" stroke-linecap="round"/>`;
   return s;
 }
@@ -101,7 +101,7 @@ export function dibuja(tipo, pose = POSES.quieto) {
     <path d="M${100 - 16} ${205 - (p.salto ?? 0) - 2} v${(p.salto ?? 0) ? 6 : 16} M${100 + 16} ${205 - (p.salto ?? 0) - 2} v${(p.salto ?? 0) ? 6 : 16}" stroke="${T}" stroke-width="5" stroke-linecap="round"/>
     <ellipse cx="${100 - 22}" cy="${223 - ((p.salto ?? 0) ? p.salto + 8 : 0)}" rx="13" ry="7" fill="${T}"/><ellipse cx="${100 + 22}" cy="${223 - ((p.salto ?? 0) ? p.salto + 8 : 0)}" rx="13" ry="7" fill="${T}"/>
     ${c.pinta(w, h, x, y, p)}
-    ${ojo(100 - ex, cy, p, 'i')}${ojo(100 + ex, cy, p, 'd')}
+    <g class="ojo">${ojo(100 - ex, cy, p, 'i')}</g><g class="ojo">${ojo(100 + ex, cy, p, 'd')}</g>
     ${ceja(100 - ex, cy, p.cejas[0], 22 + (p.alto ?? 0), 'i')}${ceja(100 + ex, cy, p.cejas[1], 22 + (p.alto ?? 0), 'd')}
     ${(BOCAS[p.boca] || BOCAS.sonrisa)(100, cy + (c.boca ?? 26))}
   </g>`;

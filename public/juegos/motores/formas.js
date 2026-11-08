@@ -4,7 +4,7 @@
 //   quien      → ¿quién es quién?: preguntar para adivinar una figura, o elegir las pistas para que otro la adivine
 import { el, svg, barajar, azar, elige, suena } from './nucleo.js';
 import { gsap } from './vendor/gsap.js';
-import { espera, mano, temblor, vuela, chispasEn, bote, arrastra } from './efectos.js';
+import { espera, mano, demuestra, temblor, vuela, chispasEn, bote, arrastra } from './efectos.js';
 import { FAM, figuraDe, tablero, camino, notacion, pasaporte, cuadri, tri, convexo, simple, aristas, esc, l2, cruz, area2 } from './geoplano.js';
 
 const N = 6;
@@ -199,7 +199,16 @@ function clasificar(d, ctx) {
     } },
   ]);
   entrada(items, zona);
-  if (ctx.primera) mano(items[0].b, { tipo: 'arrastra', dx: 0.5, demora: 2600 });
+  // la primera vez, en lugar de explicarlo, se enseña: una mano lleva una figura a su sitio (y la devuelve)
+  if (ctx.primera) {
+    const it = items[0];
+    const destino = () => {
+      if (tipo === 'cuadri') { const pos = { otros: [11, 50], paralelogramo: [75, 20], rectangulo: [38, 55], rombo: [80, 55], cuadrado: [59, 55] }[it.bueno]; const r = zona.querySelector('.diagrama-caja').getBoundingClientRect(); return { x: r.left + r.width * pos[0] / 100, y: r.top + r.height * pos[1] / 100 }; }
+      if (tipo === 'lados') return destinos[Object.keys(ZONAS.lados.nombres).indexOf(it.bueno)];
+      const [f, c] = it.bueno.split('-'); return destinos[ZONAS.triangulos.filas.indexOf(f) * 3 + ZONAS.triangulos.cols.indexOf(c)];
+    };
+    setTimeout(() => { if (!it.en && !hecho) { ctx.di('Mira: **la coges y la llevas** a su sitio. Esta, por ejemplo, va ahí.', 'pista', 4200); demuestra(it.b, destino(), { demora: 200 }); } }, 1500);
+  }
 
   async function revisar() {
     if (hecho) return; hecho = true; bloquea(ctx);
