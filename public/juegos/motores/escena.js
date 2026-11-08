@@ -119,7 +119,7 @@ export function vineta(paneles, dibuja, POSES, titulo) {
     capa.setAttribute('role', 'dialog'); capa.setAttribute('aria-modal', 'true'); capa.setAttribute('aria-label', titulo || 'Historia');
     const caja = h('div', 'vineta');
     const sig = h('button', 'tecla primaria grande'), saltar = h('button', 'tecla');
-    saltar.textContent = 'Saltar';
+    saltar.textContent = 'Saltar la historia';
     capa.append(caja);
     let i = 0;
     const pinta = () => {

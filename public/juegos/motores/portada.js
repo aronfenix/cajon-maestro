@@ -115,7 +115,7 @@ const ARTE = {
     <g class="sueltas">${pieza(1, 560, 360, 18)}</g></svg>`,
 };
 
-export function portada(config, { dibuja, POSES, quien, progreso = 0, record = null, sonar = () => {}, frase: fraseHola = '¿Jugamos?' }) {
+export function portada(config, { dibuja, POSES, quien, progreso = 0, record = null, sonar = () => {}, frase: fraseHola = '¿Jugamos?', volver = '../../' }) {
   return new Promise((listo) => {
     const lento = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const tipo = config.portada?.arte || ({ estuche: 'estuche', puzle: 'puzle', corcho: 'corcho', patio: 'patio', almacen: 'almacen', merienda: 'merienda' }[config.escena] ?? 'cajon');
@@ -145,7 +145,9 @@ export function portada(config, { dibuja, POSES, quien, progreso = 0, record = n
     const frase = h('div', 'portada-bocadillo bocadillo');
     frase.textContent = config.portada?.frase || fraseHola;
     const pj = h('div', 'portada-personaje'); pj.append(frase, fig);
-    capa.append(arte, texto, pj);
+    const salir = h('a', 'volver con-texto portada-volver', '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Menú</span>');
+    salir.href = volver; salir.title = 'Volver al menú';
+    capa.append(arte, texto, pj, salir);
     document.body.append(capa);
 
     if (!lento) {

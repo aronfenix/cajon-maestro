@@ -790,3 +790,49 @@ body.mapa-cajon .mesa-juego{padding-right:clamp(12px,2.4vw,30px)}
 /* patios: las baldosas, de barro */
 .patio .baldosa,.esquema .baldosa{fill:#d9824f;stroke:var(--tinta);stroke-width:2}
 .patio .baldosa:nth-child(2n),.esquema .baldosa:nth-child(2n){fill:#c66a3d}
+/* volver al menú: con texto, siempre visible (también en la portada) */
+.volver.con-texto{width:auto;min-width:52px;padding:0 16px 0 10px;gap:4px;display:inline-flex;align-items:center;border-radius:999px;font-family:var(--fuerte);font-weight:800;font-size:18px;color:var(--tinta);text-decoration:none}
+.volver.con-texto:hover{transform:translateX(-3px)}
+.portada-volver{position:absolute;left:clamp(12px,2.4vw,30px);top:12px;z-index:5;height:52px;border:var(--borde);background:var(--papel);box-shadow:var(--sombra-baja)}
+@media (max-width:760px){.volver.con-texto{height:44px;font-size:16px;padding:0 12px 0 8px}}
+/* la merienda, paso a paso */
+.panel-trozos{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:18px;padding:14px 18px;border:var(--borde);border-radius:16px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra-baja);width:fit-content;max-width:100%}
+.panel-trozos label{display:flex;align-items:center;gap:8px;font-family:var(--fuerte);font-weight:800;font-size:19px}
+.panel-trozos.terminado label,.panel-trozos.terminado>.tecla{opacity:.45}
+.quedan-linea{flex-basis:100%;margin:0;font-family:var(--fuerte);font-weight:800;font-size:20px}
+.quedan-reparto{font-size:26px;color:var(--cobalto)}
+.cuaderno-reparto{flex-basis:100%;display:flex;flex-direction:column;gap:2px;margin:4px 0 0;padding:6px 0 0 22px;border-top:2px dashed rgba(27,30,58,.25);font-size:16px}
+.cuaderno-reparto:empty{display:none}
+.cuaderno-reparto b{font-family:var(--fuerte)}
+.cuaderno-hoja{margin-top:16px;padding:12px 18px;border:var(--borde);border-radius:14px;background:repeating-linear-gradient(transparent 0 27px,rgba(47,91,211,.18) 27px 29px),var(--papel);width:fit-content;max-width:100%;box-shadow:var(--sombra-baja)}
+.cuaderno-hoja:has(ol:empty){display:none}
+.titulo-cuaderno{font-family:var(--fuerte);font-weight:900;font-size:17px}
+.panel-dar{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:6px;padding:10px;border:2.5px solid var(--tinta);border-radius:12px;background:#fff7d6}
+.pregunta-dar{font-weight:700;font-size:14px;line-height:1.2}
+.stepper{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.stepper .tecla{min-height:42px;min-width:44px;padding:0;font-size:24px}
+.valor-dar{font-family:var(--fuerte);font-size:30px}
+.cuenta-dar{font-weight:700;color:var(--cobalto)}
+.cuentas-dar{display:flex;flex-direction:column;gap:6px}
+.cuentas-dar label{display:flex;align-items:center;justify-content:space-between;gap:6px;font-weight:700;font-size:15px}
+.cuentas-dar .campo-num{min-height:42px;font-size:22px}
+.botones-dar{display:flex;gap:6px}
+.botones-dar .tecla{flex:1;min-height:42px;font-size:16px;padding:0 6px}
+.monton.muchos{max-width:360px;padding:12px}
+.monton.muchos .golosina{width:28px;height:18px}
+.mantel-merienda .panel-trozos{margin-top:0;align-self:stretch;max-width:520px}
+.mantel-merienda .fila-bandejas{flex-basis:100%;max-width:none}
+.columna-pila{width:200px}
+/* la barra de botones: en su sitio si cabe, y pegada abajo si el contenido es más alto que la pantalla (sin tapar nada) */
+.zona>.acciones{position:sticky;left:auto;bottom:12px;max-width:none;margin-top:18px}
+.mesa-juego{padding-bottom:16px}
+@media (max-width:760px){.mesa-juego{padding-bottom:16px}}
+.zona::after{content:"";display:block;flex:0 0 100%;height:150px}
+.zona>.acciones::before{content:"";position:absolute;inset:-10px -14px;z-index:-1;border-radius:22px;background:rgba(20,30,40,.18);backdrop-filter:blur(2px);opacity:0;transition:opacity .2s}
+.columna-pila{width:184px}
+.pila{min-height:70px}
+.platos{display:grid;grid-template-columns:repeat(2,124px);gap:10px;align-content:start}
+.plato{width:124px;min-height:124px;padding:10px}
+.en-plato{max-width:96px}
+.columna-pila{position:relative;min-height:300px}
+.panel-dar{position:absolute;left:6px;right:6px;top:40px;z-index:6;width:auto;margin:0;box-shadow:var(--sombra)}

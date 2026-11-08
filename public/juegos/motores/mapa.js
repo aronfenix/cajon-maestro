@@ -58,7 +58,7 @@ export async function montaMapa(c) {
   const botonAlbum = el('button', { type: 'button', class: 'tecla boton-album', onclick: () => album() }, el('span', { class: 'icono-album', html: DIBUJOS['el-examen-del-viernes'] }), el('span', {}, 'Pegatinas ', contador));
   document.body.prepend(
     el('header', { class: 'barra-juego' },
-      el('a', { class: 'volver', href: c.volver || '../../', 'aria-label': 'Volver al Cajón maestro', title: 'Volver' }, svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 })),
+      el('a', { class: 'volver con-texto', href: c.volver || '../../', title: 'Volver al Cajón maestro' }, svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 }), el('span', { text: 'Cajón maestro' })),
       el('h1', { text: c.titulo }),
       el('div', { class: 'estado' }, regla, el('span', { class: 'texto-progreso', text: `${ordenados} de ${comp.length} ordenados` })),
       el('div', { class: 'controles' }, botonAlbum, el('button', { type: 'button', class: 'tecla', text: 'Historia', onclick: () => vineta(c.historia, dibuja, POSES, c.titulo) }))),

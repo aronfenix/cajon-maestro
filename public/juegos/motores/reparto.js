@@ -55,8 +55,8 @@ function bandejas(d, ctx) {
   const { total: N, tam } = d;
   const q = Math.floor(N / tam), r = N % tam;
   ctx.reto(d.texto ?? `Hay **${num(N)} caramelos**. En cada bandeja caben **${tam}**. ¿Cuántas bandejas se llenan y cuántos sobran?`);
-  ctx.pista(d.pista ?? (d.manos ? 'Puedes llenar bandejas con el botón y contarlas, o pensarlo de cabeza.' : 'Piensa qué número de la tabla del ' + tam + ' se acerca más sin pasarse.'));
-  const monton = el('div', { class: 'monton', 'aria-label': `${N} caramelos` });
+  ctx.pista(d.pista ?? (d.manos ? 'Puedes llenar bandejas con el botón y contarlas, o pensarlo de cabeza.' : d.trozos ? `Llena varias bandejas de golpe: tú decides cuántas. ${d.calcula ? 'Antes, calcula cuántos caramelos son.' : ''} Cuando ya no quepan, contesta.` : 'Piensa qué número de la tabla del ' + tam + ' se acerca más sin pasarse.'));
+  const monton = el('div', { class: 'monton' + (N > 40 ? ' muchos' : ''), 'aria-label': `${N} caramelos` });
   const piezas = Array.from({ length: N }, (_, i) => { const c = el('span', { class: 'golosina' }, caramelo(i)); c.style.rotate = azar(-25, 25) + 'deg'; monton.append(c); return c; });
   const fila = el('div', { class: 'fila-bandejas', 'aria-live': 'polite' });
   const llenas = campo('Bandejas llenas', 4), sobran = campo('Caramelos que sobran', 4);
@@ -80,6 +80,35 @@ function bandejas(d, ctx) {
     suena('selloBien', hechas - 1);
     return true;
   }
+  // a trozos: el alumno decide cuántas bandejas llena de golpe (y, con "calcula", escribe cuántos caramelos son)
+  if (d.trozos) {
+    const libres = () => piezas.filter((p) => p.parentNode === monton).length;
+    const cuantas = campo('Bandejas que llenas de golpe', 3), cuantos = d.calcula && campo('Caramelos que usas', 4);
+    const quedan = el('b', { class: 'quedan-reparto' });
+    const cuaderno = el('ol', { class: 'cuaderno-reparto', 'aria-live': 'polite' });
+    const llenar = el('button', { type: 'button', class: 'tecla', text: 'Llenar' });
+    const panel = el('div', { class: 'panel-trozos' },
+      el('p', { class: 'quedan-linea' }, 'Quedan ', quedan, ' caramelos.'),
+      el('label', {}, el('span', { text: 'Lleno' }), cuantas, el('span', { text: `bandejas de ${tam}` })),
+      cuantos && el('label', {}, el('span', { text: 'que son' }), cuantos, el('span', { text: 'caramelos' })),
+      llenar, cuaderno);
+    monton.after(panel);
+    const pintaQuedan = () => { quedan.textContent = num(libres()); if (libres() < tam) { panel.classList.add('terminado'); llenar.disabled = true; ctx.di(`Quedan ${libres()}: ya no se llena otra bandeja. ¿Cuántas llevas y cuántos sobran?`, 'pista', 5000); } };
+    pintaQuedan();
+    llenar.onclick = async () => {
+      if (hecho) return;
+      const n = lee(cuantas);
+      if (!n) return ctx.aviso('Escribe cuántas bandejas quieres llenar de golpe.', true);
+      if (n * tam > libres()) { ctx.aviso(`Para ${n} bandejas harían falta ${n * tam} caramelos y solo quedan ${libres()}. Prueba con menos.`, true); temblor(cuantas, 5); return; }
+      if (cuantos) { const c = lee(cuantos); if (c !== n * tam) { ctx.aviso(c == null ? `¿Cuántos caramelos son ${n} bandejas de ${tam}?` : `${n} bandejas de ${tam} no son ${c} caramelos. Multiplica.`, true); cuantos.classList.add('mal'); temblor(cuantos, 5); return; } cuantos.classList.add('bien'); }
+      ctx.aviso(''); llenar.disabled = true;
+      for (let k = 0; k < n; k++) await llenaUna(true);
+      cuaderno.append(el('li', {}, el('b', { text: `${n} × ${tam} = ${n * tam}` }), ` → quedan ${num(libres())}`));
+      cuantas.value = ''; if (cuantos) { cuantos.value = ''; cuantos.classList.remove('bien', 'mal'); }
+      llenar.disabled = false; pintaQuedan();
+    };
+    [cuantas, cuantos].filter(Boolean).forEach((i) => i.addEventListener('keydown', (e) => e.key === 'Enter' && llenar.onclick()));
+  }
   if (d.manos) {
     ctx.boton('Llenar una bandeja', () => !hecho && llenaUna(), true);
     if (ctx.primera) setTimeout(() => { const b = ctx.acciones.querySelector('.tecla:not(.primaria)'); if (b) mano(b, { dx: 0.5 }); }, 900);
@@ -87,7 +116,7 @@ function bandejas(d, ctx) {
   const comprobar = ctx.boton('Comprobar', revisar);
   [llenas, sobran].forEach((i) => i.addEventListener('keydown', (e) => e.key === 'Enter' && revisar()));
   ctx.pistas([
-    { texto: d.pistas?.[0] ?? `Repartir en bandejas de ${tam} es lo mismo que buscar **cuántas veces cabe el ${tam}** en ${num(N)}.` },
+    { texto: d.pistas?.[0] ?? (d.trozos ? `Empieza por un número redondo de bandejas: **10 bandejas** son ${10 * tam} caramelos, **5 bandejas** son ${5 * tam}.` : `Repartir en bandejas de ${tam} es lo mismo que buscar **cuántas veces cabe el ${tam}** en ${num(N)}.`) },
     { texto: d.pistas?.[1] ?? 'Te escribo la tabla hasta pasarte.', ver: () => { const t = []; for (let k = 1; k * tam <= N + tam; k++) t.push(`${k} × ${tam} = ${k * tam}`); preguntas.append(el('p', { class: 'tabla-pista', text: t.join(' · ') })); } },
     { texto: d.pistas?.[2] ?? 'Te lleno las bandejas: cuéntalas tú y mira lo que queda.', ver: async () => { while (await llenaUna(true)); } },
   ]);
@@ -123,14 +152,15 @@ function paquetes(d, ctx) {
   for (const t of ['c', 'b', 's']) {
     const pila = el('div', { class: 'pila pila-' + t });
     const cuenta = el('b', { class: 'cuenta-pila' });
-    const rep = el('button', { type: 'button', class: 'tecla', text: 'Repartir', onclick: () => repartir(t) });
+    const rep = el('button', { type: 'button', class: 'tecla', text: 'Repartir', onclick: () => (guiado ? abrePanel(t) : repartir(t)) });
     const abre = t !== 's' && el('button', { type: 'button', class: 'tecla', text: 'Abrir una', onclick: () => abrir(t) });
     montones[t] = { pila, cuenta }; botones[t] = { rep, abre };
     almacen.append(el('div', { class: 'columna-pila' }, el('span', { class: 'nombre-pila', text: NOM[t][1][0].toUpperCase() + NOM[t][1].slice(1) }), pila, cuenta, el('div', { class: 'botones-pila' }, rep, abre)));
   }
   const platos = reparto.map((_, k) => { const p = el('div', { class: 'plato' }, el('span', { class: 'nombre-amigo', text: ['Ana', 'Leo', 'Iris', 'Teo', 'Sara', 'Hugo'][k] }), el('div', { class: 'en-plato' }), el('small', { class: 'resumen-plato' })); return p; });
   const mesa = el('div', { class: 'platos' }, platos);
-  ctx.escenario.append(el('div', { class: 'mantel-merienda paquetes' }, almacen, mesa));
+  const cuaderno = el('ol', { class: 'cuaderno-reparto', 'aria-live': 'polite' });
+  ctx.escenario.append(el('div', { class: 'mantel-merienda paquetes' }, almacen, mesa), el('div', { class: 'cuaderno-hoja' }, el('span', { class: 'titulo-cuaderno', text: 'Lo que vas haciendo' }), cuaderno));
   const cada = campo('Caramelos de cada amigo', 5), sob = campo('Caramelos que sobran', 4);
   const preguntas = el('div', { class: 'preguntas-reparto', hidden: true },
     el('label', {}, el('span', { text: 'Cada amigo tiene' }), cada), el('label', {}, el('span', { text: 'Sobran' }), sob));
@@ -153,10 +183,40 @@ function paquetes(d, ctx) {
     comprobar.disabled = !acabado || hecho;
     if (acabado && !preguntas.dataset.visto) { preguntas.dataset.visto = '1'; gsap.from(preguntas, { y: 20, opacity: 0, duration: 0.4, ease: 'back.out(2)' }); ctx.di('Ya no se puede repartir más. ¿Cuántos tiene cada uno?', 'pista', 4000); }
   };
-  async function repartir(t) {
+  // el alumno elige cuántas da a cada uno (y, con "calcula", escribe cuántas usa y cuántas quedan)
+  const guiado = d.guiado || d.calcula;
+  function abrePanel(t) {
     if (hecho) return;
-    const q = Math.floor(stock[t] / n);
+    if (stock[t] < n) { ctx.aviso(`Con ${stock[t]} ${NOM[t][1]} no llega para los ${n}. Ábrela.`, true); return; }
+    const col = montones[t].pila.closest('.columna-pila');
+    col.querySelector('.panel-dar')?.remove();
+    let q = 1;
+    const valor = el('b', { class: 'valor-dar', text: '1' });
+    const vista = el('small', { class: 'cuenta-dar' });
+    const usas = d.calcula && campo(`${NOM[t][1]} que usas`, 3), quedan = d.calcula && campo(`${NOM[t][1]} que quedan`, 3);
+    const pinta2 = () => { valor.textContent = q; if (!d.calcula) vista.textContent = `${q} × ${n} = ${q * n} · quedan ${stock[t] - q * n}`; };
+    const panel = el('div', { class: 'panel-dar' },
+      el('span', { class: 'pregunta-dar', text: `¿Cuántas ${NOM[t][1]} a cada uno?` }),
+      el('div', { class: 'stepper' }, el('button', { type: 'button', class: 'tecla', text: '−', onclick: () => { q = Math.max(1, q - 1); suena('clic'); pinta2(); } }), valor, el('button', { type: 'button', class: 'tecla', text: '+', onclick: () => { q++; suena('clic'); pinta2(); } })),
+      d.calcula ? el('div', { class: 'cuentas-dar' }, el('label', {}, el('span', { text: 'Usas' }), usas), el('label', {}, el('span', { text: 'Quedan' }), quedan)) : vista,
+      el('div', { class: 'botones-dar' }, el('button', { type: 'button', class: 'tecla primaria', text: 'Dar', onclick: () => dar() }), el('button', { type: 'button', class: 'tecla', text: 'Cancelar', onclick: () => panel.remove() })));
+    col.append(panel); pinta2();
+    gsap.from(panel, { y: -10, opacity: 0, duration: 0.25 });
+    const dar = () => {
+      if (q * n > stock[t]) { ctx.aviso(`Para dar ${q} a cada uno harían falta ${q * n} ${NOM[t][1]} y solo hay ${stock[t]}.`, true); temblor(panel, 4); return; }
+      if (d.calcula) {
+        const u = lee(usas), r = lee(quedan);
+        if (u !== q * n) { usas.classList.add('mal'); return ctx.aviso(`Si das ${q} a cada uno de los ${n}, ¿cuántas usas? Multiplica.`, true); }
+        if (r !== stock[t] - q * n) { quedan.classList.add('mal'); return ctx.aviso(`Tenías ${stock[t]} y usas ${q * n}. ¿Cuántas quedan? Resta.`, true); }
+      }
+      panel.remove(); repartir(t, q);
+    };
+  }
+  async function repartir(t, elegido) {
+    if (hecho) return;
+    const q = elegido ?? Math.floor(stock[t] / n);
     if (!q) { ctx.aviso(`Con ${stock[t]} ${NOM[t][1]} no llega para los ${n}. Ábrela.`, true); return; }
+    cuaderno.append(el('li', {}, el('b', { text: `${NOM[t][1][0].toUpperCase() + NOM[t][1].slice(1)}: ${q} a cada uno` }), ` → ${q} × ${n} = ${q * n}, quedan ${stock[t] - q * n}`));
     pasos++; ctx.aviso('');
     stock[t] -= q * n;
     const desde = montones[t].pila;
@@ -181,6 +241,7 @@ function paquetes(d, ctx) {
     gsap.fromTo(pila.lastElementChild, { scale: 1 }, { scale: 1.3, rotation: 12, opacity: 0, duration: 0.3 });
     suena('quita'); await espera(250);
     stock[t]--; stock[sig] += 10;
+    cuaderno.append(el('li', {}, `Abres 1 ${NOM[t][0]}: +10 ${NOM[sig][1]}`));
     pinta();
     gsap.from([...montones[sig].pila.children].slice(-10), { y: -30, opacity: 0, scale: 0.4, duration: 0.35, ease: 'back.out(2)', stagger: 0.03 });
     suena('cremallera');

@@ -224,8 +224,8 @@ export async function arrancar(config, motor) {
 
   document.body.prepend(
     el('header', { class: 'barra-juego' },
-      el('a', { class: 'volver', href: config.volver || '../../', 'aria-label': 'Volver al Cajón maestro', title: 'Volver' },
-        svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 }), 'Cajón maestro'),
+      el('a', { class: 'volver con-texto', href: config.volver || '../../', title: 'Volver al menú' },
+        svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 }), el('span', { text: 'Menú' })),
       el('h1', { text: config.titulo }),
       el('div', { class: 'controles' }, el('div', { class: 'interruptor', role: 'group', 'aria-label': 'Modo' }, btnReto, btnPiz), btnSon),
       estado),
@@ -441,7 +441,7 @@ export async function arrancar(config, motor) {
       config.observa && el('div', { class: 'posit' }, el('strong', { text: '¿Qué observas?' }), marca(config.observa)),
       el('div', { class: 'acciones' },
         el('button', { type: 'button', class: 'tecla primaria grande', text: !adaptativo || completo || enPizarra ? 'Empezar otra vez' : 'Seguir', onclick: partida }),
-        el('a', { class: 'tecla grande', href: config.volver || '../../', text: 'Volver al cajón' }))].filter((x) => x && x.nodeType));
+        el('a', { class: 'tecla grande', href: config.volver || '../../', text: 'Volver al menú' }))].filter((x) => x && x.nodeType));
     final.hidden = false;
     if (!enPizarra) {
       final.querySelectorAll('.hoja figure').forEach((f, k) => { f.style.animationDelay = k * 90 + 'ms'; setTimeout(() => suena('pon'), k * 90); });
@@ -466,7 +466,7 @@ export async function arrancar(config, motor) {
     escenaViva.pausa();
     document.body.classList.add('en-portada');
     let prog = 0; try { prog = JSON.parse(localStorage.getItem('cajon-progreso:' + location.pathname))?.progreso || 0; } catch {}
-    await portada(config, { dibuja, POSES, quien, progreso: prog, record: leeRecord()?.retos, sonar: suena, frase: una(voz.hola) });
+    await portada(config, { dibuja, POSES, quien, progreso: prog, record: leeRecord()?.retos, sonar: suena, frase: una(voz.hola), volver: config.volver || '../../' });
     document.body.classList.remove('en-portada');
     // la historia, solo la primera vez en esta tablet
     const claveHist = 'cajon-historia:' + location.pathname;
