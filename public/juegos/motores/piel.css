@@ -487,3 +487,139 @@ body[data-escena="puzle"]{--acento:var(--amarillo)}
 .geo .trazo-geo{stroke:var(--fucsia);stroke-width:6}
 .geo.grande{width:auto;height:min(calc(100dvh - 345px),560px);min-height:260px;max-width:min(720px,calc(100vw - 70px))}
 @media (max-width:760px){.geo.grande{height:auto;width:calc(100vw - 70px)}}
+/* el patio: baldosas de barro */
+.fondo-escena.patio{background-color:#c66a3d;background-image:
+    radial-gradient(110% 85% at 18% -8%,rgba(255,240,200,.45),rgba(255,240,200,0) 55%),
+    radial-gradient(90% 80% at 105% 110%,rgba(40,10,0,.45),rgba(40,10,0,0) 60%),
+    linear-gradient(rgba(70,25,5,.55) 3px,transparent 3px),linear-gradient(90deg,rgba(70,25,5,.55) 3px,transparent 3px),
+    url('tex/cartulina.webp');
+  background-size:100% 100%,100% 100%,74px 74px,74px 74px,256px;background-blend-mode:normal,normal,normal,normal,multiply}
+/* el almacén: suelo de hormigón azulado */
+.fondo-escena.almacen{background-color:#5f7ea3;background-image:
+    radial-gradient(110% 85% at 18% -8%,rgba(255,240,200,.4),rgba(255,240,200,0) 55%),
+    radial-gradient(90% 80% at 105% 110%,rgba(5,15,35,.5),rgba(5,15,35,0) 60%),
+    url('tex/fieltro.webp');
+  background-size:100% 100%,100% 100%,220px;background-blend-mode:normal,normal,multiply}
+body[data-escena="patio"],body[data-escena="almacen"]{--acento:var(--amarillo)}
+
+/* =====================================================================================
+   La merienda: mantel de cuadros, caramelos, bandejas, cajas y bolsas, calculadora
+   ===================================================================================== */
+.fondo-escena.merienda{background-color:#f4ede0;background-image:
+    radial-gradient(110% 85% at 18% -8%,rgba(255,240,200,.45),rgba(255,240,200,0) 55%),
+    radial-gradient(90% 80% at 105% 110%,rgba(60,10,0,.35),rgba(60,10,0,0) 60%),
+    linear-gradient(90deg,rgba(214,52,52,.55) 50%,transparent 50%),linear-gradient(rgba(214,52,52,.55) 50%,transparent 50%),
+    url('tex/lona.webp');
+  background-size:100% 100%,100% 100%,64px 64px,64px 64px,128px;background-blend-mode:normal,normal,multiply,multiply,multiply}
+body[data-escena="merienda"]{--acento:var(--amarillo)}
+.mantel-merienda{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:flex-start}
+.monton{display:flex;flex-wrap:wrap;gap:2px;max-width:420px;padding:16px;border:var(--borde);border-radius:50% 46% 48% 52%/40% 44% 42% 46%;background:#fffdf6 url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra)}
+.golosina{display:inline-block;width:40px;height:26px}
+.golosina svg,.bandeja svg{width:100%;height:100%;display:block;filter:drop-shadow(1px 2px 0 rgba(0,0,0,.2))}
+.golosina.sobrante{animation:late .9s ease-in-out 3}
+.fila-bandejas{display:flex;flex-wrap:wrap;gap:12px;max-width:620px}
+.bandeja{display:grid;grid-template-columns:repeat(var(--tam),34px);grid-auto-rows:24px;gap:2px;align-content:center;justify-content:center;min-width:90px;min-height:64px;padding:10px 12px;border:var(--borde);border-radius:14px;background:var(--cielo);box-shadow:inset 0 -6px 0 rgba(0,0,0,.15),var(--sombra-baja)}
+.bandeja .golosina{width:34px;height:22px}
+.preguntas-reparto{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-top:20px;padding:14px 18px;border:var(--borde);border-radius:16px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra-baja);width:fit-content}
+.preguntas-reparto label{display:flex;align-items:center;gap:10px;font-family:var(--fuerte);font-weight:800;font-size:20px}
+.tabla-pista{flex-basis:100%;margin:0;font-family:var(--fuerte);font-weight:700;font-size:17px;color:var(--cobalto)}
+.almacen-reparto{display:flex;gap:16px;flex-wrap:wrap}
+.columna-pila{display:flex;flex-direction:column;align-items:center;gap:6px;width:170px;padding:12px;border:var(--borde);border-radius:16px;background:rgba(255,253,246,.92);box-shadow:var(--sombra-baja)}
+.nombre-pila{font-family:var(--fuerte);font-weight:900;font-size:19px}
+.pila{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;min-height:92px;align-content:flex-end}
+.pila svg{width:40px;height:34px}
+.pila-s svg{width:28px;height:18px}
+.cuenta-pila{font-family:var(--fuerte);font-size:17px}
+.botones-pila{display:flex;flex-direction:column;gap:6px;width:100%}
+.botones-pila .tecla{min-height:42px;font-size:16px;padding:0 10px}
+.platos{display:flex;flex-wrap:wrap;gap:14px}
+.plato{display:flex;flex-direction:column;align-items:center;gap:4px;width:150px;min-height:150px;padding:12px;border:var(--borde);border-radius:50%;background:radial-gradient(circle,#fff 55%,#e9e4f5 56%);box-shadow:var(--sombra-baja);justify-content:center;text-align:center}
+.nombre-amigo{font-family:var(--fuerte);font-weight:900;font-size:17px}
+.en-plato{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:110px}
+.en-plato svg.mini{width:24px;height:20px}
+.mas-plato{font-weight:800;font-size:13px}
+.resumen-plato{font-size:12px;line-height:1.2;color:var(--gris)}
+.rincon-calc{display:flex;flex-wrap:wrap;gap:24px 36px;align-items:center}
+.calculadora{width:250px;padding:16px;border:var(--borde);border-radius:22px;background:#3b3f63;box-shadow:inset 0 -8px 0 rgba(0,0,0,.3),var(--sombra);rotate:-3deg}
+.pantalla-calc{display:flex;flex-direction:column;align-items:flex-end;padding:10px 14px;border:3px solid var(--tinta);border-radius:10px;background:#b9d8a8;font-variant-numeric:tabular-nums;box-shadow:inset 0 4px 6px rgba(0,0,0,.25)}
+.pantalla-calc small{font-family:var(--fuerte);font-size:15px;color:#2c3d22}
+.pantalla-calc b{font-family:var(--fuerte);font-weight:900;font-size:34px;color:#1b2a12;letter-spacing:.02em}
+.teclas-calc{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.teclas-calc span{display:grid;place-items:center;height:38px;border:2.5px solid var(--tinta);border-radius:9px;background:#e6e9f2;font-family:var(--fuerte);font-weight:800;box-shadow:0 3px 0 var(--tinta)}
+.teclas-calc span:nth-child(4n){background:var(--amarillo)}
+/* recortables: papel doblado */
+.mesa-papel{width:fit-content;max-width:100%}
+.papel-doblado{display:block;height:auto;max-width:100%;overflow:visible}
+.papel-doblado .hoja-papel{fill:#fffdf6;stroke:var(--tinta);stroke-width:3}
+.papel-doblado .cara-doblada{fill:#f3ecdc;stroke:var(--tinta);stroke-width:3}
+.papel-doblado .pliegue{stroke:var(--tinta);stroke-width:3;stroke-dasharray:10 7;opacity:.6}
+.papel-doblado .punto-papel{fill:rgba(27,30,58,.25)}
+.papel-doblado .punto-papel.tocable{fill:rgba(27,30,58,.4);cursor:pointer}
+.papel-doblado .agujero-papel{fill:var(--mate);stroke:var(--tinta);stroke-width:3;filter:drop-shadow(inset 0 0 0 #000)}
+.papel-doblado .agujero-papel.nuevo{animation:sello-pop .4s var(--muelle) both}
+.papel-doblado .cruz-lapiz path{stroke:var(--cobalto);stroke-width:5;stroke-linecap:round}
+.papel-doblado .cruz-lapiz.bien path{stroke:#1b8f4e}
+.papel-doblado .cruz-lapiz.mal path{stroke:var(--rojo)}
+.papel-doblado .guia-papel{stroke:var(--fucsia);stroke-width:4;stroke-dasharray:6 6}
+/* la mudanza: suelo con cuadrícula y tarjetas de flechas */
+.rincon-mudanza{display:flex;flex-wrap:wrap;gap:22px 30px;align-items:flex-start}
+.suelo-mudanza{display:block;height:auto;max-width:100%;overflow:visible;border-radius:12px;box-shadow:0 0 0 3px var(--tinta),var(--sombra)}
+.suelo-mudanza .rejilla-suelo line{stroke:rgba(27,30,58,.28);stroke-width:2}
+.suelo-mudanza .destino-mudanza{fill:rgba(255,253,246,.35);stroke:var(--tinta);stroke-width:3.5;stroke-dasharray:9 7;stroke-linejoin:round}
+.suelo-mudanza .destino-mudanza.llena{fill:rgba(255,197,49,.55);stroke:var(--amarillo);stroke-dasharray:none}
+.suelo-mudanza .mueble{filter:drop-shadow(3px 6px 4px rgba(40,20,0,.45))}
+.suelo-mudanza .mueble-origen{opacity:.3}
+.suelo-mudanza .esquina-guia{fill:var(--tinta);stroke:#fff;stroke-width:2}
+.suelo-mudanza .paso-estela{stroke:var(--fucsia);stroke-width:5;stroke-linecap:round;stroke-dasharray:3 8}
+.suelo-mudanza .esquina-meta{fill:none;stroke:var(--fucsia);stroke-width:5}
+.mando-mudanza{display:flex;flex-direction:column;gap:14px;max-width:340px}
+.tarjetas-flecha{display:grid;grid-template-columns:repeat(4,64px);gap:10px}
+.tarjeta-flecha{min-height:64px;padding:0;font-size:32px}
+.programa{display:flex;flex-wrap:wrap;gap:6px;min-height:58px;margin:0;padding:10px;list-style:none;border:var(--borde);border-radius:14px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra-baja)}
+.programa:empty::before{content:"Aquí van las tarjetas";color:var(--gris);font-size:15px;align-self:center}
+.programa li{display:grid;place-items:center;width:38px;height:38px;border:2.5px solid var(--tinta);border-radius:8px;background:var(--amarillo);font-family:var(--fuerte);font-weight:900;font-size:22px;box-shadow:0 3px 0 var(--tinta)}
+.programa li.activa{background:var(--fucsia);color:#fff;translate:0 -4px}
+.tarjeta-escrita{display:flex;flex-direction:column;gap:12px;padding:16px 18px;border:var(--borde);border-radius:16px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra)}
+.titulo-tarjeta{font-family:var(--fuerte);font-weight:900;font-size:20px}
+.fila-tarjeta{display:flex;align-items:center;gap:12px}
+.fila-tarjeta b{min-width:90px;text-align:center;font-family:var(--fuerte);font-size:28px}
+.fila-tarjeta .tecla{min-width:56px;font-size:26px;padding:0}
+/* la máquina de ceros */
+.rincon-ceros{display:flex;flex-wrap:wrap;gap:24px 34px;align-items:center}
+.maquina-ceros{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:12px;width:min(560px,100%);padding:18px 20px 20px;border:var(--borde);border-radius:22px;background:linear-gradient(180deg,#3d6fd6,#2b4fae);box-shadow:inset 0 3px 0 rgba(255,255,255,.3),inset 0 -8px 0 rgba(0,0,0,.25),var(--sombra);color:#fff}
+.maquina-ceros.trabaja{animation:runrun .09s linear infinite}
+.placa-maquina{display:flex;justify-content:space-between;align-items:center;font-family:var(--fuerte);font-weight:900;font-size:20px}
+.luz-maquina{width:20px;height:20px;border:3px solid var(--tinta);border-radius:50%;background:#2a2f4a}
+.luz-maquina.on{background:var(--amarillo);box-shadow:0 0 14px 4px rgba(255,197,49,.8)}
+.diales{display:flex;align-items:center;justify-content:center;gap:12px}
+.diales .por{font-family:var(--fuerte);font-size:42px}
+.dial{display:flex;flex-direction:column;align-items:center;gap:6px}
+.dial small,.salida small{font-weight:700;font-size:13px;opacity:.85}
+.ventana-dial,.ventana-salida{display:flex;gap:3px;min-height:58px;min-width:70px;padding:6px 8px;border:3px solid var(--tinta);border-radius:12px;background:#151a33;box-shadow:inset 0 5px 8px rgba(0,0,0,.6);align-items:center;justify-content:flex-end}
+.ficha-cero{display:grid;place-items:center;width:34px;height:44px;border:2.5px solid var(--tinta);border-radius:7px;background:var(--papel);color:var(--tinta);font-family:var(--fuerte);font-weight:900;font-size:28px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
+.ficha-cero.cero{background:var(--amarillo)}
+.mandos-dial{display:flex;gap:8px;align-items:flex-end}
+.palanca{position:relative;width:60px;height:62px;border:var(--borde);border-radius:12px;background:#c9cfdd;cursor:pointer;box-shadow:0 4px 0 var(--tinta)}
+.palanca::after{content:"×10";position:absolute;left:0;right:0;bottom:4px;font-family:var(--fuerte);font-weight:900;font-size:15px;color:var(--tinta)}
+.palanca .mango{position:absolute;left:50%;top:-26px;width:10px;height:40px;margin-left:-5px;border:2.5px solid var(--tinta);border-radius:5px;background:#8a90a8;transform-origin:50% 100%}
+.palanca .mango::before{content:"";position:absolute;left:50%;top:-14px;width:22px;height:22px;margin-left:-11px;border:2.5px solid var(--tinta);border-radius:50%;background:var(--fucsia)}
+.palanca:disabled{opacity:.55;cursor:default}
+.quita-cero{width:40px;height:40px;border:var(--borde);border-radius:50%;background:var(--papel);color:var(--tinta);font-size:20px;font-weight:900;cursor:pointer}
+.quita-cero:disabled{opacity:.4}
+.tubo{height:16px;margin:0 30%;border:3px solid var(--tinta);border-top:0;border-radius:0 0 10px 10px;background:#8a90a8}
+.salida{display:flex;flex-direction:column;align-items:center;gap:6px}
+.ventana-salida{min-width:200px;justify-content:center}
+.prediccion,.panel-ascensor label{display:flex;align-items:center;gap:10px;font-family:var(--fuerte);font-weight:800;font-size:20px;padding:12px 16px;border:var(--borde);border-radius:16px;background:var(--papel);box-shadow:var(--sombra-baja)}
+/* el ascensor */
+.ascensor{display:flex;flex-direction:column;width:300px;min-height:340px;border:var(--borde);border-radius:14px;background:#e6e9f2;box-shadow:inset 0 0 0 10px #8a90a8,var(--sombra);overflow:hidden}
+.ascensor.pasado{background:#ffd9de}
+.cabecera-ascensor{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;background:#3b3f63;color:#fff;font-weight:700;font-size:14px}
+.indicador-peso{position:relative;width:60px;height:34px;border:2.5px solid #fff;border-bottom:0;border-radius:60px 60px 0 0}
+.indicador-peso .aguja{position:absolute;left:50%;bottom:0;width:3px;height:28px;margin-left:-1.5px;background:var(--amarillo);transform-origin:50% 100%;rotate:0deg;transform:rotate(-80deg)}
+.lectura-peso{font-family:var(--fuerte);font-size:17px}
+.cabina-cajas{flex:1;display:flex;flex-wrap:wrap-reverse;align-content:flex-start;gap:3px;padding:16px}
+.caja-asc{width:34px;height:28px;border:2.5px solid var(--tinta);border-radius:4px;background:#e0ad70;box-shadow:inset 0 6px 0 #f0c48c}
+.panel-ascensor{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.historial-ascensor{display:flex;flex-wrap:wrap;gap:6px;margin:0;max-width:340px}
+.historial-ascensor span{padding:4px 10px;border:2px solid var(--tinta);border-radius:999px;background:var(--papel);font-weight:700;font-size:14px}
+.historial-ascensor .no{background:#ffd9de}

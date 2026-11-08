@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La merienda · Cajón maestro</title>
+<meta name="description" content="División con resto repartiendo golosinas: bandejas llenas y sobras, repartir cajas, bolsas y sueltos abriendo paquetes, y entender lo que dice la calculadora.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "reparto",
+  "area": "matematicas",
+  "escena": "merienda",
+  "titulo": "La merienda",
+  "subtitulo": "Goma reparte la merienda del cajón. Las bandejas tienen sitio fijo y lo que sobra también cuenta.",
+  "portada": {
+    "objetivo": "Reparte la merienda: llena bandejas, abre cajas y bolsas cuando no lleguen, y no te fíes de la calculadora del Sacapuntas.",
+    "frase": "El resto también es alguien.",
+    "rotulo": "MERIENDA"
+  },
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Antes de la gran limpieza, merienda. Pero hay que repartirla bien, que luego hay peleas."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Las bandejas tienen sitio fijo. Lo que no cabe, sobra. Y el Sacapuntas ha traído una calculadora… que no entiende de caramelos."
+    }
+  ],
+  "saludo": "Repartir en bandejas es buscar **cuántas veces cabe**.",
+  "observa": "¿Por qué lo que sobra siempre es menos que lo que cabe en una bandeja? ¿Qué significan los decimales de la calculadora?",
+  "niveles": [
+    {
+      "modo": "bandejas",
+      "manos": true,
+      "generar": {
+        "tam": [
+          3,
+          5
+        ],
+        "llenas": [
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "modo": "bandejas",
+      "generar": {
+        "tam": [
+          4,
+          7
+        ],
+        "llenas": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "modo": "paquetes",
+      "generar": {
+        "amigos": [
+          2,
+          3
+        ],
+        "total": [
+          120,
+          390
+        ]
+      }
+    },
+    {
+      "modo": "bandejas",
+      "generar": {
+        "tam": [
+          6,
+          9
+        ],
+        "llenas": [
+          4,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "calculadora",
+      "generar": {
+        "tam": [
+          4,
+          5,
+          8
+        ],
+        "llenas": [
+          6,
+          25
+        ]
+      }
+    },
+    {
+      "modo": "paquetes",
+      "generar": {
+        "amigos": [
+          3,
+          6
+        ],
+        "total": [
+          200,
+          999
+        ]
+      }
+    },
+    {
+      "modo": "calculadora",
+      "generar": {
+        "tam": [
+          6,
+          12,
+          25
+        ],
+        "llenas": [
+          12,
+          60
+        ]
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

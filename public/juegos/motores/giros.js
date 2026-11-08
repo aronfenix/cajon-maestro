@@ -82,11 +82,38 @@ export function generar(spec) {
       return d;
     }
   }
+  if (d.modo === 'doblez') {
+    // agujeros en una mitad del papel doblado; el pliegue, vertical u horizontal
+    const N = d.ancho ?? 10, M = d.alto ?? 7, vertical = d.pliegue !== 'horizontal';
+    const mitad = vertical ? Math.floor(N / 2) : Math.floor(M / 2);
+    const libres = [];
+    for (let y = 0; y < M; y++) for (let x = 0; x < N; x++) if (vertical ? x < mitad : y < mitad) libres.push([x, y]);
+    const k = Math.min(libres.length, azar(...(g.agujeros ?? [2, 3])));
+    Object.assign(d, { ancho: N, alto: M, mitad, agujeros: barajar(libres).slice(0, k) });
+    return d;
+  }
+  if (d.modo === 'mudanza') {
+    const N = d.ancho ?? 10, M = d.alto ?? 7;
+    for (let t = 0; t < 400; t++) {
+      const base = normaliza(rota(PIEZAS[elige(nombres)], azar(0, 3))), b = bbox(base);
+      const [mx, my] = g.maximo ?? [4, 3];
+      const vx = azar(-mx, mx), vy = azar(-my, my);
+      if (Math.abs(vx) + Math.abs(vy) < (g.minimo ?? 2)) continue;
+      if (g.unEje && vx && vy) continue;
+      const ox = azar(Math.max(0, -vx), N - 1 - b.x1 - Math.max(0, vx)), oy = azar(Math.max(0, -vy), M - 1 - b.y1 - Math.max(0, vy));
+      if (ox < 0 || oy < 0 || ox + b.x1 + Math.max(0, vx) > N - 1 || oy + b.y1 + Math.max(0, vy) > M - 1) continue;
+      const P = base.map(([x, y]) => [x + ox, y + oy]);
+      Object.assign(d, { ancho: N, alto: M, pieza: P, vector: [vx, vy] });
+      return d;
+    }
+  }
   throw new Error('No he podido generar el reto de giros');
 }
 
 export function ronda(d, ctx) {
   if (d.modo === 'chincheta') return chincheta(d, ctx);
+  if (d.modo === 'doblez') return doblez(d, ctx);
+  if (d.modo === 'mudanza') return d.leer ? mudanzaLeer(d, ctx) : mudanza(d, ctx);
   return d.libre ? puzleLibre(d, ctx) : puzle(d, ctx);
 }
 
@@ -402,4 +429,176 @@ function entrada(tab, piezas) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   gsap.from(tab, { y: 30, rotation: -2, opacity: 0, duration: 0.55, ease: 'back.out(1.6)' });
   gsap.from(piezas, { y: -260, x: () => gsap.utils.random(-80, 80), rotation: () => gsap.utils.random(-90, 90), opacity: 0, duration: 0.6, ease: 'back.out(1.5)', delay: 0.2, stagger: { each: 0.09, onComplete() { suena('pon'); } }, clearProps: 'opacity' });
+}
+
+/* ================================================================ recortables: el papel doblado */
+function doblez(d, ctx) {
+  const { ancho: N, alto: M, mitad, agujeros } = d, vertical = d.pliegue !== 'horizontal';
+  ctx.reto(d.texto ?? `El papel está doblado por la mitad y tiene **${agujeros.length} agujeros**. ¿Dónde saldrán al desdoblarlo?`);
+  ctx.pista(d.pista ?? `Toca en la otra mitad los puntos donde crees que saldrán los agujeros. Luego, «Desdoblar».`);
+  const W = (N - 1) * PASO + 2 * MARGEN, H = (M - 1) * PASO + 2 * MARGEN;
+  const fx = vertical ? (X(mitad - 1) + X(mitad)) / 2 : null, fy = vertical ? null : (Y(mitad - 1) + Y(mitad)) / 2;
+  // pareja de cada punto al otro lado del pliegue
+  const pareja = ([x, y]) => (vertical ? [2 * mitad - 1 - x, y] : [x, 2 * mitad - 1 - y]);
+  const objetivo = agujeros.map(pareja);
+  let puntos = '';
+  for (let y = 0; y < M; y++) for (let x = 0; x < N; x++) {
+    const lado = vertical ? x >= mitad : y >= mitad;
+    puntos += `<circle cx="${X(x)}" cy="${Y(y)}" r="${lado ? 5 : 3.2}" class="punto-papel${lado ? ' tocable' : ''}" data-x="${x}" data-y="${y}"/>`;
+  }
+  const hueco = ([x, y], cls = '') => `<circle cx="${X(x)}" cy="${Y(y)}" r="13" class="agujero-papel ${cls}"/>`;
+  const sv = svg(`0 0 ${W} ${H}`, `
+    <defs><pattern id="tex-papel" width="128" height="128" patternUnits="userSpaceOnUse"><image href="../motores/tex/papel.webp" width="128" height="128"/></pattern>
+      <filter id="sombra-papel" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="5" dy="10" stdDeviation="7" flood-color="#04140d" flood-opacity=".5"/></filter></defs>
+    <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="6" class="hoja-papel" filter="url(#sombra-papel)"/>
+    <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="6" fill="url(#tex-papel)" style="mix-blend-mode:multiply"/>
+    <g class="mitad-doblada">${vertical ? `<rect x="2" y="2" width="${fx - 2}" height="${H - 4}" class="cara-doblada"/>` : `<rect x="2" y="2" width="${W - 4}" height="${fy - 2}" class="cara-doblada"/>`}${agujeros.map((p) => hueco(p)).join('')}</g>
+    ${vertical ? `<line x1="${fx}" y1="0" x2="${fx}" y2="${H}" class="pliegue"/>` : `<line x1="0" y1="${fy}" x2="${W}" y2="${fy}" class="pliegue"/>`}
+    <g class="puntos">${puntos}</g><g class="marcas-papel"></g><g class="desdoblado"></g><g class="ayudas-papel"></g>`, { class: 'papel-doblado' });
+  sv.style.width = W * escala() + 'px';
+  ctx.escenario.append(el('div', { class: 'mesa-papel' }, sv));
+  const marcadas = new Set();
+  let hecho = false;
+  const capa = sv.querySelector('.marcas-papel');
+  const pinta = () => { capa.innerHTML = [...marcadas].map((k) => { const [x, y] = k.split(',').map(Number); return `<g class="cruz-lapiz" transform="translate(${X(x)} ${Y(y)})"><path d="M-10 -10 L10 10 M10 -10 L-10 10"/></g>`; }).join(''); boton.disabled = !marcadas.size || hecho; };
+  sv.addEventListener('click', (e) => {
+    const t = e.target.closest('.tocable'); if (!t || hecho) return;
+    const k = `${t.dataset.x},${t.dataset.y}`;
+    marcadas.has(k) ? marcadas.delete(k) : marcadas.add(k);
+    suena(marcadas.has(k) ? 'pon' : 'quita'); pinta();
+  });
+  const boton = ctx.boton('Desdoblar', desdobla);
+  pinta();
+  async function desdobla() {
+    if (hecho) return; hecho = true; pinta();
+    const lado = sv.querySelector('.mitad-doblada');
+    suena('coge');
+    // la mitad gira sobre el pliegue y deja ver los agujeros al otro lado
+    const o = { s: 1 };
+    await gsap.to(o, { s: -1, duration: 0.9, ease: 'power2.inOut', onUpdate: () => lado.setAttribute('transform', vertical ? `translate(${fx} 0) scale(${o.s} 1) translate(${-fx} 0)` : `translate(0 ${fy}) scale(1 ${o.s}) translate(0 ${-fy})`) });
+    lado.removeAttribute('transform');
+    sv.querySelector('.desdoblado').innerHTML = objetivo.map((p) => hueco(p, 'nuevo')).join('');
+    suena('pon');
+    const clave = (p) => p.join(',');
+    const buenas = objetivo.filter((p) => marcadas.has(clave(p))).length;
+    const sobran = [...marcadas].filter((k) => !objetivo.some((p) => clave(p) === k)).length;
+    const faltan = objetivo.length - buenas;
+    sv.querySelectorAll('.cruz-lapiz').forEach((c) => { const m = c.getAttribute('transform').match(/translate\(([\d.]+) ([\d.]+)\)/); const x = Math.round((+m[1] - MARGEN) / PASO), y = Math.round((+m[2] - MARGEN) / PASO); c.classList.add(objetivo.some((p) => p[0] === x && p[1] === y) ? 'bien' : 'mal'); });
+    await espera(400);
+    const errores = sobran + faltan;
+    ctx.fin(errores === 0 ? 3 : errores === 1 ? 2 : errores === 2 ? 1 : 0, (errores === 0 ? '**Todos en su sitio.** ' : `${buenas} de ${objetivo.length} bien${sobran ? `, ${sobran} de más` : ''}. `) + 'Cada agujero sale a la misma distancia del pliegue, pero al otro lado: como en un espejo.');
+  }
+  ctx.pistas([
+    { texto: d.pistas?.[0] ?? 'Cuenta cuántos puntos hay desde cada agujero hasta el pliegue. Al otro lado, los mismos.' },
+    { texto: d.pistas?.[1] ?? 'Te marco la distancia de un agujero al pliegue.', ver: () => { const [x, y] = agujeros[0], [a, b] = pareja(agujeros[0]); sv.querySelector('.ayudas-papel').innerHTML = `<line x1="${X(x)}" y1="${Y(y)}" x2="${X(a)}" y2="${Y(b)}" class="guia-papel"/>`; } },
+    { texto: d.pistas?.[2] ?? 'Te dejo marcado uno.', ver: () => { const k = pareja(agujeros[0]).join(','); marcadas.add(k); pinta(); } },
+  ]);
+}
+
+/* ================================================================ la mudanza: tarjetas de flechas */
+const FLECHAS = { '→': [1, 0], '←': [-1, 0], '↓': [0, 1], '↑': [0, -1] };
+function sueloMudanza(d) {
+  const { ancho: N, alto: M } = d;
+  const W = (N - 1) * PASO + 2 * MARGEN, H = (M - 1) * PASO + 2 * MARGEN;
+  let lineas = '';
+  for (let x = 0; x < N; x++) lineas += `<line x1="${X(x)}" y1="${Y(0)}" x2="${X(x)}" y2="${Y(M - 1)}"/>`;
+  for (let y = 0; y < M; y++) lineas += `<line x1="${X(0)}" y1="${Y(y)}" x2="${X(N - 1)}" y2="${Y(y)}"/>`;
+  const destino = d.pieza.map(([x, y]) => [x + d.vector[0], y + d.vector[1]]);
+  const [c, o] = COLORES[d.color ?? 4];
+  const dP = camino(d.pieza, X, Y);
+  const sv = svg(`0 0 ${W} ${H}`, `
+    <defs><pattern id="tex-suelo" width="512" height="256" patternUnits="userSpaceOnUse"><image href="../motores/tex/madera.webp" width="512" height="256"/></pattern></defs>
+    <rect x="0" y="0" width="${W}" height="${H}" rx="12" fill="#d9ad72" class="suelo"/><rect x="0" y="0" width="${W}" height="${H}" rx="12" fill="url(#tex-suelo)" style="mix-blend-mode:multiply"/>
+    <g class="rejilla-suelo">${lineas}</g>
+    <path d="${camino(destino, X, Y)}" class="destino-mudanza"/>
+    <g class="estela"></g>
+    <g class="mueble"><path d="${dP}" fill="${o}" transform="translate(0 5)" stroke="${T}" stroke-width="3.5" stroke-linejoin="round"/><path d="${dP}" fill="${c}" stroke="${T}" stroke-width="3.5" stroke-linejoin="round"/><circle cx="${X(d.pieza[0][0])}" cy="${Y(d.pieza[0][1])}" r="7" class="esquina-guia"/></g>`, { class: 'suelo-mudanza' });
+  sv.style.width = W * escala() + 'px';
+  return { sv, destino };
+}
+function mudanza(d, ctx) {
+  const [vx, vy] = d.vector, minimo = Math.abs(vx) + Math.abs(vy);
+  ctx.reto(d.texto ?? 'Programa el carrito con **tarjetas de flechas** para llevar el mueble a su sitio nuevo');
+  ctx.pista(d.pista ?? 'Cada tarjeta mueve el mueble un cuadrito. Pon las tarjetas y dale a «¡Vamos!».');
+  const { sv } = sueloMudanza(d);
+  const programa = el('ol', { class: 'programa', 'aria-label': 'Tarjetas del carrito' });
+  const tarjetas = el('div', { class: 'tarjetas-flecha' }, Object.keys(FLECHAS).map((f) => el('button', { type: 'button', class: 'tecla tarjeta-flecha', text: f, 'aria-label': { '→': 'derecha', '←': 'izquierda', '↓': 'abajo', '↑': 'arriba' }[f], onclick: () => pon(f) })));
+  ctx.escenario.append(el('div', { class: 'rincon-mudanza' }, sv, el('div', { class: 'mando-mudanza' }, tarjetas, programa)));
+  const prog = [];
+  let hecho = false, intentos = 0, moviendo = false;
+  const mueble = sv.querySelector('.mueble');
+  const pinta = () => { programa.replaceChildren(...prog.map((f) => el('li', { text: f }))); vamos.disabled = !prog.length || hecho || moviendo; borra.disabled = !prog.length || hecho || moviendo; };
+  function pon(f) { if (hecho || moviendo || prog.length >= 14) return; prog.push(f); suena('clic'); pinta(); gsap.from(programa.lastElementChild, { y: -20, scale: 0.6, opacity: 0, duration: 0.3, ease: 'back.out(2.5)' }); }
+  const vamos = ctx.boton('¡Vamos!', mueve);
+  const borra = ctx.boton('Quitar la última', () => { prog.pop(); suena('quita'); pinta(); }, true);
+  pinta();
+  async function mueve() {
+    if (hecho || moviendo || !prog.length) return;
+    moviendo = true; pinta();
+    let x = 0, y = 0;
+    const estela = sv.querySelector('.estela');
+    estela.innerHTML = '';
+    const items = [...programa.children];
+    for (const [i, f] of prog.entries()) {
+      items.forEach((li, j) => li.classList.toggle('activa', j === i));
+      const [dx, dy] = FLECHAS[f];
+      const [ax, ay] = d.pieza[0];
+      estela.insertAdjacentHTML('beforeend', `<line x1="${X(ax + x)}" y1="${Y(ay + y)}" x2="${X(ax + x + dx)}" y2="${Y(ay + y + dy)}" class="paso-estela"/>`);
+      x += dx; y += dy;
+      await gsap.to(mueble, { x: x * PASO, y: y * PASO, duration: 0.28, ease: 'power2.inOut' });
+      suena('pon');
+    }
+    items.forEach((li) => li.classList.remove('activa'));
+    intentos++;
+    if (x === vx && y === vy) {
+      hecho = true;
+      sv.querySelector('.destino-mudanza').classList.add('llena'); suena('bien'); chispasEn(sv.querySelector('.destino-mudanza'), 14, '#ffc531');
+      await espera(500);
+      const sobra = prog.length - minimo;
+      const estrellas = intentos > 2 ? 1 : sobra === 0 && intentos === 1 ? 3 : 2;
+      return ctx.fin(estrellas, (sobra === 0 ? `**Con ${prog.length} tarjetas, lo justo.** ` : `Ha llegado, con ${prog.length} tarjetas. Se podía con ${minimo}. `) + `El mueble se ha movido ${desc(vx, vy)}: todas sus esquinas, lo mismo.`);
+    }
+    suena('quita'); temblor(sv, 4);
+    ctx.aviso(`Se ha quedado ${desc(vx - x, vy - y, true)} de su sitio. Cambia las tarjetas y prueba otra vez.`, true);
+    await espera(900);
+    await gsap.to(mueble, { x: 0, y: 0, duration: 0.4, ease: 'power2.inOut' });
+    moviendo = false; pinta();
+  }
+  ctx.pistas([
+    { texto: d.pistas?.[0] ?? 'Fíjate en **una sola esquina** del mueble y en dónde está esa esquina en su sitio nuevo.' },
+    { texto: d.pistas?.[1] ?? 'Te marco la esquina y su sitio. Cuenta los cuadritos a lo ancho y a lo alto.', ver: () => { const [ax, ay] = d.pieza[0]; sv.querySelector('.estela').insertAdjacentHTML('beforeend', `<circle cx="${X(ax + vx)}" cy="${Y(ay + vy)}" r="11" class="esquina-meta"/>`); } },
+    { texto: d.pistas?.[2] ?? 'Te pongo las tarjetas del ancho. Las del alto, tú.', ver: () => { if (hecho) return; prog.length = 0; for (let i = 0; i < Math.abs(vx); i++) prog.push(vx > 0 ? '→' : '←'); pinta(); } },
+  ]);
+}
+const desc = (vx, vy, faltan = false) => [vx && `${Math.abs(vx)} ${Math.abs(vx) === 1 ? 'cuadrito' : 'cuadritos'} ${faltan ? (vx > 0 ? 'a la izquierda' : 'a la derecha') : vx > 0 ? 'a la derecha' : 'a la izquierda'}`, vy && `${Math.abs(vy)} ${Math.abs(vy) === 1 ? 'cuadrito' : 'cuadritos'} ${faltan ? (vy > 0 ? 'por arriba' : 'por abajo') : vy > 0 ? 'hacia abajo' : 'hacia arriba'}`].filter(Boolean).join(' y ') || 'nada';
+// al revés: se ve la mudanza hecha y hay que escribir su tarjeta
+function mudanzaLeer(d, ctx) {
+  const [vx, vy] = d.vector;
+  ctx.reto(d.texto ?? 'Mira la mudanza y **escribe su tarjeta**: cuánto se ha movido a lo ancho y a lo alto');
+  ctx.pista(d.pista ?? 'Usa los botones para decir cuántos cuadritos y hacia dónde.');
+  const { sv } = sueloMudanza(d);
+  const mueble = sv.querySelector('.mueble');
+  const fantasma = mueble.cloneNode(true); fantasma.setAttribute('class', 'mueble-origen'); mueble.before(fantasma);
+  const estado = { h: 0, v: 0 };
+  const lect = (eje) => { const n = estado[eje]; return eje === 'h' ? (n ? `${Math.abs(n)} ${n > 0 ? '→' : '←'}` : '0 ↔') : n ? `${Math.abs(n)} ${n > 0 ? '↓' : '↑'}` : '0 ↕'; };
+  const vista = { h: el('b', {}), v: el('b', {}) };
+  const fila = (eje, menos, mas) => el('div', { class: 'fila-tarjeta' }, el('button', { type: 'button', class: 'tecla', text: menos, onclick: () => { estado[eje]--; suena('clic'); pinta(); } }), vista[eje], el('button', { type: 'button', class: 'tecla', text: mas, onclick: () => { estado[eje]++; suena('clic'); pinta(); } }));
+  const tarjeta = el('div', { class: 'tarjeta-escrita' }, el('span', { class: 'titulo-tarjeta', text: 'Tarjeta del carrito' }), fila('h', '←', '→'), fila('v', '↑', '↓'));
+  ctx.escenario.append(el('div', { class: 'rincon-mudanza' }, sv, tarjeta));
+  const pinta = () => { vista.h.textContent = lect('h'); vista.v.textContent = lect('v'); };
+  pinta();
+  // la mudanza se ve hecha: el mueble va de su sitio al nuevo
+  gsap.fromTo(mueble, { x: 0, y: 0 }, { x: vx * PASO, y: vy * PASO, duration: 1.1, ease: 'power2.inOut', delay: 0.6 });
+  let hecho = false;
+  ctx.boton('Comprobar', async () => {
+    if (hecho) return; hecho = true;
+    const ok = estado.h === vx && estado.v === vy;
+    ctx.fin(ok ? 3 : 0, ok ? `**Exacto: ${desc(vx, vy)}.**` : `Se ha movido ${desc(vx, vy)}. Fíjate en una esquina y en dónde acaba.`);
+  });
+  ctx.boton('Ver otra vez', () => gsap.fromTo(mueble, { x: 0, y: 0 }, { x: vx * PASO, y: vy * PASO, duration: 1.1, ease: 'power2.inOut' }), true);
+  ctx.pistas([
+    { texto: 'Mira solo una esquina: la del puntito. ¿Dónde estaba y dónde está?' },
+    { texto: 'Te dibujo el camino de esa esquina.', ver: () => { const [ax, ay] = d.pieza[0]; sv.querySelector('.estela').innerHTML = `<line x1="${X(ax)}" y1="${Y(ay)}" x2="${X(ax + vx)}" y2="${Y(ay)}" class="paso-estela"/><line x1="${X(ax + vx)}" y1="${Y(ay)}" x2="${X(ax + vx)}" y2="${Y(ay + vy)}" class="paso-estela"/>`; } },
+    { texto: `A lo ancho se ha movido ${Math.abs(vx)}. Te falta lo alto.`, ver: () => { estado.h = vx; pinta(); } },
+  ]);
 }

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedidos del almacén · Cajón maestro</title>
+<meta name="description" content="Multiplicar por partes para servir pedidos grandes y elegir la cuenta en pedidos de grupos, filas y combinaciones.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "multiplica",
+  "area": "matematicas",
+  "escena": "almacen",
+  "titulo": "Pedidos del almacén",
+  "subtitulo": "Llegan pedidos enormes al almacén de clips. Boli los parte en trozos fáciles y no deja que nada se descuadre.",
+  "portada": {
+    "objetivo": "Sirve cada pedido: parte la multiplicación en trozos fáciles, súmalos y no pierdas ni un clip.",
+    "frase": "Aquí todo cuadra. O se repite.",
+    "rotulo": "ALMACÉN"
+  },
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Soy el jefe del almacén. Si el viernes falta un solo clip en las cuentas, a la papelera."
+    },
+    {
+      "quien": "boli",
+      "pose": "pista",
+      "texto": "Un pedido grande es un rectángulo. Se parte en trozos fáciles y se suman. Y antes de calcular, piensa qué cuenta cada número."
+    }
+  ],
+  "saludo": "Cada trozo es una multiplicación fácil. **Cuidado con los ceros.**",
+  "observa": "¿Por qué 40 × 20 tiene dos ceros y 40 × 7 solo uno? ¿Por qué con 4 sabores y 3 toppings salen 12 copas y no 7?",
+  "niveles": [
+    {
+      "modo": "partir",
+      "generar": {
+        "cifras": [
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "modo": "problemas",
+      "generar": {
+        "estructuras": [
+          "grupos"
+        ],
+        "a": [
+          3,
+          9
+        ],
+        "b": [
+          3,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "partir",
+      "generar": {
+        "cifras": [
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "modo": "problemas",
+      "generar": {
+        "estructuras": [
+          "filas",
+          "combinaciones"
+        ],
+        "a": [
+          3,
+          9
+        ],
+        "b": [
+          3,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "partir",
+      "generar": {
+        "cifras": [
+          2,
+          2
+        ]
+      }
+    },
+    {
+      "modo": "problemas",
+      "generar": {
+        "estructuras": [
+          "grupos",
+          "filas",
+          "combinaciones"
+        ],
+        "a": [
+          8,
+          25
+        ],
+        "b": [
+          3,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "partir",
+      "generar": {
+        "cifras": [
+          3,
+          2
+        ]
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recortables · Cajón maestro</title>
+<meta name="description" content="Simetría con papel doblado: predecir dónde saldrán los agujeros al desdoblar.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "giros",
+  "area": "matematicas",
+  "escena": "puzle",
+  "titulo": "Recortables",
+  "subtitulo": "Fosforito ha hecho agujeros en un papel doblado. Antes de abrirlo, hay que adivinar dónde saldrán.",
+  "portada": {
+    "objetivo": "El papel está doblado. Marca dónde saldrán los agujeros al otro lado del pliegue y desdóblalo para comprobarlo.",
+    "frase": "Doblo, pincho… ¿y al abrir?",
+    "rotulo": "RECORTABLES"
+  },
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "asombro",
+      "texto": "¡He encontrado un papel doblado con agujeros! Si lo abro sin saber qué sale, me pierdo la gracia."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "Cada agujero tiene su pareja al otro lado del pliegue, igual de lejos. Como en un espejo."
+    }
+  ],
+  "saludo": "Cada agujero sale **igual de lejos del pliegue**, al otro lado.",
+  "observa": "¿Por qué los agujeros que están pegados al pliegue salen pegados también al otro lado?",
+  "niveles": [
+    {
+      "modo": "doblez",
+      "generar": {
+        "agujeros": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "modo": "doblez",
+      "generar": {
+        "agujeros": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "modo": "doblez",
+      "pliegue": "horizontal",
+      "generar": {
+        "agujeros": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "modo": "doblez",
+      "generar": {
+        "agujeros": [
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "modo": "doblez",
+      "pliegue": "horizontal",
+      "generar": {
+        "agujeros": [
+          4,
+          6
+        ]
+      }
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

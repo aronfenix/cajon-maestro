@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las baldosas del recreo · Cajón maestro</title>
+<meta name="description" content="Patios cuadrados con un número de baldosas y parcelas del huerto que engañan: área frente a apariencia.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "multiplica",
+  "area": "matematicas",
+  "escena": "patio",
+  "titulo": "Las baldosas del recreo",
+  "subtitulo": "Hay que embaldosar el patio y repartir el huerto. El Sacapuntas dibuja las parcelas para que engañen.",
+  "portada": {
+    "objetivo": "Decide si con unas baldosas sale un patio cuadrado y ordena las parcelas del huerto por lo que miden de verdad.",
+    "frase": "Las baldosas no mienten. El dibujo, a veces.",
+    "rotulo": "PATIO"
+  },
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Al patio del cajón le faltan baldosas, y el huerto está sin repartir."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Ojo con el Sacapuntas: dibuja las parcelas grandes pequeñas y las pequeñas grandes. Fíate de los números."
+    }
+  ],
+  "saludo": "Tres al cuadrado **no es tres por dos**. Es un patio de tres por tres.",
+  "observa": "¿Por qué con 24 baldosas no sale un patio cuadrado y con 25 sí? Dos parcelas con la misma valla, ¿tienen siempre la misma área?",
+  "niveles": [
+    {
+      "modo": "cuadrado",
+      "tipo": "potencia",
+      "generar": {
+        "n": [
+          2,
+          6
+        ]
+      }
+    },
+    {
+      "modo": "cuadrado",
+      "tipo": "patio",
+      "generar": {
+        "n": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "modo": "areas",
+      "escala": true,
+      "generar": {
+        "lados": [
+          2,
+          8
+        ]
+      }
+    },
+    {
+      "modo": "cuadrado",
+      "tipo": "elegir",
+      "generar": {
+        "n": [
+          4,
+          10
+        ],
+        "dobles": true
+      }
+    },
+    {
+      "modo": "areas",
+      "generar": {
+        "lados": [
+          3,
+          20
+        ],
+        "cuadrados": true
+      }
+    },
+    {
+      "modo": "cuadrado",
+      "tipo": "patio",
+      "generar": {
+        "n": [
+          6,
+          10
+        ]
+      }
+    },
+    {
+      "modo": "areas",
+      "generar": {
+        "lados": [
+          4,
+          25
+        ],
+        "mismoPerimetro": true
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

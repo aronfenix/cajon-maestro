@@ -45,6 +45,30 @@ const FONDOS = {
       <use href="#pz" transform="translate(1500 820) rotate(-40) scale(.8)" fill="#5ec3ff"/>
       <use href="#pz" transform="translate(60 120) rotate(140) scale(.7)" fill="#9bd84a"/>
     </g>`,
+  // el patio visto desde arriba: baldosas de barro y setos en las esquinas
+  patio: `
+    <defs><filter id="sombra-patio" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="6" dy="10" stdDeviation="6" flood-color="#2a1000" flood-opacity=".45"/></filter></defs>
+    <g filter="url(#sombra-patio)" stroke="#1b1e3a" stroke-width="4">
+      <circle cx="40" cy="960" r="120" fill="#6fbf3a"/><circle cx="150" cy="1010" r="80" fill="#5aa82c"/><circle cx="1580" cy="60" r="130" fill="#6fbf3a"/><circle cx="1470" cy="-10" r="80" fill="#5aa82c"/>
+      <g transform="translate(1500 880)"><circle r="34" fill="#fffdf6"/><path d="M-34 0 h68 M0 -34 v68" stroke-width="3"/><circle r="12" fill="#e8417a" stroke-width="3"/></g>
+    </g>`,
+  // el almacén de clips: suelo de hormigón con líneas pintadas y cajas apiladas
+  almacen: `
+    <defs><filter id="sombra-alm" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="7" dy="12" stdDeviation="7" flood-color="#0a1626" flood-opacity=".5"/></filter></defs>
+    <path d="M0 940 H1600 M0 900 H1600" stroke="#ffc531" stroke-width="10" stroke-dasharray="60 40" opacity=".55"/>
+    <g filter="url(#sombra-alm)" stroke="#1b1e3a" stroke-width="4" stroke-linejoin="round">
+      <rect x="-20" y="760" width="170" height="130" fill="#d39a5c"/><path d="M-20 790 h170" stroke="#a8743c" stroke-width="10"/><rect x="40" y="640" width="130" height="120" fill="#e0ad70"/><path d="M40 668 h130" stroke="#a8743c" stroke-width="9"/>
+      <rect x="1460" y="80" width="170" height="130" fill="#d39a5c"/><path d="M1460 110 h170" stroke="#a8743c" stroke-width="10"/>
+      <g transform="translate(1470 820)"><rect width="140" height="20" fill="#c9cfdd"/><rect y="-90" width="40" height="90" fill="#2f5bd3"/><circle cx="20" cy="34" r="14" fill="#1b1e3a"/><circle cx="120" cy="34" r="14" fill="#1b1e3a"/></g>
+    </g>`,
+  // la merienda: mantel de cuadros con un vaso y galletas en los bordes
+  merienda: `
+    <defs><filter id="sombra-mer" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="6" dy="10" stdDeviation="6" flood-color="#3a0a00" flood-opacity=".4"/></filter></defs>
+    <g filter="url(#sombra-mer)" stroke="#1b1e3a" stroke-width="4">
+      <circle cx="1520" cy="120" r="80" fill="#fffdf6"/><circle cx="1520" cy="120" r="58" fill="#ff9f45"/><circle cx="1500" cy="104" r="8" fill="#7a3d10" stroke-width="2"/><circle cx="1540" cy="130" r="8" fill="#7a3d10" stroke-width="2"/><circle cx="1512" cy="148" r="7" fill="#7a3d10" stroke-width="2"/>
+      <circle cx="60" cy="900" r="90" fill="#d9e8ff" opacity=".9"/><circle cx="60" cy="900" r="66" fill="#fffdf6" opacity=".9"/>
+      <circle cx="1460" cy="900" r="46" fill="#e0ad70"/><circle cx="1560" cy="950" r="40" fill="#e0ad70"/>
+    </g>`,
   corcho: `
     <defs><pattern id="corcho" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#c99658"/><circle cx="8" cy="9" r="2" fill="#b07f45"/><circle cx="27" cy="21" r="2.6" fill="#ddb07a"/><circle cx="16" cy="32" r="1.8" fill="#a8763d"/><circle cx="35" cy="5" r="1.6" fill="#b07f45"/></pattern></defs>
     <rect x="1400" y="120" width="150" height="150" fill="#fff27a" transform="rotate(5 1475 195)"/><circle cx="1475" cy="132" r="12" fill="#c8201a" stroke="#000" stroke-width="3"/>

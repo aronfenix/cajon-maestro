@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La mudanza · Cajón maestro</title>
+<meta name="description" content="Traslaciones con tarjetas de flechas: programar el carrito para mover un mueble y, al revés, escribir la tarjeta de una mudanza hecha.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "giros",
+  "area": "matematicas",
+  "escena": "cajon",
+  "titulo": "La mudanza",
+  "subtitulo": "Hay que cambiar los muebles del cajón de sitio. Van en un carrito que se programa con tarjetas de flechas.",
+  "portada": {
+    "objetivo": "Programa el carrito con tarjetas de flechas para llevar cada mueble a su sitio nuevo, sin girarlo.",
+    "frase": "Flechas exactas o no hay mudanza.",
+    "rotulo": "MUDANZA"
+  },
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Los muebles del cajón están mal puestos. Se mueven en carrito, y el carrito solo entiende flechas."
+    },
+    {
+      "quien": "boli",
+      "pose": "pista",
+      "texto": "Una tarjeta, un cuadrito. Si pones de más, el mueble se pasa. Y no se gira: todo el mueble se mueve igual."
+    }
+  ],
+  "saludo": "Fíjate en **una esquina** del mueble y en su sitio nuevo.",
+  "observa": "Si una esquina se mueve 3 a la derecha y 2 hacia abajo, ¿cuánto se mueven las demás? ¿Por qué?",
+  "niveles": [
+    {
+      "modo": "mudanza",
+      "generar": {
+        "maximo": [
+          4,
+          0
+        ],
+        "minimo": 2
+      }
+    },
+    {
+      "modo": "mudanza",
+      "generar": {
+        "maximo": [
+          3,
+          3
+        ],
+        "minimo": 2,
+        "unEje": true
+      }
+    },
+    {
+      "modo": "mudanza",
+      "generar": {
+        "maximo": [
+          4,
+          3
+        ],
+        "minimo": 3
+      }
+    },
+    {
+      "modo": "mudanza",
+      "leer": true,
+      "generar": {
+        "maximo": [
+          4,
+          3
+        ],
+        "minimo": 2
+      }
+    },
+    {
+      "modo": "mudanza",
+      "generar": {
+        "maximo": [
+          5,
+          4
+        ],
+        "minimo": 5
+      }
+    },
+    {
+      "modo": "mudanza",
+      "leer": true,
+      "generar": {
+        "maximo": [
+          5,
+          4
+        ],
+        "minimo": 4
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

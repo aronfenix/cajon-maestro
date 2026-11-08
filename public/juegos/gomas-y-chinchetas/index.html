@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gomas y chinchetas · Cajón maestro</title>
+<meta name="description" content="Construir figuras por encargo con gomas y chinchetas: marcos cuadrados, rectángulos y triángulos, también inclinados.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "geoplano",
+  "area": "matematicas",
+  "escena": "corcho",
+  "titulo": "Gomas y chinchetas",
+  "subtitulo": "Los del cajón hacen encargos para el corcho. Hay que construirlos con una goma y las chinchetas que haya.",
+  "portada": {
+    "objetivo": "Cada personaje te encarga un marco. Constrúyelo con la goma usando solo las chinchetas clavadas.",
+    "frase": "¿Me haces un marco? Cuadrado, por favor.",
+    "rotulo": "CORCHO"
+  },
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "En el corcho todo el mundo quiere colgar su foto. Pero el profe solo ha dejado unas pocas chinchetas clavadas."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "seguro",
+      "texto": "Tú pones la goma. Cada encargo es una figura: si no cumple, el marco se cae."
+    }
+  ],
+  "saludo": "Solo valen **las chinchetas clavadas**. Busca primero dos que te sirvan de lado.",
+  "observa": "¿Cómo sabes que un marco inclinado tiene los cuatro lados iguales sin medirlo con regla?",
+  "niveles": [
+    {
+      "modo": "construir",
+      "figura": "rectangulo",
+      "texto": "Goma quiere un **marco rectangular** para su foto",
+      "generar": {
+        "sobran": 3
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "cuadrado",
+      "texto": "Boli quiere un **marco cuadrado**",
+      "generar": {
+        "sobran": 4
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "triRectangulo",
+      "texto": "Un banderín con forma de **triángulo rectángulo**",
+      "generar": {
+        "sobran": 4
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "triIsosceles",
+      "texto": "Un tejado: un **triángulo con dos lados iguales**",
+      "generar": {
+        "sobran": 5
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "cuadrado",
+      "texto": "Fosforito quiere un **marco cuadrado inclinado** (¡es más moderno!)",
+      "generar": {
+        "inclinado": true,
+        "sobran": 5
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "rectangulo",
+      "texto": "Un **rectángulo inclinado** para la nota del profe",
+      "generar": {
+        "inclinado": true,
+        "sobran": 6
+      },
+      "ancho": 8,
+      "alto": 6
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

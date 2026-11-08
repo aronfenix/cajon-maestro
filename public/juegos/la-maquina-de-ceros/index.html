@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La máquina de ceros · Cajón maestro</title>
+<meta name="description" content="Multiplicar por 10, 100 y 1 000 con una máquina de palancas: predecir la salida, conseguir un número y acotar un producto con el ascensor de carga.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "ceros",
+  "area": "matematicas",
+  "escena": "almacen",
+  "titulo": "La máquina de ceros",
+  "subtitulo": "En el almacén hay una máquina que multiplica. Cada palanca le añade un cero a su número.",
+  "portada": {
+    "objetivo": "Predice qué sale de la máquina, consigue el número que pide Boli y averigua cuántas cajas caben en el ascensor.",
+    "frase": "Los ceros no se cuentan solos.",
+    "rotulo": "MÁQUINA"
+  },
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Esta es la máquina de ceros. Le das dos números y los multiplica. Cada palanca, un cero más."
+    },
+    {
+      "quien": "boli",
+      "pose": "pista",
+      "texto": "Antes de tirar de la manivela, dime qué va a salir. Si aciertas siempre, te dejo llevar el ascensor."
+    }
+  ],
+  "saludo": "Primero la tabla, **luego los ceros**.",
+  "observa": "¿Por qué 70 × 80 y 7 × 800 dan lo mismo? ¿Cuántas formas hay de conseguir 5 600 con el 7 y el 8?",
+  "niveles": [
+    {
+      "modo": "prever",
+      "generar": {
+        "ceros": 1
+      }
+    },
+    {
+      "modo": "consigue",
+      "generar": {
+        "ceros": 1
+      }
+    },
+    {
+      "modo": "prever",
+      "generar": {
+        "ceros": 2
+      }
+    },
+    {
+      "modo": "consigue",
+      "generar": {
+        "ceros": 2
+      }
+    },
+    {
+      "modo": "ascensor",
+      "generar": {
+        "pesos": [
+          20,
+          30,
+          40,
+          50
+        ],
+        "limites": [
+          1000,
+          1500,
+          2000
+        ]
+      }
+    },
+    {
+      "modo": "prever",
+      "generar": {
+        "ceros": 3
+      }
+    },
+    {
+      "modo": "ascensor",
+      "generar": {
+        "pesos": [
+          60,
+          70,
+          80,
+          90
+        ],
+        "limites": [
+          2500,
+          3000,
+          4500,
+          5000
+        ]
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>
