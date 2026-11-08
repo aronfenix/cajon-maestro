@@ -219,7 +219,7 @@ export async function arrancar(config, motor) {
       aviso.textContent = ''; aviso.className = 'aviso'; correccion.hidden = true; correccion.replaceChildren();
       calla();
       if (intento === 1) {
-        cartel.replaceChildren(el('b', { text: `Reto ${n + 1}` }), !adaptativo && el('span', { text: `de ${fijas().length}` }));
+        cartel.replaceChildren(...[el('b', { text: `Reto ${n + 1}` }), !adaptativo && el('span', { text: `de ${fijas().length}` })].filter(Boolean));
         cartel.classList.remove('sale'); void cartel.offsetWidth; cartel.classList.add('sale');
       }
       zona.classList.remove('zona-entra'); void zona.offsetWidth; zona.classList.add('zona-entra');

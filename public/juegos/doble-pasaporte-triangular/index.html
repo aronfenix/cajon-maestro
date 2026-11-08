@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doble pasaporte triangular · Cajón maestro</title>
+<meta name="description" content="Clasifica triángulos por sus lados y por sus ángulos a la vez.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "geoplano",
+  "area": "matematicas",
+  "titulo": "Doble pasaporte triangular",
+  "subtitulo": "Cada triángulo lleva dos pasaportes: uno por sus lados y otro por sus ángulos.",
+  "saludo": "Un triángulo siempre tiene **dos nombres**: uno por los lados y otro por los ángulos.",
+  "volver": "../../materiales/doble-pasaporte-triangular/",
+  "observa": "¿Puede un triángulo ser rectángulo **y** obtusángulo a la vez? ¿Y isósceles y rectángulo?",
+  "niveles": [
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "triRectangulo"
+        ],
+        "no": [
+          "tri",
+          "triObtuso",
+          "triIsosceles"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "triRectangulo",
+      "texto": "Selecciona los triángulos **rectángulos**",
+      "definicion": "Por los lados: **isósceles** si tiene al menos dos iguales, **escaleno** si son todos distintos. Por los ángulos: **rectángulo** si tiene uno recto, **obtusángulo** si tiene uno mayor que un recto y **acutángulo** si todos son menores."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "triIsosceles"
+        ],
+        "no": [
+          "tri",
+          "triObtuso",
+          "triRectangulo"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "triIsosceles",
+      "texto": "Selecciona los triángulos **isósceles**",
+      "definicion": "Por los lados: **isósceles** si tiene al menos dos iguales, **escaleno** si son todos distintos. Por los ángulos: **rectángulo** si tiene uno recto, **obtusángulo** si tiene uno mayor que un recto y **acutángulo** si todos son menores."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "triObtuso"
+        ],
+        "no": [
+          "triRectangulo",
+          "triIsosceles",
+          "tri"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "triObtusangulo",
+      "texto": "Selecciona los triángulos **obtusángulos**",
+      "definicion": "Por los lados: **isósceles** si tiene al menos dos iguales, **escaleno** si son todos distintos. Por los ángulos: **rectángulo** si tiene uno recto, **obtusángulo** si tiene uno mayor que un recto y **acutángulo** si todos son menores."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "tri",
+          "triObtuso"
+        ],
+        "no": [
+          "triIsosceles"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "triEscaleno",
+      "texto": "Selecciona los triángulos **escalenos**",
+      "definicion": "Por los lados: **isósceles** si tiene al menos dos iguales, **escaleno** si son todos distintos. Por los ángulos: **rectángulo** si tiene uno recto, **obtusángulo** si tiene uno mayor que un recto y **acutángulo** si todos son menores."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "triIsosceles",
+          "tri"
+        ],
+        "no": [
+          "triRectangulo",
+          "triObtuso"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "triAcutangulo",
+      "texto": "Selecciona los triángulos **acutángulos**",
+      "definicion": "Por los lados: **isósceles** si tiene al menos dos iguales, **escaleno** si son todos distintos. Por los ángulos: **rectángulo** si tiene uno recto, **obtusángulo** si tiene uno mayor que un recto y **acutángulo** si todos son menores."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "triRectangulo"
+        ],
+        "no": [
+          "triIsosceles",
+          "triRectangulo",
+          "tri"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          1,
+          3
+        ]
+      },
+      "buscar": [
+        "triIsosceles",
+        "triRectangulo"
+      ],
+      "texto": "Selecciona los que son **isósceles y rectángulos** a la vez",
+      "definicion": "Por los lados: **isósceles** si tiene al menos dos iguales, **escaleno** si son todos distintos. Por los ángulos: **rectángulo** si tiene uno recto, **obtusángulo** si tiene uno mayor que un recto y **acutángulo** si todos son menores."
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

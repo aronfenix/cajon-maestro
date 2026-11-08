@@ -1,7 +1,7 @@
 // Lee la configuración del juego (el bloque <script type="application/json" id="config">) y arranca su motor.
 import { arrancar } from './nucleo.js';
 
-const MOTORES = { recta: './recta.js', cifras: './cifras.js', rejilla: './rejilla.js' };
+const MOTORES = { recta: './recta.js', cifras: './cifras.js', rejilla: './rejilla.js', geoplano: './geoplano.js' };
 
 try {
   const config = JSON.parse(document.getElementById('config').textContent);

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aduana de polígonos · Cajón maestro</title>
+<meta name="description" content="Clasifica polígonos por su número de lados y por cuántos lados iguales tienen.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "geoplano",
+  "area": "matematicas",
+  "titulo": "Aduana de polígonos",
+  "subtitulo": "Cuenta lados, no puntos. Y compara cuánto miden: en el geoplano, un lado inclinado puede ser igual que uno recto… o no.",
+  "saludo": "Recorre el borde con el dedo y **cuenta los cambios de dirección**.",
+  "volver": "../../materiales/aduana-de-poligonos/",
+  "observa": "«Al menos dos lados iguales» y «todos los lados iguales»: ¿cuál de las dos reglas deja pasar más figuras?",
+  "niveles": [
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "cuadrilatero",
+          "trapecio",
+          "romboide"
+        ],
+        "no": [
+          "tri",
+          "pent",
+          "convexo5"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "lados4",
+      "texto": "Selecciona las figuras de **4 lados**",
+      "definicion": "Cuenta los lados, no los puntos que tocan."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "pent",
+          "convexo5",
+          "concavo5"
+        ],
+        "no": [
+          "cuadrilatero",
+          "hex",
+          "tri"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "lados5",
+      "texto": "Selecciona los **pentágonos** (5 lados)"
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "hex",
+          "convexo6",
+          "concavo6"
+        ],
+        "no": [
+          "pent",
+          "cuadrilatero",
+          "oct"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "lados6",
+      "texto": "Selecciona los **hexágonos** (6 lados)"
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "triIsosceles",
+          "rombo",
+          "rectanguloRecto",
+          "trapecio"
+        ],
+        "no": [
+          "tri",
+          "cuadrilatero",
+          "pent"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "alMenos2Iguales",
+      "texto": "Selecciona las que tienen **al menos dos lados iguales**",
+      "definicion": "Un lado inclinado de 1 y 2 mide lo mismo que otro de 2 y 1."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "cuadradoRecto",
+          "cuadradoInclinado",
+          "rombo"
+        ],
+        "no": [
+          "rectanguloRecto",
+          "triIsosceles",
+          "romboide",
+          "trapecio"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "todosIguales",
+      "texto": "Selecciona las que tienen **todos los lados iguales**"
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "oct"
+        ],
+        "no": [
+          "hex",
+          "convexo6",
+          "pent"
+        ],
+        "cantidad": 6,
+        "positivas": [
+          1,
+          3
+        ]
+      },
+      "buscar": "lados8",
+      "texto": "Selecciona los **octógonos** (8 lados)"
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

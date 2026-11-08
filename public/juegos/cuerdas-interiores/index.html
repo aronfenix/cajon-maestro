@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuerdas interiores · Cajón maestro</title>
+<meta name="description" content="Distingue polígonos convexos y no convexos buscando entrantes.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "geoplano",
+  "area": "matematicas",
+  "titulo": "Cuerdas interiores",
+  "subtitulo": "Si puedes tender una cuerda entre dos puntos de la figura y se sale, la figura no es convexa.",
+  "saludo": "Busca **entrantes**: esquinas que se meten hacia dentro.",
+  "volver": "../../materiales/cuerdas-interiores/",
+  "observa": "¿Puede un triángulo no ser convexo? ¿Y un cuadrilátero? Busca uno de cada en tu cabeza.",
+  "niveles": [
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "dardo",
+          "concavo5"
+        ],
+        "no": [
+          "cuadradoRecto",
+          "rectanguloRecto",
+          "trapecio",
+          "convexo5"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "noConvexo",
+      "texto": "Selecciona las figuras **no convexas**",
+      "definicion": "Una figura es **convexa** si no tiene ningún entrante: cualquier cuerda entre dos puntos suyos se queda dentro."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "convexo5",
+          "trapecio",
+          "romboide",
+          "tri"
+        ],
+        "no": [
+          "dardo",
+          "concavo5",
+          "concavo6"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "convexo",
+      "texto": "Selecciona las figuras **convexas**",
+      "definicion": "Una figura es **convexa** si no tiene ningún entrante: cualquier cuerda entre dos puntos suyos se queda dentro."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "concavo5",
+          "concavo6"
+        ],
+        "no": [
+          "convexo5",
+          "convexo6",
+          "cuadrilatero"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "noConvexo",
+      "texto": "Selecciona las figuras **no convexas**",
+      "definicion": "Una figura es **convexa** si no tiene ningún entrante: cualquier cuerda entre dos puntos suyos se queda dentro."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "convexo6",
+          "convexo5",
+          "cuadrilatero"
+        ],
+        "no": [
+          "concavo6",
+          "concavo5",
+          "dardo"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "convexo",
+      "texto": "Selecciona las figuras **convexas**",
+      "definicion": "Una figura es **convexa** si no tiene ningún entrante: cualquier cuerda entre dos puntos suyos se queda dentro."
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

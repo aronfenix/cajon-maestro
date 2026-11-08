@@ -85,6 +85,20 @@
   <li>Ideas: seres vivos e inertes, sustantivos de un texto, palabras con b o con v, provincias de una comunidad, materiales que conducen la electricidad.</li>
 </ul>
 </section>
+<section class="motor">
+<h2>Geoplano</h2>
+<p>Figuras sobre una retícula de puntos. Todo se decide con coordenadas enteras: lados al cuadrado, paralelismo, ángulos rectos, convexidad y giros. Dos modos.</p>
+<p><strong>seleccionar</strong>: marcar todas las figuras que cumplen una propiedad. Las figuras se generan por familias, pero lo que cuenta es la geometría: si una «distractora» resulta ser un cuadrado, cuenta como cuadrado. Al comprobar, cada figura enseña su pasaporte completo (cuadrado, rectángulo, rombo, paralelogramo…).</p>
+<pre><code>{ "modo": "seleccionar", "buscar": "rombo", "texto": "Selecciona **todos los rombos**",
+  "generar": { "si": ["rombo", "cuadradoInclinado"], "no": ["romboide", "trapecio"], "cantidad": 8 } }
+{ "modo": "seleccionar", "buscar": ["triIsosceles", "triRectangulo"], "generar": { "si": ["triRectangulo"], "no": ["tri"] } }
+{ "modo": "seleccionar", "buscar": "giro", "generar": { "vertices": 5, "cantidad": 6 } }</code></pre>
+<ul>
+  <li>Propiedades: cuadrado, rectangulo, rombo, paralelogramo, trapecio, convexo, noConvexo, lados3…lados8, alMenos2Iguales, todosIguales, triRectangulo, triObtusangulo, triAcutangulo, triIsosceles, triEscaleno, giro.</li>
+  <li>Familias: cuadradoRecto, cuadradoInclinado, rectanguloRecto, rectanguloInclinado, rombo, romboide, trapecio, trapecioRecto, cuadrilatero, dardo, tri, triRectangulo, triIsosceles, triObtuso, pent, hex, oct, convexo5, convexo6, concavo5, concavo6.</li>
+</ul>
+<p><strong>construir</strong>: tocar puntos para hacer una figura. <code>"tarea": "simetria"</code> (eje vertical), <code>"tarea": "traslacion"</code> (con <code>vectores</code>) o <code>"figura": "cuadrado"</code> con anclajes limitados (<code>sobran</code>, <code>inclinado</code>). Se acepta cualquier solución que cumpla lo pedido.</p>
+</section>
 </div>
 </body>
 </html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anclajes disponibles · Cajón maestro</title>
+<meta name="description" content="Construye rectángulos, cuadrados y triángulos usando solo algunos puntos del geoplano.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "geoplano",
+  "area": "matematicas",
+  "titulo": "Anclajes disponibles",
+  "subtitulo": "Solo valen los puntos grandes. Con ellos hay que construir la figura que se pide; a veces está inclinada.",
+  "saludo": "Solo puedes usar **los puntos grandes**. Busca primero dos que te sirvan de lado.",
+  "volver": "../../materiales/anclajes-disponibles/",
+  "observa": "¿Cómo sabes que un cuadrado inclinado tiene los cuatro lados iguales sin medirlos con regla?",
+  "niveles": [
+    {
+      "modo": "construir",
+      "figura": "rectangulo",
+      "generar": {
+        "sobran": 3
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "cuadrado",
+      "generar": {
+        "sobran": 4
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "triRectangulo",
+      "generar": {
+        "sobran": 4
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "triIsosceles",
+      "generar": {
+        "sobran": 5
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "cuadrado",
+      "generar": {
+        "inclinado": true,
+        "sobran": 5
+      },
+      "ancho": 8,
+      "alto": 6
+    },
+    {
+      "modo": "construir",
+      "figura": "rectangulo",
+      "generar": {
+        "inclinado": true,
+        "sobran": 6
+      },
+      "ancho": 8,
+      "alto": 6
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ventanas espejo · Cajón maestro</title>
+<meta name="description" content="Construye en el geoplano la figura simétrica respecto a un eje vertical.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "geoplano",
+  "area": "matematicas",
+  "titulo": "Ventanas espejo",
+  "subtitulo": "El eje es un espejo: cada vértice tiene su pareja al otro lado, a la misma distancia.",
+  "saludo": "Cuenta **desde el eje**, no desde el borde.",
+  "volver": "../../materiales/ventanas-espejo/",
+  "observa": "Un vértice pegado al eje, ¿dónde tiene su pareja? ¿Y uno que está a tres puntos?",
+  "niveles": [
+    {
+      "modo": "construir",
+      "tarea": "simetria",
+      "generar": {
+        "vertices": 3
+      },
+      "ancho": 11,
+      "alto": 7
+    },
+    {
+      "modo": "construir",
+      "tarea": "simetria",
+      "generar": {
+        "vertices": 4
+      },
+      "ancho": 11,
+      "alto": 7
+    },
+    {
+      "modo": "construir",
+      "tarea": "simetria",
+      "generar": {
+        "vertices": 5
+      },
+      "ancho": 11,
+      "alto": 7
+    },
+    {
+      "modo": "construir",
+      "tarea": "simetria",
+      "generar": {
+        "vertices": 6
+      },
+      "ancho": 11,
+      "alto": 7
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

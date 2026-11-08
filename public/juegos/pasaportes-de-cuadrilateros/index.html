@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pasaportes de cuadriláteros · Cajón maestro</title>
+<meta name="description" content="Selecciona todos los cuadrados, rectángulos, rombos, paralelogramos o trapecios, aunque estén girados.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "geoplano",
+  "area": "matematicas",
+  "titulo": "Pasaportes de cuadriláteros",
+  "subtitulo": "Cada figura puede tener varios pasaportes a la vez: un cuadrado también es rectángulo, rombo y paralelogramo.",
+  "saludo": "Mira **lados y esquinas**, no cómo está colocada la figura.",
+  "volver": "../../materiales/pasaportes-de-cuadrilateros/",
+  "observa": "¿Por qué un cuadrado tiene **todos** los pasaportes de los paralelogramos y un rectángulo no tiene el de rombo?",
+  "niveles": [
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "cuadradoRecto"
+        ],
+        "no": [
+          "rectanguloRecto",
+          "trapecio",
+          "romboide"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "cuadrado",
+      "texto": "Selecciona **todos los cuadrados**",
+      "definicion": "Un cuadrado tiene **cuatro lados iguales y cuatro ángulos rectos**. Da igual cómo esté girado."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "rectanguloRecto",
+          "cuadradoRecto"
+        ],
+        "no": [
+          "romboide",
+          "trapecio",
+          "trapecioRecto",
+          "cuadrilatero"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "rectangulo",
+      "texto": "Selecciona **todos los rectángulos**",
+      "definicion": "Un rectángulo tiene **cuatro ángulos rectos**. Sus lados no tienen por qué ser distintos.",
+      "explica": "Los cuadrados también cuentan: tienen cuatro ángulos rectos."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "cuadradoRecto",
+          "cuadradoInclinado"
+        ],
+        "no": [
+          "rombo",
+          "rectanguloRecto",
+          "rectanguloInclinado"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "cuadrado",
+      "texto": "Selecciona **todos los cuadrados**",
+      "definicion": "Un cuadrado tiene **cuatro lados iguales y cuatro ángulos rectos**. Da igual cómo esté girado.",
+      "explica": "Un cuadrado girado sigue siendo un cuadrado."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "romboide",
+          "rombo",
+          "rectanguloRecto",
+          "cuadradoInclinado"
+        ],
+        "no": [
+          "trapecio",
+          "trapecioRecto",
+          "cuadrilatero",
+          "dardo"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "paralelogramo",
+      "texto": "Selecciona **todos los paralelogramos**",
+      "definicion": "Un paralelogramo tiene **dos parejas de lados paralelos**: cada lado es paralelo al de enfrente."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "rombo",
+          "cuadradoInclinado",
+          "cuadradoRecto"
+        ],
+        "no": [
+          "romboide",
+          "rectanguloRecto",
+          "trapecio"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "rombo",
+      "texto": "Selecciona **todos los rombos**",
+      "definicion": "Un rombo tiene **cuatro lados iguales**. Los ángulos no tienen por qué ser rectos.",
+      "explica": "Los cuadrados también son rombos: tienen los cuatro lados iguales."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "trapecio",
+          "trapecioRecto"
+        ],
+        "no": [
+          "romboide",
+          "rectanguloRecto",
+          "cuadrilatero",
+          "dardo"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "trapecio",
+      "texto": "Selecciona **todos los trapecios**",
+      "definicion": "Un trapecio tiene **solo una pareja** de lados paralelos."
+    },
+    {
+      "modo": "seleccionar",
+      "generar": {
+        "si": [
+          "rectanguloInclinado",
+          "cuadradoInclinado",
+          "rectanguloRecto"
+        ],
+        "no": [
+          "romboide",
+          "rombo",
+          "trapecio",
+          "cuadrilatero"
+        ],
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "buscar": "rectangulo",
+      "texto": "Selecciona **todos los rectángulos**",
+      "definicion": "Un rectángulo tiene **cuatro ángulos rectos**. Sus lados no tienen por qué ser distintos.",
+      "explica": "Inclinados también valen: lo que cuenta son los ángulos rectos."
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

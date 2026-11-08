@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Museo de siluetas · Cajón maestro</title>
+<meta name="description" content="Encuentra las figuras que son la misma silueta girada, y descarta las reflejadas o deformadas.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "geoplano",
+  "area": "matematicas",
+  "titulo": "Museo de siluetas",
+  "subtitulo": "Algunas figuras son la misma silueta, solo que girada. Otras parecen iguales pero están reflejadas o deformadas.",
+  "saludo": "Gira la silueta **en tu cabeza**. Las que están dadas la vuelta como en un espejo no valen.",
+  "volver": "../../materiales/museo-de-siluetas/",
+  "observa": "¿Cómo distingues una figura girada de una reflejada? Prueba a recorrer el borde en el mismo sentido en las dos.",
+  "niveles": [
+    {
+      "modo": "seleccionar",
+      "buscar": "giro",
+      "generar": {
+        "vertices": 4,
+        "cantidad": 5,
+        "positivas": [
+          2,
+          3
+        ]
+      },
+      "texto": "Selecciona las que son **la misma figura girada**"
+    },
+    {
+      "modo": "seleccionar",
+      "buscar": "giro",
+      "generar": {
+        "vertices": 5,
+        "cantidad": 6,
+        "positivas": [
+          2,
+          3
+        ]
+      },
+      "texto": "Selecciona las que son **la misma figura girada**"
+    },
+    {
+      "modo": "seleccionar",
+      "buscar": "giro",
+      "generar": {
+        "vertices": 6,
+        "cantidad": 8,
+        "positivas": [
+          2,
+          4
+        ]
+      },
+      "texto": "Selecciona las que son **la misma figura girada**"
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>
