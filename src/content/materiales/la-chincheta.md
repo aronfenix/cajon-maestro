@@ -14,6 +14,6 @@ orden: 1
 
 La práctica de estimar en la recta, con dos cambios. Al comprobar se ve en rojo cuánto te has desviado y en qué porcentaje de la recta, y una franja marca la zona de las tres estrellas: el objetivo no es acertar el número exacto sino acercarse. Cada partida los números son distintos.
 
-Las estrellas hacen crecer una planta. En modo pizarra no hay puntos y el botón dice «Ver dónde está», para proyectarlo y discutir antes de comprobar.
+Cada ronda da una pegatina (bronce, plata u oro). En modo pizarra no hay puntos y el botón dice «Ver dónde está», para proyectarlo y discutir antes de comprobar.
 
 Está hecho con el [motor de recta](../../juegos/motores/): cambiando los datos sirve para fechas, altitudes o temperaturas.

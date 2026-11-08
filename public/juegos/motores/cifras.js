@@ -1,7 +1,7 @@
 // Motor «cifras»: una máquina con huecos y un montón de cifras.
 // Hay que formar el número que cumple el reto (el mayor, el menor, el más cercano a…, par, impar, múltiplo de…).
 // Con "aCiegas": true las cifras salen de una en una y hay que decidir dónde va cada una sin poder cambiarla.
-import { el, num, barajar, azar } from './nucleo.js';
+import { el, num, barajar, azar, suena } from './nucleo.js';
 
 const NOMBRES_ENT = ['U', 'D', 'C', 'UM', 'DM', 'CM', 'U. millón'];
 const NOMBRES_DEC = ['d', 'c', 'm'];
@@ -81,23 +81,25 @@ export function ronda(d, ctx) {
     : `Toca una cifra y después el hueco donde va. ${d.cifras.length > k ? 'Sobran cifras: no hace falta usarlas todas.' : ''}`));
 
   const huecos = [];
-  const maquina = el('div', { class: 'maquina', role: 'group', 'aria-label': 'Huecos del número' });
+  const ventanas = el('div', { class: 'ventanas', role: 'group', 'aria-label': 'Huecos del número' });
+  const luces = [0, 1, 2].map(() => el('span', { class: 'luz' }));
+  const maquina = el('div', { class: 'maquina' }, el('div', { class: 'placa' }, el('span', { text: 'Máquina de cifras' }), el('span', { class: 'luces', 'aria-hidden': 'true' }, luces)), ventanas);
   for (let i = 0; i < k; i++) {
-    if (i === ent && dec) maquina.append(el('span', { class: 'coma', 'aria-hidden': 'true', text: ',' }));
+    if (i === ent && dec) ventanas.append(el('span', { class: 'coma', 'aria-hidden': 'true', text: ',' }));
     const nombre = i < ent ? NOMBRES_ENT[ent - 1 - i] : NOMBRES_DEC[i - ent];
     const b = el('button', { type: 'button', 'aria-label': `Hueco de las ${nombre}, vacío` });
     const caja = el('div', { class: 'hueco-cifra' }, b, el('small', { text: nombre }));
     huecos.push({ b, caja, nombre, cifra: null, origen: null });
-    maquina.append(caja);
+    ventanas.append(caja);
   }
-  const monton = el('div', { class: 'monton', role: 'group', 'aria-label': 'Cifras' });
-  const sale = el('div', { class: 'sale', 'aria-live': 'assertive' });
+  const monton = el('div', { class: 'tapete', role: 'group', 'aria-label': 'Cifras' });
+  const sale = el('div', { class: 'saco', 'aria-live': 'assertive' });
   const comparar = el('p', { class: 'comparar' });
   ctx.escenario.append(maquina, d.aCiegas ? sale : monton, comparar);
 
   let hecho = false;
   const pintaHueco = (h) => {
-    h.b.textContent = h.cifra ?? '';
+    h.b.replaceChildren(h.cifra != null ? el('span', { class: 'ficha-cifra', 'aria-hidden': 'true', text: h.cifra }) : '');
     h.b.classList.toggle('lleno', h.cifra != null);
     h.b.setAttribute('aria-label', `Hueco de las ${h.nombre}, ${h.cifra ?? 'vacío'}`);
   };
@@ -107,25 +109,27 @@ export function ronda(d, ctx) {
     let paso = 0;
     const muestra = () => {
       huecos.forEach((h) => h.b.classList.toggle('espera', h.cifra == null));
-      sale.replaceChildren(el('span', { class: 'cifra', text: orden[paso] }),
-        el('p', {}, `Sale el `, el('strong', { text: orden[paso] }), `. ¿Dónde lo pones? `, el('span', { style: { color: 'var(--gris)' }, text: `(Quedan ${k - paso - 1} por salir)` })));
+      suena('clic');
+      sale.replaceChildren(el('span', { class: 'ficha-cifra', text: orden[paso] }),
+        el('div', {}, el('p', {}, 'Sale el ', el('strong', { text: orden[paso] }), '. ¿En qué hueco lo pones?'),
+          el('p', { class: 'quedan', text: k - paso - 1 ? `Quedan ${k - paso - 1} por salir.` : 'Es la última.' })));
     };
     huecos.forEach((h) => (h.b.onclick = () => {
       if (hecho || h.cifra != null) return;
-      h.cifra = orden[paso]; pintaHueco(h); paso++;
+      h.cifra = orden[paso]; pintaHueco(h); suena('pon'); paso++;
       if (paso === k) { sale.replaceChildren(); huecos.forEach((x) => x.b.classList.remove('espera')); revisar(); } else muestra();
     }));
     muestra();
   } else {
     let elegida = null;
     const fichas = d.cifras.map((c, i) => {
-      const b = el('button', { type: 'button', class: 'cifra', 'aria-pressed': 'false', text: c });
+      const b = el('button', { type: 'button', class: 'ficha-cifra', 'aria-pressed': 'false', text: c });
       b.onclick = () => {
         if (hecho) return;
         fichas.forEach((f) => f.setAttribute('aria-pressed', 'false'));
         elegida = elegida === i ? null : i;
         if (elegida != null) {
-          b.setAttribute('aria-pressed', 'true');
+          b.setAttribute('aria-pressed', 'true'); suena('clic');
           // si solo queda un hueco vacío, va directa
           const vacios = huecos.filter((h) => h.cifra == null);
           if (vacios.length === 1 && d.cifras.length === k) poner(vacios[0]);
@@ -138,12 +142,12 @@ export function ronda(d, ctx) {
       if (h.origen != null) fichas[h.origen].classList.remove('usada');
       h.cifra = d.cifras[elegida]; h.origen = elegida;
       fichas[elegida].classList.add('usada'); fichas[elegida].setAttribute('aria-pressed', 'false');
-      elegida = null; pintaHueco(h); listo();
+      elegida = null; pintaHueco(h); suena('pon'); listo();
     };
     huecos.forEach((h) => (h.b.onclick = () => {
       if (hecho) return;
       if (elegida != null) return poner(h);
-      if (h.cifra != null) { fichas[h.origen].classList.remove('usada'); h.cifra = null; h.origen = null; pintaHueco(h); listo(); }
+      if (h.cifra != null) { fichas[h.origen].classList.remove('usada'); h.cifra = null; h.origen = null; pintaHueco(h); suena('quita'); listo(); }
     }));
     const comprobar = ctx.boton('Comprobar', revisar);
     comprobar.disabled = true;
@@ -177,6 +181,7 @@ export function ronda(d, ctx) {
         : `Tu número es el ${tuTxt}${extra}. ${d.aCiegas ? 'Sabiendo las cifras de antemano, lo mejor era' : 'Se podía'} **${mejorTxt}**${objetivo === 'cerca' ? ` (a ${num(Math.abs(mejor - d.valor), dec || undefined)})` : ''}. De ${validos.length} números posibles, el tuyo es el ${idx + 1}.º.`;
     }
     if (estrellas === 3) huecos.forEach((h) => h.caja.classList.add('bien'));
+    luces.forEach((l, j) => j < estrellas && setTimeout(() => l.classList.add('on'), 150 + j * 140));
     comparar.replaceChildren();
     if (estrellas < 3 && mejor != null) comparar.append('El mejor: ', el('b', { text: mejorTxt }));
     ctx.fin(estrellas, msg + (d.explica ? ' ' + d.explica : ''));
