@@ -32,7 +32,7 @@ const FONDOS = {
     <g filter="url(#sombra-cajon)" stroke="#1b1e3a" stroke-linejoin="round">
       <g fill="none" stroke="#8d97a8" stroke-width="7" stroke-linecap="round"><path d="M1460 880 h70 a16 16 0 0 0 0 -32 h-80 a10 10 0 0 0 0 20 h60"/><path d="M90 150 h60 a14 14 0 0 1 0 28 h-70 a9 9 0 0 1 0 -18 h52"/></g>
       <g transform="translate(1500 300) rotate(84)" stroke-width="4"><rect width="260" height="30" rx="5" fill="#2f5bd3"/><path d="M0 0 L-40 15 L0 30Z" fill="#f4d9a8"/><path d="M-26 10 L-40 15 L-26 20Z" fill="#1b1e3a"/><rect x="250" y="-2" width="30" height="34" rx="5" fill="#ff7fae"/></g>
-      <g transform="translate(-30 760) rotate(-12)" stroke-width="4"><rect width="150" height="70" rx="12" fill="#fff1cf"/><rect x="90" width="60" height="70" rx="0" fill="#2f5bd3"/><path d="M90 0 v70" /></g>
+      <g transform="translate(1440 560) rotate(-12)" stroke-width="4"><rect width="150" height="70" rx="12" fill="#fff1cf"/><rect x="90" width="60" height="70" rx="0" fill="#2f5bd3"/><path d="M90 0 v70" /></g>
       <circle cx="1540" cy="960" r="26" fill="#ffc531" stroke-width="4"/><circle cx="1540" cy="960" r="10" fill="#c98f00" stroke-width="3"/>
     </g>`,
   // la mesa del puzle: tapete violeta con piezas sueltas en los bordes

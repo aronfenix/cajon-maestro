@@ -736,3 +736,57 @@ body.mapa-cajon .mesa-juego{padding-right:clamp(12px,2.4vw,30px)}
 .premio-pegatina .pegatina-album{width:96px;height:96px}
 .premio-pegatina b{display:block;font-family:var(--fuerte);font-weight:900;font-size:22px}
 .premio-pegatina small{font-weight:700;color:var(--gris)}
+
+/* =====================================================================================
+   Las piezas de siempre, al nivel nuevo: regla, etiquetas colgantes, rana y máquina de cifras
+   ===================================================================================== */
+/* regla de madera con canto, contorno y cantonera de metal */
+.regla{border:var(--borde);border-radius:8px;
+  background:
+    linear-gradient(90deg,#c9cfdd 0 12px,var(--tinta) 12px 15px,transparent 15px calc(100% - 15px),var(--tinta) calc(100% - 15px) calc(100% - 12px),#c9cfdd calc(100% - 12px)),
+    linear-gradient(180deg,rgba(255,255,255,.45) 0 6px,transparent 6px),
+    url('tex/madera.webp') 0 0/512px,
+    linear-gradient(180deg,#f0cf94,#d9a862);
+  background-blend-mode:normal,normal,multiply,normal;
+  box-shadow:inset 0 -7px 0 rgba(120,70,20,.4),5px 9px 0 -2px rgba(40,15,0,.28),8px 16px 20px -10px rgba(20,8,0,.6)}
+.tic{background:var(--tinta);opacity:.9}
+.tic.menor{opacity:.55}
+.num{color:var(--tinta);font-weight:800}
+.num.fuerte{font-weight:900}
+.resalte{background:var(--amarillo);opacity:.75}
+.chincheta svg{filter:drop-shadow(2px 3px 0 rgba(0,0,0,.15))}
+.boli-azul span{color:var(--cobalto)}
+.distancia b{background:var(--papel);border:2px solid var(--rojo);padding:0 6px}
+/* etiquetas colgantes: cartulina con agujero y cordel; la bandeja, de cartón */
+.bandeja{border:var(--borde);border-radius:16px;background:#c99a63 url('tex/cartulina.webp');background-blend-mode:multiply;box-shadow:inset 0 10px 14px -6px rgba(60,30,0,.55),var(--sombra-baja)}
+.bandeja:empty::before{color:rgba(40,20,0,.65);font-family:var(--fuerte);font-weight:800}
+.etiqueta{clip-path:none;border-radius:6px 12px 12px 6px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;font-family:var(--fuerte);font-weight:800;
+  box-shadow:0 4px 0 var(--tinta);filter:drop-shadow(3px 6px 4px rgba(10,20,25,.3))}
+.etiqueta::before{left:9px;width:12px;height:12px;margin-top:-6px;background:#c99a63;box-shadow:inset 0 0 0 2.5px var(--tinta)}
+.etiqueta small{font-family:'Texto',sans-serif;font-weight:700}
+.etiqueta.elegida{box-shadow:0 0 0 4px var(--amarillo),0 4px 0 var(--tinta)}
+.etiqueta.elegida::after{display:none}
+.hilo{width:3px;margin-left:-1.5px;background:repeating-linear-gradient(var(--tinta) 0 4px,#c9cfdd 4px 7px)}
+.punta{width:16px;height:16px;margin-left:-8px;border:2.5px solid var(--tinta);background:radial-gradient(circle at 35% 30%,#fff 0 18%,#d7263d 32%)}
+.punto-bueno{border-color:#1b8f4e}
+/* la rana y sus saltos */
+.arcos text{stroke:var(--papel);fill:var(--tinta)}
+.saltos .tecla{font-family:var(--fuerte);font-weight:900}
+.cuenta{font-family:var(--fuerte)}
+.cuenta .paso{border:2.5px solid var(--tinta);box-shadow:0 3px 0 var(--tinta)}
+/* máquina de cifras, de la misma fábrica que la de ceros */
+.maquina{border:var(--borde);background:linear-gradient(180deg,#3d6fd6,#2b4fae);box-shadow:inset 0 3px 0 rgba(255,255,255,.3),inset 0 -8px 0 rgba(0,0,0,.25),var(--sombra)}
+.maquina::before,.maquina::after{border:2px solid var(--tinta);background:#c9cfdd}
+.placa span{color:#fff;font-weight:900}
+.luz{border:2.5px solid var(--tinta);background:#2a2f4a}
+.luz.on{background:var(--amarillo)}
+.hueco-cifra>button{border:3px solid var(--tinta);background:#151a33}
+.hueco-cifra small{color:#fff;font-weight:900}
+.ficha-cifra{border:3px solid var(--tinta);background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:inset 0 -6px 0 rgba(0,0,0,.1),0 5px 0 var(--tinta),4px 10px 10px -4px rgba(10,20,25,.45)}
+.hueco-cifra .ficha-cifra{box-shadow:inset 0 -6px 0 rgba(0,0,0,.1)}
+.tapete,.saco{border:var(--borde);background:#2e7d5b url('tex/fieltro.webp') 0 0/180px;background-blend-mode:multiply;box-shadow:inset 0 8px 14px rgba(0,0,0,.45),var(--sombra-baja)}
+.tapete .ficha-cifra[aria-pressed="true"]{box-shadow:0 0 0 4px var(--amarillo),0 5px 0 var(--tinta),0 22px 16px -8px rgba(0,0,0,.5)}
+.comparar b{color:var(--cobalto);font-family:var(--fuerte)}
+/* patios: las baldosas, de barro */
+.patio .baldosa,.esquema .baldosa{fill:#d9824f;stroke:var(--tinta);stroke-width:2}
+.patio .baldosa:nth-child(2n),.esquema .baldosa:nth-child(2n){fill:#c66a3d}

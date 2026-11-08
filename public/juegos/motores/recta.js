@@ -39,12 +39,12 @@ function hazRegla({ min, max, marcas, divisiones, decimales }, fuertes = []) {
 }
 
 const CHINCHETA = `
-<ellipse cx="22" cy="75" rx="7" ry="2.4" fill="rgba(60,30,0,.35)"/>
-<rect x="20.4" y="42" width="3.2" height="34" rx="1.6" fill="#7d868c"/><rect x="21" y="42" width="1" height="32" fill="#e8ecef"/>
-<path d="M7 40 Q22 33 37 40 L37 44.5 Q22 51 7 44.5Z" fill="var(--acento)" stroke="var(--acento-osc)" stroke-width="2"/>
-<path d="M15 14 L29 14 L27.2 38 L16.8 38Z" fill="var(--acento)" stroke="var(--acento-osc)" stroke-width="2" stroke-linejoin="round"/>
-<rect x="5" y="2" width="34" height="14" rx="7" fill="var(--acento)" stroke="var(--acento-osc)" stroke-width="2"/>
-<rect x="10" y="5" width="11" height="4" rx="2" fill="#fff" opacity=".75"/><path d="M19 18 L19.6 35" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>`;
+<ellipse cx="22" cy="76" rx="9" ry="3" fill="rgba(40,15,0,.4)"/>
+<path d="M20.2 44 h3.6 l-1 32 h-1.6z" fill="#c9cfdd" stroke="#1b1e3a" stroke-width="1.6"/>
+<path d="M6 41 Q22 33 38 41 L38 46 Q22 53 6 46Z" fill="#a8172c" stroke="#1b1e3a" stroke-width="3" stroke-linejoin="round"/>
+<path d="M14 14 L30 14 L27.5 39 L16.5 39Z" fill="#d7263d" stroke="#1b1e3a" stroke-width="3" stroke-linejoin="round"/>
+<rect x="4" y="2" width="36" height="15" rx="7.5" fill="#d7263d" stroke="#1b1e3a" stroke-width="3"/>
+<rect x="9" y="5" width="12" height="4.5" rx="2.2" fill="#fff" opacity=".8"/><path d="M19 18 L19.6 35" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".6"/>`;
 
 /* ---------------------------------------------------------------- estimar */
 function estimar(d, ctx) {
@@ -322,15 +322,17 @@ function agrupa(pasos) {
 }
 const COLORES = [['var(--s1)', '#a88600', '#000'], ['var(--s2)', '#1a3f8f', '#fff'], ['var(--s3)', '#992350', '#fff'], ['var(--s4)', '#0f5e34', '#fff']];
 const RANA = `
-<ellipse cx="27" cy="46" rx="17" ry="3" fill="rgba(0,0,0,.22)"/>
-<path d="M7 44 Q2 36 10 33 L17 42Z M47 44 Q52 36 44 33 L37 42Z" fill="#3f9a26" stroke="#1f5c12" stroke-width="2.5" stroke-linejoin="round"/>
-<ellipse cx="27" cy="32" rx="20" ry="13.5" fill="#5bc236" stroke="#1f5c12" stroke-width="2.5"/>
-<ellipse cx="27" cy="37" rx="11" ry="5.5" fill="#c3f29e"/>
-<circle cx="17" cy="18" r="8" fill="#5bc236" stroke="#1f5c12" stroke-width="2.5"/><circle cx="37" cy="18" r="8" fill="#5bc236" stroke="#1f5c12" stroke-width="2.5"/>
-<g class="ojos"><circle cx="17" cy="18" r="4.6" fill="#fff"/><circle cx="37" cy="18" r="4.6" fill="#fff"/>
-<circle cx="18.2" cy="18.4" r="2.5" fill="#000"/><circle cx="38.2" cy="18.4" r="2.5" fill="#000"/></g>
-<path d="M19 30 Q27 36 35 30" fill="none" stroke="#1f5c12" stroke-width="2.5" stroke-linecap="round"/>`;
-const BANDERIN = `<rect x="2" y="4" width="3" height="58" rx="1.5" fill="#3b2a12"/><path d="M5 5 L36 13 L5 24Z" fill="var(--rojo)" stroke="#7a120e" stroke-width="2" stroke-linejoin="round"/>`;
+<ellipse cx="27" cy="47" rx="18" ry="3.4" fill="rgba(40,15,0,.3)"/>
+<path d="M6 45 Q0 36 9 32 L18 42Z M48 45 Q54 36 45 32 L36 42Z" fill="#5e9a1c" stroke="#1b1e3a" stroke-width="2.8" stroke-linejoin="round"/>
+<ellipse cx="27" cy="32" rx="20.5" ry="14" fill="#9bd84a" stroke="#1b1e3a" stroke-width="2.8"/>
+<ellipse cx="27" cy="38" rx="11.5" ry="5.6" fill="#e3f7c4"/>
+<path d="M12 27 q4 -5 9 -4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".7"/>
+<circle cx="16.5" cy="17.5" r="8.4" fill="#9bd84a" stroke="#1b1e3a" stroke-width="2.8"/><circle cx="37.5" cy="17.5" r="8.4" fill="#9bd84a" stroke="#1b1e3a" stroke-width="2.8"/>
+<g class="ojos"><circle cx="16.5" cy="17.5" r="5" fill="#fff" stroke="#1b1e3a" stroke-width="1.6"/><circle cx="37.5" cy="17.5" r="5" fill="#fff" stroke="#1b1e3a" stroke-width="1.6"/>
+<circle cx="17.8" cy="18" r="2.6" fill="#1b1e3a"/><circle cx="38.8" cy="18" r="2.6" fill="#1b1e3a"/></g>
+<circle cx="13" cy="33" r="2.6" fill="#ff7fae" opacity=".8"/><circle cx="41" cy="33" r="2.6" fill="#ff7fae" opacity=".8"/>
+<path d="M19 31 Q27 37 35 31" fill="none" stroke="#1b1e3a" stroke-width="2.8" stroke-linecap="round"/>`;
+const BANDERIN = `<rect x="1.5" y="3" width="4" height="59" rx="2" fill="#c98a4b" stroke="#1b1e3a" stroke-width="1.6"/><path d="M5 5 L37 13 L5 25Z" fill="#e8417a" stroke="#1b1e3a" stroke-width="2.6" stroke-linejoin="round"/><circle cx="3.5" cy="3" r="3.4" fill="#ffc531" stroke="#1b1e3a" stroke-width="1.6"/>`;
 
 function saltar(d, ctx) {
   const saltos = [...(d.saltos ?? [1, 10, 100])].sort((a, b) => a - b);
