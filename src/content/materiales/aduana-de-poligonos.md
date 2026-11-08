@@ -11,4 +11,4 @@ orden: 3
 
 Cuatro, cinco, seis u ocho lados, «al menos dos lados iguales» y «todos los lados iguales». La igualdad se calcula con coordenadas, así que un lado de 2 y 1 cuenta igual que uno de 1 y 2 aunque estén girados.
 
-Es adaptativo: si va bien, sube la dificultad; si no, baja y ofrece repetir con pista. Hecho con el [motor de geoplano](../../juegos/motores/) a partir del diseño T2-19 del catálogo anual.
+Es adaptativo: si va bien, sube la dificultad; si no, baja y ofrece repetir con pista. Hecho con el [motor de geoplano](../../juegos/motores/).

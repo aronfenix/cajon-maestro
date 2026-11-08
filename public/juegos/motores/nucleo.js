@@ -30,7 +30,7 @@ export function svg(viewBox, html, attrs = {}) {
   return s;
 }
 
-// Números como en el libro y en Innovamat: 4 717, 12 500, 3,25
+// Números como en el libro: 4 717, 12 500, 3,25
 export function num(v, decimales) {
   if (typeof v !== 'number' || !isFinite(v)) return String(v);
   const neg = v < 0;

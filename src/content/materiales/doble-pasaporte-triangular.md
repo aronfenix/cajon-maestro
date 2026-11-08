@@ -11,4 +11,4 @@ orden: 4
 
 Isósceles o escaleno por los lados; rectángulo, obtusángulo o acutángulo por los ángulos. El último nivel pide las dos cosas a la vez (isósceles y rectángulos). En retícula cuadrada no hay triángulos equiláteros, así que no aparecen.
 
-Es adaptativo: si va bien, sube la dificultad; si no, baja y ofrece repetir con pista. Hecho con el [motor de geoplano](../../juegos/motores/) a partir del diseño T2-22 del catálogo anual.
+Es adaptativo: si va bien, sube la dificultad; si no, baja y ofrece repetir con pista. Hecho con el [motor de geoplano](../../juegos/motores/).

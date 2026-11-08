@@ -11,4 +11,4 @@ orden: 12
 
 La cajita multiplicativa con factores de decenas y centenas: 70 × 90, 200 × 8, ? × 80 = 5 600. Las pistas separan los ceros (7 × 9 × 100) y los errores típicos (faltan ceros, sobran ceros, sumar los factores) tienen su propio mensaje.
 
-Es adaptativo, con tres pistas por reto y un personaje que acompaña. Hecho con el [motor de multiplicar](../../juegos/motores/) a partir del diseño T2-10 del catálogo anual.
+Es adaptativo, con tres pistas por reto y un personaje que acompaña. Hecho con el [motor de multiplicar](../../juegos/motores/).

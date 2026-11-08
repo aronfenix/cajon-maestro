@@ -11,4 +11,4 @@ orden: 14
 
 Los dibujos engañan a propósito: el área se calcula con los números. Al comprobar, cada parcela se transforma a su tamaño real. En los niveles altos aparecen dos parcelas con el mismo perímetro y distinta área.
 
-Es adaptativo, con tres pistas por reto y un personaje que acompaña. Hecho con el [motor de multiplicar](../../juegos/motores/) a partir del diseño T2-04 del catálogo anual.
+Es adaptativo, con tres pistas por reto y un personaje que acompaña. Hecho con el [motor de multiplicar](../../juegos/motores/).

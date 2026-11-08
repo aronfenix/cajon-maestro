@@ -14,7 +14,7 @@ export const AREAS: Area[] = [
     nombre: 'Matemáticas',
     color: '#7FD6FF',
     vacio:
-      'En Matemáticas trabajo con Innovamat, así que de momento aquí no hay nada mío. De momento.',
+      'Todavía no hay nada en esta sección. De momento.',
   },
   { id: 'naturales', nombre: 'Naturales', color: '#8DF07D' },
   { id: 'sociales', nombre: 'Sociales', color: '#F5F03C' },

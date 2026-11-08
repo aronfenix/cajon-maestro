@@ -11,4 +11,4 @@ orden: 7
 
 Primero movimientos verticales de 1 o 2 puntos, como en las fichas; luego horizontales y, al final, diagonales (ampliación propia). La pista dibuja la flecha del movimiento desde un vértice.
 
-Es adaptativo: si va bien, sube la dificultad; si no, baja y ofrece repetir con pista. Hecho con el [motor de geoplano](../../juegos/motores/) a partir del diseño T2-07 del catálogo anual.
+Es adaptativo: si va bien, sube la dificultad; si no, baja y ofrece repetir con pista. Hecho con el [motor de geoplano](../../juegos/motores/).

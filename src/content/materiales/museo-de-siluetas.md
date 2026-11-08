@@ -11,4 +11,4 @@ orden: 5
 
 Las candidatas son giros de 90°, 180° o 270° de la figura modelo, o trampas: la misma figura en espejo, con un vértice movido o estirada. El juego comprueba la coincidencia con coordenadas, no a ojo.
 
-Es adaptativo: si va bien, sube la dificultad; si no, baja y ofrece repetir con pista. Hecho con el [motor de geoplano](../../juegos/motores/) a partir del diseño T2-05 del catálogo anual.
+Es adaptativo: si va bien, sube la dificultad; si no, baja y ofrece repetir con pista. Hecho con el [motor de geoplano](../../juegos/motores/).

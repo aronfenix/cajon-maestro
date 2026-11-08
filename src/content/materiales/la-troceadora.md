@@ -9,7 +9,7 @@ enlace: /juegos/la-troceadora/
 orden: 1
 ---
 
-Es la estrategia de las sesiones de división de Innovamat (descomponer el dividendo), convertida en un juego propio. El número se ve como una barra: cada corte tiene que dar justo (300 : 3, 120 : 3, 18 : 3…) y lo que no se puede repartir queda en rojo al final. Si alguien intenta cortar un trozo que da resto, el juego se lo para: esa es la regla de oro, como mucho un trozo con resto y siempre el último.
+Dividir descomponiendo el dividendo, convertido en juego. El número se ve como una barra: cada corte tiene que dar justo (300 : 3, 120 : 3, 18 : 3…) y lo que no se puede repartir queda en rojo al final. Si alguien intenta cortar un trozo que da resto, el juego se lo para: esa es la regla de oro, como mucho un trozo con resto y siempre el último.
 
 - **Pizarra libre**, para proyectar: se escribe cualquier división (por ejemplo la de la sesión 17, 440 : 3) y se trocea entre todos. Al acabar sale la pregunta para la puesta en común.
 - **Reto por parejas**, en las tablets: ocho divisiones cada vez más difíciles. Las estrellas dependen de cuántos trozos se usan, así que compensa pensar el trozo más grande en vez de ir de 10 en 10.
