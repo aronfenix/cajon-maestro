@@ -28,6 +28,14 @@
 </ol>
 <p>Campos comunes a todos: <code>motor</code> (recta, cifras o rejilla), <code>titulo</code>, <code>subtitulo</code>, <code>area</code> (lengua, matematicas, naturales, sociales, plastica, valores: cambia el color), <code>volver</code> (enlace a su ficha), <code>observa</code> (la pregunta de la pantalla final) y <code>rondas</code>.</p>
 <p>En cada ronda: <code>texto</code> cambia el enunciado (lo que va entre <code>**</code> sale resaltado), <code>pista</code> la línea de ayuda, <code>explica</code> lo que se añade al comprobar, <code>repetir</code> cuántas veces sale y <code>generar</code> hace que los números salgan al azar en cada partida.</p>
+<h3>Adaptativo: niveles en lugar de rondas</h3>
+<p>Si en vez de <code>rondas</code> el juego tiene <code>niveles</code> (del más fácil al más difícil), el juego se adapta: tres estrellas sin ayuda suben un nivel, dos lo mantienen y una o ninguna lo bajan. Tras un fallo se ofrece volver a intentarlo con una pista. La barra de arriba avanza por objetivos conseguidos (pesa más un acierto difícil y menos uno con ayuda) y el taller se completa al llenarla, no al pasar un número fijo de pantallas. Para completarlo hay que llegar al menos al nivel de la mitad (<code>nivelObjetivo</code> lo cambia). <code>maximo</code> limita los retos por sesión (24 por defecto). La barra se guarda en esa tablet.</p>
+<p>Cada motor trae tres pistas graduadas (orientar la mirada, señalar la estructura, enseñar una parte de la solución). En cada nivel, <code>pistas</code> cambia sus textos: <code>"pistas": ["primera", "segunda"]</code>. <code>saludo</code> es lo primero que dice el ayudante.</p>
+<pre><code>"niveles": [
+  { "modo": "estimar", "generar": true, "min": 0, "max": 100, "marcas": [0, 50, 100] },
+  { "modo": "estimar", "generar": true, "min": 0, "max": 1000, "marcas": [0, 1000],
+    "pistas": ["¿Dónde está el 500?"] }
+]</code></pre>
 <p>Todos tienen modo <strong>Pizarra</strong> (sin puntos, para proyectar). Para abrir un juego directamente así, añade <code>?pizarra</code> al final del enlace.</p>
 </section>
 

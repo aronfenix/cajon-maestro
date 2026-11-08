@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agudas, llanas y esdrújulas · Cajón maestro</title>
-<meta name="description" content="Clasifica palabras en agudas, llanas y esdrújulas pintándolas por rondas.">
+<meta name="description" content="Clasifica palabras en agudas, llanas y esdrújulas. Adaptativo: de ocho palabras a la regla de la tilde.">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../motores/base.css">
 </head>
@@ -19,40 +19,17 @@
   "motor": "rejilla",
   "area": "lengua",
   "titulo": "Agudas, llanas y esdrújulas",
-  "subtitulo": "Las mismas 24 palabras en tres rondas. Lo que ya está clasificado se queda rayado, así que cada ronda hay menos donde elegir.",
+  "subtitulo": "Pinta las palabras que pide cada reto. Empieza con pocas y, si vas bien, llegan más y la regla de la tilde.",
+  "saludo": "Di cada palabra **en voz alta** y busca la sílaba que suena más fuerte.",
   "volver": "../../materiales/agudas-llanas-esdrujulas/",
   "observa": "Busca las palabras **con tilde** de cada grupo. ¿En qué terminan las agudas que llevan tilde? ¿Y las llanas?",
-  "rondas": [
+  "niveles": [
     {
-      "items": [
-        "sábado",
-        "azúcar",
-        "árbol",
-        "brújula",
-        "pájaro",
-        "lápiz",
-        "camión",
-        "césped",
-        "ratón",
-        "papel",
-        "teléfono",
-        "feliz",
-        "móvil",
-        "sofá",
-        "cárcel",
-        "reloj",
-        "café",
-        "examen",
-        "canción",
-        "joven",
-        "murciélago",
-        "mesa",
-        "pared",
-        "música"
-      ],
-      "columnas": 6,
-      "regla": {
-        "lista": [
+      "generar": {
+        "cantidad": 8
+      },
+      "banco": {
+        "aguda": [
           "canción",
           "reloj",
           "sofá",
@@ -61,42 +38,18 @@
           "feliz",
           "ratón",
           "café",
-          "pared"
-        ]
-      },
-      "texto": "Pinta las palabras **agudas**",
-      "pista": "Agudas: la sílaba más fuerte es la última, como en can-CIÓN o re-LOJ. Dilas en voz alta."
-    },
-    {
-      "items": [
-        "sábado",
-        "azúcar",
-        "árbol",
-        "brújula",
-        "pájaro",
-        "lápiz",
-        "camión",
-        "césped",
-        "ratón",
-        "papel",
-        "teléfono",
-        "feliz",
-        "móvil",
-        "sofá",
-        "cárcel",
-        "reloj",
-        "café",
-        "examen",
-        "canción",
-        "joven",
-        "murciélago",
-        "mesa",
-        "pared",
-        "música"
-      ],
-      "columnas": 6,
-      "regla": {
-        "lista": [
+          "pared",
+          "compás",
+          "jabón",
+          "nariz",
+          "balcón",
+          "autobús",
+          "motor",
+          "ciudad",
+          "menú",
+          "salud"
+        ],
+        "llana": [
           "árbol",
           "lápiz",
           "mesa",
@@ -105,57 +58,460 @@
           "examen",
           "móvil",
           "joven",
-          "cárcel"
-        ]
-      },
-      "mantener": true,
-      "textoAntes": "Rayadas: las agudas",
-      "texto": "Ahora las **llanas**",
-      "pista": "Llanas: la sílaba más fuerte es la penúltima, como en ÁR-bol o ME-sa."
-    },
-    {
-      "items": [
-        "sábado",
-        "azúcar",
-        "árbol",
-        "brújula",
-        "pájaro",
-        "lápiz",
-        "camión",
-        "césped",
-        "ratón",
-        "papel",
-        "teléfono",
-        "feliz",
-        "móvil",
-        "sofá",
-        "cárcel",
-        "reloj",
-        "café",
-        "examen",
-        "canción",
-        "joven",
-        "murciélago",
-        "mesa",
-        "pared",
-        "música"
-      ],
-      "columnas": 6,
-      "regla": {
-        "lista": [
+          "cárcel",
+          "casa",
+          "libro",
+          "fácil",
+          "útil",
+          "cráter",
+          "silla",
+          "ventana",
+          "carácter",
+          "dólar"
+        ],
+        "esdrujula": [
           "pájaro",
           "música",
           "murciélago",
           "brújula",
           "sábado",
-          "teléfono"
+          "teléfono",
+          "médico",
+          "lámpara",
+          "plátano",
+          "número",
+          "rápido",
+          "último",
+          "círculo",
+          "sílaba"
         ]
       },
-      "mantener": true,
-      "textoAntes": "Rayadas: agudas y llanas",
-      "texto": "Y por último, las **esdrújulas**",
-      "pista": "Esdrújulas: la sílaba más fuerte es la antepenúltima, como en PÁ-ja-ro. Todas llevan tilde.",
-      "explica": "Si has acertado las dos rondas anteriores, las que quedan sin rayar son justo estas."
+      "buscar": "aguda",
+      "columnas": 4,
+      "texto": "Pinta las palabras **agudas**",
+      "pistas": [
+        "Agudas: la sílaba más fuerte es **la última**, como en can-CIÓN o re-LOJ."
+      ]
+    },
+    {
+      "generar": {
+        "cantidad": 8
+      },
+      "banco": {
+        "aguda": [
+          "canción",
+          "reloj",
+          "sofá",
+          "papel",
+          "camión",
+          "feliz",
+          "ratón",
+          "café",
+          "pared",
+          "compás",
+          "jabón",
+          "nariz",
+          "balcón",
+          "autobús",
+          "motor",
+          "ciudad",
+          "menú",
+          "salud"
+        ],
+        "llana": [
+          "árbol",
+          "lápiz",
+          "mesa",
+          "césped",
+          "azúcar",
+          "examen",
+          "móvil",
+          "joven",
+          "cárcel",
+          "casa",
+          "libro",
+          "fácil",
+          "útil",
+          "cráter",
+          "silla",
+          "ventana",
+          "carácter",
+          "dólar"
+        ],
+        "esdrujula": [
+          "pájaro",
+          "música",
+          "murciélago",
+          "brújula",
+          "sábado",
+          "teléfono",
+          "médico",
+          "lámpara",
+          "plátano",
+          "número",
+          "rápido",
+          "último",
+          "círculo",
+          "sílaba"
+        ]
+      },
+      "buscar": "llana",
+      "columnas": 4,
+      "texto": "Pinta las palabras **llanas**",
+      "pistas": [
+        "Llanas: la sílaba más fuerte es **la penúltima**, como en ÁR-bol o ME-sa."
+      ]
+    },
+    {
+      "generar": {
+        "cantidad": 10
+      },
+      "banco": {
+        "aguda": [
+          "canción",
+          "reloj",
+          "sofá",
+          "papel",
+          "camión",
+          "feliz",
+          "ratón",
+          "café",
+          "pared",
+          "compás",
+          "jabón",
+          "nariz",
+          "balcón",
+          "autobús",
+          "motor",
+          "ciudad",
+          "menú",
+          "salud"
+        ],
+        "llana": [
+          "árbol",
+          "lápiz",
+          "mesa",
+          "césped",
+          "azúcar",
+          "examen",
+          "móvil",
+          "joven",
+          "cárcel",
+          "casa",
+          "libro",
+          "fácil",
+          "útil",
+          "cráter",
+          "silla",
+          "ventana",
+          "carácter",
+          "dólar"
+        ],
+        "esdrujula": [
+          "pájaro",
+          "música",
+          "murciélago",
+          "brújula",
+          "sábado",
+          "teléfono",
+          "médico",
+          "lámpara",
+          "plátano",
+          "número",
+          "rápido",
+          "último",
+          "círculo",
+          "sílaba"
+        ]
+      },
+      "buscar": "esdrujula",
+      "columnas": 5,
+      "texto": "Pinta las **esdrújulas**",
+      "pistas": [
+        "Esdrújulas: la sílaba más fuerte es **la antepenúltima**, como en PÁ-ja-ro. Todas llevan tilde."
+      ]
+    },
+    {
+      "generar": {
+        "cantidad": 12
+      },
+      "banco": {
+        "aguda": [
+          "canción",
+          "reloj",
+          "sofá",
+          "papel",
+          "camión",
+          "feliz",
+          "ratón",
+          "café",
+          "pared",
+          "compás",
+          "jabón",
+          "nariz",
+          "balcón",
+          "autobús",
+          "motor",
+          "ciudad",
+          "menú",
+          "salud"
+        ],
+        "llana": [
+          "árbol",
+          "lápiz",
+          "mesa",
+          "césped",
+          "azúcar",
+          "examen",
+          "móvil",
+          "joven",
+          "cárcel",
+          "casa",
+          "libro",
+          "fácil",
+          "útil",
+          "cráter",
+          "silla",
+          "ventana",
+          "carácter",
+          "dólar"
+        ],
+        "esdrujula": [
+          "pájaro",
+          "música",
+          "murciélago",
+          "brújula",
+          "sábado",
+          "teléfono",
+          "médico",
+          "lámpara",
+          "plátano",
+          "número",
+          "rápido",
+          "último",
+          "círculo",
+          "sílaba"
+        ]
+      },
+      "buscar": "aguda",
+      "columnas": 6,
+      "texto": "Pinta las palabras **agudas**",
+      "pistas": [
+        "Agudas: la sílaba más fuerte es **la última**, como en can-CIÓN o re-LOJ."
+      ]
+    },
+    {
+      "generar": {
+        "cantidad": 12
+      },
+      "banco": {
+        "aguda": [
+          "canción",
+          "reloj",
+          "sofá",
+          "papel",
+          "camión",
+          "feliz",
+          "ratón",
+          "café",
+          "pared",
+          "compás",
+          "jabón",
+          "nariz",
+          "balcón",
+          "autobús",
+          "motor",
+          "ciudad",
+          "menú",
+          "salud"
+        ],
+        "llana": [
+          "árbol",
+          "lápiz",
+          "mesa",
+          "césped",
+          "azúcar",
+          "examen",
+          "móvil",
+          "joven",
+          "cárcel",
+          "casa",
+          "libro",
+          "fácil",
+          "útil",
+          "cráter",
+          "silla",
+          "ventana",
+          "carácter",
+          "dólar"
+        ],
+        "esdrujula": [
+          "pájaro",
+          "música",
+          "murciélago",
+          "brújula",
+          "sábado",
+          "teléfono",
+          "médico",
+          "lámpara",
+          "plátano",
+          "número",
+          "rápido",
+          "último",
+          "círculo",
+          "sílaba"
+        ]
+      },
+      "buscar": "llana",
+      "columnas": 6,
+      "texto": "Pinta las palabras **llanas**",
+      "pistas": [
+        "Llanas: la sílaba más fuerte es **la penúltima**, como en ÁR-bol o ME-sa."
+      ]
+    },
+    {
+      "generar": {
+        "cantidad": 16,
+        "proporcion": 0.3
+      },
+      "banco": {
+        "aguda": [
+          "canción",
+          "reloj",
+          "sofá",
+          "papel",
+          "camión",
+          "feliz",
+          "ratón",
+          "café",
+          "pared",
+          "compás",
+          "jabón",
+          "nariz",
+          "balcón",
+          "autobús",
+          "motor",
+          "ciudad",
+          "menú",
+          "salud"
+        ],
+        "llana": [
+          "árbol",
+          "lápiz",
+          "mesa",
+          "césped",
+          "azúcar",
+          "examen",
+          "móvil",
+          "joven",
+          "cárcel",
+          "casa",
+          "libro",
+          "fácil",
+          "útil",
+          "cráter",
+          "silla",
+          "ventana",
+          "carácter",
+          "dólar"
+        ],
+        "esdrujula": [
+          "pájaro",
+          "música",
+          "murciélago",
+          "brújula",
+          "sábado",
+          "teléfono",
+          "médico",
+          "lámpara",
+          "plátano",
+          "número",
+          "rápido",
+          "último",
+          "círculo",
+          "sílaba"
+        ]
+      },
+      "buscar": "aguda-tilde",
+      "columnas": 6,
+      "texto": "Pinta solo las **agudas que llevan tilde**",
+      "pistas": [
+        "Primero busca las agudas. Luego quédate con las que tienen tilde.",
+        "Las agudas llevan tilde cuando acaban en **vocal, n o s**."
+      ],
+      "explica": "Las agudas llevan tilde si acaban en vocal, n o s: can-ción, so-fá, au-to-bús."
+    },
+    {
+      "generar": {
+        "cantidad": 16,
+        "proporcion": 0.3
+      },
+      "banco": {
+        "aguda": [
+          "canción",
+          "reloj",
+          "sofá",
+          "papel",
+          "camión",
+          "feliz",
+          "ratón",
+          "café",
+          "pared",
+          "compás",
+          "jabón",
+          "nariz",
+          "balcón",
+          "autobús",
+          "motor",
+          "ciudad",
+          "menú",
+          "salud"
+        ],
+        "llana": [
+          "árbol",
+          "lápiz",
+          "mesa",
+          "césped",
+          "azúcar",
+          "examen",
+          "móvil",
+          "joven",
+          "cárcel",
+          "casa",
+          "libro",
+          "fácil",
+          "útil",
+          "cráter",
+          "silla",
+          "ventana",
+          "carácter",
+          "dólar"
+        ],
+        "esdrujula": [
+          "pájaro",
+          "música",
+          "murciélago",
+          "brújula",
+          "sábado",
+          "teléfono",
+          "médico",
+          "lámpara",
+          "plátano",
+          "número",
+          "rápido",
+          "último",
+          "círculo",
+          "sílaba"
+        ]
+      },
+      "buscar": "llana-tilde",
+      "columnas": 6,
+      "texto": "Pinta solo las **llanas que llevan tilde**",
+      "pistas": [
+        "Primero busca las llanas. Luego quédate con las que tienen tilde.",
+        "Las llanas llevan tilde cuando **no** acaban en vocal, n o s."
+      ],
+      "explica": "Justo al revés que las agudas: ár-bol, lá-piz, cés-ped."
     }
   ]
 }

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>La máquina de cifras · Cajón maestro</title>
-<meta name="description" content="Coloca las cifras para formar el mayor, el menor, el más cercano o el par más grande. Con rondas a ciegas.">
+<meta name="description" content="Coloca cifras para formar el mayor, el menor, el más cercano o el par más grande. Adaptativo, con rondas a ciegas.">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../motores/base.css">
 </head>
@@ -19,10 +19,16 @@
   "motor": "cifras",
   "area": "matematicas",
   "titulo": "La máquina de cifras",
-  "subtitulo": "Cada hueco vale distinto según dónde esté. Coloca las cifras para que salga el número que pide el reto.",
+  "subtitulo": "Cada hueco vale distinto según dónde esté. Los retos se complican cuando los vas clavando.",
+  "saludo": "Toca una cifra y luego el hueco donde va. **El hueco de la izquierda es el que más vale.**",
   "volver": "../../materiales/la-maquina-de-cifras/",
   "observa": "¿Dónde pones la cifra más grande cuando buscas el número mayor? ¿Y en las rondas **a ciegas**, dónde pones un 5 si es la primera que sale?",
-  "rondas": [
+  "niveles": [
+    {
+      "generar": true,
+      "huecos": 3,
+      "objetivo": "max"
+    },
     {
       "generar": true,
       "huecos": 4,

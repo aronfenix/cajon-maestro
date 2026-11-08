@@ -127,7 +127,6 @@ export async function arrancar(config, motor) {
     try { localStorage.setItem('cajon-sonido', sonidoOn ? 'si' : 'no'); } catch {}
     suena('clic');
   };
-  const pegatinas = el('ol', { class: 'pegatinas', 'aria-label': 'Pegatinas de cada ronda' });
   const reto = el('h2', { class: 'reto', 'aria-live': 'polite' });
   const pista = el('p', { class: 'pista' });
   const escenario = el('div', { class: 'escenario' });
@@ -137,14 +136,40 @@ export async function arrancar(config, motor) {
   const zona = el('div', {}, reto, pista, escenario, acciones, aviso, correccion);
   const final = el('section', { class: 'final', hidden: true, 'aria-live': 'polite' });
 
+  // barra de progreso: avanza por objetivos conseguidos, no por número de pantallas
+  const relleno = el('span', { class: 'relleno' }, el('span', { class: 'punta-barra' }));
+  const barra = el('div', { class: 'progreso', role: 'progressbar', 'aria-label': 'Progreso del taller', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': '0' }, relleno);
+  const nivelUI = el('span', { class: 'nivel', role: 'img' });
+  const racha = el('span', { class: 'racha', hidden: true });
+  const estado = el('div', { class: 'estado' }, barra, nivelUI, racha);
+
+  // el asistente: de momento una bombilla con bocadillo; el personaje irá aquí
+  const bocadillo = el('div', { class: 'bocadillo', role: 'status', 'aria-live': 'polite', hidden: true });
+  const figura = el('div', { class: 'figura', 'aria-hidden': 'true' },
+    svg('0 0 64 64', '<circle cx="32" cy="27" r="19" fill="var(--oro)" stroke="#000" stroke-width="3"/><path d="M24 44h16v8a4 4 0 0 1-4 4h-8a4 4 0 0 1-4-4z" fill="#c9cfca" stroke="#000" stroke-width="3"/><path d="M26 49h12" stroke="#000" stroke-width="2.5"/><path d="M27 30q5 6 10 0" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><circle cx="26" cy="23" r="2.6"/><circle cx="38" cy="23" r="2.6"/>', { width: 64, height: 64 }));
+  const asistente = el('aside', { class: 'asistente', 'aria-label': 'Ayudante' }, bocadillo, figura);
+  let callaT = null;
+  const di = (texto, tipo = 'pista', ms = 0) => {
+    clearTimeout(callaT);
+    bocadillo.className = 'bocadillo ' + tipo;
+    bocadillo.replaceChildren(marca(texto));
+    bocadillo.hidden = false;
+    bocadillo.classList.remove('entra'); void bocadillo.offsetWidth; bocadillo.classList.add('entra');
+    figura.classList.remove('habla'); void figura.offsetWidth; figura.classList.add('habla');
+    if (ms) callaT = setTimeout(() => (bocadillo.hidden = true), ms);
+  };
+  const calla = () => { clearTimeout(callaT); bocadillo.hidden = true; };
+  bocadillo.addEventListener('click', calla);
+
   document.body.prepend(
     el('header', { class: 'barra-juego' },
       el('a', { class: 'volver', href: config.volver || '../../' },
         svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 }), 'Cajón maestro'),
       el('h1', { text: config.titulo }),
       el('div', { class: 'controles' }, el('div', { class: 'interruptor', role: 'group', 'aria-label': 'Modo' }, btnReto, btnPiz), btnSon),
-      pegatinas),
-    el('main', { class: 'mesa-juego' }, config.subtitulo && el('p', { class: 'pista', style: { marginTop: '4px' }, text: config.subtitulo }), zona, final));
+      estado),
+    el('main', { class: 'mesa-juego' }, config.subtitulo && el('p', { class: 'pista', style: { marginTop: '4px' }, text: config.subtitulo }), zona, final),
+    asistente);
 
   let pizarra = pizarraInicial;
   document.body.classList.toggle('pizarra', pizarra);
@@ -161,108 +186,187 @@ export async function arrancar(config, motor) {
 
   const cartel = el('div', { class: 'cartel', 'aria-hidden': 'true' });
   document.body.append(cartel);
-  const claveRecord = 'cajon-record:' + location.pathname;
-  const leeRecord = () => { try { return Number(localStorage.getItem(claveRecord)) || 0; } catch { return 0; } };
-  const racha = el('span', { class: 'racha', hidden: true });
+  const claveRecord = 'cajon-taller:' + location.pathname;
+  const leeRecord = () => { try { return JSON.parse(localStorage.getItem(claveRecord)) || null; } catch { return null; } };
   let primeraPartida = true;
 
+  const adaptativo = Array.isArray(config.niveles);
+  const NIVELES = adaptativo ? config.niveles : null;
+  const TOP = adaptativo ? NIVELES.length - 1 : 0;
+  const objetivo = config.nivelObjetivo ?? Math.ceil(TOP / 2); // dificultad mínima para poder completar
+  const fijas = () => { const out = []; for (const r of config.rondas) for (let i = 0; i < (r.repetir || 1); i++) out.push(r); return out; };
+  const crea = (spec) => (spec.generar ? motor.generar(spec) : structuredClone(spec.variantes ? spec.variantes[Math.floor(Math.random() * spec.variantes.length)] : spec));
+
+  const pintaNivel = (L, total) => {
+    nivelUI.replaceChildren(...Array.from({ length: total }, (_, k) => el('i', { class: k <= L ? 'on' : '', style: { height: 6 + (k * 14) / Math.max(1, total - 1) + 'px' } })));
+    nivelUI.setAttribute('aria-label', `Dificultad ${L + 1} de ${total}`);
+    nivelUI.title = `Dificultad ${L + 1} de ${total}`;
+  };
+  const pintaBarra = (p, chispa) => {
+    relleno.style.width = Math.max(3, p) + '%';
+    barra.setAttribute('aria-valuenow', String(Math.round(p)));
+    if (chispa) setTimeout(() => fx.chispasEn(relleno.querySelector('.punta-barra'), 10, css('--acento')), 450);
+  };
+  const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
+
   let token = 0;
+  // Juega un reto. Devuelve { estrellas, pistas, intento, reintentar }
+  function jugar(datos, { n, intento, mio }) {
+    return new Promise(async (resolver) => {
+      if (zona.animate && (n > 0 || intento > 1)) await zona.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateX(-60px)', opacity: 0 }], { duration: 200, easing: 'ease-in' }).finished.catch(() => {});
+      if (mio !== token) return;
+      reto.replaceChildren(); pista.replaceChildren(); escenario.replaceChildren(); acciones.replaceChildren();
+      aviso.textContent = ''; aviso.className = 'aviso'; correccion.hidden = true; correccion.replaceChildren();
+      calla();
+      if (intento === 1) {
+        cartel.replaceChildren(el('b', { text: `Reto ${n + 1}` }), !adaptativo && el('span', { text: `de ${fijas().length}` }));
+        cartel.classList.remove('sale'); void cartel.offsetWidth; cartel.classList.add('sale');
+      }
+      zona.classList.remove('zona-entra'); void zona.offsetWidth; zona.classList.add('zona-entra');
+      let pistas = [], usadas = 0, btnPista = null;
+      const darPista = () => {
+        if (usadas >= pistas.length) return;
+        const p = pistas[usadas++];
+        di(typeof p === 'string' ? p : p.texto, 'pista');
+        if (typeof p === 'object' && p.ver) try { p.ver(); } catch (e) { console.error(e); }
+        suena('clic');
+        if (btnPista) {
+          btnPista.lastChild.textContent = usadas < pistas.length ? `Pista ${usadas + 1}` : 'No hay más pistas';
+          btnPista.disabled = usadas >= pistas.length;
+        }
+      };
+      const ctx = {
+        pizarra, escenario, acciones, datos, num, el, suena, fx, ronda: n, intento, primera: n === 0 && intento === 1 && primeraPartida,
+        reto: (t) => reto.replaceChildren(marca(t)),
+        pista: (t) => pista.replaceChildren(marca(t)),
+        aviso: (t, mal = false) => { aviso.textContent = t || ''; aviso.className = 'aviso' + (mal ? ' mal' : ''); },
+        di,
+        pistas: (lista) => { pistas = lista.filter(Boolean); },
+        boton: (texto, fn, sec = false) => {
+          const b = el('button', { type: 'button', class: 'tecla' + (sec ? '' : ' primaria grande'), text: texto, onclick: fn });
+          btnPista ? acciones.insertBefore(b, btnPista) : acciones.append(b); return b;
+        },
+        fin: (estrellas, mensaje) => {
+          acciones.replaceChildren(); aviso.textContent = '';
+          calla();
+          const opciones = [];
+          const puedeReintentar = !pizarra && intento === 1 && estrellas < 2;
+          if (puedeReintentar) {
+            opciones.push(el('button', { type: 'button', class: 'tecla primaria grande', text: 'Volver a intentarlo', onclick: () => resolver({ estrellas, pistas: usadas, intento, reintentar: true }) }));
+            opciones.push(el('button', { type: 'button', class: 'tecla', text: 'Pasar al siguiente', onclick: () => resolver({ estrellas, pistas: usadas, intento }) }));
+          } else opciones.push(el('button', { type: 'button', class: 'tecla primaria grande', text: 'Siguiente', onclick: () => resolver({ estrellas, pistas: usadas, intento }) }));
+          correccion.replaceChildren(
+            el('div', { class: 'sello' + (estrellas === 0 ? ' gris' : ''), 'aria-hidden': 'true', text: SELLOS[estrellas] }),
+            el('div', { class: 'texto' }, el('p', {}, marca(mensaje)), estrellasNodo(estrellas)),
+            el('div', { class: 'opciones' }, opciones));
+          correccion.hidden = false;
+          if (!pizarra) {
+            const sello = correccion.querySelector('.sello');
+            suena('sello'); fx.vibra(estrellas ? 25 : [40, 60, 40]);
+            correccion.querySelectorAll('.estrellas .si').forEach((s, k) => setTimeout(() => { suena('estrella'); fx.chispasEn(s, 8); }, 260 + k * 140));
+            setTimeout(() => suena(estrellas === 3 ? 'bien' : estrellas >= 1 ? 'regular' : 'mal'), 300 + estrellas * 140);
+            if (estrellas === 3) setTimeout(() => fx.confetiEn(sello, 70), 380);
+            if (estrellas === 0) fx.temblor(escenario, 10);
+            if (puedeReintentar) setTimeout(() => di(estrellas ? 'Casi. Mira la corrección y prueba otra vez: **te doy una pista** al empezar.' : 'No pasa nada. Mira dónde estaba y vuelve a intentarlo: **te ayudo un poco**.', 'animo', 6000), 900);
+            else if (intento === 2 && estrellas >= 2) setTimeout(() => di('¿Ves? A la segunda ha salido.', 'bien', 3500), 900);
+          }
+          opciones[0].focus({ preventScroll: true });
+          correccion.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        },
+      };
+      motor.ronda(datos, ctx);
+      if (pistas.length) {
+        btnPista = el('button', { type: 'button', class: 'tecla pista-btn', onclick: darPista },
+          svg('0 0 24 24', '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V17h5v-1.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" fill="var(--oro)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>', { width: 22, height: 22 }),
+          el('span', { text: 'Pista 1' }));
+        acciones.append(btnPista);
+        if (intento === 2) setTimeout(darPista, 650);
+      }
+    });
+  }
+
   async function partida() {
     const mio = ++token;
     final.hidden = true; zona.hidden = false;
-    const rondas = [];
-    for (const r of config.rondas) for (let i = 0; i < (r.repetir || 1); i++) rondas.push(r.generar ? motor.generar(r) : structuredClone(r));
-    const logros = [];
-    const huecos = rondas.map((_, i) => el('li', { text: i + 1 }));
-    const totalTxt = el('span', { class: 'total' });
-    pegatinas.replaceChildren(...huecos, totalTxt, racha);
-    let enRacha = 0; racha.hidden = true;
+    const enPizarra = pizarra;
+    const secuencia = !adaptativo ? fijas() : enPizarra ? NIVELES : null; // en pizarra, los niveles en orden
+    let L = adaptativo ? Math.min(config.nivelInicial ?? 0, TOP) : 0;
+    let progreso = 0, n = 0, seguidas = 0, maxL = L;
+    const claveProg = 'cajon-progreso:' + location.pathname;
+    if (adaptativo && !enPizarra) try { const g = JSON.parse(localStorage.getItem(claveProg)); if (g && g.progreso < 100) { progreso = g.progreso; L = Math.min(g.nivel, TOP); maxL = L; } } catch {}
+    const guarda = () => { try { progreso >= 100 ? localStorage.removeItem(claveProg) : localStorage.setItem(claveProg, JSON.stringify({ progreso, nivel: L })); } catch {} };
+    const maximo = config.maximo ?? 24;
+    const historial = [];
+    pintaBarra(progreso); pintaNivel(L, adaptativo ? TOP + 1 : 1);
+    if (progreso > 0 && primeraPartida) setTimeout(() => di('Seguimos donde lo dejaste.', 'saludo', 3500), 1100);
+    nivelUI.hidden = !adaptativo; racha.hidden = true;
+    if (primeraPartida && config.saludo && !enPizarra) setTimeout(() => di(config.saludo, 'saludo', 6000), 1100);
 
-    for (let i = 0; i < rondas.length; i++) {
+    while (mio === token) {
+      if (secuencia ? n >= secuencia.length : progreso >= 100 || n >= maximo) break;
+      const spec = secuencia ? secuencia[n] : NIVELES[L];
+      const datos = crea(spec);
+      let r = await jugar(datos, { n, intento: 1, mio });
       if (mio !== token) return;
-      huecos.forEach((h, j) => h.classList.toggle('ahora', j === i));
-      totalTxt.textContent = `Ronda ${i + 1} de ${rondas.length}`;
-      if (i > 0 && zona.animate) await zona.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateX(-60px)', opacity: 0 }], { duration: 200, easing: 'ease-in' }).finished.catch(() => {});
-      if (mio !== token) return;
-      reto.replaceChildren(); pista.replaceChildren(); escenario.replaceChildren(); acciones.replaceChildren();
-      cartel.replaceChildren(el('b', { text: i + 1 === rondas.length && rondas.length > 1 ? 'Última ronda' : `Ronda ${i + 1}` }), el('span', { text: `de ${rondas.length}` }));
-      cartel.classList.remove('sale'); void cartel.offsetWidth; cartel.classList.add('sale');
-      zona.classList.remove('zona-entra'); void zona.offsetWidth; zona.classList.add('zona-entra');
-      aviso.textContent = ''; aviso.className = 'aviso'; correccion.hidden = true; correccion.replaceChildren();
-      const r = await new Promise((resolver) => {
-        const ctx = {
-          pizarra, escenario, acciones, datos: rondas[i], num, el, suena, fx, ronda: i, primera: i === 0 && primeraPartida,
-          reto: (t) => reto.replaceChildren(marca(t)),
-          pista: (t) => pista.replaceChildren(marca(t)),
-          aviso: (t, mal = false) => { aviso.textContent = t || ''; aviso.className = 'aviso' + (mal ? ' mal' : ''); },
-          boton: (texto, fn, sec = false) => {
-            const b = el('button', { type: 'button', class: 'tecla' + (sec ? '' : ' primaria grande'), text: texto, onclick: fn });
-            acciones.append(b); return b;
-          },
-          fin: (estrellas, mensaje) => {
-            acciones.replaceChildren(); aviso.textContent = '';
-            const ultima = i + 1 === rondas.length;
-            const sig = el('button', { type: 'button', class: 'tecla primaria grande', text: ultima ? 'Ver mis pegatinas' : 'Siguiente ronda' });
-            sig.onclick = () => resolver({ estrellas: pizarra ? 0 : estrellas, mensaje });
-            correccion.replaceChildren(
-              el('div', { class: 'sello' + (estrellas === 0 ? ' gris' : ''), 'aria-hidden': 'true', text: SELLOS[estrellas] }),
-              el('div', { class: 'texto' }, el('p', {}, marca(mensaje)), estrellasNodo(estrellas)),
-              sig);
-            correccion.hidden = false;
-            if (!pizarra) {
-              const sello = correccion.querySelector('.sello');
-              suena('sello'); fx.vibra(estrellas ? 25 : [40, 60, 40]);
-              correccion.querySelectorAll('.estrellas .si').forEach((s, k) => setTimeout(() => { suena('estrella'); fx.chispasEn(s, 8); }, 260 + k * 140));
-              setTimeout(() => suena(estrellas === 3 ? 'bien' : estrellas >= 1 ? 'regular' : 'mal'), 300 + estrellas * 140);
-              if (estrellas === 3) setTimeout(() => fx.confetiEn(sello, 70), 380);
-              if (estrellas === 0) fx.temblor(escenario, 10);
-              // la pegatina vuela hasta su sitio en la hoja de arriba
-              const h = huecos[i];
-              setTimeout(() => fx.vuela(sello, h, pegatina(estrellas), { ms: 640, escala: 'ajusta', alFinal: () => {
-                h.replaceChildren(pegatina(estrellas)); h.classList.add('puesta'); h.classList.remove('ahora');
-                h.style.setProperty('--giro', (Math.random() * 30 - 15).toFixed(0) + 'deg');
-                h.setAttribute('aria-label', `Ronda ${i + 1}: ${estrellas} estrellas`);
-                suena('pon');
-              } }), 700);
-              enRacha = estrellas === 3 ? enRacha + 1 : 0;
-              if (enRacha >= 2) {
-                racha.hidden = false;
-                racha.replaceChildren(svg('0 0 24 24', '<path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3 0-5 1-8z" fill="#ff7a1a" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 13c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1-3 1 1 2 0 2-2z" fill="#ffd23f"/>', { width: 22, height: 22 }), `Racha de ${enRacha}`);
-                fx.bote(racha, 12);
-              } else racha.hidden = true;
-            }
-            sig.focus({ preventScroll: true });
-            correccion.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-          },
-        };
-        motor.ronda(rondas[i], ctx);
-      });
-      if (mio !== token) return;
-      logros.push(r);
+      if (r.reintentar) { r = await jugar(datos, { n, intento: 2, mio }); if (mio !== token) return; }
+      const ayuda = r.pistas > 0 || r.intento === 2;
+      historial.push({ nivel: L, estrellas: r.estrellas, ayuda });
+      n++;
+      if (secuencia) { progreso = (n / secuencia.length) * 100; pintaBarra(progreso, true); continue; }
+      // adaptación: lo que cuenta es el objetivo, no el número de pantallas
+      let gana = (r.estrellas === 3 ? 1 : r.estrellas === 2 ? 0.6 : 0) * (ayuda ? 0.6 : 1);
+      let inc = gana * (8 + (24 * L) / Math.max(1, TOP));
+      seguidas = r.estrellas === 3 && !ayuda ? seguidas + 1 : 0;
+      if (seguidas >= 3 && inc) inc += 4;
+      const techo = L >= objetivo ? 100 : 78;
+      progreso = Math.max(progreso, Math.min(techo, progreso + inc));
+      const antes = L;
+      if (r.estrellas === 3 && !ayuda) L = Math.min(TOP, L + 1);
+      else if (r.estrellas <= 1) L = Math.max(0, L - 1);
+      maxL = Math.max(maxL, L);
+      pintaBarra(progreso, inc > 0);
+      pintaNivel(L, TOP + 1);
+      if (!enPizarra) guarda();
+      if (L > antes) { fx.bote(nivelUI, 8); setTimeout(() => di(L === TOP ? 'Este es **de los difíciles**.' : 'Sube un poco la dificultad.', 'bien', 2600), 300); }
+      else if (L < antes) setTimeout(() => di('Vamos con uno **un poco más sencillo**.', 'animo', 2800), 300);
+      else if (progreso >= 78 && L < objetivo && techo === 78) setTimeout(() => di('Para completar el taller hay que llegar a retos **un poco más difíciles**.', 'animo', 3500), 300);
+      if (seguidas >= 2) {
+        racha.hidden = false;
+        racha.replaceChildren(svg('0 0 24 24', '<path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3 0-5 1-8z" fill="#ff7a1a" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 13c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1-3 1 1 2 0 2-2z" fill="#ffd23f"/>', { width: 22, height: 22 }), `${seguidas} seguidos`);
+        fx.bote(racha, 12);
+      } else racha.hidden = true;
+      await fx.espera(200);
     }
-    const total = logros.reduce((a, b) => a + b.estrellas, 0);
-    const posibles = rondas.length * 3;
+    if (mio !== token) return;
+
+    // final
+    calla();
+    primeraPartida = false;
     zona.hidden = true;
-    huecos.forEach((h) => h.classList.remove('ahora'));
-    final.replaceChildren(
-      el('h2', { text: pizarra ? 'Fin de la pizarra' : total === posibles ? '¡Hoja completa!' : total >= posibles * 0.7 ? 'Muy buena hoja' : total >= posibles * 0.4 ? 'Vas bien' : 'Mañana, otra' }),
-      !pizarra && el('p', { class: 'total' }, el('strong', { text: total }), ` estrellas de ${posibles}.`),
-      !pizarra && el('div', { class: 'hoja' }, logros.map((l, i) => el('figure', {}, pegatina(l.estrellas), el('figcaption', { text: `Ronda ${i + 1}` })))),
+    const completo = progreso >= 100;
+    const sinAyuda = historial.filter((h) => h.estrellas >= 2 && !h.ayuda).length;
+    const conAyuda = historial.filter((h) => h.estrellas >= 2 && h.ayuda).length;
+    const previo = leeRecord();
+    if (!enPizarra && adaptativo && completo && (!previo?.retos || n < previo.retos)) try { localStorage.setItem(claveRecord, JSON.stringify({ retos: n })); } catch {}
+    final.replaceChildren(...[
+      el('h2', { text: enPizarra ? 'Fin de la pizarra' : !adaptativo ? 'Hoja terminada' : completo ? '¡Taller completado!' : 'Por hoy, suficiente' }),
+      !enPizarra && el('ul', { class: 'resumen' },
+        el('li', {}, el('strong', { text: n }), ' retos'),
+        el('li', {}, el('strong', { text: sinAyuda }), ' bien a la primera y sin pistas'),
+        el('li', {}, el('strong', { text: conAyuda }), ' bien con ayuda'),
+        adaptativo && el('li', {}, 'Dificultad más alta: ', el('strong', { text: `${maxL + 1} de ${TOP + 1}` }))),
+      !enPizarra && adaptativo && completo && previo?.retos && el('p', { class: 'total' }, n < previo.retos ? el('span', { class: 'record', text: `¡Nuevo récord en esta tablet: ${n} retos!` }) : el('span', { class: 'record viejo', text: `Tu récord en esta tablet: ${previo.retos} retos` })),
+      !enPizarra && !completo && adaptativo && el('p', { class: 'total', text: 'La barra se queda guardada en esta tablet: la próxima vez seguirás desde aquí.' }),
+      !enPizarra && el('div', { class: 'hoja' }, historial.map((h, i) => el('figure', {}, pegatina(h.estrellas), el('figcaption', {}, String(i + 1), h.ayuda && el('small', { text: 'con ayuda' }))))),
       config.observa && el('div', { class: 'posit' }, el('strong', { text: '¿Qué observas?' }), marca(config.observa)),
       el('div', { class: 'acciones' },
-        el('button', { type: 'button', class: 'tecla primaria grande', text: 'Jugar otra partida', onclick: partida }),
-        el('a', { class: 'tecla grande', href: config.volver || '../../', text: 'Volver al cajón' })));
+        el('button', { type: 'button', class: 'tecla primaria grande', text: !adaptativo || completo || enPizarra ? 'Empezar otra vez' : 'Seguir', onclick: partida }),
+        el('a', { class: 'tecla grande', href: config.volver || '../../', text: 'Volver al cajón' }))].filter((x) => x && x.nodeType));
     final.hidden = false;
-    primeraPartida = false;
-    if (!pizarra) {
-      const strong = final.querySelector('.total strong'); fx.cuentaArriba(strong, 0, total, 900);
-      final.querySelectorAll('.hoja figure').forEach((f, k) => { f.style.animationDelay = k * 110 + 'ms'; setTimeout(() => suena('pon'), k * 110); });
-      const record = leeRecord();
-      if (total > record) {
-        try { localStorage.setItem(claveRecord, String(total)); } catch {}
-        if (record > 0) final.querySelector('.total').append(el('span', { class: 'record', text: '¡Nuevo récord en esta tablet!' }));
-      } else if (record) final.querySelector('.total').append(el('span', { class: 'record viejo', text: `Tu récord en esta tablet: ${record}` }));
-      if (total >= posibles * 0.7) setTimeout(() => { suena('bien'); fx.confeti(innerWidth / 2, innerHeight * 0.35, 140); }, 300);
+    if (!enPizarra) {
+      final.querySelectorAll('.hoja figure').forEach((f, k) => { f.style.animationDelay = k * 90 + 'ms'; setTimeout(() => suena('pon'), k * 90); });
+      if (completo || !adaptativo) setTimeout(() => { suena('bien'); fx.confeti(innerWidth / 2, innerHeight * 0.35, 140); }, 300);
+      setTimeout(() => di(completo ? 'Taller completado. **Bien pensado.**' : adaptativo ? 'Lo dejamos aquí. La próxima vez, seguimos.' : '¡Hecho!', 'bien', 6000), 700);
     }
   }
   partida();

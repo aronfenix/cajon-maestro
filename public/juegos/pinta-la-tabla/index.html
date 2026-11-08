@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pinta la tabla · Cajón maestro</title>
-<meta name="description" content="Pinta múltiplos y cuadrados en la tabla del 1 al 100 y descubre los dibujos que salen.">
+<meta name="description" content="Pinta múltiplos y números cuadrados en tablas de cien y descubre los dibujos que salen. Adaptativo.">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../motores/base.css">
 </head>
@@ -19,10 +19,28 @@
   "motor": "rejilla",
   "area": "matematicas",
   "titulo": "Pinta la tabla",
-  "subtitulo": "Una tabla del 1 al 100 y una regla. Pinta las casillas que la cumplen y fíjate en el dibujo que sale.",
+  "subtitulo": "Una tabla de cien números y una regla. Pinta las casillas que la cumplen y fíjate en el dibujo que sale.",
+  "saludo": "Toca para pintar o **arrastra el dedo**. Fíjate en el dibujo que va saliendo.",
   "volver": "../../materiales/pinta-la-tabla/",
   "observa": "Los múltiplos de 2 salen en **columnas** y los de 9 en **diagonal**. ¿Por qué cambia el dibujo? Pista: la tabla tiene 10 columnas.",
-  "rondas": [
+  "niveles": [
+    {
+      "desde": 1,
+      "hasta": 100,
+      "regla": {
+        "multiplo": 10
+      },
+      "texto": "Pinta los **múltiplos de 10**"
+    },
+    {
+      "desde": 1,
+      "hasta": 100,
+      "regla": {
+        "multiplo": 5
+      },
+      "texto": "Pinta los **múltiplos de 5**",
+      "explica": "Acaban en 0 o en 5: salen dos columnas."
+    },
     {
       "desde": 1,
       "hasta": 100,
@@ -33,32 +51,58 @@
       "explica": "Salen columnas enteras: acaban en 0, 2, 4, 6 u 8."
     },
     {
-      "desde": 1,
-      "hasta": 100,
+      "generar": {
+        "bloques": [
+          1,
+          101
+        ]
+      },
       "regla": {
         "multiplo": 3
       },
-      "mantener": true,
-      "textoAntes": "Rayadas: los múltiplos de 2",
-      "texto": "Ahora, los **múltiplos de 3**",
-      "explica": "Las rayadas y pintadas a la vez son múltiplos de 2 y de 3: 6, 12, 18… los múltiplos de 6."
+      "texto": "Pinta los **múltiplos de 3**"
     },
     {
-      "desde": 1,
-      "hasta": 100,
-      "regla": {
-        "multiplo": 5
+      "generar": {
+        "bloques": [
+          1,
+          101,
+          201,
+          301
+        ]
       },
-      "texto": "Pinta los **múltiplos de 5**"
+      "regla": {
+        "multiplo": 4
+      },
+      "texto": "Pinta los **múltiplos de 4**"
     },
     {
-      "desde": 1,
-      "hasta": 100,
+      "generar": {
+        "bloques": [
+          1,
+          101
+        ]
+      },
       "regla": {
         "multiplo": 9
       },
       "texto": "Pinta los **múltiplos de 9**",
       "explica": "Suma las cifras de cada uno: 18 → 1 + 8, 27 → 2 + 7…"
+    },
+    {
+      "generar": {
+        "bloques": [
+          1,
+          101,
+          201,
+          301
+        ]
+      },
+      "regla": {
+        "multiplo": 6
+      },
+      "texto": "Pinta los **múltiplos de 6**",
+      "explica": "Son a la vez múltiplos de 2 y de 3."
     },
     {
       "desde": 1,

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>La chincheta · Cajón maestro</title>
-<meta name="description" content="Clava cada número en su sitio de la recta. Estimación con números hasta 100 000.">
+<meta name="description" content="Clava cada número en su sitio de la recta. Estimación adaptativa con números hasta 100 000.">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../motores/base.css">
 </head>
@@ -19,10 +19,23 @@
   "motor": "recta",
   "area": "matematicas",
   "titulo": "La chincheta",
-  "subtitulo": "Solo hay un par de números escritos en la recta. Clava la chincheta donde creas que va el número y comprueba cuánto te has desviado.",
+  "subtitulo": "Clava la chincheta donde creas que va el número. Si aciertas, la recta se complica; si no, te ayuda.",
+  "saludo": "Clava la chincheta donde creas que va el número. Si te atascas, **pídeme una pista**.",
   "volver": "../../materiales/la-chincheta/",
   "observa": "¿Qué número miras primero para colocar la chincheta? ¿Te ayuda pensar en **la mitad** de la recta, o en **los cuartos**?",
-  "rondas": [
+  "niveles": [
+    {
+      "modo": "estimar",
+      "generar": true,
+      "min": 0,
+      "max": 100,
+      "marcas": [
+        0,
+        50,
+        100
+      ],
+      "divisiones": 10
+    },
     {
       "modo": "estimar",
       "generar": true,
@@ -31,40 +44,42 @@
       "marcas": [
         0,
         100
-      ],
-      "repetir": 2
+      ]
     },
     {
       "modo": "estimar",
-      "generar": {
-        "redondeo": 1
-      },
+      "generar": true,
+      "min": 0,
+      "max": 1000,
+      "marcas": [
+        0,
+        500,
+        1000
+      ]
+    },
+    {
+      "modo": "estimar",
+      "generar": true,
       "min": 0,
       "max": 1000,
       "marcas": [
         0,
         1000
-      ],
-      "repetir": 2
+      ]
     },
     {
       "modo": "estimar",
-      "generar": {
-        "redondeo": 1
-      },
+      "generar": true,
       "min": 0,
       "max": 10000,
       "marcas": [
         0,
         10000
-      ],
-      "repetir": 2
+      ]
     },
     {
       "modo": "estimar",
-      "generar": {
-        "redondeo": 1
-      },
+      "generar": true,
       "min": 2000,
       "max": 3000,
       "marcas": [

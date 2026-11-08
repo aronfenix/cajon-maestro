@@ -98,7 +98,7 @@ export function ronda(d, ctx) {
   const comparar = el('p', { class: 'comparar' });
   ctx.escenario.append(maquina, d.aCiegas ? sale : monton, comparar);
 
-  let hecho = false;
+  let hecho = false, fichasRef = [];
   const pintaHueco = (h) => {
     h.b.replaceChildren(h.cifra != null ? el('span', { class: 'ficha-cifra', 'aria-hidden': 'true', text: h.cifra }) : '');
     h.b.classList.toggle('lleno', h.cifra != null);
@@ -128,7 +128,7 @@ export function ronda(d, ctx) {
     muestra();
   } else {
     let elegida = null;
-    const fichas = d.cifras.map((c, i) => {
+    const fichas = fichasRef = d.cifras.map((c, i) => {
       const b = el('button', { type: 'button', class: 'ficha-cifra', 'aria-pressed': 'false', text: c });
       b.onclick = () => {
         if (hecho) return;
@@ -166,6 +166,37 @@ export function ronda(d, ctx) {
     ctx.boton('Vaciar', () => { huecos.forEach((h) => { if (h.origen != null) fichas[h.origen].classList.remove('usada'); h.cifra = h.origen = null; pintaHueco(h); }); listo(); }, true);
     function listo() { comprobar.disabled = huecos.some((h) => h.cifra == null); }
   }
+
+  // pistas: la condición, la posición decisiva y, si hace falta, la primera cifra
+  const mejorDe = () => {
+    const posibles = todas(d.cifras, k, dec, d.ceroDelante);
+    const val = [...posibles.keys()].filter((x) => cumple(d.condicion, x));
+    const cal = objetivo === 'max' ? (x) => -x : objetivo === 'min' ? (x) => x : (x) => Math.abs(x - d.valor);
+    val.sort((a, b) => cal(a) - cal(b));
+    return posibles.get(val[0]);
+  };
+  const p1 = d.condicion === 'par' ? 'Para que sea par, **la última cifra** tiene que ser 0, 2, 4, 6 u 8.'
+    : d.condicion === 'impar' ? 'Para que sea impar, **la última cifra** tiene que ser 1, 3, 5, 7 o 9.'
+    : String(d.condicion || '').startsWith('multiplo:5') ? 'Los múltiplos de 5 acaban en **0 o en 5**.'
+    : objetivo === 'max' ? 'La cifra de **la izquierda** es la que más vale: ahí va la más grande que puedas.'
+    : objetivo === 'min' ? 'A la izquierda va la más pequeña… pero **el 0 no puede ir delante**.'
+    : `Fíjate en cómo empieza el ${num(d.valor)}: tu número debería empezar por **una cifra parecida**.`;
+  const p2 = d.aCiegas ? 'Si sale una cifra grande, guárdala para **la izquierda**; si es pequeña, para **la derecha**.'
+    : d.condicion ? 'Primero asegura la última cifra; luego ordena las demás de izquierda a derecha.'
+    : 'Este es el hueco que más importa. Decide primero qué cifra va ahí.';
+  ctx.pistas([
+    { texto: d.pistas?.[0] ?? p1 },
+    { texto: d.pistas?.[1] ?? p2, ver: () => huecos[d.condicion ? k - 1 : 0].caja.classList.add('pista-hueco') },
+    d.aCiegas ? { texto: d.pistas?.[2] ?? `Una cifra de las que no han salido puede cambiarlo todo. Si ahora sale una grande, ¿dónde te conviene?` }
+      : { texto: d.pistas?.[2] ?? 'Te pongo la primera cifra. Termina tú.', ver: () => {
+        const m = mejorDe(); if (!m || hecho) return;
+        const h0 = huecos[0];
+        if (h0.cifra === m[0]) return;
+        if (h0.origen != null) { fichasRef[h0.origen].classList.remove('usada'); h0.cifra = h0.origen = null; pintaHueco(h0); }
+        const idx = d.cifras.findIndex((c, j) => c === m[0] && !fichasRef[j].classList.contains('usada'));
+        if (idx >= 0) { fichasRef[idx].click(); if (fichasRef[idx].getAttribute('aria-pressed') === 'true') h0.b.click(); }
+      } },
+  ]);
 
   async function revisar() {
     if (hecho) return;

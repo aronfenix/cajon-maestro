@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>A saltos · Cajón maestro</title>
-<meta name="description" content="Llega de un número a otro con el menor número de saltos de 1, 10, 100 y 1 000.">
+<meta name="description" content="Llega de un número a otro con el menor número de saltos de 1, 10, 100 y 1 000. Adaptativo.">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../motores/base.css">
 </head>
@@ -19,18 +19,28 @@
   "motor": "recta",
   "area": "matematicas",
   "titulo": "A saltos",
-  "subtitulo": "Tienes saltos de 1, de 10, de 100… hacia delante y hacia atrás. Llega a la meta con los menos saltos que puedas.",
+  "subtitulo": "Lleva la rana a la meta con los menos saltos posibles. Los retos se ajustan a cómo te va.",
+  "saludo": "Cuantos **menos saltos**, mejor. A veces pasarse y volver sale más corto.",
   "volver": "../../materiales/a-saltos/",
   "observa": "¿Cuándo compensa **pasarse y volver hacia atrás**? Busca un ejemplo en el que saltar de más ahorre saltos.",
-  "rondas": [
+  "niveles": [
     {
       "modo": "saltos",
-      "inicio": 37,
-      "meta": 100,
+      "generar": {
+        "inicio": [
+          10,
+          40
+        ],
+        "distancia": [
+          20,
+          50
+        ]
+      },
       "saltos": [
         1,
         10
-      ]
+      ],
+      "restar": false
     },
     {
       "modo": "saltos",
@@ -41,7 +51,7 @@
         ],
         "distancia": [
           25,
-          75
+          79
         ]
       },
       "saltos": [
@@ -51,8 +61,16 @@
     },
     {
       "modo": "saltos",
-      "inicio": 196,
-      "meta": 400,
+      "generar": {
+        "inicio": [
+          100,
+          300
+        ],
+        "distancia": [
+          120,
+          300
+        ]
+      },
       "saltos": [
         1,
         10,
@@ -76,13 +94,20 @@
         1,
         10,
         100
-      ],
-      "repetir": 2
+      ]
     },
     {
       "modo": "saltos",
-      "inicio": 2990,
-      "meta": 5000,
+      "generar": {
+        "inicio": [
+          1000,
+          3000
+        ],
+        "distancia": [
+          1100,
+          2900
+        ]
+      },
       "saltos": [
         1,
         10,
@@ -98,7 +123,7 @@
           4000
         ],
         "distancia": [
-          1200,
+          1500,
           3900
         ],
         "haciaAtras": true
@@ -108,8 +133,7 @@
         10,
         100,
         1000
-      ],
-      "repetir": 2
+      ]
     }
   ]
 }

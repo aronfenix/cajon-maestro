@@ -4,6 +4,7 @@
 //   saltos   → llevar la rana de un número a otro con el menor número de saltos
 import { el, svg, num, azar, barajar, redondea, suena } from './nucleo.js';
 import { polvo, chispasEn, cuentaArriba, espera, mano, bote, temblor } from './efectos.js';
+const conTextos = (lista, d) => lista.map((p, i) => (d.pistas?.[i] ? { ...p, texto: d.pistas[i] } : p));
 const bloquea = (ctx) => ctx.acciones.querySelectorAll('button').forEach((b) => (b.disabled = true));
 function polvoBajo(nodo) { const r = nodo.getBoundingClientRect(); polvo(r.left + r.width / 2, r.bottom - 4); }
 
@@ -96,6 +97,13 @@ function estimar(d, ctx) {
   // desde el teclado se empieza con la chincheta en el centro
   mango.addEventListener('focus', () => { if (g == null && !hecho) mueve((d.min + d.max) / 2, true); });
   if (ctx.primera) mano(R.regla, { dx: 0.38 });
+  const marcaPista = (v) => { R.escala.append(el('span', { class: 'tic pista-tic', style: { left: R.pc(v) + '%' } }), el('span', { class: 'num pista-num', style: { left: R.pc(v) + '%' }, text: num(redondea(v, d.paso ?? 1), d.decimales) })); };
+  const mitad = (d.min + d.max) / 2;
+  ctx.pistas(conTextos([
+    { texto: `Piensa primero en **la mitad** de la recta: es el ${num(redondea(mitad, d.paso ?? 1), d.decimales)}. ¿El ${fmt(d, d.valor)} está antes o después?` },
+    { texto: 'Te marco la mitad en la regla.', ver: () => marcaPista(mitad) },
+    { texto: 'Y ahora los cuartos. Busca entre qué dos marcas cae y afina.', ver: () => { marcaPista(d.min + (d.max - d.min) / 4); marcaPista(d.min + (3 * (d.max - d.min)) / 4); } },
+  ], d));
 
   async function revisar() {
     if (g == null || hecho) return;
@@ -244,6 +252,12 @@ function ordenar(d, ctx) {
     });
   }
   if (ctx.primera) mano(tarjetas[0].nodo, { dx: 0.5, demora: 3500 });
+  const mitadO = (d.min + d.max) / 2;
+  ctx.pistas(conTextos([
+    { texto: 'Empieza por **la más pequeña y la más grande**: son las que van más cerca de los extremos.' },
+    { texto: `Te marco la mitad, el ${num(mitadO, d.decimales)}. ¿Qué etiquetas van antes y cuáles después?`, ver: () => R.escala.append(el('span', { class: 'tic pista-tic', style: { left: '50%' } }), el('span', { class: 'num pista-num', style: { left: '50%' }, text: num(mitadO, d.decimales) })) },
+    { texto: 'Te numero las etiquetas de menor a mayor. Ahora ajusta las distancias.', ver: () => [...tarjetas].sort((a, b) => a.valor - b.valor).forEach((t, k) => t.nodo.append(el('span', { class: 'orden-pista', text: k + 1 }))) },
+  ], d));
   R.regla.addEventListener('pointerdown', (e) => {
     if (hecho || !elegida) return;
     const t = elegida; colocar(t, R.valorEn(e.clientX)); t.nodo.focus({ preventScroll: true });
@@ -409,6 +423,11 @@ function saltar(d, ctx) {
   window.addEventListener('resize', () => !hecho && pinta(false));
   requestAnimationFrame(() => pinta(false));
   if (ctx.primera) setTimeout(() => mano(botones.firstChild, { dx: 0.5, demora: 2800 }), 50);
+  ctx.pistas(conTextos([
+    { texto: `¿Cuánto hay del ${num(d.inicio)} al ${num(d.meta)}? Calcúlalo antes de saltar: son **${num(Math.abs(d.meta - d.inicio))}**.` },
+    { texto: 'Usa primero **los saltos grandes** y afina al final con los pequeños. Si te pasas un poco, puedes volver.' },
+    { texto: `Un camino de los más cortos: ${agrupa(optimo)}.` },
+  ], d));
 
   async function acabar() {
     if (hecho && !ctx.pizarra) return;

@@ -23,9 +23,24 @@ function reglaDe(r) {
 
 let anterior = null; // { clave, buenas: Set de textos }
 
+const TILDE = /[áéíóú]/;
 export function generar(spec) {
   const d = structuredClone(spec);
+  const g = typeof d.generar === 'object' ? d.generar : {};
   delete d.generar;
+  if (g.bloques) { const b = g.bloques[Math.floor(Math.random() * g.bloques.length)]; d.desde = b; d.hasta = b + (g.tamano ?? 100) - 1; }
+  if (d.banco && d.buscar) {
+    // elige palabras del banco asegurando que haya bastantes de las que se buscan
+    const [cat, tilde] = d.buscar.split('-');
+    const va = (w) => w.cat === cat && (!tilde || TILDE.test(w.t));
+    const todas = barajar(Object.entries(d.banco).flatMap(([c, ws]) => ws.map((t) => ({ t, cat: c }))));
+    const n = g.cantidad ?? 12;
+    const buenas = todas.filter(va).slice(0, Math.max(2, Math.round(n * (g.proporcion ?? 0.35))));
+    const resto = todas.filter((w) => !va(w)).slice(0, n - buenas.length);
+    d.items = barajar([...buenas, ...resto]).map((w) => ({ t: w.t, si: va(w) }));
+    delete d.banco;
+    return d;
+  }
   if (Array.isArray(d.items) && d.barajar !== false) d.items = barajar(d.items);
   return d;
 }
@@ -82,6 +97,15 @@ export function ronda(d, ctx) {
     b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
   });
 
+  const r = d.regla || {};
+  const p1 = r.multiplo ? `Los múltiplos de ${r.multiplo} salen **contando de ${r.multiplo} en ${r.multiplo}**: ${r.multiplo}, ${2 * r.multiplo}, ${3 * r.multiplo}…`
+    : r.cuadrado ? 'Un cuadrado es un número por sí mismo: **1×1, 2×2, 3×3**…' : r.primo ? 'Un primo solo se puede dividir entre 1 y entre él mismo.' : 'Lee cada palabra en voz alta y busca su sílaba más fuerte.';
+  const marcaBuenas = (cuantas) => celdas.filter((c) => esBuena(c.it) && c.b.getAttribute('aria-pressed') !== 'true' && !c.b.classList.contains('pista-celda')).slice(0, cuantas).forEach((c) => c.b.classList.add('pista-celda'));
+  ctx.pistas([
+    { texto: d.pistas?.[0] ?? p1 },
+    { texto: d.pistas?.[1] ?? 'Te marco **tres** de las que van. ¿Ves cómo siguen?', ver: () => marcaBuenas(3) },
+    { texto: d.pistas?.[2] ?? 'Te marco unas cuantas más. Fíjate en el dibujo que forman.', ver: () => marcaBuenas(Math.ceil(celdas.filter((c) => esBuena(c.it)).length / 2)) },
+  ]);
   if (ctx.primera) mano(celdas[Math.min(1, celdas.length - 1)].b, { tipo: 'arrastra', dx: 0.3 });
   ctx.boton(ctx.pizarra ? 'Ver la solución' : 'Comprobar', revisar);
   ctx.boton('Borrar todo', () => celdas.forEach((c) => pinta(c, false)), true);
