@@ -110,7 +110,7 @@ export function vibra(patron) { try { navigator.vibrate?.(patron); } catch {} }
 
 /* ---------- la mano que enseña qué hacer si nadie toca nada ---------- */
 const MANO = `<svg viewBox="0 0 64 72" width="64" height="72" aria-hidden="true"><path d="M24 6c4 0 6 3 6 7v20l3-1c3-1 6 1 7 3l1 2 3-1c3-1 6 1 7 4l1 2 2-1c3 0 6 2 6 6v9c0 11-8 20-19 20h-6c-7 0-12-3-16-9L6 47c-2-3-1-6 2-8 2-1 5-1 7 1l3 4V13c0-4 2-7 6-7z" fill="#fff" stroke="#000" stroke-width="3" stroke-linejoin="round"/><path d="M33 33v12M44 37v9M54 42v6" stroke="#000" stroke-width="2.5" stroke-linecap="round"/></svg>`;
-export function mano(objetivo, { tipo = 'toca', dx = 0.35, demora = 3200 } = {}) {
+export function mano(objetivo, { tipo = 'toca', dx = 0.35, demora = 3200, hasta = null } = {}) {
   if (quieto()) return () => {};
   let nodo = null, t = null, cancelado = false;
   const fuera = () => { cancelado = true; clearTimeout(t); nodo?.remove(); removeEventListener('pointerdown', fuera, true); removeEventListener('keydown', fuera, true); };
@@ -122,10 +122,12 @@ export function mano(objetivo, { tipo = 'toca', dx = 0.35, demora = 3200 } = {})
     nodo.innerHTML = MANO;
     Object.assign(nodo.style, { position: 'absolute', zIndex: 80, pointerEvents: 'none', left: r.left + scrollX + r.width * dx - 24 + 'px', top: r.top + scrollY + r.height * 0.45 + 'px', filter: 'drop-shadow(0 6px 4px rgba(0,0,0,.3))' });
     document.body.append(nodo);
+    let mx = r.width * 0.25, my = 4;
+    if (hasta?.isConnected) { const q = hasta.getBoundingClientRect(); mx = q.left + q.width / 2 - (r.left + r.width * dx); my = q.top + q.height / 2 - (r.top + r.height * 0.45); }
     const mov = tipo === 'arrastra'
-      ? [{ transform: 'translate(0,-30px)', opacity: 0 }, { transform: 'translate(0,0)', opacity: 1, offset: 0.15 }, { transform: 'translate(0,4px) scale(.92)', offset: 0.25 }, { transform: `translate(${r.width * 0.25}px,4px) scale(.92)`, offset: 0.75 }, { transform: `translate(${r.width * 0.25}px,-20px)`, opacity: 0 }]
+      ? [{ transform: 'translate(0,-30px)', opacity: 0 }, { transform: 'translate(0,0)', opacity: 1, offset: 0.15 }, { transform: 'translate(0,4px) scale(.92)', offset: 0.25 }, { transform: `translate(${mx}px,${my}px) scale(.92)`, offset: 0.75 }, { transform: `translate(${mx}px,${my - 24}px)`, opacity: 0 }]
       : [{ transform: 'translate(0,-30px)', opacity: 0 }, { transform: 'translate(0,0)', opacity: 1, offset: 0.3 }, { transform: 'translate(0,5px) scale(.9)', offset: 0.45 }, { transform: 'translate(0,0)', offset: 0.6 }, { transform: 'translate(0,5px) scale(.9)', offset: 0.75 }, { transform: 'translate(0,-20px)', opacity: 0 }];
-    nodo.animate(mov, { duration: 1700, iterations: 3 }).onfinish = () => nodo?.remove();
+    nodo.animate(mov, { duration: hasta ? 2100 : 1700, iterations: 3, easing: 'ease-in-out' }).onfinish = () => nodo?.remove();
   }, demora);
   return fuera;
 }
@@ -171,4 +173,61 @@ export function gomets(n = 28) {
     const destino = 30 + Math.random() * 60, giro = Math.random() * 360;
     g.animate([{ transform: `translateY(-10vh) rotate(${giro}deg)` }, { transform: `translateY(${destino}vh) rotate(${giro + 200}deg)`, offset: 0.35, easing: 'cubic-bezier(.3,1.6,.5,1)' }, { transform: `translateY(${destino}vh) rotate(${giro + 200}deg) scale(1)`, offset: 0.8 }, { transform: `translateY(${destino}vh) rotate(${giro + 260}deg) scale(.2)`, opacity: 0 }], { duration: 2600 + Math.random() * 900, delay: i * 35, fill: 'both' }).onfinish = () => g.remove();
   }
+}
+
+/* ---------- arrastrar con el dedo (y tocar, para quien no pueda arrastrar) ---------- */
+// arrastra(nodo, { destinos: () => [elementos], alSoltar(destino, x, y) → true si se queda, alTocar() })
+export function arrastra(nodo, { destinos, alSoltar, alTocar, puede = () => true }) {
+  nodo.style.touchAction = 'none';
+  // el toque (y el teclado) llega como click; tras un arrastre el click se descarta
+  nodo.addEventListener('click', (e) => {
+    if (nodo._trasArrastre) { nodo._trasArrastre = false; e.stopImmediatePropagation(); e.preventDefault(); return; }
+    alTocar?.(e);
+  }, true);
+  nodo.addEventListener('pointerdown', (e) => {
+    if (!puede() || e.button > 0) return;
+    e.preventDefault();
+    const x0 = e.clientX, y0 = e.clientY, r0 = nodo.getBoundingClientRect();
+    let fantasma = null, sobre = null;
+    const dx = x0 - r0.left, dy = y0 - r0.top;
+    try { nodo.setPointerCapture(e.pointerId); } catch {}
+    const bajo = (x, y) => { const lista = destinos(); return lista.find((d) => { const r = d.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; }) || null; };
+    const mover = (ev) => {
+      if (!fantasma) {
+        if (Math.hypot(ev.clientX - x0, ev.clientY - y0) < 7) return;
+        fantasma = nodo.cloneNode(true);
+        fantasma.classList.add('fantasma'); fantasma.removeAttribute('id');
+        Object.assign(fantasma.style, { position: 'fixed', left: 0, top: 0, width: r0.width + 'px', height: r0.height + 'px', margin: 0, zIndex: 99, pointerEvents: 'none' });
+        document.body.append(fantasma);
+        nodo.classList.add('levantado');
+        document.body.classList.add('arrastrando');
+      }
+      const x = ev.clientX - dx, y = ev.clientY - dy;
+      fantasma.style.transform = `translate(${x}px, ${y}px) rotate(-4deg) scale(1.1)`;
+      const s = bajo(ev.clientX, ev.clientY);
+      if (s !== sobre) { sobre?.classList.remove('sobre'); s?.classList.add('sobre'); sobre = s; }
+    };
+    const soltar = (ev) => {
+      nodo.removeEventListener('pointermove', mover); nodo.removeEventListener('pointerup', soltar); nodo.removeEventListener('pointercancel', soltar);
+      sobre?.classList.remove('sobre');
+      document.body.classList.remove('arrastrando');
+      if (!fantasma) return;
+      nodo._trasArrastre = true; setTimeout(() => (nodo._trasArrastre = false), 60);
+      const destino = bajo(ev.clientX, ev.clientY);
+      const res = destino ? alSoltar(destino, ev.clientX, ev.clientY) : false;
+      const queda = res !== false;
+      // alSoltar puede devolver el elemento donde «aterriza» la pieza (si no, vuelve a su nodo)
+      const pista = res instanceof Element ? res : nodo;
+      requestAnimationFrame(() => {
+        const desde = fantasma.style.transform;
+        const acaba = () => { fantasma.remove(); nodo.classList.remove('levantado'); if (queda) bote(pista.isConnected ? pista : nodo, 6); };
+        if (!pista.isConnected) { fantasma.animate([{ transform: desde, opacity: 1 }, { transform: desde + ' scale(.6)', opacity: 0 }], { duration: 200 }).onfinish = acaba; return; }
+        const r = pista.getBoundingClientRect();
+        const tx = r.left + r.width / 2 - r0.width / 2, ty = r.top + r.height / 2 - r0.height / 2;
+        const anim = fantasma.animate([{ transform: desde }, { transform: `translate(${tx}px, ${ty}px) rotate(0) scale(1)` }], { duration: queda ? 220 : 320, easing: queda ? 'cubic-bezier(.3,1.5,.5,1)' : 'cubic-bezier(.3,0,.3,1)' });
+        anim.onfinish = acaba;
+      });
+    };
+    nodo.addEventListener('pointermove', mover); nodo.addEventListener('pointerup', soltar); nodo.addEventListener('pointercancel', soltar);
+  });
 }

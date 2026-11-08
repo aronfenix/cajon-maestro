@@ -2,7 +2,7 @@
 // Hay que formar el número que cumple el reto (el mayor, el menor, el más cercano a…, par, impar, múltiplo de…).
 // Con "aCiegas": true las cifras salen de una en una y hay que decidir dónde va cada una sin poder cambiarla.
 import { el, num, barajar, azar, suena } from './nucleo.js';
-import { vuela, espera, mano, chispasEn, temblor } from './efectos.js';
+import { vuela, espera, mano, chispasEn, temblor, arrastra, bote } from './efectos.js';
 
 const NOMBRES_ENT = ['U', 'D', 'C', 'UM', 'DM', 'CM', 'U. millón'];
 const NOMBRES_DEC = ['d', 'c', 'm'];
@@ -79,7 +79,7 @@ export function ronda(d, ctx) {
   ctx.reto(d.texto ?? retoTxt);
   ctx.pista(d.pista ?? (d.aCiegas
     ? `Las cifras salen de una en una y no se pueden mover. Piensa dónde pones cada una: aún no sabes cuáles vendrán.`
-    : `Toca una cifra y después el hueco donde va. ${d.cifras.length > k ? 'Sobran cifras: no hace falta usarlas todas.' : ''}`));
+    : `Arrastra cada cifra a su hueco (o tócala y toca el hueco). ${d.cifras.length > k ? 'Sobran cifras: no hace falta usarlas todas.' : ''}`));
 
   const huecos = [];
   const ventanas = el('div', { class: 'ventanas', role: 'group', 'aria-label': 'Huecos del número' });
@@ -108,62 +108,95 @@ export function ronda(d, ctx) {
   if (d.aCiegas) {
     const orden = barajar(d.cifras).slice(0, k);
     let paso = 0, ocupado = false;
-    const muestra = () => {
-      huecos.forEach((h) => h.b.classList.toggle('espera', h.cifra == null));
-      suena('clic');
-      sale.replaceChildren(el('span', { class: 'ficha-cifra', text: orden[paso] }),
-        el('div', {}, el('p', {}, 'Sale el ', el('strong', { text: orden[paso] }), '. ¿En qué hueco lo pones?'),
-          el('p', { class: 'quedan', text: k - paso - 1 ? `Quedan ${k - paso - 1} por salir.` : 'Es la última.' })));
-    };
-    huecos.forEach((h) => (h.b.onclick = () => {
-      if (hecho || h.cifra != null || ocupado) return;
+    const ponEn = (h, volando) => {
+      if (hecho || h.cifra != null || ocupado) return false;
       ocupado = true;
       const origen = sale.querySelector('.ficha-cifra');
       const fin = () => {
-        h.cifra = orden[paso]; pintaHueco(h); suena('pon'); paso++; ocupado = false;
+        h.cifra = orden[paso]; pintaHueco(h); suena('pon'); bote(h.b, 5); paso++; ocupado = false;
         if (paso === k) { sale.replaceChildren(); huecos.forEach((x) => x.b.classList.remove('espera')); revisar(); } else muestra();
       };
-      if (origen) { const c = origen.cloneNode(true); origen.style.visibility = 'hidden'; vuela(origen, h.b, c, { ms: 340, escala: 'ajusta', alFinal: fin }); } else fin();
-    }));
+      if (origen && volando) { const c = origen.cloneNode(true); origen.style.visibility = 'hidden'; vuela(origen, h.b, c, { ms: 340, escala: 'ajusta', alFinal: fin }); }
+      else { if (origen) origen.style.visibility = 'hidden'; fin(); }
+    };
+    const muestra = () => {
+      huecos.forEach((h) => h.b.classList.toggle('espera', h.cifra == null));
+      suena('clic');
+      const ficha = el('span', { class: 'ficha-cifra arrastrable', text: orden[paso] });
+      arrastra(ficha, {
+        puede: () => !hecho && !ocupado,
+        destinos: () => huecos.filter((h) => h.cifra == null).map((h) => h.b),
+        alSoltar: (dest) => { const h = huecos.find((x) => x.b === dest); if (!h || ponEn(h, false) === false) return false; return h.b; },
+      });
+      sale.replaceChildren(ficha,
+        el('div', {}, el('p', {}, 'Sale el ', el('strong', { text: orden[paso] }), '. ¿En qué hueco lo pones?'),
+          el('p', { class: 'quedan', text: k - paso - 1 ? `Quedan ${k - paso - 1} por salir.` : 'Es la última.' })));
+    };
+    huecos.forEach((h) => (h.b.onclick = () => ponEn(h, true)));
     muestra();
   } else {
     let elegida = null;
+    const huecoDe = (nodo) => huecos.find((h) => h.b === nodo);
+    // coloca la cifra i en el hueco h (si el hueco estaba lleno, la anterior vuelve al tapete)
+    const colocar = (h, i, volando) => {
+      if (h.origen != null) fichas[h.origen].classList.remove('usada');
+      const f = fichas[i];
+      h.cifra = d.cifras[i]; h.origen = i;
+      f.setAttribute('aria-pressed', 'false'); f.classList.add('usada');
+      elegida = null; listo();
+      if (volando) {
+        const c = f.cloneNode(true); c.removeAttribute('aria-pressed');
+        h.b.replaceChildren(); h.b.classList.add('lleno');
+        vuela(f, h.b, c, { ms: 300, escala: 'ajusta', alFinal: () => { pintaHueco(h); suena('pon'); bote(h.b, 5); } });
+      } else { pintaHueco(h); suena('pon'); }
+    };
+    const vaciar = (h) => { if (h.origen != null) fichas[h.origen].classList.remove('usada'); h.cifra = h.origen = null; pintaHueco(h); };
     const fichas = fichasRef = d.cifras.map((c, i) => {
       const b = el('button', { type: 'button', class: 'ficha-cifra', 'aria-pressed': 'false', text: c });
-      b.onclick = () => {
-        if (hecho) return;
-        fichas.forEach((f) => f.setAttribute('aria-pressed', 'false'));
-        elegida = elegida === i ? null : i;
-        if (elegida != null) {
-          b.setAttribute('aria-pressed', 'true'); suena('clic');
-          // si solo queda un hueco vacío, va directa
-          const vacios = huecos.filter((h) => h.cifra == null);
-          if (vacios.length === 1 && d.cifras.length === k) poner(vacios[0]);
-        }
-      };
+      arrastra(b, {
+        puede: () => !hecho && !b.classList.contains('usada'),
+        destinos: () => huecos.map((h) => h.b),
+        alSoltar: (dest) => { const h = huecoDe(dest); if (!h) return false; colocar(h, i, false); return h.b; },
+        alTocar: () => {
+          if (hecho || b.classList.contains('usada')) return;
+          fichas.forEach((f) => f.setAttribute('aria-pressed', 'false'));
+          elegida = elegida === i ? null : i;
+          if (elegida != null) {
+            b.setAttribute('aria-pressed', 'true'); suena('clic');
+            // si solo queda un hueco vacío, va directa
+            const vacios = huecos.filter((h) => h.cifra == null);
+            if (vacios.length === 1 && d.cifras.length === k) colocar(vacios[0], i, true);
+          }
+        },
+      });
       monton.append(b);
       return b;
     });
-    const poner = (h) => {
-      if (h.origen != null) fichas[h.origen].classList.remove('usada');
-      const f = fichas[elegida];
-      h.cifra = d.cifras[elegida]; h.origen = elegida;
-      f.setAttribute('aria-pressed', 'false');
-      const c = f.cloneNode(true); c.removeAttribute('aria-pressed');
-      f.classList.add('usada');
-      h.b.replaceChildren(); h.b.classList.add('lleno');
-      elegida = null; listo();
-      vuela(f, h.b, c, { ms: 300, escala: 'ajusta', alFinal: () => { pintaHueco(h); suena('pon'); } });
-    };
-    huecos.forEach((h) => (h.b.onclick = () => {
-      if (hecho) return;
-      if (elegida != null) return poner(h);
-      if (h.cifra != null) { fichas[h.origen].classList.remove('usada'); h.cifra = null; h.origen = null; pintaHueco(h); suena('quita'); listo(); }
-    }));
-    if (ctx.primera) mano(fichas[0], { dx: 0.5 });
+    huecos.forEach((h) => {
+      // una cifra ya puesta se puede arrastrar a otro hueco (se intercambian) o devolver al tapete
+      arrastra(h.b, {
+        puede: () => !hecho && h.cifra != null,
+        destinos: () => [...huecos.filter((x) => x !== h).map((x) => x.b), monton],
+        alSoltar: (dest) => {
+          const otro = huecoDe(dest);
+          if (!otro) { const f = fichas[h.origen]; vaciar(h); suena('quita'); listo(); return f; }
+          const a = h.origen, bo = otro.origen;
+          vaciar(h); vaciar(otro);
+          colocar(otro, a, false);
+          if (bo != null) colocar(h, bo, false);
+          listo(); return otro.b;
+        },
+        alTocar: () => {
+          if (hecho) return;
+          if (elegida != null) return colocar(h, elegida, true);
+          if (h.cifra != null) { vaciar(h); suena('quita'); listo(); }
+        },
+      });
+    });
+    if (ctx.primera) mano(fichas[0], { tipo: 'arrastra', dx: 0.5, hasta: huecos[0].b });
     const comprobar = ctx.boton('Comprobar', revisar);
     comprobar.disabled = true;
-    ctx.boton('Vaciar', () => { huecos.forEach((h) => { if (h.origen != null) fichas[h.origen].classList.remove('usada'); h.cifra = h.origen = null; pintaHueco(h); }); listo(); }, true);
+    ctx.boton('Vaciar', () => { huecos.forEach(vaciar); listo(); }, true);
     function listo() { comprobar.disabled = huecos.some((h) => h.cifra == null); }
   }
 

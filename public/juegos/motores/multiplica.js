@@ -5,7 +5,7 @@
 //   areas      → ordenar parcelas por área cuando el dibujo engaña (T2-04)
 //   problemas  → grupos, combinaciones y filas: qué cuenta hay que hacer (T2-16)
 import { el, svg, num, azar, elige, barajar, suena } from './nucleo.js';
-import { espera, mano, temblor, chispasEn, cuentaArriba } from './efectos.js';
+import { espera, mano, temblor, chispasEn, cuentaArriba, arrastra, bote } from './efectos.js';
 
 const lee = (input) => { const t = String(input.value).replace(/[\s. ]/g, ''); return t === '' || !/^\d+$/.test(t) ? null : Number(t); };
 function campo(etiqueta, ancho = 6) {
@@ -214,43 +214,70 @@ function cuadrado(d, ctx) {
 function areas(d, ctx) {
   const P = d.parcelas; // [{a, b, cuadrado?}]
   ctx.reto(d.texto ?? 'Ordena las parcelas de **menor a mayor área**');
-  ctx.pista(d.pista ?? (d.escala ? 'Toca las parcelas en orden, de la más pequeña a la más grande.' : 'Toca las parcelas en orden, de la más pequeña a la más grande. **Los dibujos no están a escala.**'));
-  const orden = [];
-  const zona = el('div', { class: 'parcelas' });
+  ctx.pista(d.pista ?? ('Arrastra las parcelas para ponerlas en fila, de la más pequeña (izquierda) a la más grande (derecha). También puedes tocar dos para cambiarlas de sitio.' + (d.escala ? '' : ' **Los dibujos no están a escala.**')));
+  const zona = el('div', { class: 'parcelas fila-orden' });
   const maxLado = Math.max(...P.flatMap((p) => [p.a, p.b]));
-  const cartas = barajar(P).map((p, i) => {
+  let mezcla = barajar(P);
+  for (let t = 0; t < 5 && mezcla.every((p, i, A) => !i || A[i - 1].a * A[i - 1].b <= p.a * p.b); t++) mezcla = barajar(P);
+  let suelta = null; // carta tocada, esperando a la segunda para intercambiar
+  // FLIP: anima las cartas desde donde estaban hasta su nuevo sitio
+  const recoloca = (cambio) => {
+    const antes = new Map(cartas.map((c) => [c, c.b.getBoundingClientRect()]));
+    cambio();
+    cartas.forEach((c) => { const r0 = antes.get(c), r1 = c.b.getBoundingClientRect(); const dx = r0.left - r1.left, dy = r0.top - r1.top; if (dx || dy) c.b.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.3,1.25,.5,1)' }); });
+    marca();
+  };
+  const tocada = (c) => { suelta = c; cartas.forEach((x) => x.b.classList.toggle('elegida', x === c)); };
+  const cartas = mezcla.map((p) => {
     const area = p.a * p.b;
     // dibujo: a escala o con tamaños inventados que engañan
     const w0 = d.escala ? 30 + (p.a / maxLado) * 150 : azar(60, 170), h0 = d.escala ? 30 + (p.b / maxLado) * 150 : azar(50, 150);
     const fig = el('div', { class: 'parcela-fig', style: { width: w0 + 'px', height: (p.cuadrado ? w0 : h0) + 'px' } },
       el('span', { class: 'lado-h', text: `${p.a} m` }), !p.cuadrado && el('span', { class: 'lado-v', text: `${p.b} m` }));
-    const etq = el('span', { class: 'orden-pista', hidden: true });
+    const etq = el('span', { class: 'orden-pista' });
     const sub = el('small', { class: 'cuenta-area' });
     const b = el('button', { type: 'button', class: 'parcela' }, fig, el('span', { class: 'nombre-parcela', text: p.cuadrado ? `Cuadrado de lado ${p.a} m` : `Rectángulo de ${p.a} m por ${p.b} m` }), sub, etq);
     const c = { p, area, b, fig, etq, sub };
-    b.onclick = () => {
-      if (hecho) return;
-      const k = orden.indexOf(c);
-      if (k >= 0) orden.splice(k, 1); else orden.push(c);
-      suena(k >= 0 ? 'quita' : 'pon'); marca();
-    };
+    arrastra(b, {
+      puede: () => !hecho,
+      destinos: () => cartas.filter((x) => x !== c).map((x) => x.b),
+      alSoltar: (dest) => {
+        const hijos = [...zona.children], de = hijos.indexOf(b), a = hijos.indexOf(dest);
+        tocada(null);
+        recoloca(() => (de < a ? dest.after(b) : dest.before(b)));
+        suena('pon'); return b;
+      },
+      alTocar: () => {
+        if (hecho) return;
+        if (!suelta) { tocada(c); suena('clic'); return; }
+        if (suelta === c) { tocada(null); suena('quita'); return; }
+        const o = suelta; tocada(null);
+        recoloca(() => { const marcador = document.createComment(''); b.replaceWith(marcador); o.b.replaceWith(b); marcador.replaceWith(o.b); });
+        suena('pon'); bote(b, 5); bote(o.b, 5);
+      },
+    });
     zona.append(b);
     return c;
   });
-  const marca = () => { cartas.forEach((c) => { const k = orden.indexOf(c); c.etq.hidden = k < 0; c.etq.textContent = k + 1; c.b.classList.toggle('elegida', k >= 0); }); btn.disabled = orden.length < cartas.length; };
-  ctx.escenario.append(zona);
+  const orden = () => [...zona.children].map((n) => cartas.find((c) => c.b === n)).filter(Boolean);
+  const marca = () => orden().forEach((c, k) => (c.etq.textContent = k + 1));
+  marca();
+  const regla = el('div', { class: 'regla-orden', 'aria-hidden': 'true' }, el('span', { text: 'más pequeña' }), el('i'), el('span', { text: 'más grande' }));
+  ctx.escenario.append(zona, regla);
   ctx.pistas([
     { texto: d.pistas?.[0] ?? 'El área es **largo × ancho**. El tamaño del dibujo no cuenta: cuentan los números.' },
     { texto: d.pistas?.[1] ?? 'Te escribo la multiplicación de cada parcela.', ver: () => cartas.forEach((c) => (c.sub.textContent = `${c.p.a} × ${c.p.b} = ?`)) },
     { texto: d.pistas?.[2] ?? 'Te calculo el área de una.', ver: () => { const c = cartas[0]; c.sub.textContent = `${c.p.a} × ${c.p.b} = ${num(c.area)} m²`; } },
   ]);
-  if (ctx.primera) mano(cartas[0].b, { dx: 0.5 });
-  const btn = ctx.boton('Comprobar', revisar); btn.disabled = true;
+  if (ctx.primera) mano(cartas[0].b, { tipo: 'arrastra', dx: 0.5, hasta: cartas.at(-1).b });
+  const btn = ctx.boton('Comprobar', revisar);
   let hecho = false;
   async function revisar() {
     if (hecho) return; hecho = true; bloquea(ctx);
+    tocada(null);
+    const O = orden();
     let inv = 0;
-    for (let i = 0; i < orden.length; i++) for (let j = i + 1; j < orden.length; j++) if (orden[i].area > orden[j].area) inv++;
+    for (let i = 0; i < O.length; i++) for (let j = i + 1; j < O.length; j++) if (O[i].area > O[j].area) inv++;
     // revelado: cada parcela pasa a su tamaño real
     const maxA = Math.max(...cartas.flatMap((c) => [c.p.a, c.p.b]));
     for (const c of [...cartas].sort((x, y) => x.area - y.area)) {

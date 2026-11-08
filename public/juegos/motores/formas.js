@@ -3,7 +3,7 @@
 //   goma       → predecir si una goma elástica tocará todo el borde (convexidad) y qué vértices se quedan dentro
 //   quien      → ¿quién es quién?: preguntar para adivinar una figura, o elegir las pistas para que otro la adivine
 import { el, svg, barajar, azar, elige, suena } from './nucleo.js';
-import { espera, mano, temblor, vuela, chispasEn, bote } from './efectos.js';
+import { espera, mano, temblor, vuela, chispasEn, bote, arrastra } from './efectos.js';
 import { FAM, figuraDe, tablero, camino, notacion, pasaporte, cuadri, tri, convexo, simple, aristas, esc, l2, cruz, area2 } from './geoplano.js';
 
 const N = 6;
@@ -33,87 +33,129 @@ const NOMBRE_ZONA = { otros: 'otros cuadriláteros', paralelogramo: 'paralelogra
 
 function clasificar(d, ctx) {
   const tipo = d.tipo;
-  ctx.reto(d.texto ?? (tipo === 'lados' ? 'Cada figura, **a su caja** según sus lados' : tipo === 'triangulos' ? 'Cada triángulo, **a su cajón**: por lados y por ángulos' : 'Cada cuadrilátero, **a su sitio** del estuche'));
-  ctx.pista(d.pista ?? 'Toca una figura de la cola y después el sitio donde va. Si te equivocas, tócala otra vez para sacarla.');
+  ctx.reto(d.texto ?? (tipo === 'lados' ? 'Cada figura, **a su bolsillo** según sus lados' : tipo === 'triangulos' ? 'Cada triángulo, **a su cajón**: por lados y por ángulos' : 'Cada cuadrilátero, **a su bolsillo** del estuche'));
+  ctx.pista(d.pista ?? 'Arrastra cada figura con el dedo hasta su sitio. También puedes tocarla y después tocar el sitio.');
   const cola = el('div', { class: 'cola-figuras', role: 'group', 'aria-label': 'Figuras por colocar' });
   const zona = el('div', { class: 'zona-clasificar ' + tipo });
-  ctx.escenario.append(cola, zona);
+  ctx.escenario.append(el('div', { class: 'mesa-clasificar ' + tipo }, cola, zona));
   let hecho = false, elegida = null;
+  const destinos = [];
   const items = d.figuras.map((P, i) => {
     const b = el('button', { type: 'button', class: 'pasajero', 'aria-label': `Figura ${i + 1}` }, mini(P));
     const it = { P, b, en: null, bueno: tipo === 'cuadri' ? zonaCuadri(P, d.partes) : ZONAS[tipo].de(P) };
-    b.onclick = () => {
-      if (hecho) return;
-      if (it.en) { it.en = null; cola.append(b); b.classList.remove('colocada'); b.style.cssText = ''; suena('quita'); }
-      elegir(it);
-    };
+    arrastra(b, {
+      puede: () => !hecho,
+      destinos: () => [...destinos, cola],
+      alTocar: () => { if (it.en) { aCola(it); } elegir(it); },
+      alSoltar: (dest, x, y) => { if (dest === cola) { aCola(it); return true; } return dest._soltar(it, x, y); },
+    });
     cola.append(b);
     return it;
   });
-  const elegir = (it) => { items.forEach((x) => x.b.classList.toggle('elegida', x === it)); elegida = it; if (it) suena('clic'); comprobar.disabled = items.some((x) => !x.en); };
-  const pon = (key, cont, x, y) => {
-    if (hecho || !elegida) { if (!elegida) ctx.aviso('Primero toca una figura de la cola.'); return; }
-    const it = elegida, origen = it.b.getBoundingClientRect();
+  const aCola = (it) => { it.en = null; it._caja = null; cola.append(it.b); it.b.classList.remove('colocada'); it.b.style.position = it.b.style.left = it.b.style.top = ''; suena('quita'); listo(); };
+  const listo = () => { comprobar.disabled = items.some((x) => !x.en); };
+  const elegir = (it) => { items.forEach((x) => x.b.classList.toggle('elegida', x === it)); elegida = it; if (it) suena('clic'); };
+  // coloca una figura en un sitio; con tocar-tocar, la figura vuela hasta allí
+  const pon = (it, key, cont, x, y, volando) => {
+    const origen = it.b.getBoundingClientRect();
     it.en = key;
     cont.append(it.b);
     it.b.classList.add('colocada'); it.b.classList.remove('elegida');
-    if (x != null) Object.assign(it.b.style, { position: 'absolute', left: x + '%', top: y + '%' });
-    it.b.animate?.([{ transform: `translate(${origen.left - it.b.getBoundingClientRect().left}px, ${origen.top - it.b.getBoundingClientRect().top}px) scale(1.3)` }, { transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.3,1.3,.5,1)' });
+    if (x != null) Object.assign(it.b.style, { position: 'absolute', left: x + '%', top: y + '%' }); else it.b.style.position = it.b.style.left = it.b.style.top = '';
+    if (volando) { const r = it.b.getBoundingClientRect(); it.b.animate?.([{ transform: `translate(${origen.left - r.left}px, ${origen.top - r.top}px) scale(1.2)` }, { transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.3,1.3,.5,1)' }); }
+    cont.animate?.([{ transform: 'scale(1)' }, { transform: 'scale(1.015)' }, { transform: 'scale(1)' }], { duration: 260 });
     suena('pon'); ctx.aviso('');
-    elegida = null;
-    elegir(items.find((x) => !x.en) || null);
+    if (elegida === it) elegir(items.find((x) => !x.en) || null);
+    listo();
+    return true;
   };
+  const tocarSitio = (cont, fn) => cont.addEventListener('click', (e) => { if (e.target.closest('.pasajero') || hecho) return; if (!elegida) return ctx.aviso('Primero toca o arrastra una figura de la cola.'); fn(elegida, e.clientX, e.clientY, true); });
 
   if (tipo === 'cuadri') {
-    // diagrama: caja grande de paralelogramos; dentro, rectángulos y rombos que se solapan; el solape son los cuadrados
+    // bolsillos del estuche: paralelogramos y, dentro, rectángulos y rombos que se cruzan; el cruce son los cuadrados
     const p = d.partes;
-    const dib = svg('0 0 1000 560', `
-      <rect x="6" y="6" width="988" height="548" rx="28" class="z-otros"/>
-      <text x="30" y="46" class="z-nombre">Otros cuadriláteros</text>
-      <rect x="240" y="70" width="730" height="460" rx="26" class="z-par"/>
-      <text x="262" y="110" class="z-nombre">Paralelogramos</text>
-      ${p >= 2 ? '<ellipse cx="520" cy="320" rx="230" ry="160" class="z-rect"/><text x="330" y="190" class="z-nombre">Rectángulos</text>' : ''}
-      ${p >= 3 ? '<ellipse cx="760" cy="320" rx="200" ry="160" class="z-rombo"/><text x="830" y="190" class="z-nombre">Rombos</text><text x="640" y="470" class="z-nombre peq" text-anchor="middle">Cuadrados</text>' : ''}`, { class: 'diagrama' });
+    const R = [300, 175, 400, 360, 70], RO = [520, 175, 400, 360, 70], PA = [240, 70, 735, 500, 46];
+    const rr = ([x, y, w, h, r], c, extra = '') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" class="${c}" ${extra}/>`;
+    const costura = ([x, y, w, h, r], c) => `<rect x="${x + 12}" y="${y + 12}" width="${w - 24}" height="${h - 24}" rx="${r - 10}" class="costura ${c}"/>`;
+    const ETQ = [];
+    const etiqueta = (x, y, txt, c, ancla = 'start') => { const w = txt.length * 15 + 34; const x0 = ancla === 'end' ? x - w : ancla === 'middle' ? x - w / 2 : x; ETQ.push([x0, y - 26, w, 40]); return `<g class="etq ${c}"><rect x="${x0}" y="${y - 26}" width="${w}" height="40" rx="20"/><circle cx="${x0 + 17}" cy="${y - 6}" r="5" class="agujero"/><text x="${x0 + 30}" y="${y + 3}">${txt}</text></g>`; };
+    const dib = svg('0 0 1000 600', `
+      <defs><clipPath id="corte-rect"><rect x="${R[0]}" y="${R[1]}" width="${R[2]}" height="${R[3]}" rx="${R[4]}"/></clipPath></defs>
+      <rect x="8" y="8" width="984" height="584" rx="44" class="z-otros"/>${costura([8, 8, 984, 584, 44], 'c-otros')}
+      ${etiqueta(34, 62, 'Otros', 'e-otros')}
+      ${rr(PA, 'z-par')}${costura(PA, 'c-par')}${etiqueta(PA[0] + 26, PA[1] + 54, 'Paralelogramos', 'e-par')}
+      ${p >= 2 ? rr(R, 'z-rect') + costura(R, 'c-rect') : ''}
+      ${p >= 3 ? rr(RO, 'z-rombo') + costura(RO, 'c-rombo') + `<g clip-path="url(#corte-rect)">${rr(RO, 'z-cuadrado')}</g>` : ''}
+      ${p >= 2 ? etiqueta(R[0] + 24, R[1] + 52, 'Rectángulos', 'e-rect') : ''}
+      ${p >= 3 ? etiqueta(RO[0] + RO[2] - 24, RO[1] + 52, 'Rombos', 'e-rombo', 'end') + etiqueta(RO[0] + (R[0] + R[2] - RO[0]) / 2, R[1] + R[3] - 22, 'Cuadrados', 'e-cuadrado', 'middle') : ''}`, { class: 'diagrama' });
     const caja = el('div', { class: 'diagrama-caja' }, dib);
     zona.append(caja);
-    const dentroE = (x, y, cx, cy, rx, ry) => ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1;
-    caja.addEventListener('click', (e) => {
-      if (e.target.closest('.pasajero')) return;
+    const dentro = (x, y, [rx, ry, w, h, r]) => { if (x < rx || x > rx + w || y < ry || y > ry + h) return false; const cx = Math.max(rx + r, Math.min(x, rx + w - r)), cy = Math.max(ry + r, Math.min(y, ry + h - r)); return (x - cx) ** 2 + (y - cy) ** 2 <= r * r; };
+    const zonaEn = (x, y) => { const enP = dentro(x, y, PA), enR = p >= 2 && dentro(x, y, R), enRo = p >= 3 && dentro(x, y, RO); return !enP ? 'otros' : enR && enRo ? 'cuadrado' : enR ? 'rectangulo' : enRo ? 'rombo' : 'paralelogramo'; };
+    const choca = (a, b, m = 0) => a[0] < b[0] + b[2] + m && b[0] < a[0] + a[2] + m && a[1] < b[1] + b[3] + m && b[1] < a[1] + a[3] + m;
+    // busca, cerca de donde se ha soltado, un hueco de la misma zona que no tape etiquetas ni otras figuras
+    const acomoda = (it, x, y, w, h) => {
+      const key = zonaEn(x, y);
+      const otras = items.filter((o) => o !== it && o.en && o._caja).map((o) => o._caja);
+      const vale = (cx, cy, conOtras) => {
+        const q = [cx - w / 2, cy - h / 2, w, h];
+        if (q[0] < 14 || q[1] < 14 || q[0] + w > 986 || q[1] + h > 586) return false;
+        for (const fx of [0, 0.5, 1]) for (const fy of [0, 0.5, 1]) if (zonaEn(q[0] + 4 + fx * (w - 8), q[1] + 4 + fy * (h - 8)) !== key) return false;
+        if (ETQ.some((t) => choca(q, t, 4))) return false;
+        return !conOtras || !otras.some((o) => choca(q, o, -12));
+      };
+      // primero sin pisar a nadie; si no cabe, al menos sin tapar etiquetas ni salirse de su zona
+      for (const conOtras of [true, false]) for (let rad = 0; rad <= 320; rad += 12) {
+        const pasos = rad ? Math.ceil((2 * Math.PI * rad) / 24) : 1;
+        for (let k = 0; k < pasos; k++) { const a = (k / pasos) * 2 * Math.PI; const cx = x + rad * Math.cos(a), cy = y + rad * Math.sin(a) * 0.8; if (vale(cx, cy, conOtras)) return [key, cx, cy]; }
+      }
+      return [key, x, y];
+    };
+    const soltar = (it, cx, cy, volando) => {
       const r = caja.getBoundingClientRect();
-      const x = ((e.clientX - r.left) / r.width) * 1000, y = ((e.clientY - r.top) / r.height) * 560;
-      const enP = x >= 240 && x <= 970 && y >= 70 && y <= 530;
-      const enR = p >= 2 && dentroE(x, y, 520, 320, 230, 160), enRo = p >= 3 && dentroE(x, y, 760, 320, 200, 160);
-      const key = !enP ? 'otros' : enR && enRo ? 'cuadrado' : enR ? 'rectangulo' : enRo ? 'rombo' : 'paralelogramo';
-      pon(key, caja, Math.min(92, (x / 1000) * 100 - 4), Math.min(86, (y / 560) * 100 - 7));
-    });
+      const lado = innerWidth <= 760 ? 52 : 74; // tamaño de la figura ya dentro del estuche
+      const w = (lado / r.width) * 1000, h = (lado / r.height) * 600;
+      const [key, x, y] = acomoda(it, ((cx - r.left) / r.width) * 1000, ((cy - r.top) / r.height) * 600, w, h);
+      it._caja = [x - w / 2, y - h / 2, w, h];
+      return pon(it, key, caja, (x - w / 2) / 10, (y - h / 2) / 6, volando);
+    };
+    caja._soltar = (it, x, y) => soltar(it, x, y, false);
+    tocarSitio(caja, soltar);
+    destinos.push(caja);
   } else if (tipo === 'lados') {
-    for (const [k, nombre] of Object.entries(ZONAS.lados.nombres)) {
-      const c = el('div', { class: 'cajita-lados', role: 'button', tabindex: '0', 'aria-label': `Caja de ${nombre}` }, el('b', { text: nombre }));
-      c.addEventListener('click', (e) => { if (!e.target.closest('.pasajero')) pon(k, c); });
-      zona.append(c);
-    }
+    Object.entries(ZONAS.lados.nombres).forEach(([k, nombre], i) => {
+      const c = el('div', { class: 'bolsillo b' + i, role: 'button', tabindex: '0', 'aria-label': `Bolsillo de ${nombre}` }, el('span', { class: 'etq-html', text: nombre }));
+      c._soltar = (it) => pon(it, k, c);
+      tocarSitio(c, (it) => pon(it, k, c, null, null, true));
+      zona.append(c); destinos.push(c);
+    });
   } else {
     const Z = ZONAS.triangulos;
     zona.append(el('span'), ...Z.cols.map((c) => el('b', { class: 'cab-cajon', text: Z.nc[c] })));
-    for (const f of Z.filas) {
+    Z.filas.forEach((f, fi) => {
       zona.append(el('b', { class: 'cab-cajon fila', text: Z.nf[f] }));
       for (const c of Z.cols) {
         const k = `${f}-${c}`;
-        const cel = el('div', { class: 'cajon-tri', role: 'button', tabindex: '0', 'aria-label': `${Z.nf[f]} y ${Z.nc[c]}` });
-        cel.addEventListener('click', (e) => { if (!e.target.closest('.pasajero')) pon(k, cel); });
-        zona.append(cel);
+        const cel = el('div', { class: 'cajon-tri f' + fi, role: 'button', tabindex: '0', 'aria-label': `${Z.nf[f]} y ${Z.nc[c]}` });
+        cel._soltar = (it) => pon(it, k, cel);
+        tocarSitio(cel, (it) => pon(it, k, cel, null, null, true));
+        zona.append(cel); destinos.push(cel);
       }
-    }
+    });
   }
   const comprobar = ctx.boton('Comprobar', revisar);
   comprobar.disabled = true;
   elegir(items[0]);
   ctx.pistas([
-    { texto: d.pistas?.[0] ?? (tipo === 'lados' ? 'Recorre el borde con el dedo y cuenta los lados, no los puntos.' : tipo === 'triangulos' ? 'Cada triángulo tiene dos nombres: uno por los lados (fila) y otro por los ángulos (columna).' : 'Un rectángulo tiene cuatro ángulos rectos; un rombo, cuatro lados iguales. Un cuadrado tiene las dos cosas: por eso va **donde se juntan**.') },
-    { texto: d.pistas?.[1] ?? 'Te marco los lados iguales, los paralelos y los ángulos rectos de todas.', ver: () => items.forEach((it) => { const s = it.b.querySelector('svg'); const T = tablero(N); s.insertAdjacentHTML('beforeend', `<g class="notas">${notacion(it.P, T.X, T.Y, tipo === 'lados' ? { iguales: false, paralelos: false, rectos: false } : {})}</g>`); }) },
-    { texto: d.pistas?.[2] ?? 'Te coloco una bien. Fíjate en por qué va ahí.', ver: () => { const it = items.find((x) => x.en !== x.bueno); if (!it) return; if (it.en) { it.en = null; cola.append(it.b); it.b.style.cssText = ''; } elegir(it); const z = tipo === 'cuadri' ? null : [...zona.querySelectorAll('.cajita-lados, .cajon-tri')].find((c) => c.getAttribute('aria-label').toLowerCase().includes(tipo === 'lados' ? ZONAS.lados.nombres[it.bueno] : ZONAS.triangulos.nc[it.bueno.split('-')[1]].toLowerCase()) && (tipo === 'lados' || c.getAttribute('aria-label').toLowerCase().includes(ZONAS.triangulos.nf[it.bueno.split('-')[0]].toLowerCase()))); if (z) z.click(); else { const P = { otros: [10, 50], paralelogramo: [30, 85], rectangulo: [42, 55], rombo: [84, 55], cuadrado: [64, 58] }[it.bueno]; const caja = zona.querySelector('.diagrama-caja'); pon(it.bueno, caja, P[0] - 4, P[1] - 7); } } },
+    { texto: d.pistas?.[0] ?? (tipo === 'lados' ? 'Recorre el borde con el dedo y cuenta los lados, no los puntos.' : tipo === 'triangulos' ? 'Cada triángulo tiene dos nombres: uno por los lados (fila) y otro por los ángulos (columna).' : 'Un rectángulo tiene cuatro ángulos rectos; un rombo, cuatro lados iguales. Un cuadrado tiene las dos cosas: por eso va **donde se cruzan**.') },
+    { texto: d.pistas?.[1] ?? 'Te marco los lados iguales, los paralelos y los ángulos rectos de todas.', ver: () => items.forEach((it) => { const sv = it.b.querySelector('svg'); if (sv.querySelector('.notas')) return; const T = tablero(N); sv.insertAdjacentHTML('beforeend', `<g class="notas">${notacion(it.P, T.X, T.Y, tipo === 'lados' ? { iguales: false, paralelos: false, rectos: false } : {})}</g>`); }) },
+    { texto: d.pistas?.[2] ?? 'Te coloco una bien. Fíjate en por qué va ahí.', ver: () => {
+      const it = items.find((x) => x.en !== x.bueno); if (!it) return;
+      if (tipo === 'cuadri') { const pos = { otros: [10, 40], paralelogramo: [32, 78], rectangulo: [38, 50], rombo: [82, 50], cuadrado: [61, 50] }[it.bueno]; const caja = zona.querySelector('.diagrama-caja'); const r = caja.getBoundingClientRect(); caja._soltar(it, r.left + r.width * pos[0] / 100, r.top + r.height * pos[1] / 100); }
+      else { const c = destinos.find((z) => z._clave === it.bueno) ?? destinos[tipo === 'lados' ? Object.keys(ZONAS.lados.nombres).indexOf(it.bueno) : ZONAS.triangulos.filas.indexOf(it.bueno.split('-')[0]) * 3 + ZONAS.triangulos.cols.indexOf(it.bueno.split('-')[1])]; c._soltar(it); }
+    } },
   ]);
-  if (ctx.primera) mano(items[0].b, { dx: 0.5 });
+  if (ctx.primera) mano(items[0].b, { tipo: 'arrastra', dx: 0.5, demora: 2600 });
 
   async function revisar() {
     if (hecho) return; hecho = true; bloquea(ctx);
@@ -122,16 +164,20 @@ function clasificar(d, ctx) {
       await espera(140);
       const ok = it.en === it.bueno;
       it.b.classList.add(ok ? 'bien' : 'mal');
-      it.b.append(el('span', { class: 'pasaporte-mini', text: pasaporte(it.P).join(', ') }));
-      if (!ok) malas++;
+      // solo las mal colocadas llevan su «pasaporte» escrito; las buenas, un sello pequeño
+      const pas = pasaporte(it.P).join(', ');
+      it.b.title = pas;
+      it.b.append(ok ? el('span', { class: 'sello-ok', 'aria-hidden': 'true', text: '✓' }) : el('span', { class: 'pasaporte-mini', text: pas }));
+      if (!ok) { malas++; it.b.animate?.([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 300 }); }
+      else bote(it.b, 8);
       suena(ok ? 'pon' : 'quita');
     }
     await espera(250);
     const estrellas = malas === 0 ? 3 : malas === 1 ? 2 : malas === 2 ? 1 : 0;
     const mal = items.find((it) => it.en !== it.bueno);
     let msg = malas === 0 ? '**Todo en su sitio.**' : `${malas === 1 ? 'Hay una figura' : `Hay ${malas} figuras`} en un sitio que no es el suyo.`;
-    if (mal && tipo === 'cuadri') msg += ` Por ejemplo, la marcada en rojo va en ${NOMBRE_ZONA[mal.bueno]}.`;
-    if (tipo === 'triangulos') { const vacios = [...zona.querySelectorAll('.cajon-tri')].filter((c) => !c.querySelector('.pasajero')).length; if (vacios) msg += ` ${vacios === 1 ? 'Un cajón se ha quedado vacío' : `${vacios} cajones se han quedado vacíos`}: ¿existen triángulos así?`; }
+    if (mal && tipo === 'cuadri') msg += ` Por ejemplo, la rodeada en rojo va en ${NOMBRE_ZONA[mal.bueno]}.`;
+    if (tipo === 'triangulos') { const vacios = destinos.filter((c) => !c.querySelector('.pasajero')).length; if (vacios) msg += ` ${vacios === 1 ? 'Un cajón se ha quedado vacío' : `${vacios} cajones se han quedado vacíos`}: ¿existen triángulos así?`; }
     ctx.fin(estrellas, msg + (d.explica ? ' ' + d.explica : ''));
   }
 }
