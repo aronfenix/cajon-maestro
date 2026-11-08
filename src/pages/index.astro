@@ -1,0 +1,19 @@
+---
+import Archivador from '../layouts/Archivador.astro';
+import Catalogo from '../components/Catalogo.astro';
+import { grupos } from '../lib/catalogo';
+import { SITIO } from '../data/sitio';
+
+const todos = await grupos();
+---
+
+<Archivador activo="todo">
+  <header class="cabecera">
+    <h1 class="rotulo">{SITIO.nombre}</h1>
+    <div class="presentacion">
+      <p>{SITIO.presentacion}</p>
+      <p class="firma">{SITIO.firma}</p>
+    </div>
+  </header>
+  <Catalogo grupos={todos} mostrarArea={true} vacio="Todavía no hay nada en el cajón." />
+</Archivador>

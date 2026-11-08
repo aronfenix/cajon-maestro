@@ -1,0 +1,18 @@
+{
+  "name": "cajon-de-maestro",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "astro build && wrangler deploy"
+  },
+  "dependencies": {
+    "@fontsource-variable/big-shoulders-stencil": "^5.3.0",
+    "@fontsource/atkinson-hyperlegible-next": "^5.3.0",
+    "astro": "^7.4.7",
+    "sharp": "^0.35.5"
+  }
+}

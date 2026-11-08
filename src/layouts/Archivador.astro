@@ -1,0 +1,89 @@
+---
+import '@fontsource-variable/big-shoulders-stencil';
+import '@fontsource/atkinson-hyperlegible-next/400.css';
+import '@fontsource/atkinson-hyperlegible-next/600.css';
+import '@fontsource/atkinson-hyperlegible-next/700.css';
+import '../styles/global.css';
+import { AREAS, TODO } from '../data/areas';
+import { SITIO } from '../data/sitio';
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  activo: string; // id del área de la pestaña abierta, o 'todo'
+  imagen?: string;
+}
+
+const { titulo, descripcion = SITIO.descripcion, activo, imagen } = Astro.props;
+const tituloPagina = titulo ? `${titulo} · ${SITIO.nombre}` : SITIO.nombre;
+const pestanas = [TODO, ...AREAS].map((a) => ({
+  ...a,
+  href: a.id === 'todo' ? '/' : `/${a.id}/`,
+}));
+const canonica = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloPagina}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={tituloPagina} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    {imagen && <meta property="og:image" content={new URL(imagen, Astro.site)} />}
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Ir al contenido</a>
+    <div class="mesa">
+      <div class="archivador">
+        <nav aria-label="Áreas">
+          <ul class="pestanas">
+            {
+              pestanas.map((p) => (
+                <li>
+                  <a
+                    class="pestana"
+                    href={p.href}
+                    style={`background: ${p.color}`}
+                    aria-current={p.id === activo ? 'page' : undefined}
+                  >
+                    {p.nombre}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+        <main class="folio" id="contenido">
+          <slot />
+          <footer class="pie">
+            <p>
+              Todo lo que hay aquí lo he hecho yo y lleva licencia{' '}
+              <a href={SITIO.licencia.url} rel="license">{SITIO.licencia.nombre}</a>: {SITIO.licencia.explicacion}.
+            </p>
+            <p>
+              Esta web no tiene cuentas ni cookies y no guarda datos de nadie. Los juegos que enlaza son
+              versiones de demostración, sin alumnos dentro.
+            </p>
+            {
+              SITIO.contacto ? (
+                <p>
+                  <a href={`mailto:${SITIO.contacto}`}>Escríbeme</a> si usas algo en tu clase o encuentras
+                  una errata. Las erratas también acaban en el cajón.
+                </p>
+              ) : (
+                <p>Las erratas también acaban en el cajón.</p>
+              )
+            }
+          </footer>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

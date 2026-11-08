@@ -1,0 +1,23 @@
+---
+import Archivador from '../layouts/Archivador.astro';
+import Catalogo from '../components/Catalogo.astro';
+import { grupos } from '../lib/catalogo';
+import { AREAS, type Area } from '../data/areas';
+import { SITIO } from '../data/sitio';
+
+export function getStaticPaths() {
+  return AREAS.map((area) => ({ params: { area: area.id }, props: { area } }));
+}
+
+const { area } = Astro.props as { area: Area };
+const lista = await grupos(area.id);
+const vacio = area.vacio ?? `Todavía no hay nada de ${area.nombre}.`;
+---
+
+<Archivador activo={area.id} titulo={area.nombre} descripcion={`${area.nombre}: materiales de ${SITIO.nombre}.`}>
+  <header class="cabecera-area">
+    <h1 class="rotulo">{area.nombre}</h1>
+    <a class="volver" href="/">{SITIO.nombre}</a>
+  </header>
+  <Catalogo grupos={lista} mostrarArea={false} vacio={vacio} />
+</Archivador>

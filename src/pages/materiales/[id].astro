@@ -1,0 +1,131 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Archivador from '../../layouts/Archivador.astro';
+import Miniatura from '../../components/Miniatura.astro';
+import { catalogo, relacionadosDe, render, detalle, type Material } from '../../lib/catalogo';
+import { TIPOS } from '../../data/areas';
+import { SITIO } from '../../data/sitio';
+
+export async function getStaticPaths() {
+  const { materiales } = await catalogo();
+  return materiales.map((m) => ({ params: { id: m.id }, props: { m } }));
+}
+
+const { m } = Astro.props as { m: Material };
+const { Content } = await render(m.entrada);
+const tieneCuerpo = m.entrada.body?.trim().length;
+const relacionados = await relacionadosDe(m);
+const tipo = TIPOS[m.tipo];
+const det = detalle(m);
+const og = m.portada ? (await getImage({ src: m.portada, width: 1200, format: 'jpg' })).src : undefined;
+const poster = m.portada && m.video ? (await getImage({ src: m.portada, width: 1280, format: 'webp' })).src : undefined;
+
+// El botón principal depende de lo que haya.
+let principal: { href: string; texto: string; descarga?: boolean } | undefined;
+if (m.archivo) {
+  const ext = m.archivo.split('.').pop()?.toUpperCase();
+  const extra = [ext, det].filter(Boolean).join(', ');
+  principal = { href: m.archivo, texto: `Descargar${extra ? ` (${extra})` : ''}`, descarga: true };
+} else if (m.enlace) {
+  principal = { href: m.enlace, texto: tipo.accion };
+}
+const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP4)' } : undefined;
+---
+
+<Archivador activo={m.tema.area.id} titulo={m.titulo} descripcion={m.resumen} imagen={og}>
+  <p class="miga">
+    <a href="/">{SITIO.nombre}</a> / <a href={`/${m.tema.area.id}/`}>{m.tema.area.nombre}</a> / {m.tema.titulo}
+  </p>
+
+  <div class="portada-material">
+    <div>
+      <h1 class={m.titulo.length > 22 ? "rotulo largo" : "rotulo"}>{m.titulo}</h1>
+      <p class="entradilla">{m.resumen}</p>
+      <div class="botones">
+        {principal && (
+          <a class="boton" href={principal.href} download={principal.descarga ? '' : undefined}>
+            {principal.texto}
+          </a>
+        )}
+        {descargaVideo && (
+          <a class={principal ? 'boton-sec' : 'boton'} href={descargaVideo.href} download="">
+            {descargaVideo.texto}
+          </a>
+        )}
+        {m.codigo && (
+          <a class="boton-sec" href={m.codigo}>
+            Ver el código en GitHub
+          </a>
+        )}
+      </div>
+      {m.pendiente && <p class="aviso-pendiente">Falta subir el archivo: todavía no hay nada que descargar.</p>}
+    </div>
+
+    <figure class="captura">
+      {
+        m.video ? (
+          <video controls preload="none" poster={poster} src={m.video}>
+            <a href={m.video}>Descargar el vídeo</a>
+          </video>
+        ) : m.portada ? (
+          <Image src={m.portada} alt={`Portada de ${m.titulo}`} widths={[640, 1000, 1400]} sizes="(max-width: 860px) 92vw, 620px" />
+        ) : (
+          <div class="sin-portada">Sin portada todavía</div>
+        )
+      }
+    </figure>
+  </div>
+
+  <div class="cuerpo">
+    <dl class="datos">
+      {m.tema.curso && (<><dt>Curso</dt><dd>{m.tema.curso}</dd></>)}
+      <dt>Área</dt>
+      <dd>
+        <span class="subrayado" style={`background: ${m.tema.area.color}`}>{m.tema.area.nombre}</span>
+        <br />{m.tema.titulo}
+      </dd>
+      <dt>Tipo</dt>
+      <dd>{tipo.nombre}{det && `, ${det}`}</dd>
+      {m.ia && (<><dt>Con IA</dt><dd>{m.ia}</dd></>)}
+      <dt>Licencia</dt>
+      <dd><a href={SITIO.licencia.url} rel="license">{SITIO.licencia.nombre}</a></dd>
+    </dl>
+
+    <div class="texto">
+      {
+        tieneCuerpo && (
+          <section class="bloque" aria-labelledby="uso">
+            <h2 class="seccion-titulo" id="uso">Cómo lo uso en clase</h2>
+            <div class="prosa"><Content /></div>
+          </section>
+        )
+      }
+      {
+        m.cambiaria && (
+          <section class="bloque" aria-labelledby="cambiaria">
+            <h2 class="seccion-titulo" id="cambiaria">Lo que cambiaría</h2>
+            <p class="prosa boli-rojo">{m.cambiaria}</p>
+          </section>
+        )
+      }
+      {
+        relacionados.length > 0 && (
+          <section class="bloque" aria-labelledby="vacon">
+            <h2 class="seccion-titulo" id="vacon">Va con</h2>
+            <ul class="fila va-con">
+              {relacionados.map((r) => (
+                <li>
+                  <a class={`material ancho-${r.tipo}`} href={r.url}>
+                    <Miniatura material={r} />
+                    <p class="material-titulo">{r.titulo}</p>
+                    <p class="material-meta">{r.resumen}</p>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </div>
+  </div>
+</Archivador>

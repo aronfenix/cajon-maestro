@@ -1,0 +1,138 @@
+---
+import Miniatura from './Miniatura.astro';
+import { TIPOS } from '../data/areas';
+import { normaliza, type Grupo } from '../lib/catalogo';
+
+interface Props {
+  grupos: Grupo[];
+  mostrarArea: boolean;
+  vacio: string;
+}
+const { grupos, mostrarArea, vacio } = Astro.props;
+const total = grupos.reduce((n, g) => n + g.materiales.length, 0);
+const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
+  grupos.some((g) => g.materiales.some((m) => m.tipo === id)),
+);
+---
+
+{
+  total > 0 && (
+    <div class="filtros" data-filtros hidden>
+      <div class="buscar">
+        <label for="buscar">Buscar</label>
+        <input id="buscar" type="search" placeholder="Relieve, células, tildes…" autocomplete="off" />
+      </div>
+      {tiposPresentes.length > 1 && (
+        <div role="group" aria-labelledby="tipos-etiqueta">
+          <p id="tipos-etiqueta" class="etiqueta">
+            Tipo de material
+          </p>
+          <div class="tipos">
+            <button type="button" class="tipo" data-tipo="todo" aria-pressed="true">
+              Todo
+            </button>
+            {tiposPresentes.map(([id, t]) => (
+              <button type="button" class="tipo" data-tipo={id} aria-pressed="false">
+                {t.plural}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      <p class="cuenta" data-cuenta data-total={total} aria-live="polite">
+        {total === 1 ? '1 material' : `${total} materiales`}
+      </p>
+    </div>
+  )
+}
+
+{
+  grupos.map((g) => (
+    <section class="tema" aria-labelledby={`tema-${g.tema.id}`} data-tema>
+      <div class="tema-cabeza">
+        {mostrarArea && (
+          <a class="subrayado" href={`/${g.tema.area.id}/`} style={`background: ${g.tema.area.color}`}>
+            {g.tema.area.nombre}
+          </a>
+        )}
+        <h2 class="tema-titulo" id={`tema-${g.tema.id}`}>
+          {g.tema.titulo}
+        </h2>
+        {(g.tema.subtitulo || g.tema.curso) && (
+          <p class="tema-sub">{[g.tema.subtitulo, g.tema.curso && `(${g.tema.curso})`].filter(Boolean).join(' ')}</p>
+        )}
+      </div>
+      <ul class="fila">
+        {g.materiales.map((m) => (
+          <li
+            data-material
+            data-tipo={m.tipo}
+            data-texto={normaliza(`${m.titulo} ${m.resumen} ${g.tema.titulo} ${g.tema.subtitulo ?? ''} ${g.tema.area.nombre} ${TIPOS[m.tipo].nombre}`)}
+          >
+            <a class={`material ancho-${m.tipo}`} href={m.url}>
+              <Miniatura material={m} />
+              <p class="material-titulo">{m.titulo}</p>
+              <p class="material-meta">{m.resumen}</p>
+              {m.pendiente && <p class="pendiente">Falta subir el archivo.</p>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))
+}
+
+<p class="vacio" data-vacio hidden={total > 0 ? true : undefined}>{total > 0 ? '' : vacio}</p>
+
+<script>
+  const filtros = document.querySelector<HTMLElement>('[data-filtros]');
+  if (filtros) {
+    filtros.hidden = false;
+    const entrada = filtros.querySelector<HTMLInputElement>('#buscar')!;
+    const botones = [...filtros.querySelectorAll<HTMLButtonElement>('[data-tipo]')];
+    const cuenta = filtros.querySelector<HTMLElement>('[data-cuenta]')!;
+    const total = Number(cuenta.dataset.total);
+    const items = [...document.querySelectorAll<HTMLElement>('[data-material]')];
+    const temas = [...document.querySelectorAll<HTMLElement>('[data-tema]')];
+    const vacio = document.querySelector<HTMLElement>('[data-vacio]')!;
+    const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+    const params = new URLSearchParams(location.search);
+    let tipo = params.get('tipo') ?? 'todo';
+    if (!botones.some((b) => b.dataset.tipo === tipo)) tipo = 'todo';
+    entrada.value = params.get('q') ?? '';
+
+    const pestanas = [...document.querySelectorAll<HTMLAnchorElement>('.pestana')];
+    const basePestanas = pestanas.map((a) => a.getAttribute('href') ?? '/');
+
+    const aplicar = () => {
+      const q = norm(entrada.value);
+      let visibles = 0;
+      for (const li of items) {
+        const ok = (tipo === 'todo' || li.dataset.tipo === tipo) && (!q || (li.dataset.texto ?? '').includes(q));
+        li.hidden = !ok;
+        if (ok) visibles++;
+      }
+      for (const t of temas) t.hidden = !t.querySelector('[data-material]:not([hidden])');
+      for (const b of botones) b.setAttribute('aria-pressed', String(b.dataset.tipo === tipo));
+      cuenta.textContent = visibles === total ? `${total} materiales` : `Se ven ${visibles} de ${total}`;
+      vacio.hidden = visibles > 0;
+      vacio.textContent = visibles > 0 ? '' : 'No hay nada con esa combinación. Prueba con otro tipo de material o borra la búsqueda.';
+
+      const p = new URLSearchParams();
+      if (tipo !== 'todo') p.set('tipo', tipo);
+      if (entrada.value.trim()) p.set('q', entrada.value.trim());
+      const qs = p.toString() ? `?${p}` : '';
+      history.replaceState(null, '', location.pathname + qs);
+      pestanas.forEach((a, i) => a.setAttribute('href', basePestanas[i] + qs));
+    };
+
+    botones.forEach((b) =>
+      b.addEventListener('click', () => {
+        tipo = b.dataset.tipo ?? 'todo';
+        aplicar();
+      }),
+    );
+    entrada.addEventListener('input', aplicar);
+    aplicar();
+  }
+</script>

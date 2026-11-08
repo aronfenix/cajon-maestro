@@ -1,0 +1,174 @@
+# Configuración de Pages CMS (https://pagescms.org): el formulario para subir materiales.
+# Si cambias un campo aquí, revisa también src/content.config.ts.
+
+media:
+  - name: imagenes
+    label: Imágenes
+    input: src/media
+    output: /src/media
+    extensions: [jpg, jpeg, png, webp, gif]
+  - name: archivos
+    label: Archivos para descargar
+    input: public/archivos
+    output: /archivos
+    extensions: [pdf, zip, docx, odt, pptx, odp, mp3]
+
+content:
+  - name: materiales
+    label: Materiales
+    type: collection
+    path: src/content/materiales
+    format: yaml-frontmatter
+    filename: "{fields.titulo}.md"
+    view:
+      fields: [titulo, tipo, fecha]
+      primary: titulo
+      sort: [fecha, titulo]
+      default:
+        sort: fecha
+        order: desc
+    fields:
+      - name: titulo
+        label: Título
+        type: string
+        required: true
+      - name: tema
+        label: Tema
+        type: reference
+        required: true
+        description: Si el tema no existe, créalo antes en «Temas».
+        options:
+          collection: temas
+          value: "{path}"
+          label: "{titulo} ({area})"
+      - name: tipo
+        label: Tipo
+        type: select
+        required: true
+        options:
+          values:
+            - name: juego
+              label: Juego
+            - name: video
+              label: Vídeo
+            - name: comic
+              label: Cómic
+            - name: ficha
+              label: Ficha o esquema
+            - name: web
+              label: Web o proyecto
+            - name: herramienta
+              label: Herramienta para profes
+      - name: resumen
+        label: Una frase
+        type: string
+        required: true
+        description: Qué es, en una frase. Sale debajo de la miniatura.
+      - name: fecha
+        label: Fecha
+        type: date
+        required: true
+      - name: portada
+        label: Portada
+        type: image
+        description: Captura de pantalla, primera página o fotograma. En el catálogo sale fotocopiada.
+        options:
+          media: imagenes
+          path: src/media/portadas
+      - name: archivo
+        label: Archivo para descargar
+        type: file
+        description: PDF, ZIP, DOCX… Para vídeos usa el campo «Vídeo».
+        options:
+          media: archivos
+          path: public/archivos
+      - name: enlace
+        label: Enlace
+        type: string
+        description: Dirección del juego, la web o la herramienta (la versión sin datos de alumnos).
+      - name: video
+        label: Vídeo
+        type: string
+        description: Dirección del MP4 subido a Cloudflare R2.
+      - name: codigo
+        label: Código en GitHub
+        type: string
+      - name: duracion
+        label: Duración
+        type: string
+        description: Solo vídeos. Por ejemplo, 4:42
+      - name: paginas
+        label: Páginas
+        type: number
+        description: Solo fichas. Con más de una, la miniatura lleva grapa.
+      - name: body
+        label: Cómo lo uso en clase
+        type: rich-text
+      - name: cambiaria
+        label: Lo que cambiaría
+        type: text
+        description: Lo que salió regular. Sale en rojo.
+      - name: ia
+        label: Hecho con IA
+        type: string
+        description: Por ejemplo, «Las imágenes están generadas con IA». Vacío si no hay nada.
+      - name: relacionados
+        label: Va con
+        type: reference
+        options:
+          collection: materiales
+          multiple: true
+          value: "{path}"
+          label: "{titulo}"
+      - name: orden
+        label: Orden dentro del tema
+        type: number
+      - name: borrador
+        label: Ocultar (borrador)
+        type: boolean
+
+  - name: temas
+    label: Temas
+    type: collection
+    path: src/content/temas
+    format: yaml
+    filename: "{fields.area}-{fields.titulo}.yml"
+    view:
+      fields: [titulo, area, curso]
+      primary: titulo
+    fields:
+      - name: titulo
+        label: Título
+        type: string
+        required: true
+        description: "Por ejemplo: Tema 2. Un voto de confianza"
+      - name: area
+        label: Área
+        type: select
+        required: true
+        options:
+          values:
+            - name: lengua
+              label: Lengua
+            - name: matematicas
+              label: Matemáticas
+            - name: naturales
+              label: Naturales
+            - name: sociales
+              label: Sociales
+            - name: plastica
+              label: Plástica
+            - name: valores
+              label: Valores
+            - name: otros-cursos
+              label: Otros cursos
+      - name: subtitulo
+        label: De qué va
+        type: string
+      - name: curso
+        label: Curso
+        type: string
+        description: "Por ejemplo: 5.º, 2026-27"
+      - name: orden
+        label: Orden dentro del área
+        type: number
