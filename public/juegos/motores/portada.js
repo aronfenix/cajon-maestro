@@ -52,6 +52,30 @@ const ARTE = {
     <g class="abertura">${pieza(0, 150, 84, -10)}${pieza(2, 480, 80, 16)}${pieza(1, 420, 76, -6)}</g>
     <g class="sueltas">${pieza(3, 100, 372, -12)}${pieza(1, 586, 356, 18)}</g>
   </svg>`,
+  // bandeja de puzle con un hueco y la pieza encima, a punto de girar
+  puzle: () => `<svg viewBox="0 0 640 400" class="arte arte-puzle" aria-hidden="true">
+    <defs><pattern id="p-carton" width="128" height="128" patternUnits="userSpaceOnUse"><image href="../motores/tex/cartulina.webp" width="128" height="128"/></pattern>
+      <filter id="p-sombra3" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="10" dy="18" stdDeviation="12" flood-color="#0a0020" flood-opacity=".55"/></filter>
+      <clipPath id="p-h1"><path d="M140 170 h120 v60 h-60 v120 h-60z"/></clipPath><clipPath id="p-h2"><path d="M330 160 h180 v60 h-120 v60 h-60z"/></clipPath></defs>
+    <g filter="url(#p-sombra3)"><rect x="80" y="100" width="480" height="280" rx="26" fill="#c99a63" stroke="${T}" stroke-width="5"/></g>
+    <rect x="80" y="100" width="480" height="280" rx="26" fill="url(#p-carton)" style="mix-blend-mode:multiply"/>
+    <path d="M140 170 h120 v60 h-60 v120 h-60z" fill="#3a2412"/><g clip-path="url(#p-h1)"><path d="M140 170 h120 v60 h-60 v120 h-60z" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="18" transform="translate(6 8)"/></g><path d="M140 170 h120 v60 h-60 v120 h-60z" fill="none" stroke="${T}" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M330 160 h180 v60 h-120 v60 h-60z" fill="#3a2412"/><g clip-path="url(#p-h2)"><path d="M330 160 h180 v60 h-120 v60 h-60z" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="18" transform="translate(6 8)"/></g><path d="M330 160 h180 v60 h-120 v60 h-60z" fill="none" stroke="${T}" stroke-width="5" stroke-linejoin="round"/>
+    <g class="pieza-portada" transform="translate(556 92)"><g class="gira-portada"><g transform="translate(-60 -90)"><path d="M0 0 h60 v120 h60 v60 h-120z" fill="#c4417a" transform="translate(0 7)" stroke="${T}" stroke-width="5" stroke-linejoin="round"/><path d="M0 0 h60 v120 h60 v60 h-120z" fill="#ff7fae" stroke="${T}" stroke-width="5" stroke-linejoin="round"/></g></g></g>
+    <g class="sueltas">${pieza(0, 110, 70, -12)}${pieza(1, 60, 380, 18)}</g>
+  </svg>`,
+  // corcho con la chincheta clavada, la pieza y su sombra, y el arco que recorrerá
+  corcho: () => `<svg viewBox="0 0 640 400" class="arte arte-corcho" aria-hidden="true">
+    <defs><pattern id="p-corcho" width="160" height="160" patternUnits="userSpaceOnUse"><image href="../motores/tex/corcho.webp" width="160" height="160"/></pattern>
+      <filter id="p-sombra4" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="10" dy="18" stdDeviation="12" flood-color="#2a1500" flood-opacity=".5"/></filter></defs>
+    <g filter="url(#p-sombra4)"><rect x="60" y="40" width="520" height="340" rx="18" fill="#8a5a26" stroke="${T}" stroke-width="5"/></g>
+    <rect x="80" y="60" width="480" height="300" rx="8" fill="url(#p-corcho)" stroke="${T}" stroke-width="4"/>
+    <path d="M360 140 h80 v40 h-40 v80 h-40z" fill="rgba(40,15,0,.38)" stroke="rgba(40,15,0,.6)" stroke-width="4" stroke-dasharray="10 7"/>
+    <path d="M300 220 a80 80 0 0 1 60 -80" fill="none" stroke="#fffdf6" stroke-width="5" stroke-dasharray="3 9" stroke-linecap="round"/>
+    <g class="pieza-portada"><g class="gira-portada"><path d="M220 180 h40 v80 h40 v40 h-80z" fill="#5e9a1c" transform="translate(0 6)" stroke="${T}" stroke-width="5" stroke-linejoin="round"/><path d="M220 180 h40 v80 h40 v40 h-80z" fill="#9bd84a" stroke="${T}" stroke-width="5" stroke-linejoin="round"/></g></g>
+    <g class="pin-portada" transform="translate(300 220)"><ellipse cx="6" cy="8" rx="16" ry="8" fill="rgba(30,10,0,.35)"/><circle r="17" fill="#d7263d" stroke="${T}" stroke-width="4"/><circle cx="-5" cy="-5" r="5" fill="#fff" opacity=".7"/></g>
+    <g class="sueltas">${pieza(2, 600, 360, 16)}</g>
+  </svg>`,
 };
 
 export function portada(config, { dibuja, POSES, quien, progreso = 0, record = null, sonar = () => {}, frase: fraseHola = '¿Jugamos?' }) {
@@ -118,6 +142,12 @@ export function portada(config, { dibuja, POSES, quien, progreso = 0, record = n
         tl.add(() => sonar('cremallera'))
           .to(tir, { x: 330, duration: 0.55, ease: 'power2.inOut' })
           .to(arte.querySelectorAll('.abertura .pieza'), { y: -260, x: () => gsap.utils.random(-200, 200), rotation: () => gsap.utils.random(-200, 200), opacity: 0, duration: 0.6, ease: 'power2.in', stagger: 0.06 }, '-=0.15');
+      } else if (tipo === 'puzle') {
+        // la pieza gira un cuarto y cae en su hueco
+        tl.to(arte.querySelector('.gira-portada'), { rotation: 90, svgOrigin: '0 0', duration: 0.45, ease: 'back.out(1.6)', onStart: () => sonar('clic') })
+          .to(arte.querySelector('.pieza-portada'), { x: -100, y: 80, duration: 0.4, ease: 'power2.in', onComplete: () => sonar('pon') });
+      } else if (tipo === 'corcho') {
+        tl.to(arte.querySelector('.gira-portada'), { rotation: 90, svgOrigin: '300 220', duration: 0.8, ease: 'power2.inOut', onStart: () => sonar('clic'), onComplete: () => sonar('pon') });
       } else {
         tl.to(arte, { y: 20, duration: 0.15, ease: 'power1.in' })
           .to(arte.querySelectorAll('.abertura .pieza'), { y: -240, rotation: () => gsap.utils.random(-160, 160), opacity: 0, duration: 0.55, ease: 'power2.in', stagger: 0.05 });

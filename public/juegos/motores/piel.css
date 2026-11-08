@@ -320,11 +320,11 @@ body.arrastrando,body.arrastrando *{cursor:grabbing!important}
 
 /* reto e instrucción en la misma línea cuando cabe */
 @media (min-width:1000px){
-  .zona{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:18px;align-items:end;align-content:start}
-  .zona>*{grid-column:1/-1}
-  .zona>.reto{grid-column:1;margin-bottom:14px}
-  .zona>.pista{grid-column:2;align-self:end;margin-bottom:18px}
-  .zona>.acciones,.zona>.aviso{width:fit-content}
+  .zona{display:flex;flex-wrap:wrap;align-items:flex-end;column-gap:18px;align-content:flex-start}
+  .zona>*{flex:0 0 100%;min-width:0}
+  .zona>.reto{flex:0 1 auto;margin-bottom:14px}
+  .zona>.pista{flex:0 1 380px;margin-bottom:18px}
+  .zona>.aviso{max-width:fit-content}
 }
 .reto{font-size:clamp(21px,2.3vw,30px)}
 
@@ -402,3 +402,88 @@ body.en-portada .barra-juego,body.en-portada .mesa-juego,body.en-portada .asiste
 .escalones i{width:18px;border:2.5px solid var(--tinta);border-radius:4px;background:#e3e5ef}
 .escalones i.on{background:var(--cobalto)}
 .escalones i.nuevo{background:var(--amarillo)}
+
+/* =====================================================================================
+   El rincón del puzle: bandeja de cartón con huecos, piezas que giran, corcho con chincheta
+   ===================================================================================== */
+.fondo-escena.puzle{background-color:#4b3a8c;background-image:
+    radial-gradient(110% 85% at 18% -8%,rgba(255,236,170,.5),rgba(255,236,170,0) 55%),
+    radial-gradient(90% 80% at 105% 110%,rgba(10,0,30,.55),rgba(10,0,30,0) 60%),
+    url('tex/fieltro.webp');
+  background-size:100% 100%,100% 100%,200px 200px;background-blend-mode:normal,normal,multiply}
+body[data-escena="puzle"]{--acento:var(--amarillo)}
+.rincon-puzle{display:flex;flex-wrap:wrap;align-items:center;gap:28px 40px}
+.rincon-puzle.libre{align-items:flex-start}
+.bandeja-puzle{display:block;height:auto;max-width:100%;overflow:visible}
+.bandeja-puzle .carton{fill:#c99a63;stroke:var(--tinta);stroke-width:4}
+.bandeja-puzle .textura{mix-blend-mode:multiply;pointer-events:none}
+.bandeja-puzle .filo{fill:none;stroke:rgba(255,255,255,.28);stroke-width:3;stroke-dasharray:3 9;stroke-linecap:round}
+.bandeja-puzle .fondo-hueco{fill:#3a2412}
+.bandeja-puzle .sombra-hueco{fill:none;stroke:rgba(0,0,0,.55);stroke-width:16}
+.bandeja-puzle .borde-hueco{fill:transparent;stroke:var(--tinta);stroke-width:4;stroke-linejoin:round;transform-box:fill-box;transform-origin:center}
+.bandeja-puzle .hueco.sobre .borde-hueco,.bandeja-puzle .borde-hueco.sobre{stroke:var(--amarillo);stroke-width:7}
+.bandeja-puzle .marca-esquina,.pieza-giro .marca-esquina{fill:none;stroke:#e8417a;stroke-width:5;stroke-dasharray:6 4}
+.mesa-pieza{display:flex;flex-direction:column;align-items:center;gap:12px}
+.giro-icono{font-family:var(--fuerte);font-weight:900;font-size:44px;line-height:1;color:var(--papel);text-shadow:0 3px 0 rgba(0,0,0,.35)}
+.pieza-giro{position:relative;padding:0;border:0;background:none;cursor:grab;touch-action:none;filter:drop-shadow(4px 8px 0 rgba(10,0,30,.3)) drop-shadow(5px 12px 10px rgba(10,0,30,.35))}
+.pieza-giro svg{display:block;overflow:visible}
+.pieza-giro .gira{transition:rotate .38s var(--muelle)}
+.pieza-giro:hover .gira{scale:1.04}
+.pieza-giro.puesta{visibility:hidden}
+.pieza-giro.probando{filter:drop-shadow(0 0 0 transparent)}
+.piezas-sueltas{display:flex;flex-wrap:wrap;gap:22px;align-items:center;padding:16px 18px;border:var(--borde);border-radius:18px;background:rgba(255,253,246,.14);box-shadow:inset 0 0 0 2px rgba(255,255,255,.12)}
+.contador-giros{margin:0;padding:6px 16px;border:var(--borde);border-radius:999px;background:var(--papel);font-family:var(--fuerte);font-weight:800;font-size:20px;box-shadow:var(--sombra-baja)}
+.contador-giros b{font-size:26px}
+.contador-giros.pasado{background:#ffe1e5}
+.opcion-giro{min-width:150px}
+.opcion-giro[aria-pressed="true"]{--c:var(--amarillo)}
+.fantasmas-giro{display:flex;gap:10px}
+.fantasma-giro{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;border-radius:12px;background:rgba(255,253,246,.85);font-size:13px;font-weight:700}
+.fantasma-giro svg{width:74px;height:74px}
+.fantasma-giro .silueta{fill:rgba(27,30,58,.18);stroke:var(--tinta);stroke-width:4;stroke-dasharray:7 5;stroke-linejoin:round}
+/* corcho */
+.marco-corcho{width:fit-content;max-width:100%;padding:16px;border:var(--borde);border-radius:16px;background:#8a5a26 url('tex/madera.webp') 0 0/512px;background-blend-mode:multiply;box-shadow:var(--sombra)}
+.corcho-giro{display:block;height:auto;max-width:100%;cursor:crosshair;border-radius:8px;box-shadow:inset 0 0 0 3px var(--tinta)}
+.corcho-giro .corcho{stroke:var(--tinta);stroke-width:3}
+.corcho-giro .agujero{fill:#5a3818;stroke:rgba(255,230,190,.5);stroke-width:1.5}
+.corcho-giro .sombra-pieza-giro{fill:rgba(40,15,0,.38);stroke:rgba(40,15,0,.55);stroke-width:3;stroke-dasharray:8 6;stroke-linejoin:round;transition:fill .3s}
+.corcho-giro .sombra-pieza-giro.llena{fill:rgba(255,197,49,.5);stroke:var(--amarillo);stroke-dasharray:none;stroke-width:5}
+.corcho-giro .rastro{fill:none;stroke:var(--papel);stroke-width:3;stroke-dasharray:2 7;stroke-linecap:round}
+.corcho-giro .rastro.viejo{opacity:.3}
+.corcho-giro .mediatriz line{stroke:var(--c);stroke-width:4;stroke-dasharray:12 9}
+.corcho-giro .mediatriz .union{stroke-width:2.5;stroke-dasharray:3 5;opacity:.8}
+.corcho-giro .mediatriz circle{fill:none;stroke:var(--c);stroke-width:5}
+.bandeja-puzle .sobre,.bandeja-puzle .hueco.sobre{outline:none!important}
+
+/* =====================================================================================
+   Geoplano y tarjetas de figuras: papel punteado y cartulina de colores
+   ===================================================================================== */
+.geo .pin{fill:rgba(27,30,58,.32)}
+.geo .fig{fill:var(--fig,var(--amarillo));fill-opacity:1;stroke:var(--tinta);stroke-width:3.5;stroke-linejoin:round;filter:drop-shadow(2px 4px 0 rgba(27,30,58,.28))}
+.geo .fig.modelo{fill:var(--amarillo);fill-opacity:1}
+.geo .fig.tuya{fill:var(--cielo);fill-opacity:.85;stroke:var(--cobalto);stroke-width:5}
+.geo .fig.solucion{filter:none}
+.cartas-geo{gap:18px}
+.carta-geo{--fig:var(--amarillo);border:var(--borde);border-radius:10px 14px 12px 16px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;
+  box-shadow:0 5px 0 var(--tinta),4px 12px 14px -6px rgba(10,20,25,.45);rotate:var(--r,0deg);transition:transform .2s var(--muelle),rotate .2s var(--muelle)}
+.carta-geo:nth-child(6n+1){--fig:var(--amarillo);--r:-1.2deg}.carta-geo:nth-child(6n+2){--fig:var(--cielo);--r:.8deg}.carta-geo:nth-child(6n+3){--fig:#ff7fae;--r:-.4deg}
+.carta-geo:nth-child(6n+4){--fig:var(--lima);--r:1.3deg}.carta-geo:nth-child(6n+5){--fig:#ff9f45;--r:-.9deg}.carta-geo:nth-child(6n+6){--fig:#b79cff;--r:.5deg}
+.carta-geo:hover{transform:translateY(-3px);rotate:0deg}
+.carta-geo:active{transform:translateY(3px);box-shadow:0 2px 0 var(--tinta)}
+.carta-geo[aria-pressed="true"]{transform:translateY(-6px) scale(1.03);rotate:0deg;background-color:#fff3c4;box-shadow:0 0 0 4px var(--amarillo),0 7px 0 var(--tinta),5px 16px 16px -6px rgba(10,20,25,.5)}
+.carta-geo[aria-pressed="true"]::after{top:-12px;right:-12px;width:34px;height:34px;border:var(--borde);background:var(--amarillo);color:var(--tinta);font-size:18px;animation:sello-pop .35s var(--muelle)}
+.carta-geo .pasaporte{font-weight:700;color:var(--tinta)}
+.carta-geo.bien{box-shadow:0 0 0 4px #1b8f4e,0 5px 0 var(--tinta)}
+.carta-geo.falta{box-shadow:0 0 0 4px var(--rojo),0 5px 0 var(--tinta)}
+.carta-geo.falta::before{border-width:4px;transform:rotate(-6deg)}
+.carta-geo.pista-carta{box-shadow:0 0 0 5px var(--amarillo),0 5px 0 var(--tinta)}
+.modelo-geo{border:var(--borde);background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra-baja)}
+.modelo-geo span{font-family:var(--fuerte);font-weight:800}
+/* el tablero grande: un geoplano de madera con chinchetas */
+.geoplano{padding:16px;border:var(--borde);border-radius:20px;background:#e0b77c url('tex/madera.webp') 0 0/512px;background-blend-mode:multiply;box-shadow:inset 0 -8px 0 rgba(90,50,10,.35),var(--sombra)}
+.geo.grande .pin{fill:#c9cfdd;stroke:var(--tinta);stroke-width:2.5}
+.geo.grande .pin.apagado{fill:rgba(255,255,255,.35);stroke:rgba(27,30,58,.3)}
+.geo .vertice{fill:var(--fucsia);stroke:var(--tinta);stroke-width:3}
+.geo .trazo-geo{stroke:var(--fucsia);stroke-width:6}
+.geo.grande{width:auto;height:min(calc(100dvh - 345px),560px);min-height:260px;max-width:min(720px,calc(100vw - 70px))}
+@media (max-width:760px){.geo.grande{height:auto;width:calc(100vw - 70px)}}

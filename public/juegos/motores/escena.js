@@ -35,6 +35,16 @@ const FONDOS = {
       <g transform="translate(-30 760) rotate(-12)" stroke-width="4"><rect width="150" height="70" rx="12" fill="#fff1cf"/><rect x="90" width="60" height="70" rx="0" fill="#2f5bd3"/><path d="M90 0 v70" /></g>
       <circle cx="1540" cy="960" r="26" fill="#ffc531" stroke-width="4"/><circle cx="1540" cy="960" r="10" fill="#c98f00" stroke-width="3"/>
     </g>`,
+  // la mesa del puzle: tapete violeta con piezas sueltas en los bordes
+  puzle: `
+    <defs><filter id="sombra-puzle" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="6" dy="10" stdDeviation="6" flood-color="#0a0020" flood-opacity=".5"/></filter>
+      <path id="pz" d="M0 0 h40 q-8 -22 12 -22 q20 0 12 22 h40 v40 q22 -8 22 12 q0 20 -22 12 v40 h-104z"/></defs>
+    <g filter="url(#sombra-puzle)" stroke="#1b1e3a" stroke-width="4" stroke-linejoin="round">
+      <use href="#pz" transform="translate(-30 760) rotate(-18)" fill="#ffc531"/>
+      <use href="#pz" transform="translate(1480 60) rotate(24)" fill="#ff7fae"/>
+      <use href="#pz" transform="translate(1500 820) rotate(-40) scale(.8)" fill="#5ec3ff"/>
+      <use href="#pz" transform="translate(60 120) rotate(140) scale(.7)" fill="#9bd84a"/>
+    </g>`,
   corcho: `
     <defs><pattern id="corcho" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#c99658"/><circle cx="8" cy="9" r="2" fill="#b07f45"/><circle cx="27" cy="21" r="2.6" fill="#ddb07a"/><circle cx="16" cy="32" r="1.8" fill="#a8763d"/><circle cx="35" cy="5" r="1.6" fill="#b07f45"/></pattern></defs>
     <rect x="1400" y="120" width="150" height="150" fill="#fff27a" transform="rotate(5 1475 195)"/><circle cx="1475" cy="132" r="12" fill="#c8201a" stroke="#000" stroke-width="3"/>

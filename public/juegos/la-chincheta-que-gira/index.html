@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La chincheta que gira · Cajón maestro</title>
+<meta name="description" content="Centro de giro: elegir dónde clavar la chincheta para que la pieza, al girar, caiga en su sombra.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "giros",
+  "area": "matematicas",
+  "escena": "puzle",
+  "titulo": "La chincheta que gira",
+  "subtitulo": "Las fotos del corcho se han soltado. Hay que clavarlas con una chincheta y girarlas hasta su marca.",
+  "portada": {
+    "arte": "corcho",
+    "objetivo": "Clava la chincheta en el punto justo: al girar, la pieza tiene que caer exactamente en su sombra.",
+    "frase": "Una chincheta, un giro, un sitio."
+  },
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "goma",
+      "pose": "asombro",
+      "texto": "¡Las piezas del corcho se han soltado! Cada una tiene su sombra marcada, de cuando estaba bien puesta."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Clava la chincheta y gírala. Si la chincheta está bien puesta, la pieza cae justo en su sombra."
+    }
+  ],
+  "saludo": "La chincheta es el único punto que **no se mueve**.",
+  "observa": "Cuando la chincheta está bien puesta, ¿qué tienen en común cada esquina y su sombra?",
+  "niveles": [
+    {
+      "modo": "chincheta",
+      "generar": {
+        "cuartos": [
+          2
+        ]
+      }
+    },
+    {
+      "modo": "chincheta",
+      "generar": {
+        "cuartos": [
+          1
+        ]
+      }
+    },
+    {
+      "modo": "chincheta",
+      "generar": {
+        "cuartos": [
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "modo": "chincheta",
+      "generar": {
+        "cuartos": [
+          1,
+          2,
+          3
+        ],
+        "solapar": true,
+        "distMin": 1
+      }
+    },
+    {
+      "modo": "chincheta",
+      "eligeGiro": true,
+      "generar": {
+        "cuartos": [
+          1,
+          2,
+          3
+        ]
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

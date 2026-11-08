@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El puzle del rincón · Cajón maestro</title>
+<meta name="description" content="Giros de un cuarto de vuelta: predecir cuántos hacen falta para que una pieza encaje, descubrir los huecos en espejo y encajar varias piezas con los giros justos.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "giros",
+  "area": "matematicas",
+  "escena": "puzle",
+  "titulo": "El puzle del rincón",
+  "subtitulo": "Las piezas del puzle del rincón están revueltas. Solo se pueden girar, nunca dar la vuelta.",
+  "portada": {
+    "arte": "puzle",
+    "objetivo": "Encaja cada pieza en su hueco girándola de cuarto en cuarto. Piensa los giros antes de hacerlos: algunos huecos son una trampa.",
+    "frase": "Girar sí. Dar la vuelta, no."
+  },
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "El puzle del rincón está desmontado. Si el viernes sigue así, a la papelera con él."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Las piezas solo se pueden girar de cuarto en cuarto, como las agujas del reloj. Piensa antes de girar: los giros están contados."
+    }
+  ],
+  "saludo": "Antes de girar, **piensa cuántos cuartos** le faltan.",
+  "observa": "¿Por qué hay huecos en los que una pieza no entra por mucho que la gires? ¿Qué tendrías que hacerle para que entrara?",
+  "niveles": [
+    {
+      "modo": "puzle",
+      "generar": {
+        "cuartos": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "modo": "puzle",
+      "generar": {
+        "cuartos": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "modo": "puzle",
+      "generar": {
+        "cuartos": [
+          1,
+          2,
+          3
+        ],
+        "espejo": 0.3
+      }
+    },
+    {
+      "modo": "puzle",
+      "libre": true,
+      "generar": {
+        "cantidad": 2
+      }
+    },
+    {
+      "modo": "puzle",
+      "sentido": "antihorario",
+      "generar": {
+        "cuartos": [
+          1,
+          2,
+          3
+        ],
+        "espejo": 0.3
+      }
+    },
+    {
+      "modo": "puzle",
+      "libre": true,
+      "generar": {
+        "cantidad": 3
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>
