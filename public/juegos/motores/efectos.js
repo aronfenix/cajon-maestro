@@ -129,3 +129,46 @@ export function mano(objetivo, { tipo = 'toca', dx = 0.35, demora = 3200 } = {})
   }, demora);
   return fuera;
 }
+
+/* ---------- celebraciones de papelería (una por personaje) ---------- */
+const capaSVG = (contenido, ms) => {
+  const d = document.createElement('div');
+  d.className = 'celebra-capa';
+  d.innerHTML = `<svg viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">${contenido}</svg>`;
+  document.body.append(d);
+  setTimeout(() => d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500 }).onfinish = () => d.remove(), ms);
+  return d;
+};
+export function celebra(quien, el) {
+  if (quieto()) return;
+  if (quien === 'fosforito') {
+    // un trazo de fosforito que cruza la pantalla
+    const y = 260 + Math.random() * 120;
+    capaSVG(`<path class="trazo-celebra" pathLength="1" d="M-20 ${y + 30} C 200 ${y - 40}, 420 ${y + 40}, 620 ${y - 10} S 900 ${y - 30}, 1030 ${y + 10}" stroke="${css('--acento')}" stroke-width="70" stroke-linecap="round" fill="none" opacity=".55" style="mix-blend-mode:multiply"/>`, 900);
+    if (el) chispasEn(el, 16, css('--acento'));
+  } else if (quien === 'boli') {
+    // el tic gigante y un 10 rodeado, como en un examen
+    capaSVG(`<path class="trazo-celebra" pathLength="1" d="M330 300 L450 420 L700 140" stroke="#c8201a" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <g class="sello-diez"><ellipse cx="800" cy="420" rx="110" ry="80" fill="none" stroke="#c8201a" stroke-width="10" transform="rotate(-8 800 420)"/><text x="800" y="452" text-anchor="middle" font-family="Rotulo,Impact" font-weight="900" font-size="100" fill="#c8201a">10</text></g>`, 1000);
+  } else {
+    // la goma frota y las virutas salen volando convertidas en estrellas
+    const r = el?.getBoundingClientRect?.() ?? { left: innerWidth / 2 - 50, top: innerHeight / 2, width: 100, height: 40 };
+    const x = r.left + r.width / 2, y = r.top + r.height / 2;
+    lanza(Array.from({ length: 26 }, () => { const a = -Math.PI / 2 + (Math.random() - 0.5) * 2.6, v = 3 + Math.random() * 6; return { tipo: 'polvo', x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: 0.18, roce: 0.97, r: 3 + Math.random() * 3, color: '#efe4cf', vida: 700 }; }));
+    setTimeout(() => chispas(x, y - 60, 18, css('--oro')), 380);
+  }
+}
+// lluvia de gomets: pegatinas redondas que caen, se pegan y se despegan
+export function gomets(n = 28) {
+  if (quieto()) return;
+  const colores = ['#ff4f7b', '#ffd23f', '#1fb5a9', '#2f6be0', '#8df07d', '#ff7a1a', '#cda8ff'];
+  for (let i = 0; i < n; i++) {
+    const g = document.createElement('span');
+    g.className = 'gomet';
+    const t = 18 + Math.random() * 26;
+    Object.assign(g.style, { width: t + 'px', height: t + 'px', left: Math.random() * 100 + 'vw', background: colores[i % colores.length] });
+    document.body.append(g);
+    const destino = 30 + Math.random() * 60, giro = Math.random() * 360;
+    g.animate([{ transform: `translateY(-10vh) rotate(${giro}deg)` }, { transform: `translateY(${destino}vh) rotate(${giro + 200}deg)`, offset: 0.35, easing: 'cubic-bezier(.3,1.6,.5,1)' }, { transform: `translateY(${destino}vh) rotate(${giro + 200}deg) scale(1)`, offset: 0.8 }, { transform: `translateY(${destino}vh) rotate(${giro + 260}deg) scale(.2)`, opacity: 0 }], { duration: 2600 + Math.random() * 900, delay: i * 35, fill: 'both' }).onfinish = () => g.remove();
+  }
+}

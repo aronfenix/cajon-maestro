@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Gran Limpieza del Cajón · Cajón maestro</title>
+<meta name="description" content="Aventura de matemáticas: el profe va a ordenar su cajón y Goma, Boli y Fosforito tienen que dejarlo todo en su sitio.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body data-area="matematicas">
+<!-- Mapa de una aventura. Para otro bloque: copiar esta carpeta y cambiar los compartimentos. -->
+<script type="application/json" id="mapa">
+{
+  "titulo": "La Gran Limpieza del Cajón",
+  "subtitulo": "El viernes el profe ordena su cajón. Cada compartimento tiene un problema que solo se arregla pensando. Se puede jugar en orden o empezar por cualquiera.",
+  "escena": "cajon",
+  "volver": "../../matematicas/",
+  "historia": [
+    {"nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.", "firma": "El profe"},
+    {"quien": "boli", "pose": "asombro", "texto": "¿A la papelera? ¿Después de todo lo que he corregido?"},
+    {"quien": "fosforito", "pose": "pista", "texto": "¡Tenemos cinco días! Si cada compartimento está perfecto, no tirará a nadie."},
+    {"quien": "goma", "pose": "seguro", "texto": "Tranquilidad. He sobrevivido a tres limpiezas. Esta vez, con mates."}
+  ],
+  "compartimentos": [
+    {"nombre": "El estuche", "quien": "fosforito", "color": "#ff8ac4", "juegos": [
+      {"slug": "aduana-del-estuche", "titulo": "Aduana del estuche"},
+      {"slug": "la-goma-elastica", "titulo": "La goma elástica"},
+      {"slug": "quien-es-quien", "titulo": "¿Quién es quién?"}]},
+    {"nombre": "El rincón del puzle", "quien": "goma", "color": "#ffd23f", "listo": false, "juegos": [
+      {"titulo": "El puzle del rincón"}, {"titulo": "La chincheta que gira"}, {"titulo": "Recortables"}, {"titulo": "La mudanza"}]},
+    {"nombre": "El corcho", "quien": "fosforito", "color": "#c99658", "listo": false, "juegos": [{"titulo": "Gomas y chinchetas"}]},
+    {"nombre": "El almacén de clips", "quien": "boli", "color": "#7fd6ff", "listo": false, "juegos": [{"titulo": "Pedidos del almacén"}, {"titulo": "La máquina de ceros"}]},
+    {"nombre": "El patio", "quien": "goma", "color": "#8df07d", "listo": false, "juegos": [{"titulo": "Las baldosas del recreo"}]},
+    {"nombre": "La merienda", "quien": "goma", "color": "#ffb054", "listo": false, "juegos": [{"titulo": "La merienda"}]}
+  ],
+  "final": {
+    "nombre": "El examen del viernes",
+    "cerrado": "Se abre cuando todos los compartimentos estén ordenados.",
+    "abierto": "Todo en su sitio. El profe ha abierto el cajón… y no encuentra nada.",
+    "historia": [
+      {"quien": "boli", "pose": "seguro", "texto": "Viernes. Ha abierto el cajón. Lo ha mirado. Lo ha cerrado despacito."},
+      {"quien": "fosforito", "pose": "celebra", "texto": "¡No ha tirado a nadie! ¡Está tan ordenado que no encuentra ni su boli!"},
+      {"quien": "goma", "pose": "animo", "texto": "Gracias. Sin ti, ahora mismo estaríamos en la papelera."}
+    ]
+  }
+}
+</script>
+<script type="module">
+import { montaMapa } from '../motores/mapa.js';
+montaMapa(JSON.parse(document.getElementById('mapa').textContent));
+</script>
+</body>
+</html>

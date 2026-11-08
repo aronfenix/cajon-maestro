@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La goma elástica · Cajón maestro</title>
+<meta name="description" content="Predice si una goma elástica tocará todo el borde de una figura: convexos y no convexos.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "formas",
+  "area": "matematicas",
+  "escena": "estuche",
+  "titulo": "La goma elástica",
+  "subtitulo": "Una goma estirada alrededor de las chinchetas se ajusta sola. Si el borde se mete hacia dentro, deja huecos.",
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Soy Goma, pero no esa goma. Esta es mi prima, la Elástica: se estira alrededor de las chinchetas."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Antes de soltarla, dime qué va a pasar. Adivinar no vale: hay que pensarlo."
+    }
+  ],
+  "observa": "Una figura es convexa cuando la goma toca todo el borde. ¿Puede un triángulo dejar huecos? ¿Y un cuadrado?",
+  "niveles": [
+    {
+      "modo": "goma",
+      "generar": {
+        "familias": [
+          "dardo",
+          "rectanguloRecto",
+          "trapecio",
+          "concavo5",
+          "romboide"
+        ]
+      }
+    },
+    {
+      "modo": "goma",
+      "generar": {
+        "familias": [
+          "convexo5",
+          "concavo5",
+          "convexo6",
+          "concavo6"
+        ]
+      }
+    },
+    {
+      "modo": "goma",
+      "marcar": true,
+      "generar": {
+        "familias": [
+          "dardo",
+          "concavo5"
+        ],
+        "concava": true
+      }
+    },
+    {
+      "modo": "goma",
+      "marcar": true,
+      "generar": {
+        "familias": [
+          "concavo5",
+          "concavo6",
+          "convexo6"
+        ]
+      }
+    },
+    {
+      "modo": "goma",
+      "marcar": true,
+      "generar": {
+        "familias": [
+          "concavo6",
+          "convexo6"
+        ],
+        "minVertices": 6
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

@@ -5,6 +5,7 @@
 import * as fx from './efectos.js';
 import { dibuja, POSES } from './personaje.js';
 import { VOCES, POSE_DE, una } from './voces.js';
+import { montaEscena, vineta, montaTeclado } from './escena.js';
 export const $ = (s, r = document) => r.querySelector(s);
 const SVGNS = 'http://www.w3.org/2000/svg';
 
@@ -157,11 +158,23 @@ export async function arrancar(config, motor) {
     if (ms) poseT = setTimeout(() => posa('quieto'), ms);
   };
   posa('quieto');
-  figura.addEventListener('click', () => { posa(una(['celebra', 'asombro', 'piensa']), 1200); suena('clic'); });
-  const asistente = el('aside', { class: 'asistente', 'aria-label': 'Ayudante' }, bocadillo, figura);
+  let ultimaFrase = null;
+  figura.addEventListener('click', () => { if (ultimaFrase) di(...ultimaFrase); else posa(una(['celebra', 'asombro', 'piensa']), 1200); suena('clic'); });
+  // botón de ayuda: siempre en el mismo sitio, pegado al personaje
+  const puntos = el('span', { class: 'puntos-ayuda', 'aria-hidden': 'true' });
+  const btnAyuda = el('button', { type: 'button', class: 'boton-ayuda', 'aria-label': 'Pedir una pista', title: 'Pedir una pista', disabled: true }, el('b', { text: '?' }), puntos);
+  let pedirPista = null;
+  btnAyuda.onclick = () => pedirPista?.();
+  const pintaAyuda = (quedan, total) => {
+    puntos.replaceChildren(...Array.from({ length: total }, (_, k) => el('i', { class: k < quedan ? 'on' : '' })));
+    btnAyuda.disabled = !quedan;
+    btnAyuda.setAttribute('aria-label', quedan ? `Pedir una pista (quedan ${quedan})` : 'No quedan pistas');
+  };
+  const asistente = el('aside', { class: 'asistente', 'aria-label': 'Ayudante' }, bocadillo, el('div', { class: 'pie-asistente' }, btnAyuda, figura));
   let callaT = null;
   const di = (texto, tipo = 'pista', ms = 0) => {
     clearTimeout(callaT);
+    ultimaFrase = [texto, tipo, ms];
     bocadillo.className = 'bocadillo ' + tipo;
     bocadillo.replaceChildren(marca(texto));
     bocadillo.hidden = false;
@@ -184,6 +197,8 @@ export async function arrancar(config, motor) {
     el('main', { class: 'mesa-juego' }, config.subtitulo && el('p', { class: 'pista', style: { marginTop: '4px' }, text: config.subtitulo }), zona, final),
     asistente);
 
+  const escenaViva = montaEscena(config.escena || 'cajon', { reacciona: (que) => { if (que === 'mano') { posa('asombro'); di(una(['¡Quietos todos! ¡La Mano!', 'Shhh… que viene el profe.', 'Nadie se mueve.']), 'animo', 4000); } else posa('quieto'); } });
+  montaTeclado();
   let pizarra = pizarraInicial;
   document.body.classList.toggle('pizarra', pizarra);
   const ponerModo = (p) => {
@@ -201,7 +216,7 @@ export async function arrancar(config, motor) {
   document.body.append(cartel);
   const claveRecord = 'cajon-taller:' + location.pathname;
   const leeRecord = () => { try { return JSON.parse(localStorage.getItem(claveRecord)) || null; } catch { return null; } };
-  let primeraPartida = true;
+  let primeraPartida = true, fallosSeguidos = 0;
 
   const adaptativo = Array.isArray(config.niveles);
   const NIVELES = adaptativo ? config.niveles : null;
@@ -236,17 +251,15 @@ export async function arrancar(config, motor) {
         cartel.classList.remove('sale'); void cartel.offsetWidth; cartel.classList.add('sale');
       }
       zona.classList.remove('zona-entra'); void zona.offsetWidth; zona.classList.add('zona-entra');
-      let pistas = [], usadas = 0, btnPista = null;
+      let pistas = [], usadas = 0;
       const darPista = () => {
         if (usadas >= pistas.length) return;
         const p = pistas[usadas++];
         di(typeof p === 'string' ? p : p.texto, 'pista', 12000);
         if (typeof p === 'object' && p.ver) try { p.ver(); } catch (e) { console.error(e); }
         suena('clic');
-        if (btnPista) {
-          btnPista.lastChild.textContent = usadas < pistas.length ? `Pista ${usadas + 1}` : 'No hay más pistas';
-          btnPista.disabled = usadas >= pistas.length;
-        }
+        pintaAyuda(pistas.length - usadas, pistas.length);
+        fx.bote(btnAyuda, 6);
       };
       const ctx = {
         pizarra, escenario, acciones, datos, num, el, suena, fx, ronda: n, intento, primera: n === 0 && intento === 1 && primeraPartida,
@@ -257,11 +270,13 @@ export async function arrancar(config, motor) {
         pistas: (lista) => { pistas = lista.filter(Boolean); },
         boton: (texto, fn, sec = false) => {
           const b = el('button', { type: 'button', class: 'tecla' + (sec ? '' : ' primaria grande'), text: texto, onclick: fn });
-          btnPista ? acciones.insertBefore(b, btnPista) : acciones.append(b); return b;
+          acciones.append(b); return b;
         },
         fin: (estrellas, mensaje) => {
           acciones.replaceChildren(); aviso.textContent = '';
           calla();
+          pedirPista = null; pintaAyuda(0, pistas.length || 3);
+          fallosSeguidos = estrellas < 2 ? fallosSeguidos + 1 : 0;
           const opciones = [];
           const puedeReintentar = !pizarra && intento === 1 && estrellas < 2;
           if (puedeReintentar) {
@@ -278,9 +293,10 @@ export async function arrancar(config, motor) {
             suena('sello'); fx.vibra(estrellas ? 25 : [40, 60, 40]);
             correccion.querySelectorAll('.estrellas .si').forEach((s, k) => setTimeout(() => { suena('estrella'); fx.chispasEn(s, 8); }, 260 + k * 140));
             setTimeout(() => suena(estrellas === 3 ? 'bien' : estrellas >= 1 ? 'regular' : 'mal'), 300 + estrellas * 140);
-            if (estrellas === 3) setTimeout(() => fx.confetiEn(sello, 70), 380);
+            if (estrellas === 3) setTimeout(() => fx.celebra(quien, sello), 380);
             if (estrellas === 0) fx.temblor(escenario, 10);
-            if (puedeReintentar) setTimeout(() => di(una(voz[estrellas ? 'casi' : 'fallo']) + ' Si lo repites, **te doy una pista** al empezar.', 'animo', 6000), 900);
+            if (puedeReintentar && fallosSeguidos >= 2) setTimeout(() => di(una(voz.fallo) + ' ¿Te echo una mano? Al repetir te doy una pista, y luego toca la **?** cuando quieras.', 'animo', 7000), 900);
+            else if (puedeReintentar) setTimeout(() => di(una(voz[estrellas ? 'casi' : 'fallo']) + ' Si lo repites, **te doy una pista** al empezar.', 'animo', 6000), 900);
             else if (intento === 2 && estrellas >= 2) setTimeout(() => dice('segunda', 'bien', 3500), 900);
             else if (estrellas === 3 && Math.random() < 0.6) setTimeout(() => dice('perfecto', 'perfecto', 3000), 900);
             else if (estrellas === 2 && Math.random() < 0.5) setTimeout(() => dice('bien', 'bien', 3000), 900);
@@ -289,14 +305,10 @@ export async function arrancar(config, motor) {
           correccion.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         },
       };
-      motor.ronda(datos, ctx);
-      if (pistas.length) {
-        btnPista = el('button', { type: 'button', class: 'tecla pista-btn', onclick: darPista },
-          svg('0 0 24 24', '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V17h5v-1.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" fill="var(--oro)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>', { width: 22, height: 22 }),
-          el('span', { text: 'Pista 1' }));
-        acciones.append(btnPista);
-        if (intento === 2) setTimeout(darPista, 650);
-      }
+      try { motor.ronda(datos, ctx); } catch (e) { console.error(e); aviso.textContent = 'Este reto tiene un error: ' + e.message; }
+      pedirPista = pistas.length ? darPista : null;
+      pintaAyuda(pistas.length, pistas.length || 3);
+      if (pistas.length && intento === 2) setTimeout(darPista, 650);
     });
   }
 
@@ -381,9 +393,17 @@ export async function arrancar(config, motor) {
     final.hidden = false;
     if (!enPizarra) {
       final.querySelectorAll('.hoja figure').forEach((f, k) => { f.style.animationDelay = k * 90 + 'ms'; setTimeout(() => suena('pon'), k * 90); });
-      if (completo || !adaptativo) setTimeout(() => { suena('bien'); fx.confeti(innerWidth / 2, innerHeight * 0.35, 140); }, 300);
+      if (completo || !adaptativo) {
+        try { localStorage.setItem('cajon-hecho:' + location.pathname, new Date().toISOString().slice(0, 10)); } catch {}
+        setTimeout(() => { suena('bien'); fx.gomets(34); }, 300);
+      }
       setTimeout(() => dice(completo || !adaptativo ? 'finalBien' : 'finalCorto', 'perfecto', 6000), 700);
     }
+  }
+  if (config.historia?.length && !pizarra && !new URLSearchParams(location.search).has('sinhistoria')) {
+    escenaViva.pausa();
+    await vineta(config.historia, dibuja, POSES, config.titulo);
+    escenaViva.sigue();
   }
   partida();
 }

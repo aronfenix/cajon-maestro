@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Quién es quién? · Cajón maestro</title>
+<meta name="description" content="Adivina la figura secreta con preguntas de sí o no, o elige tú las pistas para que la adivinen.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "formas",
+  "area": "matematicas",
+  "escena": "estuche",
+  "titulo": "¿Quién es quién?",
+  "subtitulo": "Boli ha elegido una figura. Pregunta, descarta y adivina con las menos preguntas posibles.",
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "boli",
+      "pose": "piensa",
+      "texto": "Hay una figura en el estuche que el profe quiere tirar. Yo sé cuál es. Tú no."
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Pregúntame. Solo contesto sí o no. Y no me hagas perder tinta con preguntas inútiles."
+    }
+  ],
+  "observa": "¿Qué pregunta te ha servido más? ¿Por qué hay preguntas que no sirven para nada aunque la respuesta sea verdad?",
+  "niveles": [
+    {
+      "modo": "quien",
+      "generar": {
+        "cantidad": 6
+      },
+      "preguntas": [
+        "tri",
+        "lados4",
+        "convexa",
+        "recto"
+      ]
+    },
+    {
+      "modo": "quien",
+      "generar": {
+        "cantidad": 8
+      },
+      "preguntas": [
+        "tri",
+        "lados4",
+        "masDe4",
+        "convexa",
+        "recto",
+        "iguales"
+      ]
+    },
+    {
+      "modo": "quien",
+      "generar": {
+        "cantidad": 10
+      },
+      "preguntas": [
+        "tri",
+        "lados4",
+        "masDe4",
+        "convexa",
+        "recto",
+        "iguales",
+        "dosIguales",
+        "paralelos"
+      ]
+    },
+    {
+      "modo": "quien",
+      "modo2": "pistas",
+      "generar": {
+        "cantidad": 6
+      },
+      "preguntas": [
+        "tri",
+        "lados4",
+        "convexa",
+        "recto",
+        "iguales"
+      ]
+    },
+    {
+      "modo": "quien",
+      "modo2": "pistas",
+      "generar": {
+        "cantidad": 9
+      },
+      "preguntas": [
+        "tri",
+        "lados4",
+        "masDe4",
+        "convexa",
+        "recto",
+        "iguales",
+        "dosIguales",
+        "paralelos"
+      ]
+    },
+    {
+      "modo": "quien",
+      "generar": {
+        "cantidad": 12
+      },
+      "preguntas": [
+        "tri",
+        "lados4",
+        "masDe4",
+        "convexa",
+        "recto",
+        "iguales",
+        "dosIguales",
+        "paralelos"
+      ]
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

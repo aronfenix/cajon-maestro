@@ -453,3 +453,136 @@ button,input{font:inherit;color:inherit}
 .esquema .caja-g{fill:#fff3c4;stroke:var(--tinta);stroke-width:2.5}
 .esquema .punto-g{fill:var(--azul)}
 .esquema .baldosa{fill:var(--acento);stroke:var(--acento-osc);stroke-width:1.5}
+
+/* ---------- escenarios ---------- */
+body[data-escena]{background:transparent}
+.fondo-escena{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.fondo-escena svg{width:100%;height:100%;display:block}
+body[data-escena="estuche"]{--acento:#1fb5a9;--acento2:#c9f2ee;--acento-osc:#0e7d75}
+body[data-escena] .barra-juego{margin-top:10px;border-radius:20px;background:rgba(255,255,255,.82);backdrop-filter:blur(6px);box-shadow:0 8px 20px -14px rgba(0,0,0,.5)}
+body[data-escena] .reto{color:var(--tinta);text-shadow:0 2px 0 rgba(255,255,255,.6)}
+body[data-escena] .mesa-juego>.pista,body[data-escena] .zona-entra>.pista{display:inline-block;background:rgba(255,255,255,.8);padding:6px 12px;border-radius:10px}
+.paseante{position:fixed;left:0;bottom:8px;z-index:1;pointer-events:none}
+.paseante .patas{animation:patea .3s linear infinite alternate}
+@keyframes patea{to{transform:translateX(4px)}}
+.rayo-luz{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,250,220,.45) 40%,transparent 52%)}
+.sombra-mano{position:fixed;left:0;top:0;z-index:2;pointer-events:none;filter:blur(3px)}
+.sombra-mano svg{width:min(48vw,420px);height:auto}
+
+/* ---------- viñetas ---------- */
+.vineta-capa{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:16px;background:rgba(20,24,30,.55);backdrop-filter:blur(3px)}
+.vineta{width:min(760px,100%);padding:22px;border-radius:20px;background:#fff;border:4px solid var(--tinta);box-shadow:8px 8px 0 var(--tinta)}
+.vineta-panel{display:flex;align-items:flex-end;gap:16px;min-height:220px;padding:10px;border-radius:12px;background:linear-gradient(180deg,#fff6fb,#ffe3ef)}
+.vineta-panel.der{flex-direction:row-reverse;background:linear-gradient(180deg,#f0fffd,#d6f5f2)}
+.vineta-figura{flex:none;width:150px;height:188px}
+.vineta-figura svg{width:100%;height:100%}
+.vineta-figura.fosforito{--c1:#ff8ac4}
+.vineta-bocadillo{position:relative;flex:1;align-self:center;padding:18px 22px;border:3px solid var(--tinta);border-radius:20px;background:#fff;font-size:clamp(19px,2.4vw,24px);line-height:1.35}
+.vineta-botones{display:flex;justify-content:space-between;margin-top:16px}
+.nota-profe{margin:6px auto;max-width:520px;padding:28px 28px 22px;background:#fff27a;transform:rotate(-2deg);box-shadow:0 18px 22px -14px rgba(0,0,0,.5);position:relative}
+.nota-profe::before{content:"";position:absolute;top:-14px;left:50%;width:120px;height:30px;margin-left:-60px;background:rgba(255,255,255,.6);transform:rotate(3deg)}
+.nota-profe p{margin:0;font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:clamp(28px,4.2vw,42px);line-height:1.05}
+.nota-profe span{display:block;margin-top:14px;text-align:right;font-size:20px;font-style:italic}
+
+/* ---------- ayuda y teclado ---------- */
+.pie-asistente{display:flex;align-items:flex-end;gap:6px}
+.boton-ayuda{pointer-events:auto;position:relative;width:64px;height:64px;margin-bottom:18px;border:3px solid var(--tinta);border-radius:50%;background:var(--oro);cursor:pointer;box-shadow:0 5px 0 #a8740a,0 12px 14px -8px rgba(0,0,0,.45);transition:transform .08s}
+.boton-ayuda b{font-family:'Rotulo',Impact,sans-serif;font-size:40px;line-height:1}
+.boton-ayuda:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 #a8740a}
+.boton-ayuda:disabled{filter:grayscale(1);opacity:.45;cursor:default}
+.puntos-ayuda{position:absolute;left:50%;bottom:-16px;transform:translateX(-50%);display:flex;gap:4px}
+.puntos-ayuda i{width:9px;height:9px;border-radius:50%;background:rgba(0,0,0,.2)}
+.puntos-ayuda i.on{background:var(--tinta)}
+.teclado{position:fixed;left:50%;bottom:10px;z-index:80;transform:translateX(-50%);display:flex;gap:10px;padding:12px;border-radius:22px;background:rgba(255,255,255,.95);border:3px solid var(--tinta);box-shadow:0 18px 30px -16px rgba(0,0,0,.6);animation:sube .25s cubic-bezier(.3,1.4,.5,1)}
+.teclado-nums{display:grid;grid-template-columns:repeat(3,64px);gap:8px}
+.teclado-lado{display:flex;flex-direction:column;gap:8px}
+.tecla-num{min-width:64px;min-height:56px;padding:0;font-family:'Rotulo',Impact,sans-serif;font-size:30px;font-weight:800}
+.tecla-num.vacia{visibility:hidden}
+.tecla-num.borra{font-family:'Texto',sans-serif;font-size:24px}
+.tecla-num.ok{flex:1;--c:var(--azul);--c-canto:#122a7c;--c-txt:#fff}
+.tecla-num.op{--c:#fff3c4;--c-canto:#c9a13a}
+body.con-teclado .mesa-juego{padding-bottom:300px}
+@media (max-width:760px){.teclado-nums{grid-template-columns:repeat(3,56px)}.tecla-num{min-width:56px;min-height:50px}.boton-ayuda{width:54px;height:54px}}
+
+/* ---------- celebraciones ---------- */
+.celebra-capa{position:fixed;inset:0;z-index:95;pointer-events:none}
+.celebra-capa svg{width:100%;height:100%}
+.trazo-celebra{stroke-dasharray:1;stroke-dashoffset:1;animation:traza .5s ease-out forwards}
+.sello-diez{transform-origin:800px 420px;animation:sella .4s .35s cubic-bezier(.3,1.8,.5,1) both}
+.gomet{position:fixed;top:0;z-index:96;border-radius:50%;pointer-events:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),0 2px 3px rgba(0,0,0,.3)}
+
+/* ---------- formas (el estuche) ---------- */
+.cola-figuras{display:flex;flex-wrap:wrap;gap:10px;min-height:96px;padding:12px;margin-bottom:16px;border-radius:16px;background:rgba(255,255,255,.75);border:3px dashed rgba(0,0,0,.25)}
+.cola-figuras:empty::before{content:"Cola vacía: ya están todas colocadas.";align-self:center;color:var(--gris)}
+.pasajero{position:relative;width:86px;padding:4px;border:0;border-radius:12px;background:#fff;cursor:pointer;box-shadow:inset 0 -4px 0 #d8ddd9,0 6px 10px -6px rgba(0,0,0,.5);transition:transform .12s}
+.pasajero svg{display:block;width:100%;height:auto}
+.pasajero.elegida{transform:translateY(-6px) rotate(-3deg);box-shadow:inset 0 -4px 0 #d8ddd9,0 0 0 4px var(--azul),0 12px 14px -8px rgba(0,0,0,.5);animation:menea .5s ease-in-out infinite alternate}
+.pasajero.colocada{width:68px}
+.pasajero.bien{box-shadow:0 0 0 4px var(--azul)}
+.pasajero.mal{box-shadow:0 0 0 4px var(--rojo)}
+.pasajero.mal::after{content:"";position:absolute;inset:-8px;border:3.5px solid var(--rojo);border-radius:50% 44% 52% 46%}
+.pasaporte-mini{position:absolute;left:50%;top:100%;transform:translateX(-50%);z-index:3;margin-top:4px;padding:2px 6px;border-radius:6px;background:var(--tinta);color:#fff;font-size:11px;line-height:1.2;white-space:nowrap}
+.zona-clasificar.lados{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.cajita-lados{min-height:200px;padding:10px;border-radius:16px;background:#fff;border:4px solid var(--tinta);display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px;cursor:pointer;box-shadow:inset 0 -10px 0 rgba(31,181,169,.25)}
+.cajita-lados b,.cab-cajon{width:100%;font-family:'Rotulo',Impact,sans-serif;font-size:24px}
+.zona-clasificar.triangulos{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
+.cab-cajon{text-align:center;align-self:end}
+.cab-cajon.fila{text-align:right;align-self:center;padding-right:6px}
+.cajon-tri{min-height:150px;padding:8px;border-radius:12px;background:linear-gradient(180deg,#fff,#f3f5f2);border:4px solid var(--tinta);display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;cursor:pointer;box-shadow:inset 0 -8px 0 #d8ddd9}
+.cajon-tri::after{content:"";display:block;width:40px;height:8px;margin:auto auto 0;border-radius:4px;background:var(--tinta)}
+.diagrama-caja{position:relative;max-width:900px;cursor:pointer}
+.diagrama{display:block;width:100%;height:auto}
+.diagrama .z-otros{fill:#fff;stroke:#000;stroke-width:5}
+.diagrama .z-par{fill:#fff3c4;stroke:#000;stroke-width:5}
+.diagrama .z-rect{fill:rgba(47,107,224,.18);stroke:#2f6be0;stroke-width:5}
+.diagrama .z-rombo{fill:rgba(255,79,123,.18);stroke:#ff4f7b;stroke-width:5}
+.diagrama .z-nombre{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:32px}
+.diagrama .z-nombre.peq{font-size:26px}
+.diagrama-caja .pasajero{position:absolute}
+.tablero-corcho{display:inline-block;max-width:100%;padding:16px;border-radius:18px;background:#c99658 radial-gradient(#b07f45 1.5px,transparent 2px) 0 0/14px 14px;border:10px solid #8a5a2b;box-shadow:var(--sombra)}
+.corcho-goma .fig.figura-goma{fill:#fff27a;fill-opacity:.95;stroke:#000;stroke-width:4}
+.corcho-goma .cabeza-ch{fill:#c8201a;stroke:#000;stroke-width:3}
+.corcho-goma .marcada .cabeza-ch{fill:var(--azul)}
+.corcho-goma .marcada .cabeza-ch{stroke:#fff;stroke-width:4}
+.corcho-goma .toque-v{fill:transparent;cursor:pointer}
+.corcho-goma .banda{fill:none;stroke:#ff4f7b;stroke-width:8;stroke-linejoin:round}
+.corcho-goma .aire{fill:rgba(47,107,224,.28);stroke:none}
+.corcho-goma .goma-pista{stroke:#ff4f7b;stroke-width:7;stroke-dasharray:12 10}
+.tablero-quien{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;max-width:900px}
+.carta-quien{position:relative;padding:6px;border:0;border-radius:12px;background:#fff;cursor:pointer;box-shadow:inset 0 -5px 0 #d8ddd9,0 8px 12px -8px rgba(0,0,0,.5);transition:transform .25s}
+.carta-quien svg{display:block;width:100%;height:auto}
+.carta-quien.tumbada{transform:perspective(400px) rotateX(64deg) translateY(10px);opacity:.45;filter:grayscale(1)}
+.carta-quien.objetivo,.carta-quien.secreta{box-shadow:0 0 0 5px var(--azul)}
+.carta-quien.bien{box-shadow:0 0 0 5px var(--azul),0 0 0 10px var(--oro)}
+.carta-quien.mal{box-shadow:0 0 0 5px var(--rojo)}
+.tablero-quien.adivinando .carta-quien:not(.tumbada){animation:menea .45s ease-in-out infinite alternate}
+.panel-preguntas{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;max-width:900px}
+.pregunta{min-height:48px;padding:6px 14px;border:3px solid var(--tinta);border-radius:999px;background:#fff;font-weight:700;font-size:16px;cursor:pointer}
+.pregunta:disabled{opacity:.5;cursor:default}
+.pista-chip[aria-pressed="true"]{background:var(--acento);}
+.historial-quien{margin:14px 0 0;padding-left:1.3em;font-size:17px;max-width:900px}
+.historial-quien b.si{color:var(--azul)}.historial-quien b.no{color:var(--rojo)}
+@media (max-width:760px){.zona-clasificar.lados{grid-template-columns:repeat(2,1fr)}.pasajero{width:70px}.tablero-quien{grid-template-columns:repeat(3,1fr)}}
+
+/* ---------- mapa de una aventura ---------- */
+.mapa .pista{max-width:44em}
+.cajon-mapa{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding:22px;border-radius:26px;background:#b9874a;box-shadow:inset 0 10px 24px rgba(0,0,0,.35),0 24px 30px -20px rgba(0,0,0,.6);border:10px solid #8a5a2b}
+.compartimento{position:relative;padding:16px;border-radius:16px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 30%,#fff),color-mix(in srgb,var(--c) 55%,#fff));box-shadow:inset 0 6px 14px rgba(0,0,0,.25);min-height:220px}
+.compartimento.en-obras{filter:saturate(.35)}
+.compartimento.en-obras::after{content:"EN OBRAS";position:absolute;right:12px;bottom:12px;padding:4px 10px;border:3px solid var(--tinta);border-radius:6px;background:repeating-linear-gradient(45deg,#ffd23f 0 10px,#000 10px 20px);color:#fff;font-family:'Rotulo',Impact,sans-serif;font-size:18px;text-shadow:0 0 3px #000}
+.cab-comp{display:flex;align-items:center;gap:10px}
+.icono-comp{width:70px;height:88px;flex:none}
+.icono-comp svg{width:100%;height:100%}
+.compartimento h2{font-family:'Rotulo',Impact,sans-serif;font-weight:800;font-size:30px;line-height:.95;margin:0}
+.compartimento p{margin:4px 0 0;font-weight:700;color:var(--gris)}
+.compartimento ul{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.juego-mapa{width:100%;justify-content:space-between;min-height:48px;font-size:17px}
+.juego-mapa.futuro{display:block;padding:10px 14px;border-radius:12px;border:2px dashed rgba(0,0,0,.3);color:var(--gris);font-weight:700}
+.juego-mapa.hecho{--c:#e9fbf6;--c-canto:#0e7d75}
+.tic-hecho{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#0e7d75;color:#fff}
+.sello-ordenado{position:absolute;right:14px;bottom:14px;padding:4px 12px;border:4px double var(--rojo);color:var(--rojo);font-family:'Rotulo',Impact,sans-serif;font-size:26px;transform:rotate(-10deg);animation:sella .5s both}
+.final-mapa{margin-top:22px;padding:18px 22px;border-radius:18px;background:rgba(255,255,255,.85);border:4px dashed rgba(0,0,0,.3)}
+.final-mapa.abierto{border:4px solid var(--tinta);background:#fff27a}
+.final-mapa h2{font-family:'Rotulo',Impact,sans-serif;font-size:36px;margin:0}
+@media (max-width:860px){.cajon-mapa{grid-template-columns:1fr 1fr;padding:12px;gap:12px}}
+@media (max-width:560px){.cajon-mapa{grid-template-columns:1fr}}

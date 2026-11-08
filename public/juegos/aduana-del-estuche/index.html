@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aduana del estuche · Cajón maestro</title>
+<meta name="description" content="Clasifica figuras metiéndolas en cajas: por lados, en el diagrama de cuadriláteros y en la cajonera de triángulos.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "formas",
+  "area": "matematicas",
+  "escena": "estuche",
+  "titulo": "Aduana del estuche",
+  "subtitulo": "Las figuras hacen cola para entrar en el estuche. Cada una tiene que ir a su sitio, y algunas tienen más de un pasaporte.",
+  "volver": "../la-gran-limpieza/",
+  "historia": [
+    {
+      "nota": "EL VIERNES ORDENO ESTE CAJÓN. LO QUE NO SIRVA, A LA PAPELERA.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "asombro",
+      "texto": "¡Alerta! Las figuras del estuche están revueltas. Si no las ordenamos antes del viernes, a la papelera."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "Tú decides dónde va cada una. Mira sus lados y sus esquinas, no cómo está colocada."
+    }
+  ],
+  "observa": "¿Por qué los cuadrados van justo donde se juntan los rectángulos y los rombos? ¿Y por qué hay cajones de triángulos que se quedan siempre vacíos?",
+  "niveles": [
+    {
+      "modo": "clasificar",
+      "tipo": "lados",
+      "generar": {
+        "cantidad": 6,
+        "familias": [
+          "tri",
+          "triRectangulo",
+          "cuadrilatero",
+          "trapecio",
+          "pent",
+          "hex"
+        ]
+      }
+    },
+    {
+      "modo": "clasificar",
+      "tipo": "lados",
+      "generar": {
+        "cantidad": 8
+      }
+    },
+    {
+      "modo": "clasificar",
+      "tipo": "cuadri",
+      "partes": 1,
+      "generar": {
+        "cantidad": 6,
+        "familias": [
+          "rectanguloRecto",
+          "romboide",
+          "rombo",
+          "trapecio",
+          "cuadrilatero",
+          "dardo"
+        ]
+      },
+      "texto": "¿Es un **paralelogramo** o no?"
+    },
+    {
+      "modo": "clasificar",
+      "tipo": "cuadri",
+      "partes": 2,
+      "generar": {
+        "cantidad": 7,
+        "familias": [
+          "rectanguloRecto",
+          "cuadradoRecto",
+          "romboide",
+          "trapecio",
+          "cuadrilatero"
+        ]
+      },
+      "texto": "Paralelogramos y, dentro, **los rectángulos**"
+    },
+    {
+      "modo": "clasificar",
+      "tipo": "triangulos",
+      "generar": {
+        "cantidad": 6
+      }
+    },
+    {
+      "modo": "clasificar",
+      "tipo": "cuadri",
+      "partes": 3,
+      "generar": {
+        "cantidad": 8,
+        "familias": [
+          "cuadradoRecto",
+          "rectanguloRecto",
+          "rombo",
+          "romboide",
+          "trapecio",
+          "cuadrilatero",
+          "dardo"
+        ]
+      }
+    },
+    {
+      "modo": "clasificar",
+      "tipo": "triangulos",
+      "generar": {
+        "cantidad": 8
+      }
+    },
+    {
+      "modo": "clasificar",
+      "tipo": "cuadri",
+      "partes": 3,
+      "generar": {
+        "cantidad": 9,
+        "familias": [
+          "cuadradoInclinado",
+          "rectanguloInclinado",
+          "rombo",
+          "romboide",
+          "trapecio",
+          "cuadradoRecto",
+          "dardo"
+        ]
+      }
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

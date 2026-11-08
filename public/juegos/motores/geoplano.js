@@ -435,3 +435,6 @@ export function ronda(d, ctx) {
   if (d.modo === 'construir') return construir(d, ctx);
   return seleccionar(d, ctx);
 }
+
+// lo que reutilizan otros motores (formas.js)
+export { FAM, figuraDe, aleatorio, tablero, camino, notacion, area2, entrantes, normaliza, caja, rota, espejo, aristas, esc, l2, cruz };
