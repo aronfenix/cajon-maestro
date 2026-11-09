@@ -166,7 +166,7 @@ export function portada(config, { dibuja, POSES, quien, progreso = 0, record = n
     const AREA = { matematicas: 'MATES', lengua: 'LENGUA', naturales: 'NATURALES', sociales: 'SOCIALES' };
     const rotulo = config.portada?.rotulo ?? (tipo === 'cajon' ? AREA[config.area] || 'CAJÓN' : '');
     const arte = h('div', 'portada-arte', (ARTE[tipo] || ARTE.cajon)(rotulo));
-    const fig = h('div', 'portada-figura figura ' + quien, dibuja(quien, POSES.asombro || POSES.quieto));
+    const fig = h('div', 'portada-figura figura ' + quien, dibuja(quien, 'saluda', { veces: 2, luego: 'reposo' }));
     const frase = h('div', 'portada-bocadillo bocadillo');
     frase.textContent = config.portada?.frase || fraseHola;
     const pj = h('div', 'portada-personaje'); pj.append(frase, fig);

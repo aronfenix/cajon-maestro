@@ -1,3 +1,4 @@
+import { sprite } from './sprites.js';
 // Personaje con esqueleto: el cuerpo, la cara y los brazos son parámetros, no dibujos.
 // Una pose es un objeto; cualquier mezcla de parámetros es una viñeta nueva y se puede animar entre poses.
 // dibuja(tipo, pose) → cadena SVG (viewBox 0 0 200 250)
@@ -74,6 +75,10 @@ function brazo(sx, sy, ang, largo, curva, lado, guante = '#fff') {
 }
 
 export const POSES = {
+  baile: { brazos: [[64, 52, -14], [64, 52, -14]], ojos: 'feliz', boca: 'grande', salto: 12 },
+  saluda: { brazos: [[-70, 44, 8], [64, 52, -14]], ojos: 'feliz', boca: 'sonrisa' },
+  idea: { brazos: [[-70, 44, 8], [70, 40, -30]], ojos: 'grande', boca: 'o', alto: 6 },
+  habla: { brazos: [[-60, 44, 6], [20, 50, -6]], ojos: 'normal', boca: 'sonrisa' },
   quieto: { brazos: [[-70, 44, 8], [-70, 44, 8]], ojos: 'normal', mira: [0.3, 0], cejas: [4, 4], boca: 'ladeada' },
   pista: { brazos: [[-60, 44, 6], [62, 56, -10]], ojos: 'grande', mira: [0.6, -0.6], cejas: [-8, -8], alto: 4, boca: 'o', lean: 4 },
   celebra: { brazos: [[64, 52, -14], [64, 52, -14]], ojos: 'feliz', cejas: [-12, -12], boca: 'grande', salto: 12, estira: 1.05 },
@@ -84,7 +89,14 @@ export const POSES = {
   borra: { brazos: [[-10, 50, 10], [-10, 50, 10]], ojos: 'cerrado', cejas: [8, 8], boca: 'mueca', lean: 10, miga: true },
 };
 
-export function dibuja(tipo, pose = POSES.quieto) {
+// Las poses de siempre, traducidas a las acciones de los personajes dibujados
+const ACCION_DE = { quieto: 'reposo', pista: 'pista', celebra: 'celebrar', seguro: 'hablar', piensa: 'pensar', animo: 'animar', asombro: 'sorpresa', borra: 'revisar', baile: 'baile', saluda: 'saludar', idea: 'idea', habla: 'hablar', escucha: 'escuchar', espera: 'esperar', revisa: 'revisar', abajo: 'senalar_abajo', izquierda: 'senalar_izquierda' };
+export function dibuja(tipo, pose = POSES.quieto, opciones) {
+  const nombre = typeof pose === 'string' ? pose : Object.keys(POSES).find((k) => POSES[k] === pose) ?? 'quieto';
+  return sprite(tipo, ACCION_DE[nombre] ?? nombre, opciones);
+}
+// el esqueleto paramétrico de antes (ya no se usa, pero se queda por si hace falta un dibujo vectorial)
+export function dibujaSVG(tipo, pose = POSES.quieto) {
   const c = CUERPOS[tipo];
   const p = { ...POSES.quieto, ...pose };
   const est = p.estira ?? 1;

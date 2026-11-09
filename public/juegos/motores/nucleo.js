@@ -171,8 +171,8 @@ export async function arrancar(config, motor) {
   const bocadillo = el('div', { class: 'bocadillo', role: 'status', 'aria-live': 'polite', hidden: true });
   const figura = el('div', { class: 'figura ' + quien, 'aria-hidden': 'true', title: voz.nombre });
   let poseT = null;
-  const posa = (pose = 'quieto', ms = 0) => {
-    figura.innerHTML = dibuja(quien, POSES[pose] || POSES.quieto);
+  const posa = (pose = 'quieto', ms = 0, luego) => {
+    figura.innerHTML = dibuja(quien, POSES[pose] ? pose : 'quieto', pose === 'quieto' ? undefined : { veces: pose === 'baile' ? 3 : pose === 'piensa' ? 4 : 2, luego });
     clearTimeout(poseT);
     if (ms) poseT = setTimeout(() => posa('quieto'), ms);
   };
@@ -214,7 +214,7 @@ export async function arrancar(config, motor) {
     bocadillo.classList.remove('entra'); void bocadillo.offsetWidth; bocadillo.classList.add('entra');
     figura.classList.remove('habla'); void figura.offsetWidth; figura.classList.add('habla');
     if (ms) callaT = setTimeout(() => (bocadillo.hidden = true), ms);
-    posa(POSE_DE[tipo] || 'quieto', Math.max(ms || 0, 2600));
+    posa(POSE_DE[tipo] || 'quieto', Math.max(ms || 0, 2600), 'hablar:2');
   };
   const dice = (clave, tipo, ms) => di(una(voz[clave]), tipo, ms);
   const calla = () => { clearTimeout(callaT); bocadillo.hidden = true; };
@@ -409,7 +409,7 @@ export async function arrancar(config, motor) {
       if (L > antes) { await subeNivel(L, TOP + 1); fx.bote(nivelUI, 8); setTimeout(() => dice(L === TOP ? 'top' : 'sube', 'sube', 2600), 100); }
       else if (L < antes) setTimeout(() => dice('baja', 'baja', 2800), 300);
       else if (progreso >= 78 && L < objetivo && techo === 78) setTimeout(() => dice('techo', 'animo', 3500), 300);
-      else if (seguidas === 3 || seguidas === 6) setTimeout(() => dice('racha', 'perfecto', 2800), 300);
+      else if (seguidas === 3 || seguidas === 6) setTimeout(() => { dice('racha', 'perfecto', 2800); posa('baile', 3600); }, 300);
       if (seguidas >= 2) {
         racha.hidden = false;
         racha.replaceChildren(svg('0 0 24 24', '<path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3 0-5 1-8z" fill="#ff7a1a" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 13c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1-3 1 1 2 0 2-2z" fill="#ffd23f"/>', { width: 22, height: 22 }), `${seguidas} seguidos`);
@@ -453,10 +453,11 @@ export async function arrancar(config, motor) {
         if (DIBUJOS[slug]) {
           const premio = el('div', { class: 'premio-pegatina' }, pegatinaAlbum(slug), el('div', {}, el('b', { text: yaLaTenia ? (config.volver?.includes('feria') ? 'Tu premio de esta caseta' : 'Tu pegatina de este juego') : config.volver?.includes('feria') ? '¡Premio nuevo de la feria!' : '¡Pegatina nueva para tu álbum!' }), el('small', { text: config.volver?.includes('limpieza') ? 'La verás en el álbum del mapa.' : config.volver?.includes('feria') ? 'La verás en la estantería de premios del mapa.' : 'Ya es tuya.' })));
           final.querySelector('h2').after(premio);
+          premio.prepend(el('div', { class: 'baile-final', html: dibuja(quien, 'baile', { veces: 5, luego: 'celebrar' }) }));
           if (!matchMedia('(prefers-reduced-motion: reduce)').matches) premio.querySelector('.pegatina-album').animate([{ transform: 'scale(3) rotate(-50deg)', opacity: 0 }, { transform: 'scale(.9) rotate(8deg)', opacity: 1, offset: 0.7 }, { transform: 'scale(1) rotate(0)' }], { duration: 650, delay: 400, easing: 'cubic-bezier(.3,1.4,.5,1)', fill: 'both' });
           setTimeout(() => suena('sello'), 850);
         }
-        setTimeout(() => { suena('bien'); fx.gomets(34); }, 300);
+        setTimeout(() => { suena('bien'); fx.gomets(34); posa('baile', 3600); }, 300);
       }
       setTimeout(() => dice(completo || !adaptativo ? 'finalBien' : 'finalCorto', 'perfecto', 6000), 700);
     }

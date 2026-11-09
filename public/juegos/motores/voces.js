@@ -51,5 +51,5 @@ export const VOCES = {
     finalCorto: ['¡Lo dejamos aquí! ¡La próxima vez, más!'],
   },
 };
-export const POSE_DE = { saludo: 'quieto', pista: 'pista', animo: 'seguro', bien: 'celebra', perfecto: 'celebra', piensa: 'piensa', fallo: 'animo', sube: 'asombro', baja: 'animo' };
+export const POSE_DE = { saludo: 'saluda', pista: 'pista', animo: 'animo', bien: 'celebra', perfecto: 'celebra', piensa: 'piensa', fallo: 'animo', sube: 'idea', baja: 'animo' };
 export const una = (lista) => lista[Math.floor(Math.random() * lista.length)];

@@ -15,6 +15,7 @@ const hecho = (slug) => !!lee('cajon-hecho:' + ruta(slug));
 const lento = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 import { DIBUJOS, pegatina } from './pegatinas.js';
+import { actua } from './sprites.js';
 
 export async function montaMapa(c) {
   const X = { sello: 'ORDENADO', hechos: 'ordenados', album: 'Pegatinas', albumTitulo: 'Mis pegatinas', albumTexto: 'Cada juego terminado, una pegatina.', icono: 'el-examen-del-viernes', listo: 'Todo ordenado. Ya puedes hacer el examen.', boton: 'Hacer el examen', repetir: 'Repetir el examen', ...(c.textos || {}) };
@@ -103,6 +104,7 @@ export async function montaMapa(c) {
       guarda(clave, '1');
       if (lento()) continue;
       await new Promise((r) => setTimeout(r, 700));
+      actua(n.fig, 'baile', { veces: 4, luego: 'celebrar' });
       n.caja.scrollIntoView({ block: 'center', behavior: 'smooth' });
       if (feria) { const bs = n.caja.querySelectorAll('.bombillas i'); n.caja.classList.remove('ordenado'); for (const b of bs) { b.classList.add('apagada'); } n.caja.classList.add('ordenado'); for (const b of bs) { b.classList.remove('apagada'); suena('clic'); await new Promise((r) => setTimeout(r, 70)); } }
       gsap.fromTo(n.sello, { scale: 3, rotation: -40, opacity: 0 }, { scale: 1, rotation: -12, opacity: 1, duration: 0.45, ease: 'back.out(2.2)', onComplete: () => { suena('sello'); gsap.fromTo(n.caja, { y: 4 }, { y: 0, duration: 0.4, ease: 'elastic.out(1,0.3)' }); chispasEn(n.sello, 16, '#ffc531'); } });

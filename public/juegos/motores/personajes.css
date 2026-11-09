@@ -1,0 +1,24 @@
+/* ---------- los personajes dibujados (sprites.js) ---------- */
+.sprite{position:absolute;left:50%;bottom:-13%;width:128%;aspect-ratio:1/1;transform:translateX(-50%);background-repeat:no-repeat;background-size:auto 100%;background-position:0 0;pointer-events:none}
+.figura,.portada-figura,.vineta-figura,.figura-comp,.mini-goma,.saltarin,.bailarin,.baile-final{position:relative}
+.figura .sprite{width:150%;bottom:-16%}
+.figura::after{bottom:-2px}
+.figura-comp .sprite{width:146%;bottom:-16%}
+.mini-goma .sprite{width:118%;bottom:-6%}
+.saltarin .sprite{width:140%;bottom:-14%}
+/* la pantalla de carga: el personaje del juego baila */
+.carga-baile{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#2e7d5b;color:#fffdf6;transition:opacity .3s}
+.carga-baile.feria{background:#23285c}
+.carga-baile.sale{opacity:0}
+.carga-baile .bailarin{width:min(46vw,220px);aspect-ratio:1/1.05}
+.carga-baile .bailarin .sprite{width:118%;bottom:-6%}
+.carga-baile b{font-family:'Rotulo','Grandstander',system-ui,sans-serif;font-weight:900;font-size:26px;letter-spacing:.02em}
+/* el baile de la victoria al acabar un juego */
+.premio-pegatina{position:relative}
+.baile-final{flex:none;width:120px;height:132px;margin:-30px 0 -6px}
+.baile-final .sprite{width:126%;bottom:-8%}
+@media (max-width:640px){.baile-final{width:90px;height:100px}}
+.cara-quien{position:relative;flex:none;width:56px;height:64px;overflow:visible}
+.cara-quien .sprite{width:150%;bottom:-14%}
+.vineta-figura .sprite{width:140%;bottom:-14%}
+.portada-figura .sprite{width:150%;bottom:-16%}
