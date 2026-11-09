@@ -310,9 +310,10 @@ function colchonetas(d, ctx) {
 }
 
 /* ---------------------------------------------------------------- cartas y huecos (pares y báscula) */
-function mesaDeCartas({ valores, huecos, alCambiar, clase = 'carta-feria' }) {
-  const cartas = valores.map((v, i) => el('div', { class: clase, tabindex: 0, role: 'button', 'data-v': v, 'aria-label': `Carta ${v}` }, el('b', { text: typeof v === 'number' ? num(v) : v })));
+export function mesaDeCartas({ valores, huecos, alCambiar, clase = 'carta-feria', contenido, etiqueta }) {
+  const cartas = valores.map((v, i) => el('div', { class: clase, tabindex: 0, role: 'button', 'data-v': v, 'aria-label': etiqueta ? etiqueta(v, i) : `Carta ${v}` }, contenido ? contenido(v, i) : el('b', { text: typeof v === 'number' ? num(v) : v })));
   const mazo = el('div', { class: 'mazo-cartas' }, cartas);
+  const sel = '.' + clase.split(' ')[0];
   const sitio = new Map();
   let elegida = null;
   const de = (h) => cartas.find((c) => sitio.get(c) === h);
@@ -324,10 +325,10 @@ function mesaDeCartas({ valores, huecos, alCambiar, clase = 'carta-feria' }) {
   const quita = (c) => { sitio.delete(c); mazo.append(c); alCambiar?.(); };
   const marca = (c) => { elegida?.classList.remove('elegida'); elegida = elegida === c ? null : c; elegida?.classList.add('elegida'); suena('clic'); };
   let bloqueado = false;
-  cartas.forEach((c) => arrastra(c, { puede: () => !bloqueado, destinos: () => [...huecos, mazo], alSoltar: (dest) => { elegida?.classList.remove('elegida'); elegida = null; dest === mazo ? quita(c) : pon(c, dest); return c; }, alTocar: () => !bloqueado && marca(c) }));
-  huecos.forEach((h) => h.addEventListener('click', (e) => { if (!elegida || bloqueado || e.target.closest('.' + clase) === elegida) return; const c = elegida; marca(c); pon(c, h); aterriza(c); }));
-  mazo.addEventListener('click', (e) => { if (elegida && !e.target.closest('.' + clase)) { const c = elegida; marca(c); quita(c); aterriza(c); } });
-  return { mazo, cartas, valor: (h) => { const c = de(h); return c ? c.dataset.v : null; }, bloquea: (b = true) => (bloqueado = b), pon, de };
+  cartas.forEach((c) => arrastra(c, { puede: () => !bloqueado, destinos: () => [...huecos, mazo], alSoltar: (dest) => { elegida?.classList.remove('elegida'); elegida = null; dest === mazo ? quita(c) : pon(c, dest); return c; }, alTocar: () => { if (bloqueado) return; const h = sitio.get(c); if (elegida && elegida !== c && h) { const e = elegida; marca(e); pon(e, h); aterriza(e); return; } marca(c); } }));
+  huecos.forEach((h) => h.addEventListener('click', (e) => { if (!elegida || bloqueado || e.target.closest(sel) === elegida) return; const c = elegida; marca(c); pon(c, h); aterriza(c); }));
+  mazo.addEventListener('click', (e) => { if (elegida && !e.target.closest(sel)) { const c = elegida; marca(c); quita(c); aterriza(c); } });
+  return { mazo, cartas, valor: (h) => { const c = de(h); return c ? c.dataset.v : null; }, bloquea: (b = true) => (bloqueado = b), pon, de, quita, sitio };
 }
 
 /* ================================================================ pares y nones */

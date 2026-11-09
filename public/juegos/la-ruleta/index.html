@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La ruleta · Cajón maestro</title>
+<meta name="description" content="Estimar la medida de ángulos en una ruleta, dibujar ángulos con el medidor (también con el brazo hacia la izquierda) y medirlos leyendo la escala buena.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "angulos",
+  "titulo": "La ruleta",
+  "subtitulo": "La ruleta de la feria reparte premios por gajos. Para saber cuánto toca, hay que saber cuánto mide cada trozo.",
+  "portada": {
+    "rotulo": "RULETA",
+    "objetivo": "Estima, dibuja y mide ángulos con el medidor. Ojo con las dos filas de números.",
+    "frase": "¡Gira, gira, gira!"
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "La ruleta paga según el trozo donde cae. El feriante dice que el rojo mide 90°. Yo no me fío."
+    },
+    {
+      "quien": "boli",
+      "pose": "pista",
+      "texto": "El medidor tiene dos filas de números. La buena es la que empieza en 0 por el lado de tu brazo."
+    }
+  ],
+  "observa": "¿Cómo sabes qué fila de números del medidor tienes que leer antes de mirar los números?",
+  "niveles": [
+    {
+      "modo": "estima",
+      "generar": {
+        "angulos": [
+          45,
+          90,
+          180,
+          270
+        ],
+        "cuantas": 4
+      }
+    },
+    {
+      "modo": "estima",
+      "generar": {
+        "angulos": [
+          30,
+          60,
+          90,
+          120,
+          150
+        ],
+        "girar": true
+      }
+    },
+    {
+      "modo": "dibuja",
+      "generar": {
+        "angulos": [
+          30,
+          60,
+          90,
+          120,
+          150
+        ]
+      }
+    },
+    {
+      "modo": "mide",
+      "generar": {
+        "rango": [
+          20,
+          160
+        ],
+        "redondo": true
+      }
+    },
+    {
+      "modo": "dibuja",
+      "generar": {
+        "angulos": [
+          45,
+          135,
+          60,
+          150
+        ],
+        "izquierda": true
+      }
+    },
+    {
+      "modo": "estima",
+      "generar": {
+        "angulos": [
+          30,
+          45,
+          60,
+          120,
+          135,
+          150
+        ],
+        "girar": true,
+        "cerca": true
+      }
+    },
+    {
+      "modo": "mide",
+      "generar": {
+        "rango": [
+          15,
+          165
+        ],
+        "izquierda": "mezcla"
+      }
+    },
+    {
+      "modo": "dibuja",
+      "generar": {
+        "angulos": [
+          35,
+          75,
+          105,
+          125,
+          165
+        ],
+        "izquierda": "mezcla"
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

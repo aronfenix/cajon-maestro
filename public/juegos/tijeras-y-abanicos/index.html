@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tijeras y abanicos · Cajón maestro</title>
+<meta name="description" content="Comparar y ordenar ángulos por su abertura aunque los brazos tengan distinto largo o estén girados, y abrir un abanico igual que otro.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "angulos",
+  "titulo": "Tijeras y abanicos",
+  "subtitulo": "En el puesto de los abanicos hay de todos los tamaños. Pero lo que importa no es lo grandes que son, sino lo que se abren.",
+  "portada": {
+    "rotulo": "ABANICOS",
+    "objetivo": "¿Cuál está más abierto? Ojo: los brazos largos engañan.",
+    "frase": "El grande no siempre es el más abierto."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "asombro",
+      "texto": "¡Abanicos gigantes y abanicos enanos! El feriante dice que el más caro es el que más se abre."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "No te fijes en lo largo de las varillas. Fíjate en el hueco que dejan entre ellas."
+    }
+  ],
+  "observa": "Si alargas los brazos de un ángulo, ¿se hace más grande el ángulo?",
+  "niveles": [
+    {
+      "modo": "compara",
+      "generar": {
+        "objeto": "abanico",
+        "diferencia": [
+          35,
+          60
+        ]
+      }
+    },
+    {
+      "modo": "compara",
+      "generar": {
+        "objeto": "tijeras",
+        "diferencia": [
+          25,
+          45
+        ]
+      }
+    },
+    {
+      "modo": "ordena",
+      "generar": {
+        "cantidad": 4,
+        "separacion": 25
+      }
+    },
+    {
+      "modo": "compara",
+      "generar": {
+        "objeto": "mezcla",
+        "diferencia": [
+          15,
+          30
+        ],
+        "engana": true
+      }
+    },
+    {
+      "modo": "iguala",
+      "generar": {
+        "rango": [
+          30,
+          150
+        ]
+      }
+    },
+    {
+      "modo": "ordena",
+      "generar": {
+        "cantidad": 5,
+        "separacion": 15,
+        "objeto": "brazos",
+        "girar": true,
+        "engana": true,
+        "sentido": "baja"
+      }
+    },
+    {
+      "modo": "compara",
+      "generar": {
+        "objeto": "brazos",
+        "diferencia": [
+          8,
+          18
+        ],
+        "engana": true,
+        "iguales": true
+      }
+    },
+    {
+      "modo": "iguala",
+      "generar": {
+        "rango": [
+          20,
+          165
+        ],
+        "girar": true,
+        "rModelo": [
+          50,
+          70
+        ],
+        "rTuyo": [
+          100,
+          110
+        ]
+      }
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

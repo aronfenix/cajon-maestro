@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las banderolas · Cajón maestro</title>
+<meta name="description" content="Tipos de ángulos: clasificar en agudo, recto, obtuso, llano y completo, encontrar polígonos con algún ángulo obtuso y emparejar ángulos iguales aunque estén girados.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "angulos",
+  "titulo": "Las banderolas",
+  "subtitulo": "Las guirnaldas de banderines se han mezclado. Hay que separar los ángulos por tipos y encontrar los banderines con esquinas obtusas.",
+  "portada": {
+    "rotulo": "BANDEROLAS",
+    "objetivo": "Agudo, recto, obtuso, llano o completo. Compara siempre con la esquina de un folio.",
+    "frase": "¡Qué lío de banderines!"
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Las banderolas van por tipos, y se han mezclado todas con el viento."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Mi truco: la esquina de un folio. Si el ángulo cabe dentro, es agudo; si sobra, obtuso."
+    }
+  ],
+  "observa": "¿Puede un triángulo tener dos ángulos obtusos? ¿Por qué no?",
+  "niveles": [
+    {
+      "modo": "clasifica",
+      "generar": {
+        "tipos": [
+          "agudo",
+          "recto",
+          "obtuso"
+        ],
+        "cantidad": 6
+      }
+    },
+    {
+      "modo": "clasifica",
+      "generar": {
+        "tipos": [
+          "agudo",
+          "recto",
+          "obtuso",
+          "llano"
+        ],
+        "cantidad": 7,
+        "girar": true
+      }
+    },
+    {
+      "modo": "busca",
+      "generar": {
+        "cantidad": 6,
+        "lados": [
+          3
+        ]
+      }
+    },
+    {
+      "modo": "parejas",
+      "generar": {
+        "parejas": 4,
+        "angulos": [
+          30,
+          60,
+          90,
+          135,
+          150
+        ]
+      }
+    },
+    {
+      "modo": "clasifica",
+      "generar": {
+        "tipos": [
+          "agudo",
+          "recto",
+          "obtuso",
+          "llano",
+          "completo"
+        ],
+        "cantidad": 8,
+        "girar": true
+      }
+    },
+    {
+      "modo": "busca",
+      "generar": {
+        "cantidad": 6
+      }
+    },
+    {
+      "modo": "parejas",
+      "generar": {
+        "parejas": 6,
+        "angulos": [
+          30,
+          45,
+          60,
+          90,
+          120,
+          135,
+          150
+        ]
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

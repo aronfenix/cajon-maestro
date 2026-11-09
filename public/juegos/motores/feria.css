@@ -292,3 +292,56 @@ body[data-escena="feria"] .mesa-juego>.pista{background:rgba(255,253,246,.92)}
 .ficha-bascula{display:grid;place-items:center;width:clamp(50px,10vw,64px);height:clamp(58px,12vw,74px);border:var(--borde);border-radius:10px;background:#ffc531;cursor:grab;user-select:none;box-shadow:0 4px 0 var(--tinta);font-family:var(--fuerte);font-weight:900;font-size:clamp(28px,5.4vw,38px)}
 .zona-verde-texto{padding:6px 14px;border-radius:10px;background:rgba(255,253,246,.9);font-size:18px}
 .zona-verde-texto b{font-family:var(--fuerte);color:#1b8f4e}
+
+/* ---------- los ángulos ---------- */
+.caseta-abanicos,.caseta-banderolas,.caseta-ruleta{display:flex;flex-direction:column;align-items:center;gap:16px}
+.mesa-compara{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:18px}
+.pieza-angulo{position:relative;display:grid;place-items:center;width:clamp(140px,30vw,240px);aspect-ratio:1;padding:6px;border:var(--borde);border-radius:18px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra-baja);cursor:pointer;color:var(--tinta)}
+.pieza-angulo svg{width:100%;height:100%;overflow:visible}
+button.pieza-angulo:hover{transform:translateY(-3px)}
+.letra-opcion{position:absolute;left:8px;top:6px;padding:0 8px;border-radius:8px;background:var(--tinta);color:#fff;font-family:var(--fuerte);font-weight:900;font-size:16px}
+.grados-pieza{position:absolute;right:8px;bottom:6px;padding:1px 8px;border:2.5px solid var(--tinta);border-radius:8px;background:#fff27a;font-family:var(--fuerte);font-weight:900;font-size:16px}
+.tecla.boton-iguales{--c:#b79cff}
+.pieza-angulo.modelo{background-color:#e4f4ff}
+.pieza-angulo.tuyo{cursor:crosshair;touch-action:none}
+.fila-huecos-angulo{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.hueco-angulo{position:relative;display:grid;place-items:center;width:clamp(110px,18vw,150px);aspect-ratio:1;border:3px dashed rgba(255,253,246,.7);border-radius:16px;background:rgba(255,253,246,.12)}
+.hueco-angulo>small{position:absolute;top:-24px;left:0;right:0;text-align:center;color:var(--papel);font-weight:800;font-size:13px;text-shadow:0 2px 0 var(--tinta)}
+.hueco-angulo.sobre{border-color:var(--amarillo);background:rgba(255,197,49,.25)}
+.carta-angulo{width:clamp(96px,16vw,138px);padding:4px;cursor:grab}
+.carta-angulo .dibujo-angulo{display:block;width:100%;height:100%}
+.carta-angulo .dibujo-angulo svg{width:100%;height:100%;overflow:visible}
+.carta-angulo.elegida{outline:4px solid var(--cobalto);outline-offset:3px}
+.carta-angulo.levantado{opacity:.35}
+.carta-angulo.mal{background-color:#ffd1d1}
+.carta-angulo.bien{background-color:#e8fbe6}
+.carta-angulo.con-esquina{background-image:linear-gradient(90deg,transparent calc(50% - 1px),rgba(47,91,211,.2) 0 calc(50% + 1px),transparent 0),linear-gradient(transparent calc(50% - 1px),rgba(47,91,211,.2) 0 calc(50% + 1px),transparent 0)}
+.fila-cubos{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.cubo-angulo{display:flex;flex-direction:column;gap:6px;width:clamp(150px,22vw,220px);min-height:160px;padding:8px;border:var(--borde);border-radius:8px 8px 26px 26px;background:linear-gradient(180deg,#5ec3ff,#2f8fd3);box-shadow:var(--sombra-baja)}
+.cubo-angulo:nth-child(2){background:linear-gradient(180deg,#ffc531,#e3a518)}.cubo-angulo:nth-child(3){background:linear-gradient(180deg,#ff9fbf,#e8417a)}.cubo-angulo:nth-child(4){background:linear-gradient(180deg,#9bd84a,#5e9a1c)}.cubo-angulo:nth-child(5){background:linear-gradient(180deg,#b79cff,#7b5cd6)}
+.cubo-angulo.sobre{box-shadow:0 0 0 4px var(--papel),var(--sombra-baja)}
+.etiqueta-cubo{padding:4px 8px;border:2.5px solid var(--tinta);border-radius:6px;background:var(--papel);text-align:center}
+.etiqueta-cubo b{display:block;font-family:var(--fuerte);font-weight:900;font-size:20px}
+.etiqueta-cubo small{font-size:12px;line-height:1.15;display:block}
+.dentro-cubo{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.dentro-cubo .carta-angulo{width:clamp(64px,9vw,84px)}
+.caseta-banderolas .mazo-cartas{background-color:#2a3070}
+.cuerda-banderines{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:14px;padding:30px 10px 10px;max-width:1000px}
+.cuerda-banderines::before{content:"";position:absolute;left:0;right:0;top:12px;height:4px;background:var(--tinta);border-radius:2px}
+.banderin{position:relative;width:clamp(130px,22vw,180px);aspect-ratio:1;padding:6px;border:var(--borde);border-radius:16px;background:rgba(255,253,246,.92);cursor:pointer;box-shadow:var(--sombra-baja)}
+.banderin::before{content:"";position:absolute;left:50%;top:-22px;width:3px;height:22px;background:var(--tinta)}
+.banderin svg{width:100%;height:100%;overflow:visible}
+.banderin[aria-pressed="true"]{background:#fff27a;box-shadow:0 0 0 4px var(--amarillo),var(--sombra-baja)}
+.banderin.tiene{outline:4px solid #d7263d;outline-offset:2px}
+.banderin.no-tiene{opacity:.8}
+.tablero-parejas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:640px;width:100%}
+.tablero-parejas .carta-angulo{width:100%}
+.carta-angulo.emparejada{cursor:default;background-color:#e8fbe6;box-shadow:0 0 0 4px #5cc56a}
+@media (max-width:520px){.tablero-parejas{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ruleta-feria{width:min(76vw,300px)}
+.ruleta-feria svg{width:100%;height:auto;overflow:visible}
+.opciones-ruleta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.opciones-ruleta .tecla.correcta{--c:#9bd84a}.opciones-ruleta .tecla.fallada{--c:#ff9fbf}
+.lienzo-medidor{width:min(94vw,640px);border:var(--borde);border-radius:18px;background:#fffdf6;background-image:linear-gradient(rgba(47,91,211,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(47,91,211,.1) 1px,transparent 1px);background-size:24px 24px;box-shadow:var(--sombra);touch-action:none}
+.lienzo-medidor svg{width:100%;height:auto;display:block}
+.caseta-ruleta .prediccion{display:flex;align-items:center;gap:10px;padding:10px 16px;border:var(--borde);border-radius:14px;background:var(--papel);font-weight:800;font-size:20px;box-shadow:var(--sombra-baja)}
