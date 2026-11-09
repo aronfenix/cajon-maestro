@@ -1,14 +1,21 @@
 /* =====================================================================================
    La Feria de Otoño · casetas de cartulina en el patio del cole, de noche
    ===================================================================================== */
-.fondo-escena.feria{background-color:#23285c;background-image:
-  radial-gradient(90% 70% at 50% 120%,rgba(255,180,90,.35),rgba(255,180,90,0) 60%),
-  radial-gradient(120% 90% at 10% -10%,rgba(140,150,255,.35),rgba(140,150,255,0) 55%),
-  url('tex/cartulina.webp');background-size:100% 100%,100% 100%,256px 256px;background-blend-mode:normal,normal,multiply}
+.fondo-escena.feria{background:#23285c url('feria/fondo-h.webp') center/cover;overflow:hidden}
+.capa-fer{position:absolute;left:0;right:0;background-repeat:no-repeat;background-size:100% 100%}
+.capa-fer.arriba{top:0;aspect-ratio:1920/208;background-image:url('feria/arriba-h-apagada.webp')}
+.capa-fer.arriba.luz{background-image:url('feria/arriba-h-encendida.webp');animation:luz-fer 3.6s ease-in-out infinite}
+.capa-fer.abajo{bottom:0;aspect-ratio:1920/270;background-image:url('feria/abajo-h.webp')}
+@media (orientation:portrait){
+  .fondo-escena.feria{background-image:url('feria/fondo-v.webp')}
+  .capa-fer.arriba{aspect-ratio:1080/195;background-image:url('feria/arriba-v-apagada.webp')}
+  .capa-fer.arriba.luz{background-image:url('feria/arriba-v-encendida.webp')}
+  .capa-fer.abajo{aspect-ratio:1080/257;background-image:url('feria/abajo-v.webp')}
+}
+@keyframes luz-fer{0%,100%{opacity:1}12%{opacity:.25}16%{opacity:1}55%{opacity:.55}}
+.fondo-escena.encendida .capa-fer.luz{animation:none;opacity:1}
 body[data-escena="feria"]{--acento:var(--amarillo);--acento2:#fff0c2;--acento-osc:var(--amarillo-osc)}
-.fondo-escena.feria .halo{animation:halo-fer 2.2s ease-in-out infinite alternate}
-@keyframes halo-fer{from{opacity:.35}to{opacity:1}}
-@media (prefers-reduced-motion:reduce){.fondo-escena.feria .halo{animation:none}}
+@media (prefers-reduced-motion:reduce){.capa-fer.luz{animation:none;opacity:1}}
 body[data-escena="feria"] .mesa-juego>.pista{background:rgba(255,253,246,.92)}
 
 /* ---------- el mapa de la feria: cada compartimento es una caseta con toldo y bombillas ---------- */
@@ -419,3 +426,53 @@ button.pieza-angulo:hover{transform:translateY(-3px)}
 .unidad-encargo{font-family:inherit;font-size:18px;font-weight:800}
 
 @media (max-width:640px){.colchoneta{width:max(58px,calc((100vw - 64px - (var(--n) - 1) * 22px) / var(--n)))}.arco-salto{width:22px}.cartel-colchoneta .campo-num{width:100%;min-width:0;padding:0 2px;font-size:16px}.num-colchoneta{font-size:18px;padding:3px 6px}.arco-salto>b,.signo-salto{font-size:13px;padding:1px 5px}.signo-salto .campo-num{width:4.6ch;font-size:15px}.cesta-tombola .boleto{width:84px}}
+
+/* ---------- premios de la feria: peluches en lugar de pegatinas ---------- */
+.solo-lector{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.pegatina-album.premio-feria{filter:drop-shadow(3px 4px 0 rgba(0,0,0,.3))}
+.pegatina-album.premio-feria img,.icono-album.con-premio img{width:100%;height:100%;display:block;object-fit:contain}
+.icono-album.con-premio{width:42px;height:42px;margin:-6px 0}
+.pegatina-album.premio-feria.mini{width:46px;height:46px;margin:-10px -8px -10px 0;rotate:0deg}
+.premio-pegatina .pegatina-album.premio-feria{width:132px;height:132px;margin:-18px -4px -10px}
+.aviso-pegatina .pegatina-album.premio-feria{width:120px;height:120px}
+.aviso-pegatina .nuevas{flex-wrap:wrap;justify-content:center;max-width:min(560px,86vw)}
+
+.album.album-feria{width:min(1040px,100%);background:#1c2150 url('tex/cartulina.webp');background-size:256px;background-blend-mode:multiply;color:#fffdf6;padding:16px 18px 18px}
+.album-feria .cab-album p{margin:0 0 6px;color:#fff0c2;font-weight:700}
+.cuerpo-feria{display:grid;grid-template-columns:auto minmax(220px,1fr);gap:20px;align-items:center}
+.estanteria-feria{position:relative;width:min(600px,calc((100dvh - 150px) * .75));aspect-ratio:3/4;background:url('feria/estanteria.webp') center/100% 100% no-repeat;border-radius:10px}
+.balda-feria{position:absolute;left:7%;right:7%;height:12.2%;display:flex;justify-content:space-evenly;align-items:flex-end}
+.premio-balda{position:relative;height:100%;aspect-ratio:1/1;margin:0 -1.8%;padding:0;border:0;background:none;cursor:pointer;border-radius:12px}
+.premio-balda img{display:block;width:100%;height:100%;object-fit:contain;transform:translateY(12%);transform-origin:50% 88%;transition:transform .15s}
+.premio-balda.tiene img{filter:drop-shadow(0 4px 0 rgba(0,0,0,.35))}
+.premio-balda.falta img{opacity:.55}
+.premio-balda:hover img,.premio-balda:focus-visible img{transform:translateY(12%) scale(1.12)}
+.premio-balda.elegido img{transform:translateY(12%) scale(1.18)}
+.premio-balda.elegido::after{content:"";position:absolute}
+.premio-balda:focus-visible{outline:3px solid var(--amarillo);outline-offset:2px}
+.detalle-premio{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:12px}
+.detalle-premio h3{margin:0;font-family:var(--fuerte);font-weight:900;font-size:clamp(22px,2.6vw,30px);color:#fffdf6}
+.detalle-premio p{margin:0;max-width:22em;color:#fff0c2;font-weight:700;line-height:1.35}
+.premio-grande{width:min(260px,60vw);aspect-ratio:1/1;filter:drop-shadow(5px 7px 0 rgba(0,0,0,.35))}
+.premio-grande.falta{opacity:.6;filter:none}
+.premio-grande img{width:100%;height:100%;display:block}
+.album-feria>.tecla{display:block;margin:14px auto 0}
+@media (orientation:portrait),(max-width:700px){
+  .cuerpo-feria{grid-template-columns:1fr;gap:6px}
+  .album.album-feria{padding:12px 10px 14px}
+  .estanteria-feria{width:min(100%,560px);margin:0 auto}
+  .detalle-premio{display:grid;grid-template-columns:96px 1fr;grid-template-rows:auto auto auto;column-gap:10px;row-gap:4px;align-items:center;text-align:left;padding:4px}
+  .premio-grande{width:96px;grid-row:1/4}
+  .detalle-premio h3{font-size:20px}
+  .detalle-premio p{font-size:14px}
+  .detalle-premio .tecla{justify-self:start;min-height:44px;padding:0 16px;font-size:16px}
+}
+
+/* ---------- portadas ilustradas de algunas casetas ---------- */
+.portada-arte .arte-caseta-img{position:relative;width:min(100%,720px);aspect-ratio:5/4;display:block}
+.arte-caseta-img .caseta-img{position:absolute;left:50%;top:0;height:100%;width:auto;translate:-50% 0;filter:drop-shadow(10px 16px 0 rgba(5,6,26,.45))}
+.arte-caseta-img .pieza{position:absolute;width:21%;height:auto;filter:drop-shadow(4px 7px 0 rgba(5,6,26,.45))}
+.arte-caseta-img .pz1{left:1%;top:16%;rotate:-8deg}
+.arte-caseta-img .pz2{right:2%;bottom:6%;rotate:7deg}
+.arte-caseta-img .pz3{right:4%;top:4%;width:20%;rotate:-5deg}
+@media (max-width:820px){.portada-arte .arte-caseta-img{aspect-ratio:16/11;width:min(100%,460px)}.arte-caseta-img .pieza{width:21%}}

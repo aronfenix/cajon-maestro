@@ -22,3 +22,4 @@
 .cara-quien .sprite{width:150%;bottom:-14%}
 .vineta-figura .sprite{width:140%;bottom:-14%}
 .portada-figura .sprite{width:150%;bottom:-16%}
+.sprite[data-espejo]{transform:translateX(-50%) scaleX(-1)}

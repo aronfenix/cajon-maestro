@@ -41,5 +41,18 @@ export const DIBUJOS = {
   'los-encargos': P(`<path d="M30 28 h32 l8 8 v38 h-40z" fill="#fffdf6" stroke="${T}" stroke-width="4" stroke-linejoin="round"/><path d="M37 44 h24 M37 52 h24 M37 60 h14" stroke="${T}" stroke-width="3" stroke-linecap="round"/>`, '#ff9fbf'),
   'el-gran-concurso': P(`<path d="M34 28 h32 v12 a16 16 0 0 1 -32 0z" fill="#ffc531" stroke="${T}" stroke-width="4"/><path d="M50 56 v10 M38 72 h24" stroke="${T}" stroke-width="5" stroke-linecap="round"/><path d="M50 32 l3 6 l6 1 l-5 4 l1 6 l-5 -3 l-5 3 l1 -6 l-5 -4 l6 -1z" fill="#fffdf6" stroke="${T}" stroke-width="1.5"/>`, '#e8417a'),
 };
-export const pegatina = (slug, cls = '') => el('span', { class: 'pegatina-album ' + cls, html: DIBUJOS[slug] ?? P('', '#ffc531') });
+// La Feria de Otoño: en vez de pegatina, un peluche de premio (cada animal lleva el objeto de su caseta y un accesorio propio)
+const RUTA = new URL('./feria/premios/', import.meta.url).href;
+export const PREMIOS = {
+  'la-tombola': 'el oso del casete', 'el-candado-de-la-taquilla': 'el gato del pañuelo', 'la-caja-registradora': 'el cerdito del cinturón', 'el-cambio': 'el mapache de las gafas lima',
+  'la-noria': 'el pulpo DJ', 'los-patitos': 'el pato del gorro', 'las-colchonetas': 'el canguro de la riñonera', 'pares-y-nones': 'los gemelos del rayo',
+  'la-bascula': 'el elefante del gorrito', 'el-martillo-de-fuerza': 'el gorila de las muñequeras', 'la-tirolina': 'el mono fotógrafo', 'la-caseta-de-los-records': 'la jirafa de la bufanda',
+  'tijeras-y-abanicos': 'el pavo de la boina', 'las-banderolas': 'el zorro de cuadros', 'la-ruleta': 'el búho del monóculo', 'los-farolillos': 'la luciérnaga de la batería',
+  'las-manzanas-de-caramelo': 'el erizo del casco', 'las-tiras-de-tickets': 'la oruga de las zapatillas', 'las-tres-cartas': 'el conejo del sombrero torcido',
+  'el-puesto-de-chapas': 'la tortuga de la antena', 'los-encargos': 'el perro de las gafas de aviador', 'el-gran-concurso': 'el león de la capa',
+};
+export const imgPremio = (slug, silueta = false) => `<img src="${RUTA}${slug}${silueta ? '-silueta' : ''}.webp" alt="${silueta ? '' : PREMIOS[slug]}" width="320" height="320" draggable="false" decoding="async">`;
+export const pegatina = (slug, cls = '') => PREMIOS[slug]
+  ? el('span', { class: 'pegatina-album premio-feria ' + cls, html: imgPremio(slug) })
+  : el('span', { class: 'pegatina-album ' + cls, html: DIBUJOS[slug] ?? P('', '#ffc531') });
 

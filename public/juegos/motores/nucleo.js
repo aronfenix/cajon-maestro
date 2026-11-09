@@ -5,9 +5,9 @@
 import * as fx from './efectos.js';
 import { dibuja, POSES } from './personaje.js';
 import { VOCES, POSE_DE, una } from './voces.js';
-import { montaEscena, vineta, montaTeclado } from './escena.js';
+import { montaEscena, vineta, montaTeclado, enciende } from './escena.js';
 import { portada } from './portada.js';
-import { DIBUJOS, pegatina as pegatinaAlbum } from './pegatinas.js';
+import { DIBUJOS, PREMIOS, pegatina as pegatinaAlbum } from './pegatinas.js';
 export const $ = (s, r = document) => r.querySelector(s);
 const SVGNS = 'http://www.w3.org/2000/svg';
 
@@ -205,7 +205,7 @@ export async function arrancar(config, motor) {
   };
   const asistente = el('aside', { class: 'asistente', 'aria-label': 'Ayudante' }, bocadillo, el('div', { class: 'pie-asistente' }, btnAyuda, figura));
   let callaT = null;
-  const di = (texto, tipo = 'pista', ms = 0) => {
+  const di = (texto, tipo = 'pista', ms = 0, pose) => {
     clearTimeout(callaT);
     ultimaFrase = [texto, tipo, ms];
     bocadillo.className = 'bocadillo ' + tipo;
@@ -214,7 +214,7 @@ export async function arrancar(config, motor) {
     bocadillo.classList.remove('entra'); void bocadillo.offsetWidth; bocadillo.classList.add('entra');
     figura.classList.remove('habla'); void figura.offsetWidth; figura.classList.add('habla');
     if (ms) callaT = setTimeout(() => (bocadillo.hidden = true), ms);
-    posa(POSE_DE[tipo] || 'quieto', Math.max(ms || 0, 2600), 'hablar:2');
+    posa(pose || POSE_DE[tipo] || 'quieto', Math.max(ms || 0, 2600), 'hablar:2');
   };
   const dice = (clave, tipo, ms) => di(una(voz[clave]), tipo, ms);
   const calla = () => { clearTimeout(callaT); bocadillo.hidden = true; };
@@ -307,7 +307,8 @@ export async function arrancar(config, motor) {
       const darPista = () => {
         if (usadas >= pistas.length) return;
         const p = pistas[usadas++];
-        di(typeof p === 'string' ? p : p.texto, 'pista', 12000);
+        // si la pista enseña algo del tablero, el ayudante (abajo a la derecha) lo señala
+        di(typeof p === 'string' ? p : p.texto, 'pista', 12000, typeof p === 'object' && p.ver ? 'izquierda' : undefined);
         if (typeof p === 'object' && p.ver) try { p.ver(); } catch (e) { console.error(e); }
         suena('clic');
         pintaAyuda(pistas.length - usadas, pistas.length);
@@ -451,8 +452,9 @@ export async function arrancar(config, motor) {
         // la pegatina del álbum de la aventura: se ve aquí y luego vuela al álbum en el mapa
         const slug = location.pathname.split('/').filter(Boolean).pop();
         if (DIBUJOS[slug]) {
-          const premio = el('div', { class: 'premio-pegatina' }, pegatinaAlbum(slug), el('div', {}, el('b', { text: yaLaTenia ? (config.volver?.includes('feria') ? 'Tu premio de esta caseta' : 'Tu pegatina de este juego') : config.volver?.includes('feria') ? '¡Premio nuevo de la feria!' : '¡Pegatina nueva para tu álbum!' }), el('small', { text: config.volver?.includes('limpieza') ? 'La verás en el álbum del mapa.' : config.volver?.includes('feria') ? 'La verás en la estantería de premios del mapa.' : 'Ya es tuya.' })));
+          const premio = el('div', { class: 'premio-pegatina' }, pegatinaAlbum(slug), el('div', {}, el('b', { text: PREMIOS[slug] ? (yaLaTenia ? `Tu premio de esta caseta: ${PREMIOS[slug]}` : `¡Te llevas ${PREMIOS[slug]}!`) : yaLaTenia ? 'Tu pegatina de este juego' : '¡Pegatina nueva para tu álbum!' }), el('small', { text: config.volver?.includes('limpieza') ? 'La verás en el álbum del mapa.' : config.volver?.includes('feria') ? 'La verás en la estantería de premios del mapa.' : 'Ya es tuya.' })));
           final.querySelector('h2').after(premio);
+          enciende();
           premio.prepend(el('div', { class: 'baile-final', html: dibuja(quien, 'baile', { veces: 5, luego: 'celebrar' }) }));
           if (!matchMedia('(prefers-reduced-motion: reduce)').matches) premio.querySelector('.pegatina-album').animate([{ transform: 'scale(3) rotate(-50deg)', opacity: 0 }, { transform: 'scale(.9) rotate(8deg)', opacity: 1, offset: 0.7 }, { transform: 'scale(1) rotate(0)' }], { duration: 650, delay: 400, easing: 'cubic-bezier(.3,1.4,.5,1)', fill: 'both' });
           setTimeout(() => suena('sello'), 850);

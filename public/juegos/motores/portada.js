@@ -140,6 +140,12 @@ const ARTE = {
     <g class="sueltas">${pieza(1, 560, 360, 18)}</g></svg>`,
 };
 
+// casetas ilustradas de la feria: la caseta recortada y sus objetos sueltos (que saltan al pulsar «Jugar»)
+const FER = new URL('./feria/', import.meta.url).href;
+const CASETAS = { 'la-tombola': ['tombola', 2], 'el-candado-de-la-taquilla': ['taquilla', 3], 'la-caja-registradora': ['caja', 2], 'la-noria': ['noria', 2] };
+const casetaIlustrada = ([n, piezas], titulo) => `<div class="arte arte-caseta-img" aria-hidden="true"><img class="caseta-img" src="${FER}caseta-${n}.webp" alt="" draggable="false">
+    <div class="abertura">${Array.from({ length: piezas }, (_, i) => `<img class="pieza pz${i + 1}" src="${FER}pieza-${n}-${i + 1}.webp" alt="" draggable="false">`).join('')}</div></div>`;
+
 export function portada(config, { dibuja, POSES, quien, progreso = 0, record = null, sonar = () => {}, frase: fraseHola = '¿Jugamos?', volver = '../../' }) {
   return new Promise((listo) => {
     const lento = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -165,7 +171,8 @@ export function portada(config, { dibuja, POSES, quien, progreso = 0, record = n
     const texto = h('div', 'portada-texto'); texto.append(etiqueta, objetivo, jugar, estado);
     const AREA = { matematicas: 'MATES', lengua: 'LENGUA', naturales: 'NATURALES', sociales: 'SOCIALES' };
     const rotulo = config.portada?.rotulo ?? (tipo === 'cajon' ? AREA[config.area] || 'CAJÓN' : '');
-    const arte = h('div', 'portada-arte', (ARTE[tipo] || ARTE.cajon)(rotulo));
+    const caseta = config.escena === 'feria' && CASETAS[location.pathname.split('/').filter(Boolean).pop()];
+    const arte = h('div', 'portada-arte', caseta ? casetaIlustrada(caseta) : (ARTE[tipo] || ARTE.cajon)(rotulo));
     const fig = h('div', 'portada-figura figura ' + quien, dibuja(quien, 'saluda', { veces: 2, luego: 'reposo' }));
     const frase = h('div', 'portada-bocadillo bocadillo');
     frase.textContent = config.portada?.frase || fraseHola;
@@ -174,6 +181,11 @@ export function portada(config, { dibuja, POSES, quien, progreso = 0, record = n
     salir.href = volver; salir.title = 'Volver al menú';
     capa.append(arte, texto, pj, salir);
     document.body.append(capa);
+    // después de saludar, señala el botón de Jugar (a la derecha o a la izquierda, según dónde quede)
+    requestAnimationFrame(() => {
+      const sp = fig.querySelector('.sprite'), a = fig.getBoundingClientRect(), b = jugar.getBoundingClientRect();
+      if (sp && a.width) sp.dataset.luego = b.left + b.width / 2 > a.left + a.width / 2 ? 'senalar_derecha:2' : 'senalar_izquierda:2';
+    });
 
     if (!lento) {
       const letras = titulo.querySelectorAll('.letra');
@@ -212,6 +224,10 @@ export function portada(config, { dibuja, POSES, quien, progreso = 0, record = n
           .to(arte.querySelector('.pieza-portada'), { x: -100, y: 80, duration: 0.4, ease: 'power2.in', onComplete: () => sonar('pon') });
       } else if (tipo === 'corcho') {
         tl.to(arte.querySelector('.gira-portada'), { rotation: 90, svgOrigin: '300 220', duration: 0.8, ease: 'power2.inOut', onStart: () => sonar('clic'), onComplete: () => sonar('pon') });
+      } else if (caseta) {
+        // la caseta se ilumina y sus objetos saltan del mostrador
+        tl.to(arte.querySelector('.caseta-img'), { filter: 'brightness(1.3) saturate(1.15)', duration: 0.18, yoyo: true, repeat: 1, onStart: () => sonar('clic') })
+          .to(arte.querySelectorAll('.abertura .pieza'), { y: -260, x: () => gsap.utils.random(-120, 120), rotation: () => gsap.utils.random(-160, 160), opacity: 0, duration: 0.6, ease: 'power2.in', stagger: 0.06 });
       } else if (tipo === 'caseta') {
         // se encienden las bombillas del rótulo, una detrás de otra, y salen volando los premios
         tl.to(arte.querySelectorAll('.bombilla-portada'), { fill: '#ffd23f', duration: 0.05, stagger: 0.05, onStart: () => sonar('clic') })

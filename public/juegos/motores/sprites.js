@@ -4,18 +4,21 @@
 const BASE = new URL('./personajes/', import.meta.url).href;
 const GESTO = [125, 125, 125, 125, 125, 125];
 export const DUR = { reposo: [1600, 400, 90, 130, 100, 680], baile: Array(12).fill(100) };
-export const ACCIONES = ['reposo', 'hablar', 'pensar', 'pista', 'revisar', 'animar', 'celebrar', 'saludar', 'baile', 'escuchar', 'idea', 'esperar', 'sorpresa', 'senalar_izquierda', 'senalar_abajo'];
-const UNA_VEZ = new Set(['celebrar', 'saludar', 'idea', 'sorpresa', 'senalar_izquierda', 'senalar_abajo', 'animar', 'revisar']);
+export const ACCIONES = ['reposo', 'hablar', 'pensar', 'pista', 'revisar', 'animar', 'celebrar', 'saludar', 'baile', 'escuchar', 'idea', 'esperar', 'sorpresa', 'senalar_izquierda', 'senalar_abajo', 'senalar_derecha'];
+const UNA_VEZ = new Set(['celebrar', 'saludar', 'idea', 'sorpresa', 'senalar_izquierda', 'senalar_abajo', 'senalar_derecha', 'animar', 'revisar']);
 // fotograma que se enseña quieto si el sistema pide menos movimiento
 const QUIETO = { celebrar: 2, saludar: 2, idea: 3, sorpresa: 2, baile: 3, pista: 3, animar: 2 };
 const dur = (a) => DUR[a] ?? GESTO;
-export const url = (quien, accion) => `${BASE}${quien}-${accion}.webp`;
+// quien no tiene tira propia para señalar a la derecha usa la de la izquierda, dada la vuelta
+const PROPIAS = { senalar_derecha: ['goma'] };
+const espejo = (quien, accion) => PROPIAS[accion] && !PROPIAS[accion].includes(quien);
+export const url = (quien, accion) => `${BASE}${quien}-${espejo(quien, accion) ? 'senalar_izquierda' : accion}.webp`;
 const lento = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function sprite(quien, accion = 'reposo', { veces, luego, cls = '' } = {}) {
   if (!ACCIONES.includes(accion)) accion = 'reposo';
   const n = dur(accion).length;
-  return `<span class="sprite ${cls}" aria-hidden="true" data-quien="${quien}" data-accion="${accion}"${veces ? ` data-veces="${veces}"` : ''}${luego ? ` data-luego="${luego}"` : ''} style="background-image:url('${url(quien, accion)}');--n:${n}"></span>`;
+  return `<span class="sprite ${cls}" aria-hidden="true" data-quien="${quien}" data-accion="${accion}"${espejo(quien, accion) ? ' data-espejo' : ''}${veces ? ` data-veces="${veces}"` : ''}${luego ? ` data-luego="${luego}"` : ''} style="background-image:url('${url(quien, accion)}');--n:${n}"></span>`;
 }
 // cambiar la acción de un sprite que ya está en la página
 export function actua(nodo, accion, { veces, luego } = {}) {
@@ -25,10 +28,11 @@ export function actua(nodo, accion, { veces, luego } = {}) {
   if (veces) s.dataset.veces = veces; else delete s.dataset.veces;
   if (luego) s.dataset.luego = luego; else delete s.dataset.luego;
   s.style.backgroundImage = `url('${url(s.dataset.quien, accion)}')`;
+  s.toggleAttribute('data-espejo', !!espejo(s.dataset.quien, accion));
   s.style.setProperty('--n', dur(accion).length);
 }
 const cargadas = new Set();
-export function precarga(quien, acciones = ['reposo', 'hablar', 'pista', 'celebrar', 'animar', 'sorpresa', 'pensar', 'idea', 'saludar', 'baile']) {
+export function precarga(quien, acciones = ['reposo', 'hablar', 'pista', 'celebrar', 'animar', 'sorpresa', 'pensar', 'idea', 'saludar', 'baile', 'senalar_izquierda', 'senalar_derecha']) {
   return Promise.all(acciones.map((a) => { const u = url(quien, a); if (cargadas.has(u)) return null; cargadas.add(u); return new Promise((ok) => { const i = new Image(); i.onload = i.onerror = ok; i.src = u; }); }));
 }
 

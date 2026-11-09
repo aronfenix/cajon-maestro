@@ -93,11 +93,19 @@ const FONDOS = {
     <rect x="60" y="760" width="170" height="120" fill="#fff" transform="rotate(-4 145 820)"/><circle cx="145" cy="768" r="12" fill="#1fb5a9" stroke="#000" stroke-width="3"/>`,
 };
 
+// la feria de noche, ilustrada: bombillas arriba (apagadas y, encima, encendidas que respiran) y la noria y las palomitas abajo
+const CAPAS = {
+  feria: '<i class="capa-fer arriba"></i><i class="capa-fer arriba luz"></i><i class="capa-fer abajo"></i>',
+};
+// encender del todo las luces del fondo (al ganar)
+export const enciende = () => document.querySelector('.fondo-escena.ilustrado')?.classList.add('encendida');
+
 const CLIP = `<svg viewBox="0 0 120 60" width="120" height="60"><path d="M10 30 h80 a14 14 0 0 0 0 -28 h-74 a9 9 0 0 0 0 18 h62" fill="none" stroke="#7d868c" stroke-width="6" stroke-linecap="round"/><circle cx="96" cy="12" r="5" fill="#fff" stroke="#000" stroke-width="2"/><circle cx="97" cy="12" r="2.4"/><path d="M30 32 l-6 22 M50 32 l6 22 M70 32 l-6 22" stroke="#000" stroke-width="3" stroke-linecap="round" class="patas"/></svg>`;
 const MANO = `<svg viewBox="0 0 400 520" width="400" height="520"><path d="M150 0 h120 v190 c0 0 40 -40 70 -10 c30 30 -20 90 -50 150 c-30 60 -80 150 -140 170 c-60 20 -120 -40 -120 -120 c0 -60 10 -120 30 -170 l40 -90z" fill="rgba(20,20,40,.32)"/><path d="M170 200 v120 M220 190 v130 M120 230 v100" stroke="rgba(20,20,40,.25)" stroke-width="40" stroke-linecap="round"/></svg>`;
 
 export function montaEscena(nombre = 'cajon', { reacciona } = {}) {
-  const capa = h('div', 'fondo-escena ' + nombre, `<svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${FONDOS[nombre] || FONDOS.cajon}</svg>`);
+  // los escenarios ilustrados (imágenes por capas) van como capas de HTML; el resto, dibujados en SVG
+  const capa = CAPAS[nombre] ? h('div', 'fondo-escena ilustrado ' + nombre, CAPAS[nombre]) : h('div', 'fondo-escena ' + nombre, `<svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${FONDOS[nombre] || FONDOS.cajon}</svg>`);
   document.body.prepend(capa);
   document.body.dataset.escena = nombre;
   if (quieto()) return { pausa() {}, sigue() {} };

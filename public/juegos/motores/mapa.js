@@ -14,7 +14,7 @@ const guarda = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
 const hecho = (slug) => !!lee('cajon-hecho:' + ruta(slug));
 const lento = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-import { DIBUJOS, pegatina } from './pegatinas.js';
+import { DIBUJOS, PREMIOS, imgPremio, pegatina } from './pegatinas.js';
 import { actua } from './sprites.js';
 
 export async function montaMapa(c) {
@@ -59,7 +59,7 @@ export async function montaMapa(c) {
   // ---------- cabecera: progreso y álbum
   const regla = el('div', { class: 'progreso', role: 'progressbar', 'aria-label': 'Progreso de la aventura', 'aria-valuemin': '0', 'aria-valuemax': String(comp.length), 'aria-valuenow': String(ordenados) }, el('span', { class: 'relleno', style: { width: Math.max(3, (ordenados / comp.length) * 100) + '%' } }, el('span', { class: 'punta-barra' })));
   const contador = el('b', { text: `${conseguidas.length} de ${todos.length}` });
-  const botonAlbum = el('button', { type: 'button', class: 'tecla boton-album', onclick: () => album() }, el('span', { class: 'icono-album', html: DIBUJOS[X.icono] }), el('span', {}, X.album + ' ', contador));
+  const botonAlbum = el('button', { type: 'button', class: 'tecla boton-album', onclick: () => (feria ? estanteria() : album()) }, el('span', { class: 'icono-album' + (PREMIOS[X.icono] ? ' con-premio' : ''), html: PREMIOS[X.icono] ? imgPremio(X.icono) : DIBUJOS[X.icono] }), el('span', {}, X.album + ' ', contador));
   document.body.prepend(
     el('header', { class: 'barra-juego' },
       el('a', { class: 'volver con-texto', href: c.volver || '../../', title: 'Volver al Cajón maestro' }, svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 }), el('span', { text: 'Cajón maestro' })),
@@ -81,6 +81,48 @@ export async function montaMapa(c) {
     if (!lento()) {
       gsap.from(hoja, { y: 60, rotation: -3, opacity: 0, duration: 0.5, ease: 'back.out(1.6)' });
       gsap.from(hoja.querySelectorAll('li.tiene .pegatina-album'), { scale: 2.2, rotation: () => gsap.utils.random(-60, 60), opacity: 0, duration: 0.45, ease: 'back.out(2)', stagger: 0.06, delay: 0.25, onStart: () => suena('pon') });
+    }
+  }
+
+  // ---------- la estantería de premios de la feria: los peluches ganados en sus baldas y, los que faltan, en silueta
+  function estanteria() {
+    suena('coge');
+    const may = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+    const capa = el('div', { class: 'vineta-capa album-capa', role: 'dialog', 'aria-modal': 'true', 'aria-label': X.albumTitulo });
+    const det = el('div', { class: 'detalle-premio', 'aria-live': 'polite' });
+    const muestra = (j) => {
+      const tiene = hecho(j.slug);
+      det.replaceChildren(
+        el('div', { class: 'premio-grande' + (tiene ? '' : ' falta'), html: imgPremio(j.slug, !tiene) }),
+        el('h3', { text: tiene ? may(PREMIOS[j.slug] || j.titulo) : '¿Quién será?' }),
+        el('p', { text: tiene ? `Lo ganaste en ${j.titulo}.` : `Termina ${j.titulo} para llevártelo.` }),
+        el('a', { class: 'tecla', href: `../${j.slug}/`, text: tiene ? 'Volver a jugar' : 'Ir a la caseta' }));
+      botones.forEach((b) => b.classList.toggle('elegido', b._j === j));
+    };
+    // cuatro baldas (la tabla de abajo es la base): dónde apoyan los pies, en % desde abajo de la imagen
+    const BALDAS = [62.6, 47.8, 33.1, 18.3];
+    const reparto = [6, 6, 5, 5];
+    const filas = []; let k = 0;
+    for (const n of reparto) { filas.push(todos.slice(k, k + n)); k += n; }
+    if (k < todos.length) filas[filas.length - 1].push(...todos.slice(k));
+    const botones = [];
+    const balda = (fila, i) => el('div', { class: 'balda-feria', style: { bottom: BALDAS[i] + '%' } }, fila.map((j) => {
+      const b = el('button', { type: 'button', class: 'premio-balda ' + (hecho(j.slug) ? 'tiene' : 'falta'), 'aria-label': hecho(j.slug) ? `${PREMIOS[j.slug]}, de ${j.titulo}` : `Sin ganar: ${j.titulo}`, html: imgPremio(j.slug, !hecho(j.slug)), onclick: () => { suena('clic'); muestra(j); } });
+      b._j = j; botones.push(b); return b;
+    }));
+    const mueble = el('div', { class: 'estanteria-feria' }, filas.map(balda));
+    const hoja = el('div', { class: 'album album-feria' },
+      el('div', { class: 'cab-album' }, el('h2', { class: 'solo-lector', text: X.albumTitulo }), el('p', { text: `${conseguidas.length} de ${todos.length}. ${X.albumTexto}` })),
+      el('div', { class: 'cuerpo-feria' }, mueble, det),
+      el('button', { type: 'button', class: 'tecla primaria grande', text: 'Cerrar', onclick: () => { capa.remove(); suena('quita'); } }));
+    capa.append(hoja); document.body.append(capa);
+    capa.addEventListener('click', (e) => { if (e.target === capa) capa.remove(); });
+    const primero = nuevas[nuevas.length - 1] || conseguidas[conseguidas.length - 1];
+    if (primero) muestra(primero);
+    else det.replaceChildren(el('h3', { text: 'Todavía vacía' }), el('p', { text: 'Cada caseta terminada te da un peluche para esta estantería. Toca una silueta para ver dónde se gana.' }));
+    if (!lento()) {
+      gsap.from(hoja, { y: 60, rotation: -2, opacity: 0, duration: 0.5, ease: 'back.out(1.6)' });
+      gsap.from(mueble.querySelectorAll('.premio-balda.tiene'), { y: -120, rotation: () => gsap.utils.random(-30, 30), opacity: 0, duration: 0.5, ease: 'bounce.out', stagger: 0.05, delay: 0.3, onStart: () => suena('pon') });
     }
   }
 

@@ -88,9 +88,10 @@ export const POSES = {
   asombro: { brazos: [[40, 44, -20], [40, 44, -20]], ojos: 'grande', mira: [0, 0], cejas: [-16, -16], alto: 8, boca: 'o', salto: 4 },
   borra: { brazos: [[-10, 50, 10], [-10, 50, 10]], ojos: 'cerrado', cejas: [8, 8], boca: 'mueca', lean: 10, miga: true },
 };
+POSES.izquierda = POSES.derecha = POSES.abajo = POSES.seguro;
 
 // Las poses de siempre, traducidas a las acciones de los personajes dibujados
-const ACCION_DE = { quieto: 'reposo', pista: 'pista', celebra: 'celebrar', seguro: 'hablar', piensa: 'pensar', animo: 'animar', asombro: 'sorpresa', borra: 'revisar', baile: 'baile', saluda: 'saludar', idea: 'idea', habla: 'hablar', escucha: 'escuchar', espera: 'esperar', revisa: 'revisar', abajo: 'senalar_abajo', izquierda: 'senalar_izquierda' };
+const ACCION_DE = { quieto: 'reposo', pista: 'pista', celebra: 'celebrar', seguro: 'hablar', piensa: 'pensar', animo: 'animar', asombro: 'sorpresa', borra: 'revisar', baile: 'baile', saluda: 'saludar', idea: 'idea', habla: 'hablar', escucha: 'escuchar', espera: 'esperar', revisa: 'revisar', abajo: 'senalar_abajo', izquierda: 'senalar_izquierda', derecha: 'senalar_derecha' };
 export function dibuja(tipo, pose = POSES.quieto, opciones) {
   const nombre = typeof pose === 'string' ? pose : Object.keys(POSES).find((k) => POSES[k] === pose) ?? 'quieto';
   return sprite(tipo, ACCION_DE[nombre] ?? nombre, opciones);
