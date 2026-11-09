@@ -56,7 +56,7 @@ def md(slug):
 slugs = sys.argv[1:] or list(F)
 for s in slugs: md(s)
 open(f'{R}/src/content/temas/matematicas-feria-otono.yml', 'w').write('titulo: La Feria de Otoño\narea: matematicas\nsubtitulo: Aventura de repaso de principio de curso. Números de cuatro cifras, cuentas, estimación, medida, ángulos y tablas. Cada juego se puede jugar suelto.\ncurso: 5.º, 2026-27\norden: -2\n')
-subprocess.run(['node', '/home/claude/herramientas/portadas4.mjs', *slugs], check=True)
+subprocess.run(['node', '/home/claude/herramientas/tapas.mjs', *slugs], check=True)
 for s in slugs:
     Image.open(f'/tmp/por-{s}.png').convert('RGB').resize((800, 500), Image.LANCZOS).save(f'{R}/src/media/portadas/{s}.jpg', quality=84)
 print('catálogo', len(slugs))

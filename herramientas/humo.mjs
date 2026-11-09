@@ -39,7 +39,8 @@ for (const [t, w, h, touch] of TAM) {
   await ctx.close();
 }
 // enlaces internos
-for (const u of enlaces) { const r = await fetch(u); if (r.status >= 400) mal(`enlace roto ${u.slice(B.length)} → ${r.status}`); }
+const api = (await b.newContext()).request; // (el fetch de Node se atraganta con el servidor de Python)
+for (const u of enlaces) { const r = await api.get(u); if (r.status() >= 400) mal(`enlace roto ${u.slice(B.length)} → ${r.status()}`); }
 console.log(`${enlaces.size} enlaces internos revisados`);
 // todos los juegos arrancan
 const juegos = fs.readdirSync(`${DIST}/juegos`).filter((j) => { try { return fs.readFileSync(`${DIST}/juegos/${j}/index.html`, 'utf8').includes('arranque.js'); } catch { return false; } });
