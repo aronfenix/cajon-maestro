@@ -80,7 +80,22 @@ export interface Material {
   orden: number;
   pendiente: boolean; // le falta el archivo, el vídeo o el enlace
   lector?: PaginaComic[]; // páginas del cómic para leerlo en la web
+  juego?: string; // carpeta del juego en /juegos/, si lo es
+  aventura?: string; // id del mapa de la aventura a la que pertenece
   entrada: CollectionEntry<'materiales'>;
+}
+
+// Una aventura: un mapa (public/juegos/<slug>/ con «compartimentos») y los juegos que contiene, por zonas.
+export interface Zona {
+  nombre: string;
+  color?: string;
+  juegos: Material[];
+}
+export interface Aventura {
+  mapa: Material;
+  zonas: Zona[];
+  final?: Material;
+  juegos: Material[];
 }
 
 export interface Grupo {
@@ -88,7 +103,7 @@ export interface Grupo {
   materiales: Material[];
 }
 
-let cache: { temas: Map<string, Tema>; materiales: Material[] } | undefined;
+let cache: { temas: Map<string, Tema>; materiales: Material[]; aventuras: Aventura[] } | undefined;
 
 export async function catalogo() {
   if (cache) return cache;
@@ -136,6 +151,7 @@ export async function catalogo() {
       orden: d.orden ?? 99,
       pendiente: !tieneDestino,
       lector: d.tipo === 'comic' ? paginasComic(m.id) : undefined,
+      juego: d.enlace?.match(/^\/?juegos\/([^/]+)\/?$/)?.[1],
       entrada: m,
     });
   }
@@ -148,8 +164,65 @@ export async function catalogo() {
     }
   }
 
-  cache = { temas, materiales };
+  // Aventuras: los juegos que son mapas leen su configuración para saber qué juegos llevan dentro.
+  const porJuego = new Map(materiales.filter((m) => m.juego).map((m) => [m.juego!, m]));
+  const aventuras: Aventura[] = [];
+  for (const mapa of materiales) {
+    if (!mapa.juego) continue;
+    const config = configJuego(mapa.juego);
+    if (!config?.compartimentos) continue;
+    const zonas: Zona[] = config.compartimentos.map((c: { nombre: string; color?: string; juegos: { slug: string }[] }) => ({
+      nombre: c.nombre,
+      color: c.color,
+      juegos: c.juegos.map((j) => porJuego.get(j.slug)).filter((x): x is Material => !!x),
+    }));
+    const final = config.final?.slug ? porJuego.get(config.final.slug) : undefined;
+    const juegos = [...zonas.flatMap((z) => z.juegos), ...(final ? [final] : [])];
+    for (const j of juegos) j.aventura = mapa.id;
+    aventuras.push({ mapa, zonas, final, juegos });
+  }
+  aventuras.sort((a, b) => b.mapa.fecha.getTime() - a.mapa.fecha.getTime());
+
+  cache = { temas, materiales, aventuras };
   return cache;
+}
+
+// El bloque JSON de configuración de un juego publicado.
+function configJuego(slug: string) {
+  const archivo = `public/juegos/${slug}/index.html`;
+  if (!existsSync(archivo)) return undefined;
+  const m = readFileSync(archivo, 'utf8').match(/<script type="application\/json"[^>]*>([\s\S]*?)<\/script>/);
+  try {
+    return m ? JSON.parse(m[1]) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function aventuras(): Promise<Aventura[]> {
+  return (await catalogo()).aventuras;
+}
+
+export async function aventuraDe(m: Material): Promise<Aventura | undefined> {
+  return (await catalogo()).aventuras.find((a) => a.mapa.id === m.id);
+}
+
+// Lo último que ha entrado en el cajón, sin las aventuras (que tienen su propia sección) ni sus juegos.
+export async function ultimos(n = 4): Promise<Material[]> {
+  const { materiales, aventuras } = await catalogo();
+  const mapas = new Set(aventuras.map((a) => a.mapa.id));
+  const vistos = new Set<string>();
+  const lista: Material[] = [];
+  const orden = [...materiales].sort((a, b) => b.fecha.getTime() - a.fecha.getTime() || a.orden - b.orden);
+  for (const m of orden) {
+    if (m.aventura || mapas.has(m.id)) continue;
+    const x = m;
+    if (vistos.has(x.id)) continue;
+    vistos.add(x.id);
+    lista.push(x);
+    if (lista.length === n) break;
+  }
+  return lista;
 }
 
 const ordenArea = (a: Area) => AREAS.findIndex((x) => x.id === a.id);

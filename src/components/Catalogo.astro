@@ -48,8 +48,11 @@ const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
 }
 
 {
-  grupos.map((g) => (
-    <section class="tema" aria-labelledby={`tema-${g.tema.id}`} data-tema>
+  grupos.map((g) => {
+    const dentro = g.materiales.filter((m) => m.aventura);
+    const mapa = dentro.length ? g.materiales.find((m) => m.id === dentro[0].aventura) : undefined;
+    return (
+    <section class={dentro.length ? 'tema tema-aventura' : 'tema'} aria-labelledby={`tema-${g.tema.id}`} data-tema>
       <div class="tema-cabeza">
         {mostrarArea && (
           <a class="subrayado" href={ruta(`/${g.tema.area.id}/`)} style={`background: ${g.tema.area.color}`}>
@@ -67,11 +70,12 @@ const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
         {g.materiales.map((m) => (
           <li
             data-material
+            data-dentro={m.aventura ? '' : undefined}
             data-tipo={m.tipo}
             data-texto={normaliza(`${m.titulo} ${m.resumen} ${g.tema.titulo} ${g.tema.subtitulo ?? ''} ${g.tema.area.nombre} ${TIPOS[m.tipo].nombre}`)}
           >
-            <a class={`material ancho-${m.tipo}`} href={m.url}>
-              <Miniatura material={m} />
+            <a class={`material ancho-${m.tipo}`} href={m.url} style={`--area: ${g.tema.area.color}`}>
+              <Miniatura material={m} vt />
               <p class="material-titulo">{m.titulo}</p>
               <p class="material-meta">{m.resumen}</p>
               {m.pendiente && <p class="pendiente">Falta subir el archivo.</p>}
@@ -79,8 +83,17 @@ const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
           </li>
         ))}
       </ul>
+      {dentro.length > 0 && (
+        <p class="plegado">
+          <button type="button" class="tipo" data-desplegar hidden>
+            Ver aquí sus {dentro.length} juegos
+          </button>
+          {mapa && <a href={mapa.url}>Abrir la aventura</a>}
+        </p>
+      )}
     </section>
-  ))
+    );
+  })
 }
 
 <p class="vacio" data-vacio hidden={total > 0 ? true : undefined}>{total > 0 ? '' : vacio}</p>
@@ -109,13 +122,15 @@ const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
       const q = norm(entrada.value);
       let visibles = 0;
       for (const li of items) {
-        const ok = (tipo === 'todo' || li.dataset.tipo === tipo) && (!q || (li.dataset.texto ?? '').includes(q));
+        // los juegos de una aventura van plegados dentro de su caja, salvo si se busca o se filtra
+        const plegado = li.hasAttribute('data-dentro') && !q && tipo === 'todo' && !li.closest('.abierta');
+        const ok = !plegado && (tipo === 'todo' || li.dataset.tipo === tipo) && (!q || (li.dataset.texto ?? '').includes(q));
         li.hidden = !ok;
         if (ok) visibles++;
       }
       for (const t of temas) t.hidden = !t.querySelector('[data-material]:not([hidden])');
       for (const b of botones) b.setAttribute('aria-pressed', String(b.dataset.tipo === tipo));
-      cuenta.textContent = visibles === total ? `${total} materiales` : `Se ven ${visibles} de ${total}`;
+      cuenta.textContent = visibles === total || (!q && tipo === 'todo') ? `${total} materiales` : `Se ven ${visibles} de ${total}`;
       vacio.hidden = visibles > 0;
       vacio.textContent = visibles > 0 ? '' : 'No hay nada con esa combinación. Prueba con otro tipo de material o borra la búsqueda.';
 
@@ -126,6 +141,17 @@ const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
       history.replaceState(null, '', location.pathname + qs);
       pestanas.forEach((a, i) => a.setAttribute('href', basePestanas[i] + qs));
     };
+
+    document.querySelectorAll<HTMLButtonElement>('[data-desplegar]').forEach((b) => {
+      b.hidden = false;
+      b.addEventListener('click', () => {
+        const t = b.closest('.tema')!;
+        const abierta = t.classList.toggle('abierta');
+        b.textContent = abierta ? 'Plegar los juegos' : b.dataset.texto ?? '';
+        aplicar();
+      });
+      b.dataset.texto = b.textContent ?? '';
+    });
 
     botones.forEach((b) =>
       b.addEventListener('click', () => {

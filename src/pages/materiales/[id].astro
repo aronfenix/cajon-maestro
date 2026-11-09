@@ -3,7 +3,7 @@ import { Image, getImage } from 'astro:assets';
 import Archivador from '../../layouts/Archivador.astro';
 import Miniatura from '../../components/Miniatura.astro';
 import Buzon from '../../components/Buzon.astro';
-import { catalogo, relacionadosDe, render, detalle, type Material } from '../../lib/catalogo';
+import { catalogo, relacionadosDe, aventuraDe, render, detalle, type Material } from '../../lib/catalogo';
 import { TIPOS } from '../../data/areas';
 import { SITIO } from '../../data/sitio';
 import { ruta } from '../../lib/rutas';
@@ -16,7 +16,10 @@ export async function getStaticPaths() {
 const { m } = Astro.props as { m: Material };
 const { Content } = await render(m.entrada);
 const tieneCuerpo = m.entrada.body?.trim().length;
-const relacionados = await relacionadosDe(m);
+const aventura = await aventuraDe(m);
+const relacionados = aventura ? [] : await relacionadosDe(m);
+const { materiales } = await catalogo();
+const madre = m.aventura ? materiales.find((x) => x.id === m.aventura) : undefined;
 const tipo = TIPOS[m.tipo];
 const det = detalle(m);
 const og = m.portada ? (await getImage({ src: m.portada, width: 1200, format: 'jpg' })).src : undefined;
@@ -79,7 +82,7 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
             <a href={m.video}>Descargar el vídeo</a>
           </video>
         ) : m.portada ? (
-          <Image src={m.portada} alt={`Portada de ${m.titulo}`} widths={[640, 1000, 1400]} sizes="(max-width: 860px) 92vw, 620px" />
+          <Image src={m.portada} alt={`Portada de ${m.titulo}`} widths={[640, 1000, 1400]} sizes="(max-width: 860px) 92vw, 620px" style={`view-transition-name: m-${m.id}`} />
         ) : (
           <div class="sin-portada">Sin portada todavía</div>
         )
@@ -87,6 +90,44 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
     </figure>
   </div>
 
+      {
+        aventura && (
+          <section class="zonas-dentro" aria-labelledby="dentro" data-aventura>
+            <h2 class="seccion-titulo" id="dentro">Lo que hay dentro</h2>
+            <p class="progreso-tablet" data-progreso hidden />
+            {aventura.zonas.map((z, i) => (
+              <div class="zona" style={`--zona: ${z.color ?? '#000'}`}>
+                <h3 class="zona-titulo"><span class="zona-num">{i + 1}</span>{z.nombre}</h3>
+                <ul class="zona-lista">
+                  {z.juegos.map((j) => (
+                    <li>
+                      <a class="zona-juego" href={j.url} data-juego={j.enlace}>
+                        <Miniatura material={j} ancho={200} />
+                        <span class="material-titulo">{j.titulo}</span>
+                        <span class="hecho" hidden>Hecho en esta tablet</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            {aventura.final && (
+              <div class="zona zona-final">
+                <h3 class="zona-titulo"><span class="zona-num">★</span>Y al final</h3>
+                <ul class="zona-lista">
+                  <li>
+                    <a class="zona-juego" href={aventura.final.url} data-juego={aventura.final.enlace}>
+                      <Miniatura material={aventura.final} ancho={200} />
+                      <span class="material-titulo">{aventura.final.titulo}</span>
+                      <span class="hecho" hidden>Hecho en esta tablet</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </section>
+        )
+      }
   <div class="cuerpo">
     <dl class="datos">
       {m.tema.curso && (<><dt>Curso</dt><dd>{m.tema.curso}</dd></>)}
@@ -120,6 +161,13 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
         )
       }
       {
+        madre && (
+          <p class="de-aventura">
+            Forma parte de la aventura <a href={madre.url}>{madre.titulo}</a>. Se puede jugar suelto.
+          </p>
+        )
+      }
+      {
         relacionados.length > 0 && (
           <section class="bloque" aria-labelledby="vacon">
             <h2 class="seccion-titulo" id="vacon">Va con</h2>
@@ -144,3 +192,28 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
     </div>
   </div>
 </Archivador>
+
+<script>
+  // Solo se lee lo que ya guardó este aparato al jugar: aquí no se manda nada a ningún sitio.
+  const caja = document.querySelector<HTMLElement>('[data-aventura]');
+  if (caja) {
+    const juegos = [...caja.querySelectorAll<HTMLAnchorElement>('[data-juego]')];
+    let hechos = 0;
+    for (const a of juegos) {
+      let ok = false;
+      try {
+        ok = !!localStorage.getItem('cajon-hecho:' + new URL(a.dataset.juego!, location.href).pathname);
+      } catch {}
+      if (ok) {
+        hechos++;
+        a.classList.add('esta-hecho');
+        a.querySelector<HTMLElement>('.hecho')!.hidden = false;
+      }
+    }
+    const p = caja.querySelector<HTMLElement>('[data-progreso]')!;
+    if (hechos) {
+      p.textContent = `En esta tablet llevas ${hechos} de ${juegos.length}.`;
+      p.hidden = false;
+    }
+  }
+</script>

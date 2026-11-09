@@ -4,55 +4,62 @@ import type { Material } from '../lib/catalogo';
 
 interface Props {
   material: Material;
+  vt?: boolean; // le da nombre para la transición entre páginas (solo una vez por página)
+  ancho?: number;
 }
-const { material: m } = Astro.props;
+const { material: m, vt = false } = Astro.props;
 
 // Ancho real en pantalla de cada forma, para generar la imagen justa.
 const anchos = { juego: 300, web: 300, herramienta: 300, video: 256, comic: 168, ficha: 150 } as const;
-const ancho = anchos[m.tipo];
+const ancho = Astro.props.ancho ?? anchos[m.tipo];
+// Los juegos (y las webs y herramientas) son cajas; las fichas siguen siendo fotocopias.
+const caja = m.tipo === 'juego' || m.tipo === 'web' || m.tipo === 'herramienta';
+const nombre = vt ? `view-transition-name: m-${m.id}` : undefined;
 ---
 
-<div class={`miniatura forma-${m.tipo}`}>
-  {
-    m.portada ? (
-      <Image
-        class="fotocopia"
-        src={m.portada}
-        alt=""
-        widths={[ancho, ancho * 2, 600]}
-        sizes={`(max-width: 860px) 92vw, ${ancho}px`}
-        loading="lazy"
-      />
-    ) : m.tipo === 'video' ? (
-      <div class="fotograma" aria-hidden="true">
-        <svg width="44" height="44" viewBox="0 0 46 46">
-          <circle cx="23" cy="23" r="21" fill="none" stroke="#fff" stroke-width="2" />
-          <path d="M19 15 L32 23 L19 31 Z" fill="#fff" />
-        </svg>
-      </div>
-    ) : m.tipo === 'comic' ? (
-      <div class="vinetas" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-        <span />
-      </div>
-    ) : m.tipo === 'ficha' ? (
-      <div class="hoja" aria-hidden="true">
-        <div class="hoja-titulo" />
-        <div class="hoja-linea" />
-        <div class="hoja-linea" />
-        <div class="hoja-linea corta" />
-        <div class="hoja-caja" />
-        <div class="hoja-linea" />
-        <div class="hoja-linea corta" />
-      </div>
-    ) : (
-      <div class="pantalla" aria-hidden="true" />
-    )
-  }
-  <span class="toner" aria-hidden="true"></span>
-  {m.paginas && m.paginas > 1 && <span class="grapa" aria-hidden="true" />}
-  {m.duracion && <span class="duracion">{m.duracion}</span>}
+<div class={caja ? 'caja' : 'sin-caja'}>
+  <div class={`miniatura forma-${m.tipo}`} style={nombre}>
+    {
+      m.portada ? (
+        <Image
+          class={m.tipo === 'ficha' ? 'fotocopia' : 'color'}
+          src={m.portada}
+          alt=""
+          widths={[ancho, ancho * 2, 600]}
+          sizes={`(max-width: 860px) 92vw, ${ancho}px`}
+          loading="lazy"
+        />
+      ) : m.tipo === 'video' ? (
+        <div class="fotograma" aria-hidden="true">
+          <svg width="44" height="44" viewBox="0 0 46 46">
+            <circle cx="23" cy="23" r="21" fill="none" stroke="#fff" stroke-width="2" />
+            <path d="M19 15 L32 23 L19 31 Z" fill="#fff" />
+          </svg>
+        </div>
+      ) : m.tipo === 'comic' ? (
+        <div class="vinetas" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+      ) : m.tipo === 'ficha' ? (
+        <div class="hoja" aria-hidden="true">
+          <div class="hoja-titulo" />
+          <div class="hoja-linea" />
+          <div class="hoja-linea" />
+          <div class="hoja-linea corta" />
+          <div class="hoja-caja" />
+          <div class="hoja-linea" />
+          <div class="hoja-linea corta" />
+        </div>
+      ) : (
+        <div class="pantalla" aria-hidden="true" />
+      )
+    }
+    {m.tipo === 'ficha' && <span class="toner" aria-hidden="true" />}
+    {m.paginas && m.paginas > 1 && <span class="grapa" aria-hidden="true" />}
+    {m.duracion && <span class="duracion">{m.duracion}</span>}
+  </div>
 </div>

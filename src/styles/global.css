@@ -128,6 +128,7 @@ a:hover {
 }
 
 .cabecera {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   gap: 40px;
@@ -351,6 +352,12 @@ a.subrayado:hover {
   background-size: 240px 240px;
   pointer-events: none;
   transition: opacity 0.18s ease-out;
+}
+.color {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .material:hover .fotocopia,
 .material:focus-visible .fotocopia {
@@ -936,6 +943,380 @@ a.subrayado:hover {
 @media (prefers-reduced-motion: reduce) {
   .fotocopia,
   .toner {
+    transition: none;
+  }
+}
+
+
+/* ——— Las cajas: los juegos tienen grosor (su lomo es del color del área) y se levantan al pasar ——— */
+@property --hondo {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 10px;
+}
+.caja {
+  --hondo: 10px;
+  position: relative;
+  display: block;
+  margin: 0 var(--hondo) var(--hondo) 0;
+  translate: 0 0;
+  transition: --hondo 0.18s ease-out, translate 0.18s ease-out, margin 0.18s ease-out;
+}
+.caja > .miniatura {
+  border: 2px solid var(--toner);
+  background: #1b1b1b;
+}
+.caja::before,
+.caja::after {
+  content: '';
+  position: absolute;
+  inset: 0 calc(-1 * var(--hondo)) calc(-1 * var(--hondo)) 0;
+  pointer-events: none;
+}
+/* lado derecho y base: dos caras del mismo color de área, la de abajo más oscura */
+.caja::before {
+  background: color-mix(in srgb, var(--area, #c9ccc6) 82%, #000);
+  clip-path: polygon(calc(100% - var(--hondo)) 0, 100% var(--hondo), 100% 100%, calc(100% - var(--hondo)) calc(100% - var(--hondo)));
+}
+.caja::after {
+  background: color-mix(in srgb, var(--area, #c9ccc6) 60%, #000);
+  clip-path: polygon(0 calc(100% - var(--hondo)), calc(100% - var(--hondo)) calc(100% - var(--hondo)), 100% 100%, var(--hondo) 100%);
+}
+.material:hover .caja,
+.material:focus-visible .caja,
+.aventura:hover .caja,
+.aventura:focus-visible .caja,
+.nuevo-item:hover .caja,
+.zona-juego:hover .caja {
+  --hondo: 16px;
+  translate: -6px -6px;
+}
+.sin-caja > .miniatura {
+  border: 2px solid var(--toner);
+}
+.forma-ficha {
+  border-width: 1.5px;
+}
+.material:hover .material-titulo {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+/* ——— Los ayudantes, de pie sobre la raya de la cabecera ——— */
+.cabecera {
+  padding-bottom: 104px;
+}
+.ayudantes {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 4px;
+  pointer-events: none;
+}
+.ayudante {
+  display: block;
+  width: 96px;
+  height: 96px;
+  margin-bottom: -13px;
+  background-image: var(--reposo);
+  background-size: 600% 100%;
+  background-repeat: no-repeat;
+  animation: ayudante-reposo 3s step-end infinite;
+  animation-delay: var(--retraso, 0s);
+  pointer-events: auto;
+}
+.ayudante:hover {
+  background-image: var(--saluda);
+  animation: ayudante-gesto 0.75s steps(6, jump-none) infinite;
+}
+@keyframes ayudante-reposo {
+  0% { background-position-x: 0%; }
+  53.33% { background-position-x: 20%; }
+  66.67% { background-position-x: 40%; }
+  69.67% { background-position-x: 60%; }
+  73% { background-position-x: 80%; }
+  77.33% { background-position-x: 100%; }
+}
+@keyframes ayudante-gesto {
+  from { background-position-x: 0%; }
+  to { background-position-x: 100%; }
+}
+
+/* ——— Lo último ——— */
+.nuevo,
+.aventuras {
+  padding: 36px 0 8px;
+}
+.nuevo-lista {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nuevo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--toner);
+  text-decoration: none;
+}
+.nuevo-item .miniatura {
+  aspect-ratio: 16 / 10;
+}
+.nuevo-item:hover .material-titulo {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+.nuevo-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.nuevo-fecha {
+  font-size: 14px;
+  color: var(--gris);
+}
+
+/* ——— Las aventuras: cajas grandes con precinto ——— */
+.aventuras-intro {
+  margin: -4px 0 22px;
+  color: var(--gris);
+  max-width: 40em;
+}
+.aventuras-lista {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.aventura {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--toner);
+  text-decoration: none;
+}
+.caja-grande {
+  --hondo: 18px;
+}
+.aventura:hover .caja-grande,
+.aventura:focus-visible .caja-grande {
+  --hondo: 26px;
+  translate: -8px -8px;
+}
+.tapa {
+  display: block;
+  aspect-ratio: 16 / 10;
+}
+.precinto {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  translate: -50% 0;
+  rotate: -3deg;
+  background: var(--area);
+  color: var(--toner);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 4px 12px;
+  border: 2px solid var(--toner);
+  box-shadow: 2px 2px 0 var(--toner);
+}
+.sello-nueva {
+  position: absolute;
+  right: 6%;
+  top: 8%;
+  rotate: 8deg;
+  padding: 6px 12px;
+  border: 3px solid var(--boli-rojo);
+  border-radius: 6px;
+  color: var(--boli-rojo);
+  background: rgba(255, 255, 255, 0.86);
+  font-family: var(--rotulo);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.aventura-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.aventura-titulo {
+  font-family: var(--rotulo);
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 0.95;
+}
+.aventura:hover .aventura-titulo {
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+}
+.todo-titulo {
+  margin-top: 44px;
+  padding-top: 28px;
+  border-top: 3px solid var(--toner);
+}
+
+/* ——— Aventuras plegadas en el catálogo ——— */
+.plegado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin: 20px 0 0;
+}
+.plegado .tipo[hidden] {
+  display: none;
+}
+.plegado a {
+  font-weight: 700;
+}
+
+/* ——— Dentro de una aventura, por zonas ——— */
+.de-aventura {
+  margin: 0 0 32px;
+  padding: 12px 16px;
+  border-left: 6px solid var(--toner);
+  background: #f2f3f0;
+}
+.zonas-dentro {
+  padding: 40px 0 8px;
+  border-bottom: 3px solid var(--toner);
+}
+.zonas-dentro .zona-lista {
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+}
+.progreso-tablet {
+  font-weight: 700;
+  margin: -4px 0 18px;
+}
+.zona {
+  margin: 0 0 26px;
+}
+.zona-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 19px;
+}
+.zona-num {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--zona);
+  color: #fff;
+  font-size: 15px;
+  border: 2px solid var(--toner);
+}
+.zona-final .zona-num {
+  background: #ffc531;
+  color: var(--toner);
+}
+.zona-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 22px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zona-juego {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--toner);
+  text-decoration: none;
+  font-size: 15px;
+  --area: var(--zona);
+}
+.zona-juego .material-titulo {
+  font-size: 15px;
+}
+.zona-juego:hover .material-titulo {
+  text-decoration: underline;
+}
+.hecho {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b8f4e;
+}
+.hecho::before {
+  content: '✓ ';
+}
+
+/* ——— Movimiento: transiciones entre páginas y entrada al hacer scroll ——— */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-group(*) {
+  animation-duration: 0.32s;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .fila > li,
+    .aventuras-lista > li,
+    .zona-lista > li {
+      animation: entra-cajon linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+@keyframes entra-cajon {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+}
+
+@media (max-width: 860px) {
+  .nuevo-lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 16px;
+  }
+  .aventuras-lista {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .aventura-titulo {
+    font-size: 34px;
+  }
+  .cabecera {
+    padding-bottom: 92px;
+  }
+  .ayudante {
+    width: 80px;
+    height: 80px;
+    margin-bottom: -11px;
+  }
+  .zona-lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  .ayudante,
+  .ayudante:hover {
+    animation: none;
+  }
+  .caja {
     transition: none;
   }
 }

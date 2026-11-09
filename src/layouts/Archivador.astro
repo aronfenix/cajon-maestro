@@ -38,6 +38,7 @@ const canonica = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_ES" />
     {imagen && <meta property="og:image" content={new URL(imagen, Astro.site)} />}
+    {imagen && <meta name="twitter:card" content="summary_large_image" />}
   </head>
   <body>
     <a class="saltar" href="#contenido">Ir al contenido</a>

@@ -1,10 +1,19 @@
 ---
+import { Image } from 'astro:assets';
 import Archivador from '../layouts/Archivador.astro';
 import Catalogo from '../components/Catalogo.astro';
-import { grupos } from '../lib/catalogo';
+import Miniatura from '../components/Miniatura.astro';
+import { grupos, aventuras, ultimos } from '../lib/catalogo';
+import { TIPOS } from '../data/areas';
 import { SITIO } from '../data/sitio';
+import { ruta } from '../lib/rutas';
 
 const todos = await grupos();
+const cajas = await aventuras();
+const nuevos = await ultimos(4);
+const fecha = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+const quienes = ['goma', 'boli', 'fosforito'];
+const sprites = ruta('/juegos/motores/personajes/');
 ---
 
 <Archivador activo="todo">
@@ -14,6 +23,63 @@ const todos = await grupos();
       <p>{SITIO.presentacion}</p>
       <p class="firma">{SITIO.firma}</p>
     </div>
+    <div class="ayudantes" aria-hidden="true">
+      {
+        quienes.map((q, i) => (
+          <span class={`ayudante ayudante-${q}`} style={`--reposo: url('${sprites}${q}-reposo.webp'); --saluda: url('${sprites}${q}-saludar.webp'); --retraso: ${-i * 1.1}s`} />
+        ))
+      }
+    </div>
   </header>
+
+  <section class="nuevo" aria-labelledby="nuevo-titulo">
+    <h2 class="seccion-titulo" id="nuevo-titulo">Lo último que he metido</h2>
+    <ul class="nuevo-lista">
+      {
+        nuevos.map((m) => (
+          <li>
+            <a class="nuevo-item" href={m.url} style={`--area: ${m.tema.area.color}`}>
+              <Miniatura material={m} ancho={220} />
+              <span class="nuevo-texto">
+                <span class="nuevo-fecha">{fecha(m.fecha)} · {TIPOS[m.tipo].nombre.toLowerCase()}</span>
+                <span class="material-titulo">{m.titulo}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {
+    cajas.length > 0 && (
+      <section class="aventuras" aria-labelledby="aventuras-titulo">
+        <h2 class="seccion-titulo" id="aventuras-titulo">Aventuras</h2>
+        <p class="aventuras-intro">Cajas con un montón de juegos dentro y un mapa para recorrerlos. Cada juego se puede jugar suelto.</p>
+        <ul class="aventuras-lista">
+          {cajas.map((a) => (
+            <li>
+              <a class="aventura" href={a.mapa.url} style={`--area: ${a.mapa.tema.area.color}`}>
+                <span class="caja caja-grande">
+                  <span class="miniatura forma-juego tapa">
+                    {a.mapa.portada && <Image class="color" src={a.mapa.portada} alt="" widths={[480, 960]} sizes="(max-width: 860px) 92vw, 480px" />}
+                    <span class="precinto">{a.juegos.length} juegos</span>
+                    {Date.now() - a.mapa.fecha.getTime() < 21 * 864e5 && <span class="sello-nueva">Nueva</span>}
+                  </span>
+                </span>
+                <span class="aventura-texto">
+                  <span class="subrayado" style={`background: ${a.mapa.tema.area.color}`}>{a.mapa.tema.area.nombre}</span>
+                  <span class="aventura-titulo">{a.mapa.titulo}</span>
+                  <span class="material-meta">{a.zonas.length} zonas: {a.zonas.map((z) => z.nombre).join(', ')}.</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <h2 class="seccion-titulo todo-titulo">Todo el cajón</h2>
   <Catalogo grupos={todos} mostrarArea={true} vacio="Todavía no hay nada en el cajón." />
 </Archivador>
