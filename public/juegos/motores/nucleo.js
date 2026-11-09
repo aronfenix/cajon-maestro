@@ -177,6 +177,11 @@ export async function arrancar(config, motor) {
     if (ms) poseT = setTimeout(() => posa('quieto'), ms);
   };
   posa('quieto');
+  // si nadie toca nada durante un rato, el ayudante espera (mira el reloj, da golpecitos…) y vuelve a lo suyo
+  let quietoT = null;
+  const vigila = () => { clearTimeout(quietoT); quietoT = setTimeout(() => { if (!document.body.classList.contains('en-portada') && bocadillo.hidden) posa('espera', 4200); vigila(); }, 25000); };
+  ['pointerdown', 'keydown'].forEach((t) => addEventListener(t, vigila, true));
+  vigila();
   // ojos vivos: siguen al dedo (y a la pieza que se arrastra) y parpadean de vez en cuando
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     let mx = innerWidth / 2, my = innerHeight / 2, pendiente = false;
