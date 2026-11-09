@@ -1320,3 +1320,68 @@ a.subrayado:hover {
     transition: none;
   }
 }
+
+/* ——— El catálogo en dos columnas de carpetas; los temas con muchos materiales, a lo ancho ——— */
+.temas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 44px;
+  align-items: start;
+}
+.temas > .tema {
+  min-width: 0;
+}
+.temas > .tema-ancho,
+.temas > .tema.abierta {
+  grid-column: 1 / -1;
+}
+.temas .ancho-juego,
+.temas .ancho-web,
+.temas .ancho-herramienta,
+.temas .ancho-video {
+  width: 200px;
+}
+.temas .ancho-comic,
+.temas .ancho-ficha {
+  width: 130px;
+}
+.temas .fila {
+  gap: 28px 22px;
+}
+.temas .tema-titulo {
+  font-size: clamp(30px, 3vw, 40px);
+}
+.temas .material-meta {
+  font-size: 14px;
+}
+@media (max-width: 860px) {
+  .temas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .temas .fila > li,
+  .temas .fila > li:has(.ancho-juego),
+  .temas .fila > li:has(.ancho-web),
+  .temas .fila > li:has(.ancho-herramienta),
+  .temas .fila > li:has(.ancho-video),
+  .temas .fila > li:has(.ancho-comic),
+  .temas .fila > li:has(.ancho-ficha) {
+    width: calc(50% - 8px);
+  }
+  .temas .fila {
+    gap: 24px 16px;
+  }
+  .temas .ancho-juego,
+  .temas .ancho-web,
+  .temas .ancho-herramienta,
+  .temas .ancho-video,
+  .temas .ancho-comic,
+  .temas .ancho-ficha {
+    width: 100%;
+  }
+  .temas .material-meta {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

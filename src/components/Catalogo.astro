@@ -47,12 +47,14 @@ const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
   )
 }
 
+<div class="temas">
 {
   grupos.map((g) => {
     const dentro = g.materiales.filter((m) => m.aventura);
+    const sueltos = g.materiales.length - dentro.length;
     const mapa = dentro.length ? g.materiales.find((m) => m.id === dentro[0].aventura) : undefined;
     return (
-    <section class={dentro.length ? 'tema tema-aventura' : 'tema'} aria-labelledby={`tema-${g.tema.id}`} data-tema>
+    <section class={['tema', dentro.length && 'tema-aventura', sueltos > 3 && 'tema-ancho'].filter(Boolean).join(' ')} aria-labelledby={`tema-${g.tema.id}`} data-tema>
       <div class="tema-cabeza">
         {mostrarArea && (
           <a class="subrayado" href={ruta(`/${g.tema.area.id}/`)} style={`background: ${g.tema.area.color}`}>
@@ -95,6 +97,7 @@ const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
     );
   })
 }
+</div>
 
 <p class="vacio" data-vacio hidden={total > 0 ? true : undefined}>{total > 0 ? '' : vacio}</p>
 
