@@ -418,4 +418,4 @@ button.pieza-angulo:hover{transform:translateY(-3px)}
 .tecla.op-encargo[aria-pressed="true"]{--c:var(--amarillo);box-shadow:0 0 0 3px var(--cobalto)}
 .unidad-encargo{font-family:inherit;font-size:18px;font-weight:800}
 
-@media (max-width:640px){.colchoneta{width:72px}.arco-salto{width:28px}.cartel-colchoneta .campo-num{width:5.4ch;font-size:18px}.num-colchoneta{font-size:18px;padding:3px 6px}.arco-salto>b,.signo-salto{font-size:13px;padding:1px 5px}.signo-salto .campo-num{width:4.6ch;font-size:15px}.cesta-tombola .boleto{width:84px}}
+@media (max-width:640px){.colchoneta{width:max(58px,calc((100vw - 64px - (var(--n) - 1) * 22px) / var(--n)))}.arco-salto{width:22px}.cartel-colchoneta .campo-num{width:100%;min-width:0;padding:0 2px;font-size:16px}.num-colchoneta{font-size:18px;padding:3px 6px}.arco-salto>b,.signo-salto{font-size:13px;padding:1px 5px}.signo-salto .campo-num{width:4.6ch;font-size:15px}.cesta-tombola .boleto{width:84px}}
