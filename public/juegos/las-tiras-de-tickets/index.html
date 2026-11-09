@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las tiras de tickets · Cajón maestro</title>
+<meta name="description" content="Hechos multiplicativos: el factor que falta (120 = 4 × ?) estirando un rectángulo de tickets, y multiplicar por decenas y centenas a partir de la tabla.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "tablas",
+  "titulo": "Las tiras de tickets",
+  "subtitulo": "La taquilla tiene los tickets en tiras. Para repartirlos en filas iguales, hay que saber cuántos van en cada una.",
+  "portada": {
+    "rotulo": "TICKETS",
+    "objetivo": "Estira el rectángulo de tickets hasta el total y averigua el número que falta.",
+    "frase": "¿Cuántos por fila? Estira y verás."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Los tickets van en filas iguales. Sé cuántos hay y cuántas filas. Me falta un número."
+    },
+    {
+      "quien": "boli",
+      "pose": "pista",
+      "texto": "Es una multiplicación con un hueco. Estira el rectángulo hasta que dé el total."
+    }
+  ],
+  "observa": "Si sabes que 4 × 3 = 12, ¿qué sabes de 4 × 30? ¿Y de 40 × 30?",
+  "niveles": [
+    {
+      "modo": "tiras",
+      "generar": {
+        "tipo": "falta",
+        "filas": [
+          2,
+          5
+        ],
+        "por": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "modo": "tiras",
+      "generar": {
+        "tipo": "falta",
+        "filas": [
+          4,
+          8
+        ],
+        "por": [
+          4,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "tiras",
+      "generar": {
+        "tipo": "decenas",
+        "parejas": 2,
+        "potencias": [
+          10
+        ]
+      }
+    },
+    {
+      "modo": "tiras",
+      "generar": {
+        "tipo": "falta",
+        "filas": [
+          3,
+          7
+        ],
+        "decenas": true
+      }
+    },
+    {
+      "modo": "tiras",
+      "generar": {
+        "tipo": "falta",
+        "filas": [
+          4,
+          9
+        ],
+        "por": [
+          3,
+          8
+        ],
+        "preguntar": "filas"
+      }
+    },
+    {
+      "modo": "tiras",
+      "generar": {
+        "tipo": "decenas",
+        "parejas": 3,
+        "potencias": [
+          10,
+          100
+        ]
+      }
+    },
+    {
+      "modo": "tiras",
+      "generar": {
+        "tipo": "falta",
+        "filas": [
+          4,
+          9
+        ],
+        "decenas": true,
+        "preguntar": "filas"
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

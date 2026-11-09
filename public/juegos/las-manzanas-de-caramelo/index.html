@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las manzanas de caramelo · Cajón maestro</title>
+<meta name="description" content="Contar elementos en disposiciones rectangulares con multiplicaciones: bandejas llenas, con huecos, con una fila incompleta o formadas por dos rectángulos.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "tablas",
+  "titulo": "Las manzanas de caramelo",
+  "subtitulo": "Las bandejas de manzanas de caramelo hay que contarlas rápido, sin ir una por una.",
+  "portada": {
+    "rotulo": "MANZANAS",
+    "objetivo": "Cuenta las manzanas sin ir de una en una: filas por columnas.",
+    "frase": "Una, dos, tres… ¡no! Así no."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "asombro",
+      "texto": "¡Manzanas de caramelo! Hay que apuntar cuántas quedan en cada bandeja."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "Si las cuentas de una en una se derrite el caramelo. Filas por columnas, y listo."
+    }
+  ],
+  "observa": "Si faltan manzanas en la bandeja, ¿es más rápido contar las que hay o calcular las de la bandeja llena y quitar las que faltan?",
+  "niveles": [
+    {
+      "modo": "manzanas",
+      "generar": {
+        "tipos": [
+          "lleno"
+        ],
+        "filas": [
+          3,
+          5
+        ],
+        "columnas": [
+          3,
+          6
+        ]
+      }
+    },
+    {
+      "modo": "manzanas",
+      "generar": {
+        "tipos": [
+          "lleno"
+        ],
+        "filas": [
+          5,
+          9
+        ],
+        "columnas": [
+          6,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "manzanas",
+      "generar": {
+        "tipos": [
+          "fila"
+        ],
+        "filas": [
+          4,
+          7
+        ],
+        "columnas": [
+          5,
+          8
+        ]
+      }
+    },
+    {
+      "modo": "manzanas",
+      "generar": {
+        "tipos": [
+          "huecos"
+        ],
+        "filas": [
+          4,
+          7
+        ],
+        "columnas": [
+          5,
+          9
+        ]
+      }
+    },
+    {
+      "modo": "manzanas",
+      "generar": {
+        "tipos": [
+          "dos"
+        ],
+        "filas": [
+          3,
+          6
+        ],
+        "columnas": [
+          4,
+          7
+        ]
+      }
+    },
+    {
+      "modo": "manzanas",
+      "generar": {
+        "tipos": [
+          "huecos",
+          "dos",
+          "fila"
+        ],
+        "filas": [
+          6,
+          9
+        ],
+        "columnas": [
+          7,
+          10
+        ]
+      }
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

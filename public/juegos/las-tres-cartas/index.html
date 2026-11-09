@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las tres cartas · Cajón maestro</title>
+<meta name="description" content="Colocar cifras para conseguir el producto más grande o más pequeño en una multiplicación de dos o tres cifras por una, compitiendo con Fosforito.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "tablas",
+  "titulo": "Las tres cartas",
+  "subtitulo": "Un juego de cartas de la feria: con las mismas cartas, gana quien consiga el producto más grande. O el más pequeño.",
+  "portada": {
+    "rotulo": "CARTAS",
+    "objetivo": "Coloca las cartas para el mejor producto. Fosforito juega con las mismas.",
+    "frase": "¡Te reto! Con las mismas cartas."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "celebra",
+      "texto": "En esta caseta se juega a las tres cartas. Pero sin trampas: con mates."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "seguro",
+      "texto": "Tú y yo, las mismas cartas. A ver quién consigue la multiplicación más grande."
+    }
+  ],
+  "observa": "¿Dónde pones la cifra más grande para que el producto sea el mayor posible? ¿Por qué?",
+  "niveles": [
+    {
+      "modo": "cartas",
+      "generar": {
+        "cartas": 3,
+        "objetivo": "mayor",
+        "listo": 0.3
+      }
+    },
+    {
+      "modo": "cartas",
+      "generar": {
+        "cartas": 3,
+        "objetivo": "menor",
+        "listo": 0.3
+      }
+    },
+    {
+      "modo": "cartas",
+      "generar": {
+        "cartas": 3,
+        "objetivo": "mayor",
+        "listo": 0.6
+      }
+    },
+    {
+      "modo": "cartas",
+      "generar": {
+        "cartas": 4,
+        "objetivo": "mayor",
+        "listo": 0.5
+      }
+    },
+    {
+      "modo": "cartas",
+      "generar": {
+        "cartas": 4,
+        "objetivo": "menor",
+        "cero": true,
+        "listo": 0.6
+      }
+    },
+    {
+      "modo": "cartas",
+      "generar": {
+        "cartas": 4,
+        "objetivo": "mayor",
+        "listo": 0.85
+      }
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

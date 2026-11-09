@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Los farolillos · Cajón maestro</title>
+<meta name="description" content="Las tablas del 7 y del 9 en una guirnalda de cien farolillos: encender los múltiplos y descubrir el dibujo que forman.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "tablas",
+  "titulo": "Los farolillos",
+  "subtitulo": "Una guirnalda de farolillos numerados. Solo se encienden los de una tabla, y al final forman un dibujo.",
+  "portada": {
+    "rotulo": "FAROLILLOS",
+    "objetivo": "Enciende los farolillos de la tabla. Luego, mira qué dibujo forman.",
+    "frase": "¡Que se vea la feria desde la luna!"
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Los farolillos de esta calle no se encienden todos. Solo los de la tabla que toca."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Y si los enciendes bien, hacen un dibujo. Fíjate en él."
+    }
+  ],
+  "observa": "¿Por qué los del 9 hacen una diagonal en una guirnalda de 10 en 10? ¿Y qué pasa con los del 7 si la guirnalda es de 7 en 7?",
+  "niveles": [
+    {
+      "modo": "farolillos",
+      "generar": {
+        "tabla": 7,
+        "hasta": 70
+      }
+    },
+    {
+      "modo": "farolillos",
+      "generar": {
+        "tabla": 9,
+        "hasta": 90
+      }
+    },
+    {
+      "modo": "farolillos",
+      "generar": {
+        "tabla": 7,
+        "hasta": 70,
+        "ancho": 7
+      }
+    },
+    {
+      "modo": "farolillos",
+      "generar": {
+        "tabla": 7,
+        "hasta": 100
+      }
+    },
+    {
+      "modo": "farolillos",
+      "generar": {
+        "tabla": 9,
+        "hasta": 100
+      }
+    },
+    {
+      "modo": "farolillos",
+      "generar": {
+        "tabla": 9,
+        "hasta": 90,
+        "ancho": 9
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

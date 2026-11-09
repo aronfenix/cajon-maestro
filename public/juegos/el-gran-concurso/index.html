@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El gran concurso · Cajón maestro</title>
+<meta name="description" content="El final de la Feria de Otoño: un reto de cada caseta, de los números de cuatro cifras a los ángulos y las tablas.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "examen",
+  "titulo": "El gran concurso",
+  "subtitulo": "Los feriantes vuelven a las nueve. Antes, el gran concurso: un reto de cada calle de la feria.",
+  "portada": {
+    "rotulo": "CONCURSO",
+    "objetivo": "Un reto de cada caseta de la feria. Si los superas, la noria da la vuelta grande.",
+    "frase": "Último repaso. Y esta vez, con público."
+  },
+  "textoFinal": "¡Feria encendida!",
+  "historia": [
+    {
+      "nota": "SON LAS NUEVE MENOS CUARTO. EMPIEZA EL GRAN CONCURSO.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Un reto de cada caseta, uno detrás de otro. Sin prisa, pero sin pausa."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Todo esto ya lo has hecho. Solo hay que acordarse."
+    }
+  ],
+  "observa": "¿Qué caseta te ha costado más? ¿Qué harías distinto si volvieras a jugarla?",
+  "rondas": [
+    {
+      "motor": "numeros",
+      "modo": "tendedero",
+      "generar": {
+        "cantidad": 5,
+        "parecido": 1
+      }
+    },
+    {
+      "motor": "numeros",
+      "modo": "candado",
+      "generar": {
+        "tipo": "menor",
+        "cero": true
+      }
+    },
+    {
+      "motor": "caja",
+      "modo": "columnas",
+      "generar": {
+        "op": "suma",
+        "llevadas": 2
+      }
+    },
+    {
+      "motor": "caja",
+      "modo": "columnas",
+      "generar": {
+        "op": "resta",
+        "llevadas": 2
+      }
+    },
+    {
+      "motor": "mental",
+      "modo": "patitos",
+      "generar": {
+        "tipos": [
+          "mezcla"
+        ],
+        "rango": [
+          20,
+          99
+        ]
+      }
+    },
+    {
+      "motor": "mental",
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          100,
+          100,
+          100,
+          100
+        ],
+        "cruzar": true
+      }
+    },
+    {
+      "motor": "linea",
+      "modo": "martillo",
+      "elige": true,
+      "generar": {
+        "op": "mezcla",
+        "a": [
+          1000,
+          9999
+        ],
+        "b": [
+          100,
+          3999
+        ]
+      }
+    },
+    {
+      "motor": "medida",
+      "modo": "rota",
+      "generar": true
+    },
+    {
+      "motor": "angulos",
+      "modo": "clasifica",
+      "generar": {
+        "tipos": [
+          "agudo",
+          "recto",
+          "obtuso",
+          "llano"
+        ],
+        "cantidad": 6,
+        "girar": true
+      }
+    },
+    {
+      "motor": "angulos",
+      "modo": "dibuja",
+      "generar": {
+        "angulos": [
+          45,
+          120,
+          135,
+          60
+        ],
+        "izquierda": "mezcla"
+      }
+    },
+    {
+      "motor": "tablas",
+      "modo": "manzanas",
+      "generar": {
+        "tipos": [
+          "huecos",
+          "dos"
+        ],
+        "filas": [
+          5,
+          8
+        ],
+        "columnas": [
+          6,
+          9
+        ]
+      }
+    },
+    {
+      "motor": "tablas",
+      "modo": "cartas",
+      "generar": {
+        "cartas": 3,
+        "objetivo": "mayor",
+        "listo": 0.7
+      }
+    },
+    {
+      "motor": "tablas",
+      "modo": "chapas",
+      "generar": {
+        "a": [
+          112,
+          499
+        ],
+        "b": [
+          3,
+          7
+        ],
+        "forma": "partes"
+      }
+    },
+    {
+      "motor": "tablas",
+      "modo": "encargos",
+      "generar": {
+        "tipos": [
+          "compara",
+          "oculto",
+          "multiplica"
+        ],
+        "a": [
+          25,
+          120
+        ]
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

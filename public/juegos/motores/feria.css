@@ -57,7 +57,7 @@ body[data-escena="feria"] .mesa-juego>.pista{background:rgba(255,253,246,.92)}
 .boleto.levantado{opacity:.35}
 .boleto.mal{background:#ffb3b3}
 .boleto.bien{box-shadow:0 0 0 4px #1b8f4e,var(--sombra-baja)}
-.mira-0 .boleto .cifra[data-k="0"],.mira-1 .boleto .cifra[data-k="1"]{background:#fffdf6;border-radius:4px;box-shadow:0 0 0 2px var(--tinta);padding:0 2px}
+.mira-0 .boleto .cifra[data-k="0"],.mira-1 .boleto .cifra[data-k="1"]{background:#fffdf6;border-radius:3px;box-shadow:0 0 0 2px var(--tinta)}
 .mostrador{position:relative;padding:14px 14px 16px;border:var(--borde);border-radius:14px;background:#c98f00 url('tex/madera.webp');background-size:512px 256px;background-blend-mode:multiply;box-shadow:var(--sombra)}
 .rotulo-cesta{position:absolute;left:14px;top:-15px;padding:2px 10px;border:var(--borde);border-radius:6px;background:var(--papel);font-family:var(--fuerte);font-weight:900;font-size:14px}
 .cesta-tombola{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:82px;padding:8px;border-radius:10px;background:rgba(27,30,58,.18)}
@@ -79,7 +79,7 @@ body[data-escena="feria"] .mesa-juego>.pista{background:rgba(255,253,246,.92)}
 .rueda.activa .ventana-rueda{box-shadow:0 0 0 4px var(--cobalto)}
 .rueda.repetida .ventana-rueda{background:linear-gradient(180deg,#e39b9b,#ffe1e1 30%,#ffe1e1 70%,#e39b9b)}
 .rueda.brilla .ventana-rueda{box-shadow:0 0 0 5px var(--amarillo),0 0 18px 4px rgba(255,197,49,.8)}
-.flecha-rueda{width:44px;height:30px;padding:0;border:2.5px solid var(--tinta);border-radius:8px;background:var(--papel);color:var(--tinta);cursor:pointer}
+.flecha-rueda{width:44px;height:40px;padding:0;border:2.5px solid var(--tinta);border-radius:8px;background:var(--papel);color:var(--tinta);cursor:pointer}
 .flecha-rueda svg{width:22px;height:16px}
 .valor-rueda{font-weight:900;font-size:12px;opacity:.65}
 .etiqueta-candado{position:absolute;right:-74px;top:30px;display:flex;flex-direction:column;align-items:center;padding:6px 10px;border:var(--borde);border-radius:6px 6px 6px 20px;background:#fff27a;rotate:9deg;box-shadow:var(--sombra-baja);z-index:2}
@@ -183,7 +183,7 @@ body[data-escena="feria"] .mesa-juego>.pista{background:rgba(255,253,246,.92)}
 .pieza-caja.p2{width:28px;height:28px;border-radius:3px;background:repeating-linear-gradient(90deg,#5ec3ff 0 2.4px,#2f5bd3 2.4px 2.8px)}
 .pieza-caja.p3{width:34px;height:34px;border-radius:4px;background:#9bd84a;box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
 .pieza-caja.nueva{outline:2px dashed #2f5bd3;outline-offset:1px}
-.accion-caja,.romper-caja{font-size:14px;min-height:38px;padding:0 8px;--c:var(--amarillo)}
+.accion-caja,.romper-caja{font-size:14px;min-height:42px;padding:0 8px;--c:var(--amarillo)}
 .romper-caja{border:2.5px dashed var(--tinta);border-radius:10px;background:#fff27a;font-weight:800;cursor:pointer}
 .saca-caja{align-self:flex-start;padding:2px 8px;border-radius:6px;background:#1b1e3a;color:#fff;font-weight:800;font-size:13px}
 .saca-caja.hecho{background:#1b8f4e}
@@ -345,3 +345,77 @@ button.pieza-angulo:hover{transform:translateY(-3px)}
 .lienzo-medidor{width:min(94vw,640px);border:var(--borde);border-radius:18px;background:#fffdf6;background-image:linear-gradient(rgba(47,91,211,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(47,91,211,.1) 1px,transparent 1px);background-size:24px 24px;box-shadow:var(--sombra);touch-action:none}
 .lienzo-medidor svg{width:100%;height:auto;display:block}
 .caseta-ruleta .prediccion{display:flex;align-items:center;gap:10px;padding:10px 16px;border:var(--borde);border-radius:14px;background:var(--papel);font-weight:800;font-size:20px;box-shadow:var(--sombra-baja)}
+
+/* ---------- los farolillos ---------- */
+.caseta-farolillos{display:flex;flex-direction:column;align-items:center;gap:14px}
+.guirnalda{display:grid;grid-template-columns:repeat(var(--w),minmax(0,1fr));gap:4px 2px;width:min(100%,760px);padding:10px;border:var(--borde);border-radius:16px;background:#1c2150;box-shadow:var(--sombra);
+  background-image:repeating-linear-gradient(180deg,transparent 0 3px,rgba(255,253,246,.0) 3px)}
+.farol{--c:#ff8a1f;position:relative;display:flex;flex-direction:column;align-items:center;padding:0;border:0;background:none;cursor:pointer;color:var(--tinta);transform-origin:50% 0}
+.farol::before{content:"";position:absolute;left:-2px;right:-2px;top:2px;height:2px;background:rgba(255,253,246,.5)}
+.farol .dib{width:100%;max-width:46px}
+.farol .dib svg{width:100%;height:auto;display:block}
+.farol b{position:absolute;top:42%;left:0;right:0;text-align:center;font-family:var(--fuerte);font-weight:900;font-size:clamp(11px,1.9vw,17px);pointer-events:none}
+.farol[aria-pressed="true"] .dib svg{filter:drop-shadow(0 0 8px var(--c)) drop-shadow(0 0 3px #fff6cf)}
+.farol.fallado{outline:3px solid var(--rojo);outline-offset:-1px;border-radius:12px}
+.pregunta-dibujo{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:12px;padding:14px 18px;border:var(--borde);border-radius:14px;background:var(--papel);box-shadow:var(--sombra)}
+
+/* ---------- las manzanas ---------- */
+.caseta-manzanas{display:flex;flex-direction:column;align-items:center;gap:16px}
+.bandeja-manzanas{display:grid;grid-template-columns:repeat(var(--c),clamp(24px,5.4vw,40px));gap:4px;padding:14px 16px;border:var(--borde);border-radius:14px;background:#c99a63 url('tex/madera.webp');background-size:512px 256px;background-blend-mode:multiply;box-shadow:var(--sombra)}
+.sitio-manzana{aspect-ratio:30/38;display:block}
+.sitio-manzana svg{width:100%;height:100%;display:block}
+.sitio-manzana.vacio{border-radius:50%;background:radial-gradient(circle at 50% 64%,rgba(27,30,58,.25) 0 36%,transparent 38%)}
+.marca-filas .sitio-manzana[data-c="0"]{background:rgba(94,195,255,.45);border-radius:6px}
+.marca-filas .sitio-manzana[data-f="0"]{background:rgba(255,197,49,.5);border-radius:6px}
+.caseta-manzanas .prediccion,.caseta-tiras .prediccion,.caseta-chapas .prediccion{display:flex;align-items:center;gap:10px;padding:10px 16px;border:var(--borde);border-radius:14px;background:var(--papel);font-weight:800;font-size:20px;box-shadow:var(--sombra-baja)}
+
+/* ---------- las tiras de tickets ---------- */
+.caseta-tiras{display:flex;flex-direction:column;align-items:center;gap:14px}
+.cuenta-tickets{display:flex;align-items:baseline;gap:12px;padding:6px 16px;border:var(--borde);border-radius:12px;background:var(--papel);font-family:var(--fuerte)}
+.cuenta-tickets b{font-weight:900;font-size:28px}
+.cuenta-tickets span{font-weight:800;font-size:18px;padding:2px 10px;border-radius:8px}
+.cuenta-tickets .justo{background:#9bd84a}.cuenta-tickets .pasa{background:#ff9fbf}.cuenta-tickets .falta{background:#fff27a}
+.marco-tickets{position:relative;max-width:100%;padding:4px;border:3px dashed rgba(255,253,246,.5);border-radius:12px;touch-action:none;cursor:nwse-resize;overflow:hidden}
+.rejilla-tickets{display:grid;gap:3px}
+.rejilla-tickets i{display:grid;place-items:center;width:34px;height:34px;border:2px solid var(--tinta);border-radius:3px;background:#ffc531;font-style:normal;font-family:var(--fuerte);font-weight:900;font-size:12px}
+.rejilla-tickets i:nth-child(odd){background:#ffd76a}
+.rejilla-tickets.tacos i{background:repeating-linear-gradient(90deg,#ffc531 0 3px,#e3a518 3px 3.5px)}
+.tirador-tickets{position:absolute;width:28px;height:28px;margin:-14px 0 0 -14px;border:var(--borde);border-radius:50%;background:#e8417a;box-shadow:0 3px 0 var(--tinta)}
+.parejas-tiras{display:flex;flex-direction:column;gap:14px}
+.pareja-tira{display:flex;flex-wrap:wrap;gap:12px;padding:10px 14px;border:var(--borde);border-radius:14px;background:var(--papel);box-shadow:var(--sombra-baja)}
+.cuenta-tira{display:flex;align-items:center;gap:8px;font-family:var(--fuerte);font-size:26px}
+.cuenta-tira.segunda{padding-left:12px;border-left:3px dashed var(--linea)}
+
+/* ---------- las cartas ---------- */
+.rival-cartas{display:flex;align-items:center;gap:10px}
+.rival-cartas .mini-goma{width:76px;height:94px}
+.rival-cartas .mini-goma::before{display:none}
+.jugada-rival{display:flex;flex-direction:column;padding:8px 16px;border:var(--borde);border-radius:14px 14px 14px 4px;background:var(--papel);font-weight:700}
+.jugada-rival b{font-family:var(--fuerte);font-size:24px}
+.todas-cartas{padding:10px 16px;border:var(--borde);border-radius:12px;background:rgba(255,253,246,.94)}
+.tabla-cartas{margin:6px 0 0;padding-left:24px;font-family:var(--fuerte);font-weight:800;font-size:18px;columns:2}
+.tabla-cartas li.tuya{color:var(--cobalto);text-decoration:underline 3px}
+
+/* ---------- las chapas ---------- */
+.caseta-chapas{display:flex;flex-direction:column;align-items:center;gap:14px}
+.descompone{padding:6px 16px;border:var(--borde);border-radius:12px;background:#fff27a;font-family:var(--fuerte);font-size:26px;rotate:-1deg}
+.cajas-chapas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.caja-chapas{display:flex;flex-direction:column;align-items:center;gap:8px;width:clamp(150px,26vw,210px);padding:0 10px 12px;border:var(--borde);border-radius:6px 6px 14px 14px;background:#d39a5c url('tex/cartulina.webp');background-blend-mode:multiply;box-shadow:var(--sombra-baja)}
+.tapa-chapas{align-self:stretch;margin:0 -10px;padding:4px;border-bottom:var(--borde);background:#e0ad70;text-align:center;font-family:var(--fuerte);font-weight:900;font-size:24px}
+.chapas-dib{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;min-height:40px}
+.chapas-dib i{width:16px;height:16px;border:2px solid var(--tinta);border-radius:50%;background:radial-gradient(circle,#fffdf6 0 35%,#2f5bd3 38%)}
+.caja-chapas label{display:flex;align-items:center;gap:6px;font-weight:800;font-size:17px;white-space:nowrap}
+
+/* ---------- los encargos ---------- */
+.caseta-encargos{display:flex;flex-direction:column;align-items:flex-start;gap:16px;max-width:900px}
+.encargo{padding:18px 22px;border:var(--borde);border-radius:4px;background:#fffdf6 url('tex/papel.webp');background-blend-mode:multiply;box-shadow:var(--sombra);rotate:-1deg;max-width:720px}
+.encargo::before{content:"ENCARGO";display:inline-block;margin-bottom:8px;padding:2px 10px;border:3px solid var(--rojo);border-radius:6px;color:var(--rojo);font-family:var(--fuerte);font-weight:900;font-size:14px;rotate:-4deg}
+.texto-encargo{font-size:clamp(19px,2.2vw,23px);line-height:1.45}
+.dato-encargo{padding:0 4px;border-radius:5px;background:#fff27a;font-weight:800}
+.cuenta-encargo{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 16px;border:var(--borde);border-radius:14px;background:var(--papel);box-shadow:var(--sombra-baja);font-family:var(--fuerte);font-size:26px}
+.ops-encargo{display:flex;gap:6px}
+.tecla.op-encargo{min-width:52px;font-size:26px;padding:0 10px}
+.tecla.op-encargo[aria-pressed="true"]{--c:var(--amarillo);box-shadow:0 0 0 3px var(--cobalto)}
+.unidad-encargo{font-family:inherit;font-size:18px;font-weight:800}
+
+@media (max-width:640px){.colchoneta{width:72px}.arco-salto{width:28px}.cartel-colchoneta .campo-num{width:5.4ch;font-size:18px}.num-colchoneta{font-size:18px;padding:3px 6px}.arco-salto>b,.signo-salto{font-size:13px;padding:1px 5px}.signo-salto .campo-num{width:4.6ch;font-size:15px}.cesta-tombola .boleto{width:84px}}

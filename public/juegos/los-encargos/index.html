@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Los encargos · Cajón maestro</title>
+<meta name="description" content="Problemas de la feria de suma, resta, comparación y multiplicación (también con datos escondidos, como media docena): elegir la operación, poner los datos y resolver.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "tablas",
+  "titulo": "Los encargos",
+  "subtitulo": "A la oficina de la feria llegan encargos. Para cada uno hay que decidir qué cuenta se hace y hacerla bien.",
+  "portada": {
+    "rotulo": "ENCARGOS",
+    "objetivo": "Lee cada encargo, elige la operación, pon los datos y resuelve.",
+    "frase": "¡Encargo urgente!"
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "A la oficina de la feria llegan encargos con preguntas. Algunas tienen trampa."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Antes de calcular, piensa: ¿se junta, se quita, se compara o se repite?"
+    }
+  ],
+  "observa": "«¿Cuántos más?» se resuelve restando, aunque diga «más». ¿Por qué?",
+  "niveles": [
+    {
+      "modo": "encargos",
+      "generar": {
+        "tipos": [
+          "suma"
+        ],
+        "rango": [
+          1200,
+          5999
+        ],
+        "rango2": [
+          300,
+          3000
+        ]
+      }
+    },
+    {
+      "modo": "encargos",
+      "generar": {
+        "tipos": [
+          "resta"
+        ]
+      }
+    },
+    {
+      "modo": "encargos",
+      "generar": {
+        "tipos": [
+          "suma",
+          "resta"
+        ]
+      }
+    },
+    {
+      "modo": "encargos",
+      "generar": {
+        "tipos": [
+          "compara"
+        ]
+      }
+    },
+    {
+      "modo": "encargos",
+      "generar": {
+        "tipos": [
+          "multiplica"
+        ],
+        "a": [
+          12,
+          99
+        ]
+      }
+    },
+    {
+      "modo": "encargos",
+      "generar": {
+        "tipos": [
+          "oculto"
+        ]
+      }
+    },
+    {
+      "modo": "encargos",
+      "generar": {
+        "tipos": [
+          "suma",
+          "resta",
+          "compara",
+          "multiplica",
+          "oculto"
+        ],
+        "a": [
+          25,
+          250
+        ]
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

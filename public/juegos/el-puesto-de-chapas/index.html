@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El puesto de chapas · Cajón maestro</title>
+<meta name="description" content="Multiplicar un número de dos o tres cifras por una cifra: por partes (7 × 144 = 700 + 280 + 28) y con la cuenta en columna.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "tablas",
+  "titulo": "El puesto de chapas",
+  "subtitulo": "Las chapas de la feria vienen en cajas iguales. Para saber cuántas hay, se multiplica… por partes.",
+  "portada": {
+    "rotulo": "CHAPAS",
+    "objetivo": "Multiplica por partes: primero las centenas, luego las decenas, luego las unidades. Y suma.",
+    "frase": "¡Chapas para todos!"
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Han llegado cajas de chapas. Muchas. Hay que apuntar cuántas en total."
+    },
+    {
+      "quien": "boli",
+      "pose": "pista",
+      "texto": "Truco: se parte el número en trozos fáciles, se multiplica cada trozo y se suma."
+    }
+  ],
+  "observa": "¿Qué tiene que ver multiplicar por partes con lo que te llevas en la cuenta en columna?",
+  "niveles": [
+    {
+      "modo": "chapas",
+      "generar": {
+        "a": [
+          12,
+          49
+        ],
+        "b": [
+          2,
+          5
+        ],
+        "forma": "partes"
+      }
+    },
+    {
+      "modo": "chapas",
+      "generar": {
+        "a": [
+          23,
+          98
+        ],
+        "b": [
+          3,
+          9
+        ],
+        "forma": "partes"
+      }
+    },
+    {
+      "modo": "chapas",
+      "generar": {
+        "a": [
+          112,
+          499
+        ],
+        "b": [
+          3,
+          7
+        ],
+        "forma": "partes"
+      }
+    },
+    {
+      "modo": "chapas",
+      "generar": {
+        "a": [
+          23,
+          98
+        ],
+        "b": [
+          3,
+          9
+        ],
+        "forma": "columna"
+      }
+    },
+    {
+      "modo": "chapas",
+      "generar": {
+        "a": [
+          123,
+          899
+        ],
+        "b": [
+          4,
+          9
+        ],
+        "forma": "partes"
+      }
+    },
+    {
+      "modo": "chapas",
+      "generar": {
+        "a": [
+          123,
+          899
+        ],
+        "b": [
+          4,
+          9
+        ],
+        "forma": "columna"
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

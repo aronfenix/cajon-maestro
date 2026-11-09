@@ -12,8 +12,15 @@ import * as reparto from './reparto.js';
 import * as ceros from './ceros.js';
 import * as multiplica from './multiplica.js';
 import * as geoplano from './geoplano.js';
+import * as numeros from './numeros.js';
+import * as linea from './linea.js';
+import * as medida from './medida.js';
+import * as caja from './caja.js';
+import * as mental from './mental.js';
+import * as angulos from './angulos.js';
+import * as tablas from './tablas.js';
 
-const OTROS = { formas, giros, reparto, ceros, multiplica, geoplano };
+const OTROS = { formas, giros, reparto, ceros, multiplica, geoplano, numeros, linea, medida, caja, mental, angulos, tablas };
 const lee = (input) => { const t = String(input.value).replace(/[\s.]/g, ''); return t === '' || !/^\d+$/.test(t) ? null : Number(t); };
 
 // cada operación sabe para quién es más razonable: puntos para cabeza, papel y calculadora
