@@ -1,16 +1,14 @@
 ---
 import { Image } from 'astro:assets';
 import Archivador from '../layouts/Archivador.astro';
-import Catalogo from '../components/Catalogo.astro';
 import Miniatura from '../components/Miniatura.astro';
 import Cajon from '../components/Cajon.astro';
-import { grupos, aventuras, ultimos, catalogo } from '../lib/catalogo';
-import { TIPOS } from '../data/areas';
+import { aventuras, ultimos, catalogo } from '../lib/catalogo';
+import { TIPOS, AREAS } from '../data/areas';
 import { SITIO } from '../data/sitio';
 import { ruta } from '../lib/rutas';
 import { cajaDe } from '../lib/cajas';
 
-const todos = await grupos();
 const cajas = await aventuras();
 const nuevos = await ultimos(4);
 const { materiales } = await catalogo();
@@ -18,6 +16,12 @@ const total = materiales.length;
 // por la tablet del cajón pasan los últimos juegos sueltos
 const pantalla = [...materiales].filter((m) => m.tipo === 'juego' && !m.aventura && !cajas.some((c) => c.mapa.id === m.id)).sort((a, b) => b.fecha.getTime() - a.fecha.getTime()).slice(0, 4);
 
+// por área, sus 4 últimos materiales sueltos (los juegos de una aventura van dentro de su caja)
+const porArea = AREAS.map((area) => {
+  const suyos = materiales.filter((m) => m.tema.area.id === area.id);
+  const vista = suyos.filter((m) => !m.aventura && !cajas.some((c) => c.mapa.id === m.id) && !nuevos.includes(m)).sort((a, b) => b.fecha.getTime() - a.fecha.getTime() || a.orden - b.orden).slice(0, 2);
+  return { area, total: suyos.length, vista };
+}).filter((x) => x.total > 0);
 const fecha = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
 ---
 
@@ -84,6 +88,45 @@ const fecha = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', month
     )
   }
 
-  <h2 class="seccion-titulo todo-titulo" id="todo">Todo el cajón</h2>
-  <Catalogo grupos={todos} mostrarArea={true} vacio="Todavía no hay nada en el cajón." />
+  <section class="por-areas" aria-labelledby="areas-titulo">
+    <h2 class="seccion-titulo todo-titulo" id="areas-titulo">Por áreas</h2>
+    <div class="areas-rejilla">
+    {
+      porArea.map(({ area, total, vista }) => (
+        <section class="fila-area" style={`--area: ${area.color}`} aria-labelledby={`a-${area.id}`}>
+          <div class="fila-area-cabeza">
+            <h3 class="fila-area-titulo" id={`a-${area.id}`}>
+              <span class="subrayado" style={`background: ${area.color}`}>{area.nombre}</span>
+            </h3>
+            <a class="ver-todo" href={ruta(`/${area.id}/`)}>
+              Ver todo ({total})
+            </a>
+          </div>
+          <ul class="nuevo-lista dos">
+            {vista.map((m) => (
+              <li>
+                <a class="nuevo-item" href={m.url} style={`--area: ${area.color}`}>
+                  <Miniatura material={m} ancho={220} />
+                  <span class="nuevo-texto">
+                    <span class="nuevo-fecha">{TIPOS[m.tipo].nombre}</span>
+                    <span class="material-titulo">{m.titulo}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+    </div>
+    <p class="todo-enlace">
+      <a class="boton" href={ruta('/todo/')}>Todo el cajón, con buscador ({total})</a>
+    </p>
+  </section>
 </Archivador>
+
+<script>
+  // enlaces antiguos del tipo /?tipo=juego: al catálogo completo
+  const q = new URLSearchParams(location.search);
+  if (q.has('tipo') || q.has('q')) location.replace(new URL('todo/' + location.search, document.baseURI));
+</script>

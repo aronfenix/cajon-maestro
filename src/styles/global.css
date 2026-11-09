@@ -1750,3 +1750,42 @@ a.objeto:focus-visible .etiqueta-obj {
     translate: -50% -55%;
   }
 }
+
+/* ——— Portada: una fila por área ——— */
+.fila-area {
+  margin: 0 0 26px;
+}
+.fila-area-cabeza {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+.fila-area-titulo {
+  margin: 0;
+  font-family: var(--rotulo);
+  font-weight: 800;
+  font-size: 30px;
+}
+.ver-todo {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.todo-enlace {
+  margin: 10px 0 0;
+  text-align: center;
+}
+.areas-rejilla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 44px;
+}
+.nuevo-lista.dos {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 860px) {
+  .areas-rejilla {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,17 @@
+---
+import Archivador from '../layouts/Archivador.astro';
+import Catalogo from '../components/Catalogo.astro';
+import { grupos } from '../lib/catalogo';
+import { SITIO } from '../data/sitio';
+import { ruta } from '../lib/rutas';
+
+const todos = await grupos();
+---
+
+<Archivador activo="todo" titulo="Todo el cajón" descripcion={`Todos los materiales de ${SITIO.nombre}, con buscador.`}>
+  <header class="cabecera-area">
+    <h1 class="rotulo">Todo el cajón</h1>
+    <a class="volver" href={ruta('/')}>{SITIO.nombre}</a>
+  </header>
+  <Catalogo grupos={todos} mostrarArea={true} vacio="Todavía no hay nada en el cajón." />
+</Archivador>
