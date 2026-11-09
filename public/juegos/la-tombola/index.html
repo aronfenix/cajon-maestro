@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La tómbola · Cajón maestro</title>
+<meta name="description" content="Ordenar números de cuatro cifras colgando boletos de la tómbola en una cuerda, de menor a mayor o de mayor a menor.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "numeros",
+  "titulo": "La tómbola",
+  "subtitulo": "Los boletos de la tómbola se han caído a la cesta. Hay que volver a colgarlos, cada uno en su pinza y en orden.",
+  "portada": {
+    "rotulo": "TÓMBOLA",
+    "objetivo": "Cuelga los boletos en la cuerda, en orden. Si alguno está mal, se cae.",
+    "frase": "¡Se han soltado todos los boletos!"
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "asombro",
+      "texto": "¡No toquéis nada! …Uy. Ya se han caído todos los boletos de la tómbola."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "Van colgados en orden. Si los cuelgas mal, la gente se lleva el premio de otro."
+    }
+  ],
+  "observa": "¿Qué cifra miras primero para saber qué boleto es más pequeño? ¿Y si dos boletos empiezan por la misma cifra?",
+  "niveles": [
+    {
+      "modo": "tendedero",
+      "generar": {
+        "cantidad": 4,
+        "parecido": 0
+      }
+    },
+    {
+      "modo": "tendedero",
+      "generar": {
+        "cantidad": 5,
+        "parecido": 0,
+        "orden": "baja"
+      }
+    },
+    {
+      "modo": "tendedero",
+      "generar": {
+        "cantidad": 5,
+        "parecido": 1
+      }
+    },
+    {
+      "modo": "tendedero",
+      "generar": {
+        "cantidad": 6,
+        "parecido": 1,
+        "orden": "baja"
+      }
+    },
+    {
+      "modo": "tendedero",
+      "generar": {
+        "cantidad": 5,
+        "parecido": 2
+      }
+    },
+    {
+      "modo": "tendedero",
+      "generar": {
+        "cantidad": 6,
+        "mismas": true
+      },
+      "texto": "Todos tienen **las mismas cifras**. Cuélgalos de **menor a mayor**"
+    },
+    {
+      "modo": "tendedero",
+      "generar": {
+        "cantidad": 6,
+        "parecido": 0,
+        "tres": true
+      }
+    },
+    {
+      "modo": "tendedero",
+      "generar": {
+        "cantidad": 6,
+        "mismas": true,
+        "orden": "baja"
+      },
+      "texto": "Las mismas cifras, colocadas de otra forma. De **mayor a menor**"
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

@@ -451,7 +451,7 @@ export async function arrancar(config, motor) {
         // la pegatina del álbum de la aventura: se ve aquí y luego vuela al álbum en el mapa
         const slug = location.pathname.split('/').filter(Boolean).pop();
         if (DIBUJOS[slug]) {
-          const premio = el('div', { class: 'premio-pegatina' }, pegatinaAlbum(slug), el('div', {}, el('b', { text: yaLaTenia ? 'Tu pegatina de este juego' : '¡Pegatina nueva para tu álbum!' }), el('small', { text: config.volver?.includes('limpieza') ? 'La verás en el álbum del mapa.' : 'Ya es tuya.' })));
+          const premio = el('div', { class: 'premio-pegatina' }, pegatinaAlbum(slug), el('div', {}, el('b', { text: yaLaTenia ? (config.volver?.includes('feria') ? 'Tu premio de esta caseta' : 'Tu pegatina de este juego') : config.volver?.includes('feria') ? '¡Premio nuevo de la feria!' : '¡Pegatina nueva para tu álbum!' }), el('small', { text: config.volver?.includes('limpieza') ? 'La verás en el álbum del mapa.' : config.volver?.includes('feria') ? 'La verás en la estantería de premios del mapa.' : 'Ya es tuya.' })));
           final.querySelector('h2').after(premio);
           if (!matchMedia('(prefers-reduced-motion: reduce)').matches) premio.querySelector('.pegatina-album').animate([{ transform: 'scale(3) rotate(-50deg)', opacity: 0 }, { transform: 'scale(.9) rotate(8deg)', opacity: 1, offset: 0.7 }, { transform: 'scale(1) rotate(0)' }], { duration: 650, delay: 400, easing: 'cubic-bezier(.3,1.4,.5,1)', fill: 'both' });
           setTimeout(() => suena('sello'), 850);

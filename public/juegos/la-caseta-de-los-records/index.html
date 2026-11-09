@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La caseta de los récords · Cajón maestro</title>
+<meta name="description" content="Medir objetos en centímetros con una regla que se arrastra, con una regla rota que no empieza en 0, y calcular cuántos centímetros más mide uno que otro.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "medida",
+  "titulo": "La caseta de los récords",
+  "subtitulo": "Aquí se apuntan los récords de la feria: el churro más largo, la piruleta más larga… Pero hay que medirlos bien.",
+  "portada": {
+    "rotulo": "RÉCORDS",
+    "objetivo": "Mide con la regla. Ojo: no siempre está en su sitio, y a veces está rota.",
+    "frase": "¿Récord? Eso hay que medirlo."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "En esta caseta se apuntan récords. Y hay gente muy lista que pone la regla donde le conviene."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Mira dónde **empieza** y dónde **acaba**. Lo que mide es lo que hay entre medias."
+    }
+  ],
+  "observa": "Si la regla no empieza en 0, ¿cómo sabes lo que mide? ¿Hace falta mover la regla?",
+  "niveles": [
+    {
+      "modo": "mide",
+      "fija": true,
+      "generar": true
+    },
+    {
+      "modo": "mide",
+      "generar": true
+    },
+    {
+      "modo": "mide",
+      "guias": false,
+      "generar": true
+    },
+    {
+      "modo": "rota",
+      "generar": true
+    },
+    {
+      "modo": "diferencia",
+      "generar": true
+    },
+    {
+      "modo": "rota",
+      "guias": false,
+      "generar": true
+    },
+    {
+      "modo": "diferencia",
+      "guias": false,
+      "generar": true
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

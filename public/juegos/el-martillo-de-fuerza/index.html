@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El martillo de fuerza · Cajón maestro</title>
+<meta name="description" content="Estimar el resultado de sumas y restas con números de cuatro cifras marcándolo en una recta vertical de 0 a 10 000, o eligiendo la opción más cercana.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "linea",
+  "titulo": "El martillo de fuerza",
+  "subtitulo": "Cuanto más grande es el resultado de la cuenta, más sube el disco. Antes del golpe, marca hasta dónde crees que llegará.",
+  "portada": {
+    "rotulo": "¡DING!",
+    "objetivo": "Estima el resultado y márcalo en la torre. Si te acercas, suena la campana.",
+    "frase": "No hace falta la cuenta exacta. Hace falta buen ojo."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "celebra",
+      "texto": "¡El martillo de fuerza! Aquí no gana el que más fuerza tiene, gana el que mejor calcula a ojo."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "Redondea los números y haz la cuenta fácil. Luego marca en la torre."
+    }
+  ],
+  "observa": "¿Cómo redondeas para estimar? ¿Es mejor redondear a los millares o a las centenas?",
+  "niveles": [
+    {
+      "modo": "martillo",
+      "generar": {
+        "op": "suma",
+        "a": [
+          1000,
+          6999
+        ],
+        "b": [
+          1000,
+          2999
+        ]
+      },
+      "marcas": [
+        0,
+        5000,
+        10000
+      ]
+    },
+    {
+      "modo": "martillo",
+      "elige": true,
+      "generar": {
+        "op": "suma",
+        "a": [
+          1000,
+          5999
+        ],
+        "b": [
+          1000,
+          3999
+        ]
+      }
+    },
+    {
+      "modo": "martillo",
+      "generar": {
+        "op": "suma",
+        "a": [
+          1000,
+          8999
+        ],
+        "b": [
+          100,
+          999
+        ]
+      }
+    },
+    {
+      "modo": "martillo",
+      "generar": {
+        "op": "resta",
+        "a": [
+          3000,
+          9999
+        ],
+        "b": [
+          100,
+          3999
+        ]
+      },
+      "marcas": [
+        0,
+        5000,
+        10000
+      ]
+    },
+    {
+      "modo": "martillo",
+      "elige": true,
+      "generar": {
+        "op": "resta",
+        "a": [
+          5000,
+          9999
+        ],
+        "b": [
+          200,
+          3999
+        ]
+      }
+    },
+    {
+      "modo": "martillo",
+      "generar": {
+        "op": "mezcla",
+        "a": [
+          1000,
+          9999
+        ],
+        "b": [
+          100,
+          3999
+        ]
+      }
+    },
+    {
+      "modo": "martillo",
+      "elige": true,
+      "generar": {
+        "op": "mezcla",
+        "a": [
+          1000,
+          9999
+        ],
+        "b": [
+          100,
+          3999
+        ]
+      }
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

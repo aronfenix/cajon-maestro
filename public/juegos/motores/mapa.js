@@ -17,6 +17,8 @@ const lento = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 import { DIBUJOS, pegatina } from './pegatinas.js';
 
 export async function montaMapa(c) {
+  const X = { sello: 'ORDENADO', hechos: 'ordenados', album: 'Pegatinas', albumTitulo: 'Mis pegatinas', albumTexto: 'Cada juego terminado, una pegatina.', icono: 'el-examen-del-viernes', listo: 'Todo ordenado. Ya puedes hacer el examen.', boton: 'Hacer el examen', repetir: 'Repetir el examen', ...(c.textos || {}) };
+  const feria = c.estilo === 'feria';
   document.title = `${c.titulo} · Cajón maestro`;
   document.body.classList.add('juego', 'mapa-cajon');
   const escena = montaEscena(c.escena || 'cajon');
@@ -31,14 +33,15 @@ export async function montaMapa(c) {
   const ordenados = comp.filter((k) => k.terminado).length;
 
   // ---------- el cajón
-  const cajon = el('div', { class: 'cajon-ilustrado' });
+  const cajon = el('div', { class: 'cajon-ilustrado' + (feria ? ' estilo-feria' : '') });
   const nodos = comp.map((k, i) => {
-    const sello = k.terminado && el('span', { class: 'sello-ordenado', text: 'ORDENADO' });
+    const sello = k.terminado && el('span', { class: 'sello-ordenado', text: X.sello });
     const fig = el('div', { class: 'figura-comp ' + k.quien, html: dibuja(k.quien, POSES[k.terminado ? 'celebra' : 'quieto']) });
     const lista = el('ul', { class: 'tarjetas-juego' }, k.juegos.map((j, n) => el('li', {}, j.slug
       ? el('a', { class: 'tarjeta-juego' + (hecho(j.slug) ? ' hecho' : ''), href: `../${j.slug}/`, style: { '--r': ((n % 2 ? 1 : -1) * (1 + (n % 3))) + 'deg' } }, el('span', { text: j.titulo }), hecho(j.slug) && pegatina(j.slug, 'mini'))
       : el('span', { class: 'tarjeta-juego futuro', text: j.titulo }))));
     const caja = el('section', { class: `compartimento-cajon mat-${k.material ?? 'cajon'}` + (k.terminado ? ' ordenado' : ''), style: { '--c': k.color } },
+      feria && el('div', { class: 'toldo-caseta', 'aria-hidden': 'true' }, el('div', { class: 'bombillas' }, Array.from({ length: 9 }, () => el('i')))),
       el('div', { class: 'cab-comp' }, fig, el('div', { class: 'etiqueta-comp' }, el('h2', { text: k.nombre }), el('p', { text: k.conSlug.length ? `${k.hechos} de ${k.conSlug.length}` : 'En obras' }))),
       lista, sello);
     cajon.append(caja);
@@ -49,27 +52,27 @@ export async function montaMapa(c) {
   // ---------- el final
   const finalHecho = c.final?.slug && hecho(c.final.slug);
   const final = c.final && el('section', { class: 'final-cajon' + (abierto ? ' abierto' : '') + (finalHecho ? ' hecho' : '') },
-    el('div', { class: 'nota-final' }, el('h2', { text: c.final.nombre }), el('p', { text: finalHecho ? c.final.abierto : todo ? 'Todo ordenado. Ya puedes hacer el examen.' : abierto ? 'Abierto por el profe para probarlo.' : c.final.cerrado })),
-    abierto && c.final.slug && el('a', { class: 'tecla primaria grande', href: `../${c.final.slug}/`, text: finalHecho ? 'Repetir el examen' : 'Hacer el examen' }));
+    el('div', { class: 'nota-final' }, el('h2', { text: c.final.nombre }), el('p', { text: finalHecho ? c.final.abierto : todo ? X.listo : abierto ? 'Abierto por el profe para probarlo.' : c.final.cerrado })),
+    abierto && c.final.slug && el('a', { class: 'tecla primaria grande', href: `../${c.final.slug}/`, text: finalHecho ? X.repetir : X.boton }));
 
   // ---------- cabecera: progreso y álbum
-  const regla = el('div', { class: 'progreso', role: 'progressbar', 'aria-label': 'Compartimentos ordenados', 'aria-valuemin': '0', 'aria-valuemax': String(comp.length), 'aria-valuenow': String(ordenados) }, el('span', { class: 'relleno', style: { width: Math.max(3, (ordenados / comp.length) * 100) + '%' } }, el('span', { class: 'punta-barra' })));
+  const regla = el('div', { class: 'progreso', role: 'progressbar', 'aria-label': 'Progreso de la aventura', 'aria-valuemin': '0', 'aria-valuemax': String(comp.length), 'aria-valuenow': String(ordenados) }, el('span', { class: 'relleno', style: { width: Math.max(3, (ordenados / comp.length) * 100) + '%' } }, el('span', { class: 'punta-barra' })));
   const contador = el('b', { text: `${conseguidas.length} de ${todos.length}` });
-  const botonAlbum = el('button', { type: 'button', class: 'tecla boton-album', onclick: () => album() }, el('span', { class: 'icono-album', html: DIBUJOS['el-examen-del-viernes'] }), el('span', {}, 'Pegatinas ', contador));
+  const botonAlbum = el('button', { type: 'button', class: 'tecla boton-album', onclick: () => album() }, el('span', { class: 'icono-album', html: DIBUJOS[X.icono] }), el('span', {}, X.album + ' ', contador));
   document.body.prepend(
     el('header', { class: 'barra-juego' },
       el('a', { class: 'volver con-texto', href: c.volver || '../../', title: 'Volver al Cajón maestro' }, svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 }), el('span', { text: 'Cajón maestro' })),
       el('h1', { text: c.titulo }),
-      el('div', { class: 'estado' }, regla, el('span', { class: 'texto-progreso', text: `${ordenados} de ${comp.length} ordenados` })),
+      el('div', { class: 'estado' }, regla, el('span', { class: 'texto-progreso', text: `${ordenados} de ${comp.length} ${X.hechos}` })),
       el('div', { class: 'controles' }, botonAlbum, el('button', { type: 'button', class: 'tecla', text: 'Historia', onclick: () => vineta(c.historia, dibuja, POSES, c.titulo) }))),
-    el('main', { class: 'mesa-juego mapa' }, el('div', { class: 'marco-cajon' }, cajon, tirador), final));
+    el('main', { class: 'mesa-juego mapa' }, el('div', { class: 'marco-cajon' + (feria ? ' marco-feria' : '') }, cajon, !feria && tirador), final));
 
   // ---------- el álbum de pegatinas
   function album() {
     suena('coge');
     const capa = el('div', { class: 'vineta-capa album-capa', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Álbum de pegatinas' });
     const hoja = el('div', { class: 'album' },
-      el('div', { class: 'cab-album' }, el('h2', { text: 'Mis pegatinas' }), el('p', { text: `${conseguidas.length} de ${todos.length}. Cada juego terminado, una pegatina.` })),
+      el('div', { class: 'cab-album' }, el('h2', { text: X.albumTitulo }), el('p', { text: `${conseguidas.length} de ${todos.length}. ${X.albumTexto}` })),
       el('ul', { class: 'hoja-album' }, todos.map((j) => el('li', { class: hecho(j.slug) ? 'tiene' : 'falta' }, hecho(j.slug) ? pegatina(j.slug) : el('span', { class: 'hueco-pegatina', text: '?' }), el('small', { text: j.titulo })))),
       el('button', { type: 'button', class: 'tecla primaria grande', text: 'Cerrar', onclick: () => { capa.remove(); suena('quita'); } }));
     capa.append(hoja); document.body.append(capa);
@@ -101,6 +104,7 @@ export async function montaMapa(c) {
       if (lento()) continue;
       await new Promise((r) => setTimeout(r, 700));
       n.caja.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      if (feria) { const bs = n.caja.querySelectorAll('.bombillas i'); n.caja.classList.remove('ordenado'); for (const b of bs) { b.classList.add('apagada'); } n.caja.classList.add('ordenado'); for (const b of bs) { b.classList.remove('apagada'); suena('clic'); await new Promise((r) => setTimeout(r, 70)); } }
       gsap.fromTo(n.sello, { scale: 3, rotation: -40, opacity: 0 }, { scale: 1, rotation: -12, opacity: 1, duration: 0.45, ease: 'back.out(2.2)', onComplete: () => { suena('sello'); gsap.fromTo(n.caja, { y: 4 }, { y: 0, duration: 0.4, ease: 'elastic.out(1,0.3)' }); chispasEn(n.sello, 16, '#ffc531'); } });
       await new Promise((r) => setTimeout(r, 900));
       suena('bien'); gomets(18);
@@ -109,7 +113,7 @@ export async function montaMapa(c) {
   // ---------- pegatinas nuevas: vuelan al álbum
   if (nuevas.length && !lento()) {
     await new Promise((r) => setTimeout(r, 600));
-    const aviso = el('div', { class: 'aviso-pegatina', role: 'status' }, el('b', { text: nuevas.length === 1 ? '¡Pegatina nueva!' : `¡${nuevas.length} pegatinas nuevas!` }), el('div', { class: 'nuevas' }, nuevas.map((j) => pegatina(j.slug))));
+    const aviso = el('div', { class: 'aviso-pegatina', role: 'status' }, el('b', { text: feria ? (nuevas.length === 1 ? '¡Premio nuevo!' : `¡${nuevas.length} premios nuevos!`) : nuevas.length === 1 ? '¡Pegatina nueva!' : `¡${nuevas.length} pegatinas nuevas!` }), el('div', { class: 'nuevas' }, nuevas.map((j) => pegatina(j.slug))));
     document.body.append(aviso);
     suena('sube');
     await gsap.from(aviso, { scale: 0.3, rotation: -20, opacity: 0, duration: 0.5, ease: 'back.out(2)' });

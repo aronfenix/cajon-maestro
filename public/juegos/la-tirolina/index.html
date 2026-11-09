@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La tirolina · Cajón maestro</title>
+<meta name="description" content="Estimar la posición de números en una recta de 0 a 10 000 y de 0 a un millón: colocar un número en su sitio y leer el número de una posición.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "linea",
+  "titulo": "La tirolina",
+  "subtitulo": "Un cable va del 0 a la torre de enfrente. Goma se tira por él y hay que saber dónde va a parar.",
+  "portada": {
+    "rotulo": "TIROLINA",
+    "objetivo": "Lleva a Goma por el cable hasta el número, o di a ojo por dónde va.",
+    "frase": "Yo me tiro. Tú calculas."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "boli",
+      "pose": "piensa",
+      "texto": "Goma quiere tirarse por la tirolina. Yo no subo ahí ni loco."
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Mi trabajo es decirle dónde parar. El cable tiene números, aunque no estén escritos."
+    }
+  ],
+  "observa": "¿Qué número está en la mitad del cable? ¿Y en un cuarto? ¿Cómo te ayuda eso a colocar los demás?",
+  "niveles": [
+    {
+      "modo": "tirolina",
+      "max": 10000,
+      "marcas": [
+        0,
+        5000,
+        10000
+      ],
+      "generar": {
+        "redondeo": 1
+      }
+    },
+    {
+      "modo": "tirolina",
+      "max": 10000,
+      "generar": {
+        "redondeo": 1,
+        "evitar": true
+      }
+    },
+    {
+      "modo": "tirolina",
+      "max": 10000,
+      "lee": true,
+      "marcas": [
+        0,
+        5000,
+        10000
+      ],
+      "generar": {
+        "redondeo": 100
+      }
+    },
+    {
+      "modo": "tirolina",
+      "max": 10000,
+      "lee": true,
+      "generar": {
+        "redondeo": 10
+      }
+    },
+    {
+      "modo": "tirolina",
+      "max": 1000000,
+      "marcas": [
+        0,
+        500000,
+        1000000
+      ],
+      "generar": {
+        "redondeo": 1
+      }
+    },
+    {
+      "modo": "tirolina",
+      "max": 1000000,
+      "generar": {
+        "redondeo": 1,
+        "evitar": true
+      }
+    },
+    {
+      "modo": "tirolina",
+      "max": 1000000,
+      "lee": true,
+      "generar": {
+        "redondeo": 1000
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

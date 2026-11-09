@@ -69,6 +69,24 @@ const FONDOS = {
       <circle cx="60" cy="900" r="90" fill="#d9e8ff" opacity=".9"/><circle cx="60" cy="900" r="66" fill="#fffdf6" opacity=".9"/>
       <circle cx="1460" cy="900" r="46" fill="#e0ad70"/><circle cx="1560" cy="950" r="40" fill="#e0ad70"/>
     </g>`,
+  // la feria de noche: guirnalda de bombillas arriba, la noria asomando por una esquina, banderines y boletos por el suelo
+  feria: `
+    <defs><filter id="sombra-fer" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="6" dy="10" stdDeviation="6" flood-color="#05061a" flood-opacity=".55"/></filter>
+      <radialGradient id="halo-fer"><stop offset="0" stop-color="#ffe27a" stop-opacity=".9"/><stop offset="1" stop-color="#ffe27a" stop-opacity="0"/></radialGradient></defs>
+    <g class="estrellas-fer" fill="#fffdf6">${Array.from({ length: 26 }, (_, i) => `<circle cx="${(i * 467) % 1600}" cy="${40 + ((i * 173) % 420)}" r="${1.5 + (i % 3)}" opacity="${0.35 + (i % 4) * 0.15}"/>`).join('')}</g>
+    <g filter="url(#sombra-fer)" stroke="#1b1e3a" stroke-width="4" stroke-linejoin="round">
+      <g transform="translate(40 1010) scale(.8)"><circle r="300" fill="none" stroke="#1b1e3a" stroke-width="16"/><circle r="300" fill="none" stroke="#ff7fae" stroke-width="9"/>
+        ${Array.from({ length: 12 }, (_, i) => { const a = (i * Math.PI) / 6; return `<path d="M0 0 L${(Math.cos(a) * 300).toFixed(0)} ${(Math.sin(a) * 300).toFixed(0)}" stroke="#fffdf6" stroke-width="5"/>`; }).join('')}
+        ${Array.from({ length: 6 }, (_, i) => { const a = -Math.PI / 2 + (i - 1.5) * 0.52; const x = Math.cos(a) * 300, y = Math.sin(a) * 300; return `<g transform="translate(${x.toFixed(0)} ${y.toFixed(0)})"><path d="M-30 6 h60 l-8 46 h-44z" fill="${['#ffc531', '#5ec3ff', '#9bd84a', '#e8417a', '#ff9f45', '#b79cff'][i]}"/><path d="M0 -6 v12" stroke-width="5"/></g>`; }).join('')}
+        <circle r="34" fill="#ffc531"/></g>
+      <g transform="translate(1440 790)"><path d="M0 0 h150 l-20 210 h-110z" fill="#fffdf6"/><path d="M30 0 l10 210 M75 0 v210 M120 0 l-10 210" stroke="#e8417a" stroke-width="16"/>
+        ${[[20, -14], [55, -26], [92, -18], [126, -12], [40, -40], [82, -44], [110, -34]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="17" fill="#fff6cf" stroke-width="3"/>`).join('')}</g>
+      <g transform="translate(1330 120) rotate(14)"><rect width="120" height="56" rx="6" fill="#ffc531"/><circle cy="28" r="10" fill="#23285c"/><circle cx="120" cy="28" r="10" fill="#23285c"/><path d="M22 14 v28" stroke-dasharray="4 4" stroke-width="3"/><text x="70" y="38" text-anchor="middle" font-family="Rotulo,sans-serif" font-weight="900" font-size="24" fill="#1b1e3a" stroke="none">ADMIT</text></g>
+    </g>
+    <path d="M-20 70 Q400 210 800 90 T1620 110" fill="none" stroke="#1b1e3a" stroke-width="5"/>
+    <g class="bombillas-fer">
+      ${[[30, 92], [130, 125], [240, 150], [350, 162], [460, 158], [570, 140], [680, 112], [790, 92], [900, 92], [1010, 110], [1120, 128], [1230, 134], [1340, 128], [1450, 116], [1560, 108]].map(([x, y], i) => `<g transform="translate(${x} ${y})"><circle r="46" fill="url(#halo-fer)" class="halo" style="animation-delay:${(i % 5) * 0.4}s"/><path d="M-6 -12 h12 v8 h-12z" fill="#8d97a8" stroke="#1b1e3a" stroke-width="3"/><circle cy="6" r="12" fill="${i % 3 ? '#ffe27a' : '#ff9fbf'}" stroke="#1b1e3a" stroke-width="3"/></g>`).join('')}</g>
+    <g stroke="#1b1e3a" stroke-width="3" stroke-linejoin="round">${[[980, 230, '#5ec3ff'], [1040, 246, '#e8417a'], [1100, 254, '#ffc531'], [1160, 254, '#9bd84a'], [1220, 246, '#b79cff'], [1280, 232, '#ff9f45']].map(([x, y, c]) => `<path d="M${x - 26} ${y - 8} h52 l-26 50z" fill="${c}"/>`).join('')}<path d="M950 222 Q1130 270 1310 222" fill="none"/></g>`,
   corcho: `
     <defs><pattern id="corcho" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#c99658"/><circle cx="8" cy="9" r="2" fill="#b07f45"/><circle cx="27" cy="21" r="2.6" fill="#ddb07a"/><circle cx="16" cy="32" r="1.8" fill="#a8763d"/><circle cx="35" cy="5" r="1.6" fill="#b07f45"/></pattern></defs>
     <rect x="1400" y="120" width="150" height="150" fill="#fff27a" transform="rotate(5 1475 195)"/><circle cx="1475" cy="132" r="12" fill="#c8201a" stroke="#000" stroke-width="3"/>

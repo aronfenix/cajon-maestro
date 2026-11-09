@@ -1,0 +1,159 @@
+/* =====================================================================================
+   La Feria de Otoño · casetas de cartulina en el patio del cole, de noche
+   ===================================================================================== */
+.fondo-escena.feria{background-color:#23285c;background-image:
+  radial-gradient(90% 70% at 50% 120%,rgba(255,180,90,.35),rgba(255,180,90,0) 60%),
+  radial-gradient(120% 90% at 10% -10%,rgba(140,150,255,.35),rgba(140,150,255,0) 55%),
+  url('tex/cartulina.webp');background-size:100% 100%,100% 100%,256px 256px;background-blend-mode:normal,normal,multiply}
+body[data-escena="feria"]{--acento:var(--amarillo);--acento2:#fff0c2;--acento-osc:var(--amarillo-osc)}
+.fondo-escena.feria .halo{animation:halo-fer 2.2s ease-in-out infinite alternate}
+@keyframes halo-fer{from{opacity:.35}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.fondo-escena.feria .halo{animation:none}}
+body[data-escena="feria"] .mesa-juego>.pista{background:rgba(255,253,246,.92)}
+
+/* ---------- el mapa de la feria: cada compartimento es una caseta con toldo y bombillas ---------- */
+.marco-cajon.marco-feria{background:#1c2150 url('tex/cartulina.webp');background-size:256px;background-blend-mode:multiply;border-radius:22px;padding:26px 22px 26px;
+  box-shadow:inset 0 0 0 6px #2a3070,var(--sombra)}
+.marco-feria::before{content:"";position:absolute;inset:10px;border:3px dashed rgba(255,253,246,.25);border-radius:16px;pointer-events:none}
+.estilo-feria{gap:22px 18px}
+.estilo-feria .compartimento-cajon{padding-top:58px;background:#fffdf6 url('tex/papel.webp');background-blend-mode:multiply;border-radius:10px 10px 14px 14px;overflow:visible;box-shadow:var(--sombra)}
+.estilo-feria .compartimento-cajon::before,.estilo-feria .compartimento-cajon::after{display:none}
+.toldo-caseta{position:absolute;left:-8px;right:-8px;top:-10px;height:52px;border:var(--borde);border-radius:8px 8px 0 0;
+  background:repeating-linear-gradient(90deg,var(--c,#e8417a) 0 26px,#fffdf6 26px 52px);box-shadow:0 5px 0 rgba(0,0,0,.18)}
+.toldo-caseta::after{content:"";position:absolute;left:-3px;right:-3px;bottom:-15px;height:16px;
+  background:radial-gradient(circle at 13px 0,var(--c,#e8417a) 12px,var(--tinta) 12.5px 15px,transparent 15.5px) 0 0/26px 16px repeat-x}
+.toldo-caseta .bombillas{position:absolute;left:10px;right:10px;top:6px;display:flex;justify-content:space-between}
+.toldo-caseta .bombillas i{width:12px;height:12px;border:2.5px solid var(--tinta);border-radius:50%;background:#e7e2d3}
+.compartimento-cajon.ordenado .toldo-caseta .bombillas i:not(.apagada){background:#ffd23f;box-shadow:0 0 10px 3px rgba(255,210,63,.85)}
+.estilo-feria .compartimento-cajon.ordenado{box-shadow:0 0 0 4px var(--amarillo),0 0 36px 8px rgba(255,210,63,.45),var(--sombra)}
+.estilo-feria .compartimento-cajon.ordenado .toldo-caseta .bombillas i:nth-child(odd){animation:parpadeo-fer 1.4s steps(2) infinite}
+@keyframes parpadeo-fer{50%{background:#fff6cf}}
+.estilo-feria .sello-ordenado{border-color:#c98f00;color:#c98f00}
+.estilo-feria .etiqueta-comp{background:#fff27a}
+
+/* ---------- la tómbola: boletos colgados de una cuerda ---------- */
+.caseta-tombola{display:flex;flex-direction:column;gap:12px;max-width:1000px}
+.cuerda-tombola{position:relative;height:200px;margin:0 30px}
+.cuerda-svg{position:absolute;left:0;right:0;top:0;height:120px}
+.cuerda-svg svg{width:100%;height:100%;display:block}
+.poste-tombola{position:absolute;top:6px;width:16px;height:180px;border:var(--borde);border-radius:6px;background:#d39a5c}
+.poste-tombola.izq{left:-26px}.poste-tombola.der{right:-26px}
+.cartel-poste{position:absolute;top:120px;left:50%;transform:translateX(-50%) rotate(-6deg);padding:4px 8px;border:var(--borde);border-radius:6px;background:#fff27a;font-family:var(--fuerte);font-weight:900;font-size:14px;white-space:nowrap;box-shadow:var(--sombra-baja);z-index:2}
+.poste-tombola.der .cartel-poste{transform:translateX(-50%) rotate(6deg)}
+.hueco-boleto{--w:clamp(60px,calc((min(100vw,1060px) - 150px) / var(--n) - 12px),124px);position:absolute;width:var(--w);height:104px;margin-left:calc(var(--w) / -2);
+  display:flex;justify-content:center;padding-top:10px;border-radius:12px;outline:3px dashed rgba(255,253,246,.35);outline-offset:-3px}
+.hueco-boleto.sobre{outline-color:var(--amarillo);background:rgba(255,197,49,.2)}
+.pinza{position:absolute;top:-6px;left:50%;width:12px;height:26px;margin-left:-6px;border:2.5px solid var(--tinta);border-radius:3px;background:#e0ad70;z-index:3}
+.pinza::after{content:"";position:absolute;left:3px;top:8px;width:2px;height:8px;background:var(--tinta)}
+.boleto{--c:#ffc531;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:76px;padding:10px 2px 8px;border:var(--borde);border-radius:6px;
+  background:var(--c);rotate:var(--r);cursor:grab;user-select:none;box-shadow:var(--sombra-baja);transform-origin:50% 0;
+  -webkit-mask:radial-gradient(circle at 0 50%,transparent 6px,#000 6.5px) left/51% 100% no-repeat,radial-gradient(circle at 100% 50%,transparent 6px,#000 6.5px) right/51% 100% no-repeat}
+.boleto::before{content:"";position:absolute;inset:4px;border:2px dashed rgba(27,30,58,.35);border-radius:3px;pointer-events:none}
+.boleto small{font-weight:800;font-size:11px;line-height:1;opacity:.7}
+.boleto b{font-family:var(--fuerte);font-weight:900;font-size:clamp(17px,2.9vw,28px);line-height:1.1;letter-spacing:.01em;white-space:nowrap}
+.boleto .cifra.miles{margin-left:.18em}
+.hueco-boleto .boleto{rotate:0deg;margin-top:6px}
+.boleto.elegida{outline:4px solid var(--cobalto);outline-offset:2px}
+.boleto.levantado{opacity:.35}
+.boleto.mal{background:#ffb3b3}
+.boleto.bien{box-shadow:0 0 0 4px #1b8f4e,var(--sombra-baja)}
+.mira-0 .boleto .cifra[data-k="0"],.mira-1 .boleto .cifra[data-k="1"]{background:#fffdf6;border-radius:4px;box-shadow:0 0 0 2px var(--tinta);padding:0 2px}
+.mostrador{position:relative;padding:14px 14px 16px;border:var(--borde);border-radius:14px;background:#c98f00 url('tex/madera.webp');background-size:512px 256px;background-blend-mode:multiply;box-shadow:var(--sombra)}
+.rotulo-cesta{position:absolute;left:14px;top:-15px;padding:2px 10px;border:var(--borde);border-radius:6px;background:var(--papel);font-family:var(--fuerte);font-weight:900;font-size:14px}
+.cesta-tombola{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:82px;padding:8px;border-radius:10px;background:rgba(27,30,58,.18)}
+.cesta-tombola .boleto{width:clamp(76px,14vw,124px)}
+.cesta-tombola.sobre{background:rgba(255,197,49,.35)}
+
+/* ---------- el candado de la taquilla ---------- */
+.caseta-candado{display:flex;flex-direction:column;align-items:center;gap:16px}
+.reja-taquilla{position:relative;padding:60px 30px 26px;border:var(--borde);border-radius:16px;background:#2a3070;
+  background-image:repeating-linear-gradient(90deg,transparent 0 30px,rgba(201,207,221,.55) 30px 36px);box-shadow:var(--sombra)}
+.candado{position:relative;display:flex;flex-direction:column;align-items:center}
+.arco-candado{position:absolute;top:-52px;width:58%;height:84px;border:16px solid #c9cfdd;border-bottom:0;border-radius:90px 90px 0 0;box-shadow:0 0 0 3px var(--tinta),inset 0 0 0 3px var(--tinta);z-index:0}
+.cuerpo-candado{position:relative;z-index:1;padding:18px 16px 30px;border:var(--borde);border-radius:18px 18px 26px 26px;background:linear-gradient(180deg,#ffd76a,#e3a518);box-shadow:inset 0 4px 0 rgba(255,255,255,.5),inset 0 -6px 0 rgba(0,0,0,.15),var(--sombra-baja)}
+.ojo-llave{position:absolute;left:50%;bottom:7px;width:14px;height:18px;margin-left:-7px;border-radius:7px 7px 3px 3px;background:var(--tinta)}
+.ruedas-candado{display:flex;gap:8px}
+.rueda{display:flex;flex-direction:column;align-items:center;gap:2px}
+.ventana-rueda{display:grid;place-items:center;width:clamp(48px,11vw,64px);height:clamp(64px,14vw,80px);overflow:hidden;border:var(--borde);border-radius:10px;
+  background:linear-gradient(180deg,#9aa3b8,#fffdf6 30%,#fffdf6 70%,#9aa3b8);cursor:ns-resize;font-family:var(--fuerte);font-weight:900;font-size:clamp(34px,7vw,46px)}
+.rueda.activa .ventana-rueda{box-shadow:0 0 0 4px var(--cobalto)}
+.rueda.repetida .ventana-rueda{background:linear-gradient(180deg,#e39b9b,#ffe1e1 30%,#ffe1e1 70%,#e39b9b)}
+.rueda.brilla .ventana-rueda{box-shadow:0 0 0 5px var(--amarillo),0 0 18px 4px rgba(255,197,49,.8)}
+.flecha-rueda{width:44px;height:30px;padding:0;border:2.5px solid var(--tinta);border-radius:8px;background:var(--papel);color:var(--tinta);cursor:pointer}
+.flecha-rueda svg{width:22px;height:16px}
+.valor-rueda{font-weight:900;font-size:12px;opacity:.65}
+.etiqueta-candado{position:absolute;right:-74px;top:30px;display:flex;flex-direction:column;align-items:center;padding:6px 10px;border:var(--borde);border-radius:6px 6px 6px 20px;background:#fff27a;rotate:9deg;box-shadow:var(--sombra-baja);z-index:2}
+.etiqueta-candado::before{content:"";position:absolute;left:-26px;top:8px;width:30px;height:2px;background:var(--tinta)}
+.etiqueta-candado small{font-weight:800;font-size:11px}
+.etiqueta-candado b{font-family:var(--fuerte);font-weight:900;font-size:20px;white-space:nowrap}
+.bandeja-fichas{display:flex;align-items:center;gap:12px;padding:10px 16px;border:var(--borde);border-radius:14px;background:var(--papel);box-shadow:var(--sombra-baja)}
+.bandeja-fichas small{font-weight:800}
+.bandeja-fichas .fichas{display:flex;flex-wrap:wrap;gap:8px}
+.ficha-candado{width:48px;height:48px;border:var(--borde);border-radius:50%;background:#ffc531;font-family:var(--fuerte);font-weight:900;font-size:24px;color:var(--tinta);cursor:pointer;box-shadow:0 3px 0 var(--tinta)}
+.ficha-candado.usada{background:#d9dbe6;color:#8a8ea8;box-shadow:none;transform:translateY(3px)}
+@media (max-width:640px){.etiqueta-candado{position:relative;right:auto;top:auto;margin-top:12px;rotate:-3deg}.etiqueta-candado::before{display:none}.reja-taquilla{padding:56px 14px 18px}}
+
+/* ---------- el martillo de fuerza ---------- */
+.caseta-martillo{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:20px 40px}
+.torre-y-base{display:flex;flex-direction:column;align-items:center}
+.torre-martillo{position:relative;display:flex;flex-direction:column;align-items:center}
+.campana{width:62px;height:52px;margin-bottom:-4px;z-index:2}
+.campana svg{width:100%;height:100%}
+.carril{position:relative;width:46px;height:clamp(260px,52vh,420px);border:var(--borde);border-radius:10px;background:repeating-linear-gradient(0deg,#e8417a 0 26px,#fffdf6 26px 52px);box-shadow:var(--sombra-baja);cursor:ns-resize}
+.carril::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;background:#8d97a8;border-left:2px solid var(--tinta);border-right:2px solid var(--tinta)}
+.marca-torre{position:absolute;left:-14px;width:12px;height:3px;background:var(--tinta);transform:translateY(50%)}
+.marca-torre b{position:absolute;right:16px;top:50%;transform:translateY(-50%);padding:1px 6px;border-radius:6px;background:var(--papel);font-family:var(--fuerte);font-weight:900;font-size:15px;white-space:nowrap;box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.marca-ayuda{background:var(--cobalto)}.marca-ayuda b{background:#dfe7ff}
+.disco-martillo{position:absolute;left:50%;bottom:0;width:34px;height:20px;margin-left:-17px;border:var(--borde);border-radius:50%;background:#ffc531;z-index:2;transform:translateY(50%)}
+.valor-disco{position:absolute;left:42px;top:50%;transform:translateY(-50%);padding:3px 10px;border:var(--borde);border-radius:8px;background:#fff27a;font-family:var(--fuerte);font-weight:900;font-size:20px;white-space:nowrap;box-shadow:var(--sombra-baja)}
+.anilla-martillo{position:absolute;left:-10px;right:-10px;height:16px;border:var(--borde);border-radius:8px;background:var(--cobalto);transform:translateY(50%);z-index:3;pointer-events:none;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.anilla-martillo.moviendo{background:#4f7bf0}
+.flecha-anilla{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);padding:3px 10px;border:var(--borde);border-radius:8px;background:var(--papel);font-family:var(--fuerte);font-weight:900;font-size:16px;white-space:nowrap}
+.flecha-anilla::before{content:"";position:absolute;left:-10px;top:50%;margin-top:-6px;border:6px solid transparent;border-right-color:var(--tinta);border-left:0}
+.base-martillo{position:relative;width:170px;height:60px}
+.diana-martillo{position:absolute;left:50%;bottom:0;width:110px;height:28px;margin-left:-55px;border:var(--borde);border-radius:50%;background:radial-gradient(circle,#e8417a 0 30%,#fffdf6 31% 55%,#e8417a 56%)}
+.mazo{position:absolute;left:-90px;bottom:16px;width:120px;height:60px}
+.mazo svg{width:100%;height:100%}
+.cartel-cuenta{display:flex;flex-direction:column;align-items:center;padding:12px 22px;border:var(--borde);border-radius:12px;background:var(--papel) url('tex/papel.webp');background-blend-mode:multiply;rotate:-2deg;box-shadow:var(--sombra)}
+.cartel-cuenta small{font-weight:800}
+.cartel-cuenta b{font-family:var(--fuerte);font-weight:900;font-size:clamp(28px,5vw,44px);white-space:nowrap}
+.globo-feria{--c:#e8417a;position:absolute;left:calc(100% + 26px);width:86px;height:46px;padding:0;border:var(--borde);border-radius:50% 50% 46% 46%;background:var(--c);transform:translateY(50%);cursor:pointer;font-family:var(--fuerte);font-weight:900;font-size:17px;color:var(--tinta);box-shadow:inset -6px -6px 0 rgba(0,0,0,.12)}
+.globo-feria::before{content:"";position:absolute;right:100%;top:50%;width:28px;height:2px;background:var(--tinta)}
+.globo-feria.elegido{outline:4px solid var(--cobalto);outline-offset:3px}
+.globo-feria.pinchado{visibility:hidden}
+
+/* ---------- la tirolina ---------- */
+.caseta-tirolina{position:relative;display:flex;align-items:flex-start;gap:0;max-width:1100px;padding:30px 0 10px}
+.torre-tirolina{flex:none;width:26px;height:230px;border:var(--borde);border-radius:4px;background:repeating-linear-gradient(0deg,#d39a5c 0 18px,#b5732a 18px 22px);box-shadow:var(--sombra-baja)}
+.cable-tirolina{position:relative;flex:1;height:150px;margin-top:20px;cursor:ew-resize;touch-action:none}
+.cable-tirolina::before{content:"";position:absolute;left:0;right:0;top:8px;height:8px;background:#c9cfdd;border-top:2.5px solid var(--tinta);border-bottom:2.5px solid var(--tinta)}
+.marca-cable{position:absolute;top:0;width:3px;height:22px;margin-left:-1.5px;background:var(--tinta)}
+.marca-cable b{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:4px;padding:1px 7px;border-radius:6px;background:var(--papel);font-family:var(--fuerte);font-weight:900;font-size:15px;white-space:nowrap}
+.marca-cable.marca-ayuda{background:var(--cobalto)}
+.decima-cable{position:absolute;top:4px;width:2px;height:14px;margin-left:-1px;background:rgba(255,253,246,.8);transform-origin:50% 0}
+.polea{position:absolute;top:-4px;width:70px;margin-left:-35px;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.rueda-polea{width:28px;height:28px;border:var(--borde);border-radius:50%;background:radial-gradient(circle,#1b1e3a 0 20%,#ffc531 22%);z-index:2}
+.mini-goma{position:relative;width:70px;height:86px;margin-top:6px;transform-origin:50% -10px}.mini-goma::before{content:"";position:absolute;left:50%;top:-12px;width:3px;height:16px;margin-left:-1.5px;background:var(--tinta)}
+.mini-goma svg{width:100%;height:100%}
+.polea.moviendo .rueda-polea{animation:gira-polea .4s linear infinite}
+@keyframes gira-polea{to{transform:rotate(360deg)}}
+.bandera-cable{position:absolute;top:10px;width:3px;height:58px;margin-left:-1.5px;background:var(--tinta);z-index:3}
+.bandera-cable b{position:absolute;left:3px;top:0;padding:3px 10px;border:var(--borde);border-radius:0 8px 8px 0;background:#9bd84a;font-family:var(--fuerte);font-weight:900;font-size:17px;white-space:nowrap}
+.caseta-tirolina .prediccion{position:absolute;left:50%;bottom:-62px;transform:translateX(-50%)}
+.caseta-tirolina:has(.prediccion){margin-bottom:70px}
+
+/* ---------- la caseta de los récords ---------- */
+.caseta-records{display:flex;flex-direction:column;align-items:flex-start;gap:14px;max-width:1000px}
+.pizarra-records{display:flex;flex-direction:column;padding:8px 18px 10px;border:6px solid #a8743c;border-radius:8px;background:#26404a;color:#f3f0e6;rotate:-1.5deg;box-shadow:var(--sombra-baja)}
+.pizarra-records small{font-weight:800;font-size:12px;opacity:.8}
+.pizarra-records b{font-family:var(--fuerte);font-weight:900;font-size:22px;text-transform:capitalize}
+.mostrador-records{position:relative;width:100%;border:var(--borde);border-radius:14px;background:#f1dfba url('tex/madera.webp');background-size:512px 256px;background-blend-mode:multiply;box-shadow:var(--sombra);overflow:hidden;touch-action:pan-y}
+.objeto-records{position:absolute;filter:drop-shadow(2px 4px 0 rgba(0,0,0,.2));z-index:2;pointer-events:none}
+.objeto-records svg{display:block;overflow:visible}
+.guia-records{position:absolute;width:0;border-left:2px dashed rgba(27,30,58,.55);z-index:1;pointer-events:none}
+.regla-records{position:absolute;height:48px;cursor:ew-resize;z-index:3;filter:drop-shadow(2px 4px 0 rgba(0,0,0,.25));touch-action:none}
+.regla-records.moviendo{filter:drop-shadow(4px 10px 4px rgba(0,0,0,.3))}
+.regla-records svg{display:block}
+.llave-records{position:absolute;height:14px;border:3px solid var(--rojo);border-bottom:0;border-radius:6px 6px 0 0;z-index:4}
+.llave-records b{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);padding:0 8px;border-radius:6px;background:var(--rojo);color:#fff;font-family:var(--fuerte);font-weight:900;font-size:15px;white-space:nowrap}
+.caseta-records .prediccion,.caseta-tirolina .prediccion{display:flex;align-items:center;gap:10px;padding:10px 16px;border:var(--borde);border-radius:14px;background:var(--papel);font-weight:800;font-size:20px;box-shadow:var(--sombra-baja)}

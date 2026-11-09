@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El candado de la taquilla · Cajón maestro</title>
+<meta name="description" content="Formar con unas cifras el mayor número, el menor, uno mayor o menor que otro dado, o el más cercano por encima, girando las ruedas de un candado.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "numeros",
+  "titulo": "El candado de la taquilla",
+  "subtitulo": "La caja del dinero tiene un candado de ruedas, y solo se abre con el número que dice la regla.",
+  "portada": {
+    "rotulo": "TAQUILLA",
+    "objetivo": "Gira las ruedas del candado con las cifras que hay. Cada cifra, una vez.",
+    "frase": "La combinación no la sé. Pero sé cómo pensarla."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "boli",
+      "pose": "piensa",
+      "texto": "La caja de la taquilla está cerrada con candado. Y la combinación no la ha dejado nadie apuntada."
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Pero el candado tiene sus reglas. Con las cifras que hay y un poco de cabeza, se abre."
+    }
+  ],
+  "observa": "Para el **mayor** número, ¿dónde pones la cifra más grande? ¿Y para el **menor**, qué pasa con el 0?",
+  "niveles": [
+    {
+      "modo": "candado",
+      "generar": {
+        "tipo": "mayor"
+      }
+    },
+    {
+      "modo": "candado",
+      "generar": {
+        "tipo": "menor"
+      }
+    },
+    {
+      "modo": "candado",
+      "generar": {
+        "tipo": "menor",
+        "cero": true
+      }
+    },
+    {
+      "modo": "candado",
+      "generar": {
+        "tipo": "mayorQue"
+      }
+    },
+    {
+      "modo": "candado",
+      "generar": {
+        "tipo": "menorQue",
+        "disponibles": 5
+      }
+    },
+    {
+      "modo": "candado",
+      "generar": {
+        "tipo": "mayor",
+        "disponibles": 6,
+        "cero": true
+      }
+    },
+    {
+      "modo": "candado",
+      "generar": {
+        "tipo": "menor",
+        "disponibles": 6,
+        "cero": true
+      }
+    },
+    {
+      "modo": "candado",
+      "generar": {
+        "tipo": "justoEncima"
+      }
+    },
+    {
+      "modo": "candado",
+      "generar": {
+        "tipo": "justoDebajo",
+        "disponibles": 5,
+        "cero": true
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

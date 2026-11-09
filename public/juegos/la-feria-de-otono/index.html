@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Feria de Otoño · Cajón maestro</title>
+<meta name="description" content="Aventura de repaso de matemáticas: la feria del cole se ha quedado apagada y cada caseta se enciende resolviendo números, cuentas, medidas, ángulos y tablas.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body data-area="matematicas">
+<!-- Mapa de una aventura. Se genera con herramientas/feria.py -->
+<script type="application/json" id="mapa">
+{
+  "titulo": "La Feria de Otoño",
+  "subtitulo": "Esta noche el patio es una feria. Cada caseta se enciende cuando funciona bien. Se puede jugar en orden o empezar por cualquiera.",
+  "escena": "feria",
+  "estilo": "feria",
+  "volver": "../../matematicas/",
+  "textos": {
+    "sello": "¡ENCENDIDA!",
+    "hechos": "casetas encendidas",
+    "album": "Premios",
+    "albumTitulo": "Mis premios de la feria",
+    "albumTexto": "Cada caseta terminada, un premio.",
+    "icono": "el-gran-concurso",
+    "listo": "Todas las casetas encendidas. Empieza el gran concurso.",
+    "boton": "Al concurso",
+    "repetir": "Repetir el concurso"
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "asombro",
+      "texto": "¡Nos han dejado la feria! ¡La feria entera!"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Nos la han dejado apagada. Cada caseta se enciende cuando funciona bien. Y para que funcione, hay que hacer números."
+    },
+    {
+      "quien": "goma",
+      "pose": "animo",
+      "texto": "Tranquilos: todo esto ya lo hicimos en septiembre. Es repasar. Pero de noche, y con churros."
+    }
+  ],
+  "compartimentos": [
+    {
+      "nombre": "La calle de los números",
+      "quien": "fosforito",
+      "color": "#e8417a",
+      "juegos": [
+        {
+          "slug": "la-tombola",
+          "titulo": "La tómbola"
+        },
+        {
+          "slug": "el-candado-de-la-taquilla",
+          "titulo": "El candado de la taquilla"
+        }
+      ]
+    },
+    {
+      "nombre": "El paseo de las cuentas",
+      "quien": "boli",
+      "color": "#2f5bd3",
+      "juegos": [
+        {
+          "titulo": "La caja registradora"
+        },
+        {
+          "titulo": "El cambio"
+        },
+        {
+          "titulo": "La noria"
+        },
+        {
+          "titulo": "Los patitos"
+        }
+      ]
+    },
+    {
+      "nombre": "Las atracciones",
+      "quien": "fosforito",
+      "color": "#1b8f4e",
+      "juegos": [
+        {
+          "titulo": "Las colchonetas"
+        },
+        {
+          "titulo": "Pares y nones"
+        },
+        {
+          "titulo": "La báscula"
+        }
+      ]
+    },
+    {
+      "nombre": "A ojo de buen cubero",
+      "quien": "boli",
+      "color": "#ff8a1f",
+      "juegos": [
+        {
+          "slug": "el-martillo-de-fuerza",
+          "titulo": "El martillo de fuerza"
+        },
+        {
+          "slug": "la-tirolina",
+          "titulo": "La tirolina"
+        }
+      ]
+    },
+    {
+      "nombre": "Medidas y ángulos",
+      "quien": "goma",
+      "color": "#7b5cd6",
+      "juegos": [
+        {
+          "slug": "la-caseta-de-los-records",
+          "titulo": "La caseta de los récords"
+        },
+        {
+          "titulo": "Tijeras y abanicos"
+        },
+        {
+          "titulo": "Las banderolas"
+        },
+        {
+          "titulo": "La ruleta"
+        }
+      ]
+    },
+    {
+      "nombre": "El rincón de las tablas",
+      "quien": "goma",
+      "color": "#d7263d",
+      "juegos": [
+        {
+          "titulo": "Los farolillos"
+        },
+        {
+          "titulo": "Las manzanas de caramelo"
+        },
+        {
+          "titulo": "Las tiras de tickets"
+        },
+        {
+          "titulo": "Las tres cartas"
+        },
+        {
+          "titulo": "El puesto de chapas"
+        },
+        {
+          "titulo": "Los encargos"
+        }
+      ]
+    }
+  ],
+  "final": {
+    "nombre": "El gran concurso",
+    "slug": null,
+    "cerrado": "Se abre cuando todas las casetas estén encendidas.",
+    "abierto": "Los feriantes han vuelto de cenar… y no se lo creen.",
+    "historia": [
+      {
+        "quien": "boli",
+        "pose": "seguro",
+        "texto": "Las nueve. Los feriantes vuelven de cenar y se quedan mirando."
+      },
+      {
+        "quien": "fosforito",
+        "pose": "celebra",
+        "texto": "¡Está todo encendido! ¡Y la noria va a dar la vuelta grande!"
+      },
+      {
+        "quien": "goma",
+        "pose": "animo",
+        "texto": "Repasar también era esto: hacerlo otra vez, y hacerlo mejor. Gracias por quedarte."
+      }
+    ]
+  }
+}
+</script>
+<script type="module">
+import { montaMapa } from '../motores/mapa.js';
+montaMapa(JSON.parse(document.getElementById('mapa').textContent));
+</script>
+</body>
+</html>

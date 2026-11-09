@@ -106,6 +106,31 @@ const ARTE = {
     ${cs}<g class="abertura">${car(260, 120, '#ff7fae', 'pieza')}${car(330, 100, '#ffc531', 'pieza')}</g>
     <g class="sueltas">${pieza(2, 90, 370, -12)}</g></svg>`;
   },
+  // una caseta de feria: toldo de rayas con festón, rótulo con bombillas y premios en el mostrador
+  caseta: (r) => {
+    const fest = Array.from({ length: 8 }, (_, i) => `<path d="M${80 + i * 60} 150 q30 40 60 0" fill="${i % 2 ? '#fffdf6' : '#e8417a'}" stroke="${T}" stroke-width="4"/>`).join('');
+    const rayas = Array.from({ length: 8 }, (_, i) => `<path d="M${80 + i * 60} 150 L${150 + i * 50} 70 L${200 + i * 50} 70 L${140 + i * 60} 150Z" fill="${i % 2 ? '#fffdf6' : '#e8417a'}"/>`).join('');
+    const bomb = (n, x0, x1, y) => Array.from({ length: n }, (_, i) => `<circle class="bombilla-portada" cx="${x0 + ((x1 - x0) * i) / (n - 1)}" cy="${y}" r="7" fill="#fff6cf" stroke="${T}" stroke-width="2.5"/>`).join('');
+    const ancho = Math.max(150, (r || '').length * 22 + 50);
+    const premio = (x, y, c, k) => k === 0
+      ? `<g class="pieza" transform="translate(${x} ${y})"><circle r="26" fill="${c}" stroke="${T}" stroke-width="4"/><circle cx="-16" cy="-20" r="10" fill="${c}" stroke="${T}" stroke-width="4"/><circle cx="16" cy="-20" r="10" fill="${c}" stroke="${T}" stroke-width="4"/><circle cx="-8" cy="-4" r="3.5" fill="${T}"/><circle cx="8" cy="-4" r="3.5" fill="${T}"/><ellipse cy="8" rx="7" ry="5" fill="#fffdf6" stroke="${T}" stroke-width="2.5"/></g>`
+      : k === 1 ? `<g class="pieza" transform="translate(${x} ${y})"><path d="M0 34 V-6" stroke="${T}" stroke-width="3"/><ellipse cy="-28" rx="22" ry="26" fill="${c}" stroke="${T}" stroke-width="4"/><path d="M-8 -40 q-6 8 -4 18" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".7"/></g>`
+      : `<g class="pieza" transform="translate(${x} ${y}) rotate(-8)"><rect x="-30" y="-16" width="60" height="32" rx="4" fill="${c}" stroke="${T}" stroke-width="4"/><path d="M-16 -16 v32" stroke="${T}" stroke-width="2.5" stroke-dasharray="4 3"/></g>`;
+    return `<svg viewBox="0 0 640 400" class="arte arte-caseta" aria-hidden="true">
+    <defs><filter id="p-sc" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="10" dy="18" stdDeviation="12" flood-color="#05061a" flood-opacity=".6"/></filter>
+      <pattern id="p-cart" width="128" height="128" patternUnits="userSpaceOnUse"><image href="../motores/tex/cartulina.webp" width="128" height="128"/></pattern></defs>
+    <g filter="url(#p-sc)"><rect x="96" y="140" width="448" height="230" rx="10" fill="#2f5bd3" stroke="${T}" stroke-width="5"/></g>
+    <rect x="96" y="140" width="448" height="230" rx="10" fill="url(#p-cart)" style="mix-blend-mode:multiply" opacity=".8"/>
+    <rect x="128" y="186" width="384" height="104" rx="8" fill="#1c2150" stroke="${T}" stroke-width="4"/>
+    <path d="M128 290 h384 v26 h-384z" fill="#ffc531" stroke="${T}" stroke-width="4"/><path d="M110 316 h420 v20 h-420z" fill="#c98f00" stroke="${T}" stroke-width="4"/>
+    <g stroke="${T}" stroke-width="4" stroke-linejoin="round"><path d="M80 150 L150 70 H490 L560 150Z" fill="#e8417a"/>${rayas}</g>${fest}
+    <path d="M150 70 H490" stroke="${T}" stroke-width="4"/>
+    <g transform="rotate(-3 320 40)"><rect x="${320 - ancho / 2}" y="8" width="${ancho}" height="58" rx="10" fill="#fffdf6" stroke="${T}" stroke-width="5"/>${bomb(Math.max(5, Math.round(ancho / 28)), 320 - ancho / 2 + 14, 320 + ancho / 2 - 14, 16)}
+      <text x="320" y="54" text-anchor="middle" font-family="Rotulo,sans-serif" font-weight="900" font-size="30" fill="${T}">${r || 'FERIA'}</text></g>
+    <g class="abertura">${premio(200, 262, '#ff9fbf', 0)}${premio(320, 262, '#5ec3ff', 1)}${premio(440, 270, '#ffc531', 2)}</g>
+    <g class="sueltas">${premio(80, 372, '#9bd84a', 2)}${premio(584, 360, '#b79cff', 1)}</g>
+  </svg>`;
+  },
   // recortables: un papel doblado con agujeros y, al otro lado, dónde saldrán
   papel: () => `<svg viewBox="0 0 640 400" class="arte arte-papel" aria-hidden="true"><defs><filter id="p-spp" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="10" dy="18" stdDeviation="12" flood-color="#0a0020" flood-opacity=".5"/></filter></defs>
     <g filter="url(#p-spp)"><path d="M160 70 H320 V350 H160Z" fill="#f3ecdc" stroke="${T}" stroke-width="5"/><path d="M320 70 L470 100 V330 L320 350Z" fill="#fffdf6" stroke="${T}" stroke-width="5"/></g>
@@ -118,7 +143,7 @@ const ARTE = {
 export function portada(config, { dibuja, POSES, quien, progreso = 0, record = null, sonar = () => {}, frase: fraseHola = '¿Jugamos?', volver = '../../' }) {
   return new Promise((listo) => {
     const lento = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const tipo = config.portada?.arte || ({ estuche: 'estuche', puzle: 'puzle', corcho: 'corcho', patio: 'patio', almacen: 'almacen', merienda: 'merienda' }[config.escena] ?? 'cajon');
+    const tipo = config.portada?.arte || ({ estuche: 'estuche', puzle: 'puzle', corcho: 'corcho', patio: 'patio', almacen: 'almacen', merienda: 'merienda', feria: 'caseta' }[config.escena] ?? 'cajon');
     const capa = h('div', 'portada-capa');
     capa.setAttribute('role', 'dialog'); capa.setAttribute('aria-modal', 'true'); capa.setAttribute('aria-label', config.titulo);
     // título letra a letra (las palabras no se parten)
@@ -187,6 +212,10 @@ export function portada(config, { dibuja, POSES, quien, progreso = 0, record = n
           .to(arte.querySelector('.pieza-portada'), { x: -100, y: 80, duration: 0.4, ease: 'power2.in', onComplete: () => sonar('pon') });
       } else if (tipo === 'corcho') {
         tl.to(arte.querySelector('.gira-portada'), { rotation: 90, svgOrigin: '300 220', duration: 0.8, ease: 'power2.inOut', onStart: () => sonar('clic'), onComplete: () => sonar('pon') });
+      } else if (tipo === 'caseta') {
+        // se encienden las bombillas del rótulo, una detrás de otra, y salen volando los premios
+        tl.to(arte.querySelectorAll('.bombilla-portada'), { fill: '#ffd23f', duration: 0.05, stagger: 0.05, onStart: () => sonar('clic') })
+          .to(arte.querySelectorAll('.abertura .pieza'), { y: -240, rotation: () => gsap.utils.random(-160, 160), opacity: 0, duration: 0.55, ease: 'power2.in', stagger: 0.05 });
       } else {
         tl.to(arte, { y: 20, duration: 0.15, ease: 'power1.in' })
           .to(arte.querySelectorAll('.abertura .pieza'), { y: -240, rotation: () => gsap.utils.random(-160, 160), opacity: 0, duration: 0.55, ease: 'power2.in', stagger: 0.05 });
