@@ -142,7 +142,8 @@ const ARTE = {
 
 // casetas ilustradas de la feria: la caseta recortada y sus objetos sueltos (que saltan al pulsar «Jugar»)
 const FER = new URL('./feria/', import.meta.url).href;
-const CASETAS = { 'la-tombola': ['tombola', 2], 'el-candado-de-la-taquilla': ['taquilla', 3], 'la-caja-registradora': ['caja', 2], 'la-noria': ['noria', 2] };
+const CASETAS = { 'la-tombola': ['tombola', 2], 'el-candado-de-la-taquilla': ['taquilla', 3], 'la-caja-registradora': ['caja', 2], 'la-noria': ['noria', 2], 'el-gran-concurso': ['el-gran-concurso', 3] };
+for (const s of ['el-cambio', 'los-patitos', 'las-colchonetas', 'pares-y-nones', 'la-bascula', 'el-martillo-de-fuerza', 'la-tirolina', 'la-caseta-de-los-records', 'tijeras-y-abanicos', 'las-banderolas', 'la-ruleta', 'los-farolillos', 'las-manzanas-de-caramelo', 'las-tiras-de-tickets', 'las-tres-cartas', 'el-puesto-de-chapas', 'los-encargos']) CASETAS[s] = [s, 2];
 const casetaIlustrada = ([n, piezas], titulo) => `<div class="arte arte-caseta-img" aria-hidden="true"><img class="caseta-img" src="${FER}caseta-${n}.webp" alt="" draggable="false">
     <div class="abertura">${Array.from({ length: piezas }, (_, i) => `<img class="pieza pz${i + 1}" src="${FER}pieza-${n}-${i + 1}.webp" alt="" draggable="false">`).join('')}</div></div>`;
 
