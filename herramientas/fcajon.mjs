@@ -1,0 +1,11 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome' });
+const p = await b.newPage({ viewport: { width: 1280, height: 800 } });
+const err = []; p.on('pageerror', (e) => err.push(e.message)); p.on('console', (m) => m.type() === 'error' && err.push(m.text()));
+await p.goto('http://localhost:8791/'); await p.waitForTimeout(2500);
+await p.evaluate(() => window.scrollTo(0, 380)); await p.waitForTimeout(300);
+await p.hover('.obj-caja-limpieza'); await p.waitForTimeout(500);
+await p.screenshot({ path: '/tmp/s-hover.png' });
+await p.click('.obj-videos'); await p.waitForTimeout(1500);
+console.log(p.url(), await p.textContent('[data-cuenta]'));
+console.log(err.join(' | ') || 'sin errores'); await b.close();

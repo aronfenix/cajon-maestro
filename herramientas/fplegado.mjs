@@ -1,0 +1,13 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome' });
+const p = await b.newPage({ viewport: { width: 1280, height: 800 } });
+const err = []; p.on('pageerror', (e) => err.push(e.message));
+await p.goto('http://localhost:8791/');
+const vis = () => p.$$eval('[data-material]', (ls) => ls.filter((l) => !l.hidden).length);
+console.log('visibles al entrar', await vis());
+await p.fill('#buscar', 'noria'); await p.waitForTimeout(200); console.log('buscando noria', await vis(), await p.textContent('[data-cuenta]'));
+await p.fill('#buscar', ''); await p.click('[data-desplegar]'); await p.waitForTimeout(200); console.log('desplegada una', await vis());
+await p.goto('http://localhost:8791/materiales/la-feria-de-otono/');
+await p.evaluate(() => { localStorage.setItem('cajon-hecho:/juegos/la-noria/', '1'); localStorage.setItem('cajon-hecho:/juegos/la-tombola/', '1'); });
+await p.reload(); console.log(await p.textContent('[data-progreso]'), await p.$$eval('.esta-hecho', (x) => x.length));
+console.log(err.join('|') || 'sin errores'); await b.close();

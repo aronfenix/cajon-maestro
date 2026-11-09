@@ -1,0 +1,62 @@
+# Fichas del catálogo y portadas de la Feria de Otoño. python3 feria_catalogo.py [slugs…]
+import sys, subprocess, os
+from PIL import Image
+R = '/home/claude/cajon'
+F = {
+ 'la-feria-de-otono': (0, 'La Feria de Otoño', 'Mapa de la aventura de repaso: la feria del cole se ha quedado apagada y cada caseta se enciende resolviendo números, cuentas, medidas, ángulos y tablas.',
+   'La portada de la aventura: el patio convertido en feria, con seis zonas de casetas. Cada caseta se enciende cuando sus juegos están hechos en esa tablet, y cada juego terminado da un premio para la estantería. No bloquea nada: cada juego se puede jugar suelto.\n\nEs un repaso de lo trabajado a principio de curso, así que el tono es «esto ya lo sabéis»: los niveles empiezan suaves y suben deprisa si se acierta.'),
+ 'la-tombola': (1, 'La tómbola', 'Ordenar números de cuatro cifras colgando boletos en una cuerda, de menor a mayor o al revés. Los boletos mal colgados se caen.',
+   'Los boletos de la tómbola se han caído a la cesta y hay que colgarlos en orden. Empieza con números que se distinguen por la primera cifra y acaba con boletos que tienen las mismas cuatro cifras en distinto orden, o con un número de tres cifras escondido entre los de cuatro. Al comprobar, solo se caen los que estaban mal, así que se ve qué parte del razonamiento falla.'),
+ 'el-candado-de-la-taquilla': (2, 'El candado de la taquilla', 'Formar el mayor y el menor número con unas cifras, uno mayor o menor que otro dado, o el que va justo detrás, girando las ruedas de un candado.',
+   'Un candado de ruedas que solo se abre con el número que dice su regla: el mayor posible, el menor (con la trampa del 0), cualquiera mayor o menor que el del cartel, o el más pequeño de los que pasan de él. En los niveles altos hay más cifras que ruedas y hay que decidir cuáles sobran.'),
+ 'la-caseta-de-los-records': (12, 'La caseta de los récords', 'Medir en centímetros con una regla que se arrastra, con una regla rota que no empieza en 0, y averiguar cuántos centímetros más mide una cosa que otra.',
+   'Golosinas y cachivaches de feria sobre el mostrador. La regla no está colocada: hay que arrastrarla y decidir dónde se pone. Después aparece una regla rota que empieza en el 3 o el 4, para que se vea que lo que mide un objeto es lo que hay entre el principio y el final, y no el número donde acaba. Las líneas de lectura desaparecen en los niveles altos.'),
+ 'el-martillo-de-fuerza': (10, 'El martillo de fuerza', 'Estimar sumas y restas de cuatro cifras marcando el resultado en una torre de 0 a 10 000, o eligiendo el globo más cercano.',
+   'La recta es la torre del martillo de fuerza. Antes del golpe se marca a ojo hasta dónde subirá el resultado; si se acerca, suena la campana. En otros retos hay cuatro globos de centena en centena y hay que pinchar el más cercano. Las pistas enseñan a redondear a millares y a centenas.'),
+ 'la-tirolina': (11, 'La tirolina', 'Estimar posiciones en la recta de 0 a 10 000 y de 0 a un millón: llevar a Goma hasta un número o leer por dónde va.',
+   'Un cable de tirolina sin números entre los extremos. Hay que llevar a Goma hasta un número o decir a ojo por dónde va. Al comprobar aparecen las diez partes del cable para ver dónde estaba. Las pistas marcan la mitad y los cuartos.'),
+ 'la-caja-registradora': (3, 'La caja registradora', 'Sumas de cuatro cifras con llevadas: juntar fichas de feria cambiando 10 por 1, la cuenta escrita y colocar bien un número de tres cifras debajo de uno de cuatro.',
+   'Cajas de 1 000, tacos de 100, tiras de 10 y fichas sueltas, cada una en su cajón. Al juntar los dos pedidos, un cajón puede pasar de 10 y entonces hay que cambiar 10 por 1 del cajón de la izquierda: eso es la llevada, y se ve. Luego llega la cuenta escrita, con casillas para lo que te llevas, y retos en los que el segundo número viene torcido y hay que alinear las unidades antes de sumar.'),
+ 'el-cambio': (4, 'El cambio', 'Restas de cuatro cifras con llevadas: sacar fichas rompiendo una de la izquierda en diez cuando no llegan, la cuenta escrita y restas con ceros en el minuendo.',
+   'La misma caja, al revés: hay que sacar fichas y, cuando en un cajón no hay bastantes, romper una del cajón de la izquierda en diez. Con ceros (5 003 − 2 468) hay que romper dos veces seguidas, y ahí es donde se entiende de verdad la resta llevando.'),
+ 'la-noria': (5, 'La noria', 'Cálculo mental por parejas de cuentas relacionadas: 6 − 4 y 600 − 400, 830 − 300 y 830 − 290, 600 + 130 + 7, millares y completar la centena.',
+   'Seis cabinas por vuelta y una cuenta en cada una. Las cuentas vienen por parejas y la de antes se queda a la vista, para que se use: si 830 − 300 = 530, entonces 830 − 290 son 10 más. Dos fallos en la misma cabina y la noria te dice el resultado y sigue.'),
+ 'los-patitos': (6, 'Los patitos', 'El número oculto en sumas y restas (45 − ? = 24, ? − 18 = 27, 18 + ? = 45): pescar el patito que completa la cuenta.',
+   'Cada cuenta tiene un hueco y en el estanque nadan cinco o seis patitos con números. Entre ellos está siempre la trampa típica: operar los dos números que se ven con el signo que se ve. Al fallar, el juego hace la cuenta con el patito elegido para que se vea por qué no vale.'),
+ 'las-colchonetas': (7, 'Las colchonetas', 'Saltos de 10 y de 100 hacia delante y hacia atrás desde números de cuatro cifras, cruzando centenas y millares, y averiguar de cuánto es cada salto.',
+   'Fosforito bota de cama elástica en cama elástica y hay que escribir dónde cae. Los saltos cruzan centenas y millares (8 784 + 10 + 10 + 10…), y al final se invierte la pregunta: se ven las colchonetas y hay que descubrir de cuánto es cada salto, o una mezcla de las dos cosas.'),
+ 'pares-y-nones': (8, 'Pares y nones', 'Sumas y restas pares o impares: colocar números para que salga par o impar, y decidirlo sin hacer la cuenta mirando solo la última cifra.',
+   'Primero se colocan cartas para que la suma o la resta salga par o impar, y el juego enseña la regla al corregir. Después, rondas rápidas de seis cuentas grandes en las que solo da tiempo a mirar las unidades.'),
+ 'la-bascula': (9, 'La báscula', 'Colocar cifras en una suma o una resta para que el resultado quede entre dos números, con una báscula que marca la zona buena y avisa si te pasas o te quedas corto.',
+   'La báscula de «adivina el peso» con una zona verde. Hay que repartir las cifras en los huecos para que el resultado caiga dentro. Cada pesada dice si te pasas o te quedas corto, y las pistas enseñan a mover primero las cifras que más valen.'),
+ 'tijeras-y-abanicos': (13, 'Tijeras y abanicos', 'Comparar y ordenar ángulos por su abertura aunque tengan los brazos de distinto largo o estén girados, y abrir un abanico igual que un modelo.',
+   'Abanicos, tijeras y ángulos sueltos de todos los tamaños. La trampa, a propósito: el más abierto suele tener los brazos más cortos. Hay rondas de elegir el más abierto (con la opción «iguales»), de ordenar cuatro o cinco y de abrir tu abanico, más grande que el modelo, hasta que se abra lo mismo.'),
+ 'las-banderolas': (14, 'Las banderolas', 'Tipos de ángulos (agudo, recto, obtuso, llano y completo), banderines poligonales con algún ángulo obtuso y parejas de ángulos iguales aunque estén girados.',
+   'Tres actividades sobre los tipos de ángulo. Meter ángulos en cubos por su tipo, comparando siempre con la esquina de un folio; tocar los banderines que tienen alguna esquina obtusa (al corregir se marcan todas, y los obtusos en rojo); y un memory de parejas de ángulos iguales con distinta orientación y brazos de distinto largo.'),
+ 'la-ruleta': (15, 'La ruleta', 'Estimar la medida de un ángulo en una ruleta, dibujar ángulos con el medidor (también con el brazo hacia la izquierda) y medirlos leyendo la fila de números buena.',
+   'Primero, a ojo: qué medida tiene el gajo rojo de la ruleta, con 90° y 180° como referencias. Después, el medidor de ángulos con sus dos filas de números: dibujar un ángulo arrastrando un brazo y medir uno dado. Cuando el brazo fijo va hacia la izquierda hay que leer la otra fila, y el juego detecta cuando se ha leído la equivocada.'),
+ 'los-farolillos': (16, 'Los farolillos', 'Las tablas del 7 y del 9 en una guirnalda de cien farolillos: encender los múltiplos y descubrir el dibujo que forman.',
+   'Una guirnalda de farolillos numerados del 1 al 100 (o al 70). Se encienden los de la tabla y, si están todos bien, el juego pregunta qué dibujo forman: la diagonal del 9 en una guirnalda de diez en diez, o la columna que sale cuando la guirnalda tiene tantos farolillos por fila como la tabla.'),
+ 'las-manzanas-de-caramelo': (17, 'Las manzanas de caramelo', 'Contar en disposiciones rectangulares con una multiplicación: bandejas llenas, con huecos, con una fila incompleta o formadas por dos rectángulos.',
+   'Bandejas de manzanas de caramelo que hay que contar sin ir de una en una. Primero rectángulos completos y después bandejas con huecos, con la última fila a medias o hechas de dos trozos. La corrección enseña la cuenta: 6 × 8 = 48, menos los 3 huecos.'),
+ 'las-tiras-de-tickets': (18, 'Las tiras de tickets', 'Hechos multiplicativos: el factor que falta (120 = 4 × ?) estirando un rectángulo de tickets, y multiplicar por decenas y centenas a partir de la tabla.',
+   'El número que falta en una multiplicación, visto como un rectángulo: se estira desde la esquina hasta que tenga el total y un contador dice si faltan o sobran. En los niveles altos cada cuadrito es un taco de 10 (490 = 7 × 70). También hay parejas tipo 9 × 7 y 90 × 7 para usar una cuenta en la otra. No reproduce la cajita del libro.'),
+ 'las-tres-cartas': (19, 'Las tres cartas', 'Colocar cifras para el producto más grande o más pequeño en una multiplicación de dos o tres cifras por una, compitiendo con Fosforito.',
+   'Un juego de cartas contra Fosforito: con las mismas tres o cuatro cartas, gana quien consiga el producto mayor (o menor). Al destapar se ven todas las colocaciones posibles ordenadas, para descubrir por qué la cifra que va sola es la que más pesa.'),
+ 'el-puesto-de-chapas': (20, 'El puesto de chapas', 'Multiplicar un número de dos o tres cifras por una cifra: por partes (7 × 144 = 700 + 280 + 28) y con la cuenta en columna.',
+   'Cajas de chapas iguales. Primero se multiplica por partes, con una caja para las centenas, otra para las decenas y otra para las unidades, y luego se suma. Después llega la cuenta en columna con casillas para lo que te llevas.'),
+ 'los-encargos': (21, 'Los encargos', 'Problemas de suma, resta, comparación y multiplicación con datos de la feria, también con datos escondidos en las palabras (media docena, triciclos).',
+   'Encargos de la oficina de la feria. Para cada uno se elige la operación, se ponen los datos y se resuelve. El juego distingue si falla la operación, los datos o la cuenta, y lo dice. Los problemas de «¿cuántos más?» y los que esconden un dato en las palabras («media docena», «cada uno con su triciclo») llegan al final.'),
+ 'el-gran-concurso': (22, 'El gran concurso', 'El final de la Feria de Otoño: catorce retos seguidos, uno de cada caseta, de los números de cuatro cifras a los ángulos y las tablas.',
+   'El final de la aventura: catorce retos seguidos, cada uno con la mecánica de su caseta (boletos, candado, cuentas, patitos, colchonetas, martillo, regla rota, ángulos, manzanas, cartas, chapas y encargos). En el mapa se abre cuando todas las casetas están encendidas, y el profe puede abrirlo antes con ?abrir en la dirección del mapa.'),
+}
+def md(slug):
+    o, t, r, c = F[slug]
+    open(f'{R}/src/content/materiales/{slug}.md', 'w').write(f'---\ntitulo: "{t}"\ntema: matematicas-feria-otono\ntipo: juego\nresumen: "{r}"\nfecha: 2026-11-09\nportada: /src/media/portadas/{slug}.jpg\nenlace: /juegos/{slug}/\norden: {o}\n---\n\n{c}\n')
+slugs = sys.argv[1:] or list(F)
+for s in slugs: md(s)
+open(f'{R}/src/content/temas/matematicas-feria-otono.yml', 'w').write('titulo: La Feria de Otoño\narea: matematicas\nsubtitulo: Aventura de repaso de principio de curso. Números de cuatro cifras, cuentas, estimación, medida, ángulos y tablas. Cada juego se puede jugar suelto.\ncurso: 5.º, 2026-27\norden: -2\n')
+subprocess.run(['node', '/home/claude/herramientas/portadas4.mjs', *slugs], check=True)
+for s in slugs:
+    Image.open(f'/tmp/por-{s}.png').convert('RGB').resize((800, 500), Image.LANCZOS).save(f'{R}/src/media/portadas/{s}.jpg', quality=84)
+print('catálogo', len(slugs))
