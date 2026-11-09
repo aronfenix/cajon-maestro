@@ -1002,43 +1002,7 @@ a.subrayado:hover {
   text-decoration-thickness: 2px;
 }
 
-/* ——— Los ayudantes (ahora se asoman en el cajón) ——— */
-.ayudantes {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  gap: 4px;
-  pointer-events: none;
-}
-.ayudante {
-  display: block;
-  width: 96px;
-  height: 96px;
-  margin-bottom: -13px;
-  background-image: var(--reposo);
-  background-size: 600% 100%;
-  background-repeat: no-repeat;
-  animation: ayudante-reposo 3s step-end infinite;
-  animation-delay: var(--retraso, 0s);
-  pointer-events: auto;
-}
-.ayudante:hover {
-  background-image: var(--saluda);
-  animation: ayudante-gesto 0.75s steps(6, jump-none) infinite;
-}
-@keyframes ayudante-reposo {
-  0% { background-position-x: 0%; }
-  53.33% { background-position-x: 20%; }
-  66.67% { background-position-x: 40%; }
-  69.67% { background-position-x: 60%; }
-  73% { background-position-x: 80%; }
-  77.33% { background-position-x: 100%; }
-}
-@keyframes ayudante-gesto {
-  from { background-position-x: 0%; }
-  to { background-position-x: 100%; }
-}
+
 
 /* ——— Lo último ——— */
 .nuevo,
@@ -1298,12 +1262,7 @@ a.subrayado:hover {
   .aventura-titulo {
     font-size: 34px;
   }
-  .ayudante {
-    width: 80px;
-    height: 80px;
-    margin-bottom: -11px;
-  }
-  .zona-lista {
+    .zona-lista {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1311,10 +1270,6 @@ a.subrayado:hover {
 @media (prefers-reduced-motion: reduce) {
   @view-transition {
     navigation: none;
-  }
-  .ayudante,
-  .ayudante:hover {
-    animation: none;
   }
   .caja {
     transition: none;
@@ -1551,14 +1506,16 @@ a.objeto:focus-visible .etiqueta-obj {
     scale: 1.08;
   }
 }
+/* en los objetos de la fila de abajo la etiqueta va arriba, para que no la tapen los ayudantes */
+.et-arriba .etiqueta-obj {
+  top: 0;
+  translate: -50% -55%;
+}
 @media (hover: none) {
   .etiqueta-obj {
     opacity: 1;
     font-size: 12px;
     padding: 2px 7px;
-  }
-  .deco {
-    display: none;
   }
 }
 @media (max-width: 700px) {
@@ -1778,5 +1735,18 @@ a.objeto:focus-visible .etiqueta-obj {
 @media (max-width: 700px) {
   .zonas-dentro .zona-lista {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* en pantallas táctiles las cajas no necesitan etiqueta: su título va impreso en la tapa */
+@media (hover: none) {
+  .obj-caja-feria .etiqueta-obj,
+  .obj-caja-limpieza .etiqueta-obj {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .obj-tablet .etiqueta-obj {
+    top: 0;
+    translate: -50% -55%;
   }
 }
