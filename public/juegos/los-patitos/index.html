@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Los patitos · Cajón maestro</title>
+<meta name="description" content="El número oculto: completar sumas y restas con el número que falta (45 − ? = 24, ? − 18 = 27), pescando el patito correcto.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "mental",
+  "titulo": "Los patitos",
+  "subtitulo": "Cada cuenta tiene un hueco, y en el estanque nada el número que falta. Solo uno de los patitos es el bueno.",
+  "portada": {
+    "rotulo": "PATITOS",
+    "objetivo": "Pesca el patito que completa la cuenta. Si fallas, el patito se va al agua.",
+    "frase": "Todos los patitos parecen buenos. Solo uno lo es."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "goma",
+      "pose": "piensa",
+      "texto": "A las cuentas de esta caseta se les ha caído un número al agua."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Antes de pescar, prueba en tu cabeza: pon el número en el hueco y mira si la cuenta sale."
+    }
+  ],
+  "observa": "En **45 − ? = 24**, ¿por qué no vale 69, si 45 + 24 = 69?",
+  "niveles": [
+    {
+      "modo": "patitos",
+      "generar": {
+        "tipos": [
+          "sumaMedio"
+        ],
+        "rango": [
+          10,
+          40
+        ],
+        "patos": 4
+      }
+    },
+    {
+      "modo": "patitos",
+      "generar": {
+        "tipos": [
+          "restaMedio"
+        ],
+        "rango": [
+          10,
+          50
+        ],
+        "patos": 4
+      }
+    },
+    {
+      "modo": "patitos",
+      "generar": {
+        "tipos": [
+          "restaMedio",
+          "sumaPrimero"
+        ],
+        "rango": [
+          20,
+          60
+        ]
+      }
+    },
+    {
+      "modo": "patitos",
+      "generar": {
+        "tipos": [
+          "restaPrimero"
+        ],
+        "rango": [
+          20,
+          70
+        ]
+      }
+    },
+    {
+      "modo": "patitos",
+      "generar": {
+        "tipos": [
+          "mezcla"
+        ],
+        "rango": [
+          20,
+          99
+        ]
+      }
+    },
+    {
+      "modo": "patitos",
+      "generar": {
+        "tipos": [
+          "mezcla"
+        ],
+        "rango": [
+          100,
+          400
+        ],
+        "patos": 6
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

@@ -157,3 +157,138 @@ body[data-escena="feria"] .mesa-juego>.pista{background:rgba(255,253,246,.92)}
 .llave-records{position:absolute;height:14px;border:3px solid var(--rojo);border-bottom:0;border-radius:6px 6px 0 0;z-index:4}
 .llave-records b{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);padding:0 8px;border-radius:6px;background:var(--rojo);color:#fff;font-family:var(--fuerte);font-weight:900;font-size:15px;white-space:nowrap}
 .caseta-records .prediccion,.caseta-tirolina .prediccion{display:flex;align-items:center;gap:10px;padding:10px 16px;border:var(--borde);border-radius:14px;background:var(--papel);font-weight:800;font-size:20px;box-shadow:var(--sombra-baja)}
+
+/* ---------- la caja registradora ---------- */
+.caseta-caja{display:flex;flex-direction:column;gap:14px;max-width:1000px}
+.recibos{display:flex;gap:12px;flex-wrap:wrap}
+.recibo{display:flex;flex-direction:column;padding:8px 18px 10px;border:var(--borde);border-radius:4px;background:var(--papel);box-shadow:var(--sombra-baja);rotate:-1.5deg;
+  -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 8px) no-repeat,radial-gradient(circle at 6px 100%,transparent 5px,#000 5.5px) bottom/12px 9px repeat-x}
+.recibo:nth-child(2){rotate:1.5deg}
+.recibo small{font-weight:800;font-size:13px;opacity:.7}
+.recibo b{font-family:var(--fuerte);font-weight:900;font-size:clamp(24px,4vw,34px);white-space:nowrap}
+.registradora{padding:14px;border:var(--borde);border-radius:18px;background:#3b3f63;box-shadow:var(--sombra)}
+.pantalla-caja{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:center;margin-bottom:12px;padding:8px 10px;border:var(--borde);border-radius:10px;background:#1c2150;position:relative}
+.rotulo-pantalla{position:absolute;left:12px;top:-12px;padding:0 8px;border-radius:6px;background:#9bd84a;font-family:var(--fuerte);font-weight:900;font-size:13px}
+.cifra-caja.campo-num{width:100%;height:56px;padding:0;text-align:center;font-size:34px;background:#d8f5c4;border-radius:8px}
+.cajones-caja{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cajon-caja{position:relative;display:flex;flex-direction:column;gap:6px;min-height:170px;padding:8px 6px 10px;border:var(--borde);border-radius:10px;background:#fffdf6 url('tex/papel.webp');background-blend-mode:multiply}
+.cajon-caja.lleno{background:#ffe1e1;box-shadow:0 0 0 4px #ff8a1f}
+.cab-caja{display:flex;justify-content:space-between;align-items:baseline;gap:4px;font-size:12px;line-height:1.1}
+.cab-caja b{font-weight:800}
+.cab-caja .cuantas{font-family:var(--fuerte);font-weight:900;font-size:20px}
+.monton-caja{display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;flex:1}
+.pieza-caja{display:block;border:2px solid var(--tinta)}
+.pieza-caja.p0{width:16px;height:16px;border-radius:50%;background:#ffc531}
+.pieza-caja.p1{width:8px;height:40px;border-radius:2px;background:repeating-linear-gradient(0deg,#ff9fbf 0 3px,#e8417a 3px 4px)}
+.pieza-caja.p2{width:28px;height:28px;border-radius:3px;background:repeating-linear-gradient(90deg,#5ec3ff 0 2.4px,#2f5bd3 2.4px 2.8px)}
+.pieza-caja.p3{width:34px;height:34px;border-radius:4px;background:#9bd84a;box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
+.pieza-caja.nueva{outline:2px dashed #2f5bd3;outline-offset:1px}
+.accion-caja,.romper-caja{font-size:14px;min-height:38px;padding:0 8px;--c:var(--amarillo)}
+.romper-caja{border:2.5px dashed var(--tinta);border-radius:10px;background:#fff27a;font-weight:800;cursor:pointer}
+.saca-caja{align-self:flex-start;padding:2px 8px;border-radius:6px;background:#1b1e3a;color:#fff;font-weight:800;font-size:13px}
+.saca-caja.hecho{background:#1b8f4e}
+@media (max-width:640px){.cajones-caja,.pantalla-caja{gap:5px}.cab-caja{flex-direction:column}.cajon-caja{padding:6px 4px}.pieza-caja.p3{width:24px;height:24px}.pieza-caja.p2{width:20px;height:20px}.accion-caja,.romper-caja{font-size:12px}}
+
+/* ---------- la cuenta escrita ---------- */
+.caseta-cuenta{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.papel-cuenta{padding:18px 26px 22px;border:var(--borde);border-radius:6px;background:#fffdf6;background-image:linear-gradient(rgba(47,91,211,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(47,91,211,.14) 1px,transparent 1px);background-size:28px 28px;box-shadow:var(--sombra);rotate:-1deg}
+.hoja-cuenta{display:flex;flex-direction:column;gap:4px}
+.fila-cuenta{display:grid;grid-template-columns:repeat(5,clamp(46px,11vw,60px));gap:6px;align-items:center}
+.celda-cuenta{display:grid;place-items:center;height:clamp(46px,11vw,60px);font-family:var(--fuerte);font-weight:900;font-size:clamp(30px,7vw,42px)}
+.fila-cuenta.cab .celda-cuenta{height:22px;font-size:13px;font-weight:800;color:var(--gris)}
+.fila-cuenta.llevadas .celda-cuenta{height:34px}
+.campo-num.llevada{width:30px;height:30px;padding:0;font-size:18px;text-align:center;border-radius:50%;background:#fff27a}
+.campo-num.cifra-res{width:100%;height:100%;padding:0;font-size:inherit;text-align:center}
+.celda-cuenta.signo{color:var(--cobalto)}
+.raya-cuenta{height:4px;margin:2px 0 4px;background:var(--tinta);border-radius:2px}
+.colocando .movil{background:rgba(255,197,49,.35);border-radius:10px}
+.mover-fila{display:flex;gap:10px}
+.mover-fila .tecla{min-width:64px;font-size:24px}
+
+/* ---------- la noria ---------- */
+.caseta-noria{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 30px}
+.rueda-noria{width:min(86vw,440px)}
+.rueda-noria svg{width:100%;height:auto;overflow:visible}
+.panel-noria{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.antes-noria{margin:0;padding:6px 12px;border-radius:10px;background:rgba(255,253,246,.88);font-size:16px}
+.antes-noria b{font-family:var(--fuerte)}
+.ticket-noria{display:flex;flex-direction:column;padding:10px 22px 12px;border:var(--borde);border-radius:8px;background:#fff27a;box-shadow:var(--sombra);rotate:-2deg}
+.ticket-noria small{font-weight:800;font-size:13px}
+.cuenta-noria{font-family:var(--fuerte);font-weight:900;font-size:clamp(30px,5.5vw,46px);white-space:nowrap}
+
+/* ---------- los patitos ---------- */
+.caseta-patos{display:flex;flex-direction:column;gap:16px;max-width:1000px}
+.lista-patos{display:flex;flex-wrap:wrap;gap:12px}
+.cuenta-patos{display:flex;align-items:center;gap:10px;padding:10px 18px;border:var(--borde);border-radius:14px;background:rgba(255,253,246,.7);font-family:var(--fuerte);font-size:clamp(26px,4.4vw,36px);opacity:.6}
+.cuenta-patos.activa{background:var(--papel);opacity:1;box-shadow:var(--sombra);rotate:-1deg}
+.hueco-pato{display:inline-grid;place-items:center;min-width:2.2em;height:1.4em;padding:0 6px;border:3px dashed var(--cobalto);border-radius:10px;color:var(--cobalto)}
+.hueco-pato.bien{border-style:solid;background:#d8f5c4;color:var(--tinta)}
+.hueco-pato.mal{background:#ffd1d1}
+.estanque{position:relative;height:200px;border:var(--borde);border-radius:100px/40px;background:linear-gradient(180deg,#5ec3ff,#2f8fd3);overflow:hidden;box-shadow:inset 0 8px 0 rgba(0,0,0,.15),var(--sombra)}
+.olas{position:absolute;inset:0;background:radial-gradient(40px 10px at 20% 30%,rgba(255,255,255,.4),transparent),radial-gradient(60px 12px at 70% 70%,rgba(255,255,255,.35),transparent),radial-gradient(50px 10px at 45% 50%,rgba(255,255,255,.3),transparent)}
+.pato{position:absolute;left:var(--x);top:calc(30px + (var(--i,0) * 1px));width:100px;height:96px;padding:0;border:0;background:none;cursor:pointer;animation:nada-pato var(--v) ease-in-out var(--d) infinite alternate}
+.pato:nth-child(odd){top:90px}
+.cuerpo-pato svg{width:96px;height:76px;filter:drop-shadow(2px 4px 0 rgba(0,0,0,.2))}
+.pato b{position:absolute;left:14px;top:46px;min-width:56px;padding:0 6px;border:2.5px solid var(--tinta);border-radius:8px;background:var(--papel);font-family:var(--fuerte);font-weight:900;font-size:20px;color:var(--tinta)}
+.pato.al-agua{opacity:.15;pointer-events:none}
+@keyframes nada-pato{from{transform:translateX(-18px) rotate(-3deg)}to{transform:translateX(18px) rotate(3deg)}}
+@media (prefers-reduced-motion:reduce){.pato{animation:none}}
+@media (max-width:640px){.pato{width:76px}.cuerpo-pato svg{width:74px;height:60px}.pato b{font-size:16px;left:8px;top:36px;min-width:44px}.estanque{height:180px}}
+
+/* ---------- las colchonetas ---------- */
+.caseta-colchonetas{position:relative;padding-top:110px;overflow-x:auto;overflow-y:hidden}
+.fila-colchonetas{display:flex;align-items:flex-start;gap:0;min-width:max-content;padding:0 8px 10px}
+.colchoneta{display:flex;flex-direction:column;align-items:center;gap:6px;width:clamp(84px,14vw,130px)}
+.cartel-colchoneta{min-height:52px;display:flex;align-items:center}
+.cartel-colchoneta .campo-num{width:6.2ch;font-size:22px}
+.num-colchoneta{padding:4px 10px;border:var(--borde);border-radius:8px;background:#fff27a;font-family:var(--fuerte);font-weight:900;font-size:22px;white-space:nowrap}
+.cama{width:100%;height:28px;border:var(--borde);border-radius:50% / 40%;background:repeating-linear-gradient(90deg,#1b1e3a 0 4px,#2f5bd3 4px 18px);box-shadow:0 10px 0 -4px #8d97a8,0 12px 0 -2px var(--tinta);transform-origin:50% 100%}
+.colchoneta.salida .cama{background:repeating-linear-gradient(90deg,#1b1e3a 0 4px,#e8417a 4px 18px)}
+.arco-salto{position:relative;align-self:flex-start;margin-top:-34px;width:clamp(36px,7vw,70px);display:flex;justify-content:center}
+.arco-salto>b,.signo-salto{display:flex;align-items:center;gap:2px;padding:2px 8px;border:2.5px solid var(--tinta);border-radius:20px;background:var(--papel);font-family:var(--fuerte);font-weight:900;font-size:16px;white-space:nowrap;z-index:2}
+.signo-salto .campo-num{width:5.2ch;font-size:18px;min-height:36px}
+.arco-salto::before{content:"";position:absolute;left:-30px;right:-30px;top:16px;height:40px;border:3px dashed rgba(255,253,246,.8);border-bottom:0;border-radius:60px 60px 0 0}
+.saltarin{position:absolute;left:0;top:0;width:60px;height:76px;pointer-events:none;z-index:3}
+.saltarin svg{width:100%;height:100%}
+
+/* ---------- pares y nones ---------- */
+.caseta-pares{display:flex;flex-direction:column;align-items:center;gap:16px}
+.juez-pares .cartel-quiere{display:inline-block;padding:6px 22px;border:var(--borde);border-radius:10px;font-family:var(--fuerte);font-weight:900;font-size:30px;rotate:-3deg;box-shadow:var(--sombra-baja)}
+.cartel-quiere.par{background:#5ec3ff}.cartel-quiere.impar{background:#ff9fbf}
+.mesa-pares,.fila-bascula{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.mano-carta,.hueco-cifra{display:grid;place-items:center;width:clamp(76px,16vw,104px);height:clamp(96px,20vw,128px);border:3px dashed rgba(255,253,246,.7);border-radius:14px;background:rgba(255,253,246,.12)}
+.mano-carta.sobre,.hueco-cifra.sobre{border-color:var(--amarillo);background:rgba(255,197,49,.25)}
+.op-pares{font-family:var(--fuerte);font-weight:900;font-size:40px;color:var(--papel);text-shadow:0 3px 0 var(--tinta)}
+.resultado-pares{display:grid;place-items:center;min-width:110px;height:76px;padding:0 12px;border:var(--borde);border-radius:14px;background:var(--papel);font-family:var(--fuerte);font-weight:900;font-size:36px}
+.resultado-pares.bien{background:#d8f5c4}.resultado-pares.mal{background:#ffd1d1}
+.mazo-cartas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;min-height:110px;padding:12px;border:var(--borde);border-radius:16px;background:#1b8f4e url('tex/fieltro.webp');background-blend-mode:multiply;box-shadow:var(--sombra)}
+.mazo-cartas.sobre{box-shadow:0 0 0 4px var(--amarillo),var(--sombra)}
+.carta-feria{display:grid;place-items:center;width:clamp(72px,15vw,98px);height:clamp(92px,19vw,122px);border:var(--borde);border-radius:12px;background:var(--papel);cursor:grab;user-select:none;box-shadow:var(--sombra-baja);font-family:var(--fuerte);font-weight:900;font-size:clamp(26px,5vw,36px)}
+.carta-feria::before{content:"";position:absolute;inset:5px;border:2px solid rgba(232,65,122,.4);border-radius:8px;pointer-events:none}
+.carta-feria{position:relative}
+.carta-feria.elegida,.ficha-bascula.elegida{outline:4px solid var(--cobalto);outline-offset:3px}
+.carta-feria.levantado,.ficha-bascula.levantado{opacity:.35}
+.carta-feria.mira-ultima b{background:linear-gradient(90deg,transparent calc(100% - .62em),#fff27a calc(100% - .62em))}
+.cuenta-rapida{display:flex;flex-direction:column;align-items:center;padding:16px 30px;border:var(--borde);border-radius:14px;background:var(--papel);box-shadow:var(--sombra);font-family:var(--fuerte)}
+.cuenta-rapida b{font-weight:900;font-size:clamp(32px,6vw,52px);white-space:nowrap}
+.cuenta-rapida small{font-weight:800;font-size:22px;color:var(--gris)}
+.botones-pares{display:flex;gap:16px}
+.tecla.boton-par{--c:#5ec3ff;min-width:150px}.tecla.boton-impar{--c:#ff9fbf;min-width:150px}
+.marcador-rapido{display:flex;gap:8px}
+.marcador-rapido i{width:22px;height:22px;border:3px solid var(--papel);border-radius:50%}
+.marcador-rapido i.bien{background:#5cc56a}.marcador-rapido i.mal{background:var(--rojo)}
+
+/* ---------- la báscula ---------- */
+.caseta-bascula{display:flex;flex-direction:column;align-items:center;gap:14px}
+.bascula{display:flex;flex-direction:column;align-items:center;padding:14px 18px 16px;border:var(--borde);border-radius:26px 26px 12px 12px;background:#2f5bd3;box-shadow:var(--sombra)}
+.esfera-bascula{width:min(76vw,300px)}
+.esfera-bascula svg{width:100%;height:auto;display:block;overflow:visible}
+.lectura-bascula{min-width:110px;margin:4px 0 10px;padding:2px 14px;border:var(--borde);border-radius:8px;background:#1c2150;color:#d8f5c4;font-family:var(--fuerte);font-weight:900;font-size:28px;text-align:center}
+.lectura-bascula.bien{color:#9bd84a}.lectura-bascula.mal{color:#ff9fbf}
+.plato-bascula{padding:10px 14px;border:var(--borde);border-radius:50% / 22%;background:#c9cfdd}
+.numero-bascula{display:flex;gap:4px}
+.hueco-cifra{width:clamp(54px,11vw,70px);height:clamp(64px,13vw,80px);border-color:rgba(27,30,58,.45);background:rgba(255,253,246,.5)}
+.plato-bascula .op-pares{color:var(--tinta);text-shadow:none}
+.ficha-bascula{display:grid;place-items:center;width:clamp(50px,10vw,64px);height:clamp(58px,12vw,74px);border:var(--borde);border-radius:10px;background:#ffc531;cursor:grab;user-select:none;box-shadow:0 4px 0 var(--tinta);font-family:var(--fuerte);font-weight:900;font-size:clamp(28px,5.4vw,38px)}
+.zona-verde-texto{padding:6px 14px;border-radius:10px;background:rgba(255,253,246,.9);font-size:18px}
+.zona-verde-texto b{font-family:var(--fuerte);color:#1b8f4e}

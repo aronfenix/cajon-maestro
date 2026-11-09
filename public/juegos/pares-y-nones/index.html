@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pares y nones · Cajón maestro</title>
+<meta name="description" content="Sumas y restas pares o impares: colocar números para que el resultado sea par o impar, y decidirlo sin hacer la cuenta mirando la última cifra.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "mental",
+  "titulo": "Pares y nones",
+  "subtitulo": "El juego de toda la vida, con cartas: ¿saldrá par o impar? Hay un truco para saberlo sin hacer la cuenta.",
+  "portada": {
+    "rotulo": "¿PAR?",
+    "objetivo": "Pon dos cartas para que salga lo que pide el cartel. Y luego, el truco.",
+    "frase": "¿Pares o nones? Yo nones. Bueno, depende."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "boli",
+      "pose": "piensa",
+      "texto": "En esta caseta se apuesta a pares o nones. Yo siempre gano, porque hago trampa."
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "La trampa es legal: solo miro **la última cifra**. Descúbrela tú."
+    }
+  ],
+  "observa": "¿Qué sale al sumar dos impares? ¿Y al restarlos? ¿Pasa lo mismo con números enormes?",
+  "niveles": [
+    {
+      "modo": "pares",
+      "generar": {
+        "op": "+",
+        "quiere": "par",
+        "rango": [
+          11,
+          49
+        ]
+      }
+    },
+    {
+      "modo": "pares",
+      "generar": {
+        "op": "+",
+        "quiere": "impar",
+        "rango": [
+          11,
+          99
+        ]
+      }
+    },
+    {
+      "modo": "pares",
+      "generar": {
+        "op": "−",
+        "quiere": "impar",
+        "rango": [
+          11,
+          99
+        ],
+        "cartas": 5
+      }
+    },
+    {
+      "modo": "pares",
+      "rapido": true,
+      "generar": {
+        "ops": [
+          "+"
+        ],
+        "rango": [
+          10,
+          999
+        ]
+      }
+    },
+    {
+      "modo": "pares",
+      "generar": {
+        "op": "−",
+        "quiere": "par",
+        "rango": [
+          101,
+          999
+        ],
+        "cartas": 5
+      }
+    },
+    {
+      "modo": "pares",
+      "rapido": true,
+      "generar": {
+        "rango": [
+          1000,
+          9999
+        ]
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La báscula · Cajón maestro</title>
+<meta name="description" content="Colocar cifras en una suma o una resta para que el resultado quede entre dos números, con una báscula que marca la zona buena.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "mental",
+  "titulo": "La báscula",
+  "subtitulo": "La báscula de «adivina el peso» marca en verde la zona buena. Coloca las cifras para que la aguja caiga ahí.",
+  "portada": {
+    "rotulo": "BÁSCULA",
+    "objetivo": "Coloca las cifras para que la aguja caiga en la zona verde. Cada pesada te dice si te pasas.",
+    "frase": "Ni mucho ni poco. Justo."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "La báscula de la feria no pesa cosas: pesa cuentas."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Antes de colocar, piensa qué cifras dan un número grande y cuáles uno pequeño. Las de la izquierda mandan."
+    }
+  ],
+  "observa": "¿Qué cifras cambias primero cuando te pasas mucho? ¿Y cuando te pasas solo un poquito?",
+  "niveles": [
+    {
+      "modo": "bascula",
+      "generar": {
+        "forma": [
+          "d",
+          "+",
+          "d"
+        ],
+        "cifras": 4,
+        "ancho": 3,
+        "maxFraccion": 0.35
+      }
+    },
+    {
+      "modo": "bascula",
+      "generar": {
+        "forma": [
+          "dd",
+          "+",
+          "d"
+        ],
+        "ancho": 10
+      }
+    },
+    {
+      "modo": "bascula",
+      "generar": {
+        "forma": [
+          "dd",
+          "−",
+          "d"
+        ],
+        "ancho": 8
+      }
+    },
+    {
+      "modo": "bascula",
+      "generar": {
+        "forma": [
+          "dd",
+          "+",
+          "dd"
+        ],
+        "ancho": 14
+      }
+    },
+    {
+      "modo": "bascula",
+      "generar": {
+        "forma": [
+          "dd",
+          "−",
+          "dd"
+        ],
+        "ancho": 10,
+        "cifras": 5
+      }
+    },
+    {
+      "modo": "bascula",
+      "generar": {
+        "forma": [
+          "ddd",
+          "+",
+          "dd"
+        ],
+        "ancho": 40,
+        "maxFraccion": 0.2
+      }
+    },
+    {
+      "modo": "bascula",
+      "generar": {
+        "forma": [
+          "ddd",
+          "−",
+          "dd"
+        ],
+        "ancho": 30,
+        "cifras": 6,
+        "maxFraccion": 0.15
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El cambio · Cajón maestro</title>
+<meta name="description" content="Restas de cuatro cifras con llevadas: sacar fichas de la caja rompiendo una de la izquierda en diez cuando no llegan, y luego la cuenta escrita, también con ceros.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "caja",
+  "titulo": "El cambio",
+  "subtitulo": "La noria necesita fichas y hay que sacarlas de la caja. Cuando en un cajón no hay bastantes, se rompe una del cajón de la izquierda.",
+  "portada": {
+    "rotulo": "CAMBIO",
+    "objetivo": "Saca las fichas que piden. Si no llegan, rompe una de la izquierda en diez.",
+    "frase": "¿No hay bastantes? Se rompe una."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "La noria pide fichas. Hay que sacarlas de la caja sin que se descuadre."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Si un cajón se queda corto, coges un taco del de al lado y lo deshaces en diez tiras. Nada se pierde."
+    }
+  ],
+  "observa": "Cuando rompes un taco en 10 tiras, ¿tienes más fichas o las mismas? ¿Y qué pasa cuando el cajón de al lado está vacío?",
+  "niveles": [
+    {
+      "modo": "caja",
+      "generar": {
+        "op": "resta",
+        "llevadas": 0
+      }
+    },
+    {
+      "modo": "caja",
+      "generar": {
+        "op": "resta",
+        "llevadas": 1
+      }
+    },
+    {
+      "modo": "caja",
+      "generar": {
+        "op": "resta",
+        "llevadas": 2
+      }
+    },
+    {
+      "modo": "columnas",
+      "generar": {
+        "op": "resta",
+        "llevadas": 1
+      }
+    },
+    {
+      "modo": "columnas",
+      "generar": {
+        "op": "resta",
+        "llevadas": 2
+      }
+    },
+    {
+      "modo": "columnas",
+      "colocar": true,
+      "generar": {
+        "op": "resta",
+        "llevadas": 2,
+        "cifrasB": 3
+      }
+    },
+    {
+      "modo": "caja",
+      "generar": {
+        "op": "resta",
+        "llevadas": 2,
+        "ceros": true
+      }
+    },
+    {
+      "modo": "columnas",
+      "generar": {
+        "op": "resta",
+        "llevadas": 3
+      }
+    },
+    {
+      "modo": "columnas",
+      "generar": {
+        "op": "resta",
+        "llevadas": 2,
+        "ceros": true
+      }
+    }
+  ],
+  "personaje": "goma"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

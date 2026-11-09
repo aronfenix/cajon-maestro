@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La caja registradora · Cajón maestro</title>
+<meta name="description" content="Sumas de cuatro cifras con llevadas: primero juntando fichas de feria y cambiando 10 por 1, luego con la cuenta escrita y colocando bien los números.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "caja",
+  "titulo": "La caja registradora",
+  "subtitulo": "Hay que cuadrar la caja de la taquilla. Cuando un cajón llega a 10, se cambia por uno del cajón de al lado.",
+  "portada": {
+    "rotulo": "TAQUILLA",
+    "objetivo": "Junta las fichas, cambia 10 por 1 cuando haga falta y escribe el total.",
+    "frase": "¡Diez sueltas no caben en una cifra!"
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Alguien tiene que hacer la caja de la taquilla. Y ese alguien soy yo, que soy el que corrige."
+    },
+    {
+      "quien": "boli",
+      "pose": "pista",
+      "texto": "Regla de oro: ningún cajón puede tener 10. Si llega a 10, se cambian por uno del cajón de la izquierda."
+    }
+  ],
+  "observa": "¿Qué tiene que ver cambiar 10 tiras por un taco con **llevarse una** en la cuenta escrita?",
+  "niveles": [
+    {
+      "modo": "caja",
+      "generar": {
+        "op": "suma",
+        "llevadas": 0
+      }
+    },
+    {
+      "modo": "caja",
+      "generar": {
+        "op": "suma",
+        "llevadas": 1
+      }
+    },
+    {
+      "modo": "caja",
+      "generar": {
+        "op": "suma",
+        "llevadas": 2
+      }
+    },
+    {
+      "modo": "columnas",
+      "generar": {
+        "op": "suma",
+        "llevadas": 1
+      }
+    },
+    {
+      "modo": "columnas",
+      "generar": {
+        "op": "suma",
+        "llevadas": 2
+      }
+    },
+    {
+      "modo": "columnas",
+      "colocar": true,
+      "generar": {
+        "op": "suma",
+        "llevadas": 2,
+        "cifrasB": 3
+      }
+    },
+    {
+      "modo": "columnas",
+      "generar": {
+        "op": "suma",
+        "llevadas": 3
+      }
+    },
+    {
+      "modo": "columnas",
+      "colocar": true,
+      "generar": {
+        "op": "suma",
+        "llevadas": 3,
+        "cifrasB": 3
+      }
+    }
+  ],
+  "personaje": "boli"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La noria · Cajón maestro</title>
+<meta name="description" content="Cálculo mental por parejas: 6 − 4 y 600 − 400, 830 − 300 y 830 − 290, 600 + 130 + 7, sumas de millares y completar centenas.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "mental",
+  "titulo": "La noria",
+  "subtitulo": "Seis cabinas, seis cuentas de cabeza. Las cuentas vienen de dos en dos, y la primera ayuda a hacer la segunda.",
+  "portada": {
+    "rotulo": "NORIA",
+    "objetivo": "Haz cada cuenta de cabeza. La de antes te da una pista para la siguiente.",
+    "frase": "Sube, que no muerde."
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "celebra",
+      "texto": "¡La noria! Cada cabina lleva una cuenta pegada. Si la aciertas, la cabina sube."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "Van por parejas. Si sabes 830 − 300, la de 830 − 290 es casi regalada."
+    }
+  ],
+  "observa": "¿Por qué restar 290 es lo mismo que restar 300 y luego sumar 10?",
+  "niveles": [
+    {
+      "modo": "noria",
+      "generar": {
+        "tipos": [
+          "decenas"
+        ]
+      }
+    },
+    {
+      "modo": "noria",
+      "generar": {
+        "tipos": [
+          "millares",
+          "decenas"
+        ]
+      }
+    },
+    {
+      "modo": "noria",
+      "generar": {
+        "tipos": [
+          "redondos",
+          "decenas"
+        ]
+      }
+    },
+    {
+      "modo": "noria",
+      "generar": {
+        "tipos": [
+          "compuestas"
+        ]
+      }
+    },
+    {
+      "modo": "noria",
+      "generar": {
+        "tipos": [
+          "compensar"
+        ]
+      }
+    },
+    {
+      "modo": "noria",
+      "generar": {
+        "tipos": [
+          "compensar",
+          "compuestas",
+          "redondos"
+        ]
+      }
+    },
+    {
+      "modo": "noria",
+      "generar": {
+        "tipos": [
+          "mezcla"
+        ]
+      }
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

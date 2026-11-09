@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las colchonetas · Cajón maestro</title>
+<meta name="description" content="Saltos de 10 y de 100 hacia delante y hacia atrás desde números de cuatro cifras, cruzando centenas y millares, y averiguar de cuánto es cada salto.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "area": "matematicas",
+  "escena": "feria",
+  "volver": "../la-feria-de-otono/",
+  "motor": "mental",
+  "titulo": "Las colchonetas",
+  "subtitulo": "Una fila de camas elásticas. Fosforito salta de una a otra, y cada salto suma (o resta) siempre lo mismo… o casi.",
+  "portada": {
+    "rotulo": "¡BOING!",
+    "objetivo": "Escribe dónde cae Fosforito en cada colchoneta. Si te equivocas, se pega un tortazo.",
+    "frase": "¡Yo salto, tú cuentas!"
+  },
+  "historia": [
+    {
+      "nota": "LOS FERIANTES HAN IDO A CENAR. VUELVEN A LAS NUEVE. NO TOQUÉIS NADA.",
+      "firma": "La organización"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "celebra",
+      "texto": "¡Las colchonetas! Cada una tiene un número, y yo salto de una a la siguiente."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "asombro",
+      "texto": "Pero los carteles se han borrado. Si no sabes dónde caigo, no sé dónde poner los pies."
+    }
+  ],
+  "observa": "Al saltar de 10 en 10, ¿qué cifra cambia? ¿Qué pasa cuando esa cifra es un 9?",
+  "niveles": [
+    {
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          10,
+          10,
+          10
+        ]
+      }
+    },
+    {
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          100,
+          100,
+          100
+        ]
+      }
+    },
+    {
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "cruzar": true
+      }
+    },
+    {
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          10,
+          10,
+          10
+        ],
+        "atras": true
+      }
+    },
+    {
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          100,
+          100,
+          100,
+          100
+        ],
+        "cruzar": true
+      }
+    },
+    {
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          100,
+          100,
+          100
+        ],
+        "atras": true,
+        "cruzar": true
+      }
+    },
+    {
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          1000,
+          100,
+          10,
+          1
+        ],
+        "barajar": true
+      }
+    },
+    {
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          2000,
+          400,
+          10,
+          2
+        ],
+        "barajar": true,
+        "pregunta": "salto"
+      }
+    },
+    {
+      "modo": "colchonetas",
+      "generar": {
+        "saltos": [
+          3000,
+          500,
+          30,
+          8
+        ],
+        "barajar": true,
+        "pregunta": "mixto"
+      }
+    }
+  ],
+  "personaje": "fosforito"
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>
