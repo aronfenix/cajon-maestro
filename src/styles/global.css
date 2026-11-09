@@ -1002,10 +1002,7 @@ a.subrayado:hover {
   text-decoration-thickness: 2px;
 }
 
-/* ——— Los ayudantes, de pie sobre la raya de la cabecera ——— */
-.cabecera {
-  padding-bottom: 104px;
-}
+/* ——— Los ayudantes (ahora se asoman en el cajón) ——— */
 .ayudantes {
   position: absolute;
   right: 0;
@@ -1271,6 +1268,12 @@ a.subrayado:hover {
     .aventuras-lista > li,
     .zona-lista > li {
       animation: entra-cajon linear both;
+    }
+    /* (aparte, para que el minificador no lo meta en el atajo «animation», donde no vale) */
+    .temas .fila > li,
+    .fila > li,
+    .aventuras-lista > li,
+    .zona-lista > li {
       animation-timeline: view();
       animation-range: entry 0% entry 70%;
     }
@@ -1294,9 +1297,6 @@ a.subrayado:hover {
   }
   .aventura-titulo {
     font-size: 34px;
-  }
-  .cabecera {
-    padding-bottom: 92px;
   }
   .ayudante {
     width: 80px;
@@ -1383,5 +1383,400 @@ a.subrayado:hover {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+}
+
+/* ——— El cajón de la portada ——— */
+.cajon {
+  --alto: calc(1350 / 2400);
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 2400 / 1350;
+  margin: 36px 0 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 2px 0 #b9bdb5, 0 14px 30px -14px rgba(40, 30, 10, 0.45);
+}
+.cajon-capa,
+.cajon-capa img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+.cajon-capa img {
+  object-fit: cover;
+}
+.cajon-frente {
+  z-index: 20;
+}
+.objeto {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  z-index: var(--z);
+  rotate: var(--r);
+  display: block;
+  color: var(--toner);
+  text-decoration: none;
+  filter: drop-shadow(0 2px 1px rgba(50, 30, 5, 0.35)) drop-shadow(3px 9px 8px rgba(70, 45, 10, 0.28));
+  transition: translate 0.18s ease-out, scale 0.18s ease-out, filter 0.18s ease-out;
+}
+.objeto > img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+a.objeto:hover,
+a.objeto:focus-visible {
+  translate: 0 -2.2cqw;
+  scale: 1.05;
+  z-index: 19;
+  filter: drop-shadow(0 3px 2px rgba(50, 30, 5, 0.3)) drop-shadow(6px 22px 16px rgba(70, 45, 10, 0.32));
+}
+a.objeto:focus-visible {
+  outline: none;
+}
+a.objeto:focus-visible > img {
+  outline: 3px solid var(--boli-azul);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+.etiqueta-obj {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  translate: -50% -40%;
+  rotate: calc(-1 * var(--r));
+  white-space: nowrap;
+  background: #fffdf6;
+  border: 2px solid var(--toner);
+  padding: 3px 10px;
+  font-size: clamp(12px, 1.5cqw, 15px);
+  font-weight: 700;
+  box-shadow: 2px 2px 0 var(--toner);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+a.objeto:hover .etiqueta-obj,
+a.objeto:focus-visible .etiqueta-obj {
+  opacity: 1;
+}
+/* la pantalla de la tablet: las portadas van debajo del dibujo y se van turnando */
+.tablet-pantalla {
+  position: absolute;
+  left: 11.32%;
+  top: 15.03%;
+  width: 74.46%;
+  height: 70.38%;
+  background: #111;
+  overflow: hidden;
+}
+.tablet-pantalla img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: pasa-portada calc(var(--n) * 3.5s) infinite;
+  animation-delay: calc(var(--k) * 3.5s);
+}
+.tablet-pantalla img:first-child {
+  opacity: 1;
+}
+@keyframes pasa-portada {
+  0%, 22% { opacity: 1; }
+  27%, 100% { opacity: 0; }
+}
+/* los ayudantes se asoman por detrás del frente del cajón */
+.asoma {
+  --s: 12.5%;
+  position: absolute;
+  z-index: 15;
+  left: var(--x);
+  width: var(--s);
+  aspect-ratio: 1;
+  top: calc(78% - 0.78 * var(--s) / var(--alto));
+  background-image: var(--hoja);
+  background-size: 800% 100%;
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  animation: asomarse 1.28s steps(8, jump-none) var(--d) both;
+  pointer-events: none;
+}
+@keyframes asomarse {
+  from { background-position-x: 0%; }
+  to { background-position-x: 100%; }
+}
+.cajon:hover .asoma {
+  animation: asomarse 1.28s steps(8, jump-none) both;
+}
+.cajon-tarjeta {
+  position: absolute;
+  z-index: 21;
+  left: 36.7%;
+  top: 81.3%;
+  width: 26.6%;
+  height: 10.5%;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--rotulo);
+  font-weight: 800;
+  font-size: 3.3cqw;
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+/* al entrar, los objetos caen en el cajón uno detrás de otro */
+@media (prefers-reduced-motion: no-preference) {
+  .objeto {
+    animation: cae-al-cajon 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+    animation-delay: calc(var(--i) * 45ms + 0.1s);
+  }
+}
+@keyframes cae-al-cajon {
+  from {
+    opacity: 0;
+    translate: 0 -6cqw;
+    scale: 1.08;
+  }
+}
+@media (hover: none) {
+  .etiqueta-obj {
+    opacity: 1;
+    font-size: 12px;
+    padding: 2px 7px;
+  }
+  .deco {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .cajon {
+    --alto: calc(1600 / 1080);
+    aspect-ratio: 1080 / 1600;
+    margin: 24px -8px 8px;
+  }
+  .objeto {
+    left: var(--xm);
+    top: var(--ym);
+    width: var(--wm);
+    rotate: var(--rm);
+  }
+  .objeto.solo-ancho {
+    display: none;
+  }
+  .etiqueta-obj {
+    rotate: calc(-1 * var(--rm));
+  }
+  .asoma {
+    --s: 22%;
+    left: var(--xm);
+  }
+  .cajon-tarjeta {
+    left: 20.4%;
+    top: 80.75%;
+    width: 59%;
+    height: 9.25%;
+    font-size: 7.4cqw;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .asoma,
+  .cajon:hover .asoma {
+    animation: none;
+  }
+  .tablet-pantalla img {
+    animation: none;
+  }
+  .objeto {
+    transition: none;
+  }
+}
+
+/* ——— La caja de una aventura: cerrada en la portada y abierta en «Lo que hay dentro» ——— */
+.caja3d-marco {
+  margin: 0;
+  perspective: 1600px;
+  padding: 4% 6% 10% 2%;
+}
+.caja3d {
+  position: relative;
+  aspect-ratio: 1600 / 1000;
+  transform-style: preserve-3d;
+  transform: rotateX(32deg) rotateZ(-7deg);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.caja3d-marco:hover .caja3d {
+  transform: rotateX(26deg) rotateZ(-5deg) translateZ(30px);
+}
+.caja3d .cara {
+  position: absolute;
+  display: block;
+  backface-visibility: hidden;
+}
+.tapa3d {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px var(--toner);
+}
+/* el grosor de la caja: 140/1600 del ancho */
+.lomo3d-largo {
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: auto;
+  transform-origin: top;
+  transform: rotateX(-90deg);
+}
+.lomo3d-corto {
+  left: 100%;
+  top: 0;
+  height: 100%;
+  width: auto;
+  aspect-ratio: 140 / 1000;
+  object-fit: fill;
+  transform-origin: left;
+  transform: rotateY(90deg);
+}
+.caja3d::after {
+  content: '';
+  position: absolute;
+  inset: 6% -2% -8% 4%;
+  transform: translateZ(-90px);
+  background: rgba(40, 30, 10, 0.28);
+  filter: blur(18px);
+  border-radius: 10px;
+}
+.caja-abierta {
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 1600 / 1000;
+  margin: 8px 0 34px;
+  background: var(--interior) center / 100% 100% no-repeat;
+  border-radius: 6px;
+  box-shadow: 0 16px 30px -16px rgba(40, 30, 10, 0.5);
+}
+/* cada compartimento: el suelo (para las portadas) y su tira con el nombre */
+.compartimento {
+  --x0: calc(4.4% + var(--c) * 32%);
+  position: absolute;
+  left: var(--x0);
+  width: 27.6%;
+  top: calc(9.5% + var(--f) * 46.6%);
+  height: 37%;
+  display: block;
+  color: var(--toner);
+  text-decoration: none;
+}
+.compartimento-juegos {
+  position: absolute;
+  inset: 4% 6% 26% 6%;
+}
+.compartimento-juegos img {
+  position: absolute;
+  width: 62%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  left: calc(4% + var(--k) * (30% / max(var(--t) - 1, 1)));
+  top: calc(var(--k) * 9%);
+  rotate: calc((var(--k) - 1.5) * 5deg);
+  border: 2px solid var(--toner);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.25);
+  transition: translate 0.2s, rotate 0.2s;
+}
+.compartimento:hover .compartimento-juegos img {
+  translate: 0 -6%;
+  rotate: calc((var(--k) - 1.5) * 9deg);
+}
+.compartimento-nombre {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 2%;
+  height: 18%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-weight: 700;
+  font-size: clamp(11px, 1.6cqw, 17px);
+  line-height: 1.05;
+  padding: 0 6%;
+}
+.compartimento-cuenta {
+  position: absolute;
+  right: 4%;
+  top: 0;
+  background: var(--toner);
+  color: #fff;
+  font-size: clamp(10px, 1.2cqw, 13px);
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+.compartimento:hover .compartimento-nombre {
+  text-decoration: underline;
+}
+.compartimento:focus-visible {
+  outline: 3px solid var(--boli-azul);
+  outline-offset: 2px;
+}
+/* la tapa se levanta al hacer scroll; donde no se pueda, la caja ya está abierta */
+.tapa-suelta {
+  display: none;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .tapa-suelta {
+      display: block;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      border-radius: 6px;
+      box-shadow: 0 0 0 2px var(--toner), 0 20px 30px -12px rgba(0, 0, 0, 0.45);
+      pointer-events: none;
+      transform-origin: 50% 0;
+      animation: abre-tapa linear both;
+    }
+    .caja-abierta > .tapa-suelta {
+      animation-timeline: view();
+      animation-range: entry 70% cover 48%;
+    }
+  }
+}
+@keyframes abre-tapa {
+  0% { transform: perspective(1400px) rotateX(0deg) translateY(0); opacity: 1; }
+  60% { transform: perspective(1400px) rotateX(-70deg) translateY(-8%); opacity: 1; }
+  100% { transform: perspective(1400px) rotateX(-95deg) translateY(-30%); opacity: 0; }
+}
+@media (max-width: 700px) {
+  .compartimento-juegos img {
+    border-width: 1px;
+  }
+  .compartimento-nombre {
+    font-size: 10px;
+  }
+  .compartimento-cuenta {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .zonas-dentro .zona-lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

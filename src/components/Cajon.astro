@@ -1,0 +1,89 @@
+---
+// El cajón de la portada: fondo y frente ilustrados, con los objetos sueltos encima (cada uno lleva a una parte de la web).
+import { getImage } from 'astro:assets';
+import type { Material } from '../lib/catalogo';
+import { ruta } from '../lib/rutas';
+
+interface Props {
+  total: number;
+  pantalla: Material[]; // portadas que pasan por la tablet
+}
+const { total, pantalla } = Astro.props;
+const C = (f: string) => ruta(`/cajon/${f}`);
+
+// x, y, w en % del cajón (horizontal) y xm, ym, wm en el móvil; r = giro. Sin «xm», no sale en el móvil.
+type Obj = { n: string; href?: string; et?: string; x: number; y: number; w: number; r: number; xm?: number; ym?: number; wm?: number; rm?: number; z?: number };
+const OBJ: Obj[] = [
+  // decorado, debajo de todo
+  { n: 'posits', x: 1.5, y: 39, w: 13, r: -12, z: 1 },
+  { n: 'regla', x: 38, y: 43, w: 27, r: -7, xm: 30, ym: 51.5, wm: 62, rm: -8, z: 1 },
+  { n: 'clips', x: 63, y: 38, w: 8, r: 4, xm: 80, ym: 50, wm: 16, rm: 6, z: 2 },
+  { n: 'chinchetas', x: 89, y: 40, w: 8.5, r: -6, z: 2 },
+  { n: 'goma', x: 30.5, y: 40, w: 8, r: 10, z: 2 },
+  { n: 'tizas', x: 58, y: 70, w: 11, r: 8, z: 2 },
+  { n: 'sacapuntas', x: 92, y: 62, w: 6, r: -10, z: 2 },
+  // con enlace
+  { n: 'caja-feria', href: '/materiales/la-feria-de-otono/', et: 'Aventura: La Feria de Otoño', x: 4, y: 6, w: 31, r: -3, xm: 3, ym: 5, wm: 62, rm: -3, z: 5 },
+  { n: 'caja-limpieza', href: '/materiales/la-gran-limpieza/', et: 'Aventura: La Gran Limpieza del Cajón', x: 37, y: 9, w: 30, r: 2.5, xm: 39, ym: 25, wm: 58, rm: 3, z: 5 },
+  { n: 'tablet', href: '/?tipo=juego#todo', et: 'Todos los juegos', x: 70, y: 5, w: 23, r: 5, xm: 3, ym: 33, wm: 38, rm: -5, z: 5 },
+  { n: 'fichas', href: '/?tipo=ficha#todo', et: 'Fichas', x: 6, y: 47, w: 15, r: -7, xm: 4, ym: 56, wm: 30, rm: -6, z: 6 },
+  { n: 'comics', href: '/?tipo=comic#todo', et: 'Cómics', x: 22, y: 51, w: 21, r: 5, xm: 33, ym: 57, wm: 36, rm: 4, z: 6 },
+  { n: 'videos', href: '/?tipo=video#todo', et: 'Vídeos', x: 45, y: 53, w: 18, r: -4, xm: 66, ym: 57, wm: 31, rm: -5, z: 6 },
+  { n: 'globo', href: '/materiales/aplanatron/', et: '¡Aplanatrón! (Sociales)', x: 65, y: 47, w: 17, r: 6, z: 6 },
+  { n: 'boli-rojo', href: '/materiales/la-maldicion-del-boli-rojo/', et: 'La maldición del boli rojo', x: 75, y: 64, w: 20, r: -16, xm: 60, ym: 69, wm: 36, rm: -14, z: 7 },
+];
+const ASOMA = [
+  { q: 'goma', x: 13, xm: 8 },
+  { q: 'boli', x: 70, xm: 68 },
+  { q: 'fosforito', x: 83, xm: 84 },
+];
+const sprites = ruta('/juegos/motores/personajes/');
+const fotos = await Promise.all(
+  pantalla.filter((m) => m.portada).slice(0, 4).map(async (m) => (await getImage({ src: m.portada!, width: 480, format: 'webp' })).src),
+);
+const estilo = (o: Obj, i: number) =>
+  [
+    `--x:${o.x}%`, `--y:${o.y}%`, `--w:${o.w}%`, `--r:${o.r}deg`, `--z:${o.z ?? 3}`, `--i:${i}`,
+    o.xm !== undefined && `--xm:${o.xm}%`, o.ym !== undefined && `--ym:${o.ym}%`, o.wm !== undefined && `--wm:${o.wm}%`, o.rm !== undefined && `--rm:${o.rm}deg`,
+  ].filter(Boolean).join(';');
+const img = (n: string) => `<img src="${C(`obj-${n}-360.webp`)}" srcset="${C(`obj-${n}-360.webp`)} 360w, ${C(`obj-${n}-720.webp`)} 720w" sizes="(max-width: 860px) 60vw, 300px" alt="" draggable="false" decoding="async">`;
+---
+
+<div class="cajon" aria-label="El cajón" role="group">
+  <picture class="cajon-capa">
+    <source media="(max-width: 700px)" srcset={`${C('cajon-v-fondo-720.webp')} 720w, ${C('cajon-v-fondo-1080.webp')} 1080w`} sizes="100vw" />
+    <img src={C('cajon-h-fondo-1100.webp')} srcset={`${C('cajon-h-fondo-1100.webp')} 1100w, ${C('cajon-h-fondo-1920.webp')} 1920w`} sizes="(max-width: 1240px) 92vw, 980px" alt="" />
+  </picture>
+
+  {
+    OBJ.map((o, i) =>
+      o.href ? (
+        <a class={`objeto obj-${o.n}${o.xm === undefined ? ' solo-ancho' : ''}`} href={ruta(o.href)} style={estilo(o, i)}>
+          {o.n === 'tablet' && (
+            <span class="tablet-pantalla" aria-hidden="true">
+              {fotos.map((f, k) => <img src={f} alt="" style={`--k:${k};--n:${fotos.length}`} />)}
+            </span>
+          )}
+          <Fragment set:html={img(o.n)} />
+          <span class="etiqueta-obj">{o.et}</span>
+        </a>
+      ) : (
+        <span class={`objeto deco obj-${o.n}${o.xm === undefined ? ' solo-ancho' : ''}`} style={estilo(o, i)} aria-hidden="true">
+          <Fragment set:html={img(o.n)} />
+        </span>
+      ),
+    )
+  }
+
+  {
+    ASOMA.map((a, i) => (
+      <span class="asoma" style={`--x:${a.x}%;--xm:${a.xm}%;--hoja:url('${sprites}${a.q}-asomarse.webp');--d:${0.5 + i * 0.45}s`} aria-hidden="true" />
+    ))
+  }
+
+  <picture class="cajon-capa cajon-frente">
+    <source media="(max-width: 700px)" srcset={`${C('cajon-v-frente-720.webp')} 720w, ${C('cajon-v-frente-1080.webp')} 1080w`} sizes="100vw" />
+    <img src={C('cajon-h-frente-1100.webp')} srcset={`${C('cajon-h-frente-1100.webp')} 1100w, ${C('cajon-h-frente-1920.webp')} 1920w`} sizes="(max-width: 1240px) 92vw, 980px" alt="" />
+  </picture>
+  <p class="cajon-tarjeta">{total} materiales</p>
+</div>

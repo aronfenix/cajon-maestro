@@ -3,17 +3,22 @@ import { Image } from 'astro:assets';
 import Archivador from '../layouts/Archivador.astro';
 import Catalogo from '../components/Catalogo.astro';
 import Miniatura from '../components/Miniatura.astro';
-import { grupos, aventuras, ultimos } from '../lib/catalogo';
+import Cajon from '../components/Cajon.astro';
+import { grupos, aventuras, ultimos, catalogo } from '../lib/catalogo';
 import { TIPOS } from '../data/areas';
 import { SITIO } from '../data/sitio';
 import { ruta } from '../lib/rutas';
+import { cajaDe } from '../lib/cajas';
 
 const todos = await grupos();
 const cajas = await aventuras();
 const nuevos = await ultimos(4);
+const { materiales } = await catalogo();
+const total = materiales.length;
+// por la tablet del cajón pasan los últimos juegos sueltos
+const pantalla = [...materiales].filter((m) => m.tipo === 'juego' && !m.aventura && !cajas.some((c) => c.mapa.id === m.id)).sort((a, b) => b.fecha.getTime() - a.fecha.getTime()).slice(0, 4);
+
 const fecha = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
-const quienes = ['goma', 'boli', 'fosforito'];
-const sprites = ruta('/juegos/motores/personajes/');
 ---
 
 <Archivador activo="todo">
@@ -23,14 +28,9 @@ const sprites = ruta('/juegos/motores/personajes/');
       <p>{SITIO.presentacion}</p>
       <p class="firma">{SITIO.firma}</p>
     </div>
-    <div class="ayudantes" aria-hidden="true">
-      {
-        quienes.map((q, i) => (
-          <span class={`ayudante ayudante-${q}`} style={`--reposo: url('${sprites}${q}-reposo.webp'); --saluda: url('${sprites}${q}-saludar.webp'); --retraso: ${-i * 1.1}s`} />
-        ))
-      }
-    </div>
   </header>
+
+  <Cajon total={total} pantalla={pantalla} />
 
   <section class="nuevo" aria-labelledby="nuevo-titulo">
     <h2 class="seccion-titulo" id="nuevo-titulo">Lo último que he metido</h2>
@@ -62,7 +62,11 @@ const sprites = ruta('/juegos/motores/personajes/');
               <a class="aventura" href={a.mapa.url} style={`--area: ${a.mapa.tema.area.color}`}>
                 <span class="caja caja-grande">
                   <span class="miniatura forma-juego tapa">
-                    {a.mapa.portada && <Image class="color" src={a.mapa.portada} alt="" widths={[480, 960]} sizes="(max-width: 860px) 92vw, 480px" />}
+                    {cajaDe(a.mapa.id) ? (
+                      <img class="color" src={cajaDe(a.mapa.id)!.tapa} alt="" loading="lazy" />
+                    ) : (
+                      a.mapa.portada && <Image class="color" src={a.mapa.portada} alt="" widths={[480, 960]} sizes="(max-width: 860px) 92vw, 480px" />
+                    )}
                     <span class="precinto">{a.juegos.length} juegos</span>
                     {Date.now() - a.mapa.fecha.getTime() < 21 * 864e5 && <span class="sello-nueva">Nueva</span>}
                   </span>
@@ -80,6 +84,6 @@ const sprites = ruta('/juegos/motores/personajes/');
     )
   }
 
-  <h2 class="seccion-titulo todo-titulo">Todo el cajón</h2>
+  <h2 class="seccion-titulo todo-titulo" id="todo">Todo el cajón</h2>
   <Catalogo grupos={todos} mostrarArea={true} vacio="Todavía no hay nada en el cajón." />
 </Archivador>

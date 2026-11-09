@@ -7,6 +7,7 @@ import { catalogo, relacionadosDe, aventuraDe, render, detalle, type Material } 
 import { TIPOS } from '../../data/areas';
 import { SITIO } from '../../data/sitio';
 import { ruta } from '../../lib/rutas';
+import { cajaDe } from '../../lib/cajas';
 
 export async function getStaticPaths() {
   const { materiales } = await catalogo();
@@ -19,6 +20,7 @@ const tieneCuerpo = m.entrada.body?.trim().length;
 const aventura = await aventuraDe(m);
 const relacionados = aventura ? [] : await relacionadosDe(m);
 const { materiales } = await catalogo();
+const caja = aventura ? cajaDe(m.id) : undefined;
 const madre = m.aventura ? materiales.find((x) => x.id === m.aventura) : undefined;
 const tipo = TIPOS[m.tipo];
 const det = detalle(m);
@@ -75,6 +77,15 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
       {m.pendiente && <p class="aviso-pendiente">Falta subir el archivo: todavía no hay nada que descargar.</p>}
     </div>
 
+    {caja ? (
+      <figure class="caja3d-marco" aria-label={`La caja de ${m.titulo}`}>
+        <div class="caja3d">
+          <img class="cara tapa3d" src={caja.tapa} alt={`Tapa de la caja de ${m.titulo}`} />
+          <img class="cara lomo3d-largo" src={caja.lomoLargo} alt="" />
+          <img class="cara lomo3d-corto" src={caja.lomoCorto} alt="" />
+        </div>
+      </figure>
+    ) : (
     <figure class="captura">
       {
         m.video ? (
@@ -88,6 +99,7 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
         )
       }
     </figure>
+    )}
   </div>
 
       {
@@ -95,8 +107,24 @@ const descargaVideo = m.video ? { href: m.video, texto: 'Descargar el vídeo (MP
           <section class="zonas-dentro" aria-labelledby="dentro" data-aventura>
             <h2 class="seccion-titulo" id="dentro">Lo que hay dentro</h2>
             <p class="progreso-tablet" data-progreso hidden />
+            {caja && (
+              <div class="caja-abierta" style={`--interior: url('${caja.interior}')`}>
+                {aventura.zonas.slice(0, 6).map((z, i) => (
+                  <a class="compartimento" href={`#zona-${i + 1}`} style={`--c:${i % 3};--f:${Math.floor(i / 3)}`}>
+                    <span class="compartimento-juegos" aria-hidden="true">
+                      {z.juegos.slice(0, 4).map((j, k) => j.portada && (
+                        <Image src={j.portada} alt="" widths={[200]} sizes="140px" style={`--k:${k};--t:${Math.min(z.juegos.length, 4)}`} />
+                      ))}
+                    </span>
+                    <span class="compartimento-nombre">{z.nombre}</span>
+                    <span class="compartimento-cuenta">{z.juegos.length === 1 ? '1 juego' : `${z.juegos.length} juegos`}</span>
+                  </a>
+                ))}
+                <img class="tapa-suelta" src={caja.tapa} alt="" aria-hidden="true" />
+              </div>
+            )}
             {aventura.zonas.map((z, i) => (
-              <div class="zona" style={`--zona: ${z.color ?? '#000'}`}>
+              <div class="zona" id={`zona-${i + 1}`} style={`--zona: ${z.color ?? '#000'}`}>
                 <h3 class="zona-titulo"><span class="zona-num">{i + 1}</span>{z.nombre}</h3>
                 <ul class="zona-lista">
                   {z.juegos.map((j) => (
