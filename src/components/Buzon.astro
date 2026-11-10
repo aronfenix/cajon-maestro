@@ -11,7 +11,7 @@ const {
   titulo = '¿Algo no funciona?',
   texto = 'Escríbeme aquí si algo falla o está mal. No hace falta correo: solo tu nombre y lo que pasa.',
 } = Astro.props;
-const asunto = material ? `Cajón maestro · ${material}` : 'Cajón maestro · mensaje';
+const asunto = material ? `La cajonera · ${material}` : 'La cajonera · mensaje';
 const id = material ? 'buzon-material' : 'buzon';
 ---
 
@@ -23,7 +23,7 @@ const id = material ? 'buzon-material' : 'buzon';
       <form class="buzon-form" data-buzon novalidate>
         <input type="hidden" name="access_key" value={SITIO.buzon} />
         <input type="hidden" name="subject" value={asunto} />
-        <input type="hidden" name="from_name" value="Cajón maestro" />
+        <input type="hidden" name="from_name" value="La cajonera" />
         {material && <input type="hidden" name="material" value={material} />}
         <input type="checkbox" name="botcheck" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <div class="campo">

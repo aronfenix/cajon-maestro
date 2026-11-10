@@ -5,7 +5,7 @@ PLANTILLA = '''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{titulo} · Cajón maestro</title>
+<title>{titulo} · La cajonera</title>
 <meta name="description" content="{desc}">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../motores/base.css">

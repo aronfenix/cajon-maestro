@@ -135,7 +135,7 @@ const SELLOS = ['Otra vez será', 'Por poco', '¡Muy bien!', '¡Perfecto!'];
 
 /* ---------- arranque ---------- */
 export async function arrancar(config, motor) {
-  document.title = `${config.titulo} · Cajón maestro`;
+  document.title = `${config.titulo} · La cajonera`;
   document.body.classList.add('juego');
   if (config.area) document.body.dataset.area = config.area;
   const pizarraInicial = new URLSearchParams(location.search).has('pizarra');

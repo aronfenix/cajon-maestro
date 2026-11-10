@@ -20,7 +20,7 @@ import { actua } from './sprites.js';
 export async function montaMapa(c) {
   const X = { sello: 'ORDENADO', hechos: 'ordenados', album: 'Pegatinas', albumTitulo: 'Mis pegatinas', albumTexto: 'Cada juego terminado, una pegatina.', icono: 'el-examen-del-viernes', listo: 'Todo ordenado. Ya puedes hacer el examen.', boton: 'Hacer el examen', repetir: 'Repetir el examen', ...(c.textos || {}) };
   const feria = c.estilo === 'feria';
-  document.title = `${c.titulo} · Cajón maestro`;
+  document.title = `${c.titulo} · La cajonera`;
   document.body.classList.add('juego', 'mapa-cajon');
   const escena = montaEscena(c.escena || 'cajon');
   const visto = lee('cajon-mapa:' + location.pathname);
@@ -62,7 +62,7 @@ export async function montaMapa(c) {
   const botonAlbum = el('button', { type: 'button', class: 'tecla boton-album', onclick: () => (feria ? estanteria() : album()) }, el('span', { class: 'icono-album' + (PREMIOS[X.icono] ? ' con-premio' : ''), html: PREMIOS[X.icono] ? imgPremio(X.icono) : DIBUJOS[X.icono] }), el('span', {}, X.album + ' ', contador));
   document.body.prepend(
     el('header', { class: 'barra-juego' },
-      el('a', { class: 'volver con-texto', href: c.volver || '../../', title: 'Volver al Cajón maestro' }, svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 }), el('span', { text: 'Cajón maestro' })),
+      el('a', { class: 'volver con-texto', href: c.volver || '../../', title: 'Volver a La cajonera' }, svg('0 0 24 24', '<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>', { width: 22, height: 22 }), el('span', { text: 'La cajonera' })),
       el('h1', { text: c.titulo }),
       el('div', { class: 'estado' }, regla, el('span', { class: 'texto-progreso', text: `${ordenados} de ${comp.length} ${X.hechos}` })),
       el('div', { class: 'controles' }, botonAlbum, el('button', { type: 'button', class: 'tecla', text: 'Historia', onclick: () => vineta(c.historia, dibuja, POSES, c.titulo) }))),

@@ -481,7 +481,7 @@ open(f'{BASE}/la-feria-de-otono/index.html', 'w').write(f'''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>La Feria de Otoño · Cajón maestro</title>
+<title>La Feria de Otoño · La cajonera</title>
 <meta name="description" content="Aventura de repaso de matemáticas: la feria del cole se ha quedado apagada y cada caseta se enciende resolviendo números, cuentas, medidas, ángulos y tablas.">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../motores/base.css">

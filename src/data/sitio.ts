@@ -1,6 +1,6 @@
 // Datos generales de la web. Lo que cambies aquí sale en todas las páginas.
 export const SITIO = {
-  nombre: 'Cajón maestro',
+  nombre: 'La cajonera',
   autor: 'Álvaro',
   firma: 'Álvaro, maestro en Madrid',
   presentacion:

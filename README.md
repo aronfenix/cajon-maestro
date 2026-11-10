@@ -1,4 +1,4 @@
-# Cajón maestro
+# La cajonera
 
 Web de materiales de Primaria de Álvaro: juegos, vídeos, cómics y fichas. Es una web estática hecha con [Astro](https://astro.build); no tiene cuentas, base de datos ni cookies.
 
