@@ -38,7 +38,7 @@ Si a una ficha le falta el archivo, la web lo avisa en rojo («Falta subir el ar
 
 ## Publicación
 
-**Ahora: GitHub Pages.** Cada cambio en `main` (también los que guardas desde Pages CMS) lanza `.github/workflows/publicar.yml`, que construye la web y la publica en https://aronfenix.github.io/cajon-maestro/. Tarda uno o dos minutos; el progreso se ve en la pestaña *Actions* del repositorio. Si algo falla, ahí sale qué material tiene el problema.
+**Ahora: GitHub Pages.** Cada cambio en `main` (también los que guardas desde Pages CMS) lanza `.github/workflows/publicar.yml`, que construye la web y la publica en https://aronfenix.github.io/la-cajonera/. Tarda uno o dos minutos; el progreso se ve en la pestaña *Actions* del repositorio. Si algo falla, ahí sale qué material tiene el problema.
 
 **Más adelante: dominio propio en Cloudflare.**
 

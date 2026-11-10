@@ -1,7 +1,7 @@
 // Publicación en Cloudflare Workers (solo archivos estáticos).
 // Cloudflare lee este archivo cuando conectas el repositorio en Workers & Pages.
 {
-  "name": "cajon-maestro",
+  "name": "la-cajonera",
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./dist",

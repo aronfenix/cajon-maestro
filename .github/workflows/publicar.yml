@@ -31,7 +31,7 @@ jobs:
       - run: npm run build
         env:
           SITE_URL: https://aronfenix.github.io
-          BASE_PATH: /cajon-maestro
+          BASE_PATH: /la-cajonera
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

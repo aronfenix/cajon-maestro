@@ -16,7 +16,7 @@ interface Props {
 }
 
 const { titulo, descripcion = SITIO.descripcion, activo, imagen } = Astro.props;
-const tituloPagina = titulo ? `${titulo} · ${SITIO.nombre}` : SITIO.nombre;
+const tituloPagina = titulo ? `${titulo} · ${SITIO.nombre}` : `${SITIO.nombre} · materiales de Primaria`;
 const pestanas = [TODO, ...AREAS].map((a) => ({
   ...a,
   href: ruta(a.id === 'todo' ? '/' : `/${a.id}/`),

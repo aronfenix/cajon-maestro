@@ -1,5 +1,5 @@
 // Prefija las rutas internas con la base de la web.
-// En GitHub Pages la web vive en /cajon-maestro/; con dominio propio, en /.
+// En GitHub Pages la web vive en /la-cajonera/; con dominio propio, en /.
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export function ruta(p: string): string {
