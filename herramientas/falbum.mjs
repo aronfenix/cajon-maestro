@@ -1,0 +1,12 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome' });
+const ctx = await b.newContext({ viewport: { width: 1280, height: 800 } });
+const p = await ctx.newPage(); const err = []; p.on('pageerror', (e) => err.push(e.message));
+await p.goto('http://localhost:8765/juegos/la-gran-limpieza/');
+await p.evaluate(() => { for (const s of ['aduana-del-estuche','la-goma-elastica','quien-es-quien','la-merienda','recortables']) localStorage.setItem(`cajon-hecho:/juegos/${s}/`, '2026-11-10'); });
+await p.reload(); await p.waitForTimeout(2500);
+await p.screenshot({ path: '/tmp/lp-mapa.png' });
+await p.evaluate(() => document.querySelectorAll('.vineta-capa').forEach((c) => c.remove())); await p.click('.boton-album'); await p.waitForTimeout(2200);
+await p.screenshot({ path: '/tmp/lp-album.png' });
+console.log(err);
+await b.close();

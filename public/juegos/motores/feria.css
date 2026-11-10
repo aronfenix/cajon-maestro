@@ -476,3 +476,15 @@ button.pieza-angulo:hover{transform:translateY(-3px)}
 .arte-caseta-img .pz2{right:2%;bottom:6%;rotate:7deg}
 .arte-caseta-img .pz3{right:4%;top:4%;width:20%;rotate:-5deg}
 @media (max-width:820px){.portada-arte .arte-caseta-img{aspect-ratio:16/11;width:min(100%,460px)}.arte-caseta-img .pieza{width:21%}}
+/* La Gran Limpieza: escena ilustrada de cada juego en la portada, con dos piezas sueltas */
+.portada-arte .arte-caseta-img.arte-escena-img{aspect-ratio:1/1;width:min(100%,600px)}
+.arte-escena-img .caseta-img{top:50%;max-width:86%;max-height:90%;height:auto;translate:-50% -50%;filter:drop-shadow(8px 12px 0 rgba(10,30,20,.32))}
+.arte-escena-img .pieza{width:25%;filter:drop-shadow(4px 7px 0 rgba(10,30,20,.32))}
+.arte-escena-img .pz1{left:-2%;top:2%;rotate:-9deg}
+.arte-escena-img .pz2{right:-3%;bottom:0;rotate:8deg}
+@media (max-width:820px){.portada-arte .arte-caseta-img.arte-escena-img{aspect-ratio:4/3;width:min(100%,420px)}.arte-escena-img .pieza{width:22%}}
+/* pegatinas ilustradas del álbum y sus huecos en silueta */
+.pegatina-album.pegatina-img img,.hueco-pegatina.con-silueta img{width:100%;height:100%;display:block;object-fit:contain}
+.pegatina-album.pegatina-img{rotate:-4deg}
+.hueco-pegatina.con-silueta{border:0;opacity:.55}
+.premio-pegatina .pegatina-album.pegatina-img{width:120px;height:120px;margin:-14px -4px -10px}

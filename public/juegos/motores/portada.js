@@ -144,8 +144,12 @@ const ARTE = {
 const FER = new URL('./feria/', import.meta.url).href;
 const CASETAS = { 'la-tombola': ['tombola', 2], 'el-candado-de-la-taquilla': ['taquilla', 3], 'la-caja-registradora': ['caja', 2], 'la-noria': ['noria', 2], 'el-gran-concurso': ['el-gran-concurso', 3] };
 for (const s of ['el-cambio', 'los-patitos', 'las-colchonetas', 'pares-y-nones', 'la-bascula', 'el-martillo-de-fuerza', 'la-tirolina', 'la-caseta-de-los-records', 'tijeras-y-abanicos', 'las-banderolas', 'la-ruleta', 'los-farolillos', 'las-manzanas-de-caramelo', 'las-tiras-de-tickets', 'las-tres-cartas', 'el-puesto-de-chapas', 'los-encargos']) CASETAS[s] = [s, 2];
-const casetaIlustrada = ([n, piezas], titulo) => `<div class="arte arte-caseta-img" aria-hidden="true"><img class="caseta-img" src="${FER}caseta-${n}.webp" alt="" draggable="false">
-    <div class="abertura">${Array.from({ length: piezas }, (_, i) => `<img class="pieza pz${i + 1}" src="${FER}pieza-${n}-${i + 1}.webp" alt="" draggable="false">`).join('')}</div></div>`;
+const LIM = new URL('./limpieza/', import.meta.url).href;
+const ESCENAS = new Set(['aduana-del-estuche', 'la-goma-elastica', 'quien-es-quien', 'el-puzle-del-rincon', 'la-chincheta-que-gira', 'recortables', 'la-mudanza', 'gomas-y-chinchetas', 'pedidos-del-almacen', 'la-maquina-de-ceros', 'las-baldosas-del-recreo', 'la-merienda', 'el-examen-del-viernes']);
+const casetaIlustrada = ([n, piezas], extra = '', base = FER, img = `caseta-${n}`) => `<div class="arte arte-caseta-img ${extra}" aria-hidden="true"><img class="caseta-img" src="${base}${img}.webp" alt="" draggable="false">
+    <div class="abertura">${Array.from({ length: piezas }, (_, i) => `<img class="pieza pz${i + 1}" src="${base}pieza-${n}-${i + 1}.webp" alt="" draggable="false">`).join('')}</div></div>`;
+// La Gran Limpieza: la escena ilustrada de cada juego sobre la mesa, con sus dos piezas sueltas
+const escenaIlustrada = (n) => casetaIlustrada([n, 2], 'arte-escena-img', LIM, `escena-${n}`);
 
 export function portada(config, { dibuja, POSES, quien, progreso = 0, record = null, sonar = () => {}, frase: fraseHola = '¿Jugamos?', volver = '../../' }) {
   return new Promise((listo) => {
@@ -172,8 +176,9 @@ export function portada(config, { dibuja, POSES, quien, progreso = 0, record = n
     const texto = h('div', 'portada-texto'); texto.append(etiqueta, objetivo, jugar, estado);
     const AREA = { matematicas: 'MATES', lengua: 'LENGUA', naturales: 'NATURALES', sociales: 'SOCIALES' };
     const rotulo = config.portada?.rotulo ?? (tipo === 'cajon' ? AREA[config.area] || 'CAJÓN' : '');
-    const caseta = config.escena === 'feria' && CASETAS[location.pathname.split('/').filter(Boolean).pop()];
-    const arte = h('div', 'portada-arte', caseta ? casetaIlustrada(caseta) : (ARTE[tipo] || ARTE.cajon)(rotulo));
+    const slug = location.pathname.split('/').filter(Boolean).pop();
+    const caseta = config.escena === 'feria' && CASETAS[slug];
+    const arte = h('div', 'portada-arte', caseta ? casetaIlustrada(caseta) : ESCENAS.has(slug) ? escenaIlustrada(slug) : (ARTE[tipo] || ARTE.cajon)(rotulo));
     const fig = h('div', 'portada-figura figura ' + quien, dibuja(quien, 'saluda', { veces: 2, luego: 'reposo' }));
     const frase = h('div', 'portada-bocadillo bocadillo');
     frase.textContent = config.portada?.frase || fraseHola;

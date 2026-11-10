@@ -14,7 +14,7 @@ const guarda = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
 const hecho = (slug) => !!lee('cajon-hecho:' + ruta(slug));
 const lento = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-import { DIBUJOS, PREMIOS, imgPremio, pegatina } from './pegatinas.js';
+import { DIBUJOS, PREMIOS, LIMPIEZA, imgPremio, imgPegatina, pegatina } from './pegatinas.js';
 import { actua } from './sprites.js';
 
 export async function montaMapa(c) {
@@ -74,7 +74,7 @@ export async function montaMapa(c) {
     const capa = el('div', { class: 'vineta-capa album-capa', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Álbum de pegatinas' });
     const hoja = el('div', { class: 'album' },
       el('div', { class: 'cab-album' }, el('h2', { text: X.albumTitulo }), el('p', { text: `${conseguidas.length} de ${todos.length}. ${X.albumTexto}` })),
-      el('ul', { class: 'hoja-album' }, todos.map((j) => el('li', { class: hecho(j.slug) ? 'tiene' : 'falta' }, hecho(j.slug) ? pegatina(j.slug) : el('span', { class: 'hueco-pegatina', text: '?' }), el('small', { text: j.titulo })))),
+      el('ul', { class: 'hoja-album' }, todos.map((j) => el('li', { class: hecho(j.slug) ? 'tiene' : 'falta' }, hecho(j.slug) ? pegatina(j.slug) : LIMPIEZA.has(j.slug) ? el('span', { class: 'hueco-pegatina con-silueta', html: imgPegatina(j.slug, true) }) : el('span', { class: 'hueco-pegatina', text: '?' }), el('small', { text: j.titulo })))),
       el('button', { type: 'button', class: 'tecla primaria grande', text: 'Cerrar', onclick: () => { capa.remove(); suena('quita'); } }));
     capa.append(hoja); document.body.append(capa);
     capa.addEventListener('click', (e) => { if (e.target === capa) capa.remove(); });

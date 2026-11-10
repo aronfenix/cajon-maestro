@@ -52,7 +52,12 @@ export const PREMIOS = {
   'el-puesto-de-chapas': 'la tortuga de la antena', 'los-encargos': 'el perro de las gafas de aviador', 'el-gran-concurso': 'el león de la capa',
 };
 export const imgPremio = (slug, silueta = false) => `<img src="${RUTA}${slug}${silueta ? '-silueta' : ''}.webp" alt="${silueta ? '' : PREMIOS[slug]}" width="320" height="320" draggable="false" decoding="async">`;
+// La Gran Limpieza del Cajón: pegatinas ilustradas (con su silueta gris para los huecos del álbum)
+const LIM = new URL('./limpieza/', import.meta.url).href;
+export const LIMPIEZA = new Set(['aduana-del-estuche', 'la-goma-elastica', 'quien-es-quien', 'el-puzle-del-rincon', 'la-chincheta-que-gira', 'recortables', 'la-mudanza', 'gomas-y-chinchetas', 'pedidos-del-almacen', 'la-maquina-de-ceros', 'las-baldosas-del-recreo', 'la-merienda', 'el-examen-del-viernes']);
+export const imgPegatina = (slug, silueta = false) => `<img src="${LIM}premio-${slug}${silueta ? '-silueta' : ''}.webp" alt="" width="320" height="320" draggable="false" decoding="async">`;
 export const pegatina = (slug, cls = '') => PREMIOS[slug]
   ? el('span', { class: 'pegatina-album premio-feria ' + cls, html: imgPremio(slug) })
+  : LIMPIEZA.has(slug) ? el('span', { class: 'pegatina-album pegatina-img ' + cls, html: imgPegatina(slug) })
   : el('span', { class: 'pegatina-album ' + cls, html: DIBUJOS[slug] ?? P('', '#ffc531') });
 
