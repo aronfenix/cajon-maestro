@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/paginas-comics.mjs && astro build",
+    "build": "node scripts/paginas-comics.mjs && astro build && node scripts/versiona-juegos.mjs",
     "preview": "astro preview",
     "deploy": "npm run build && wrangler deploy",
     "comics": "node scripts/paginas-comics.mjs"

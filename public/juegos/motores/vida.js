@@ -279,7 +279,7 @@ export function generar(spec) {
 }
 export function ronda(d, ctx) {
   const m = { portero, averia, cuenta, zoom, cadena, ruta, salida, musculo, articulacion, divide }[d.modo];
-  if (!m) throw new Error(`El motor vida no tiene el modo «${d.modo}».`);
+  if (!m) throw new Error(`no encuentro el modo «${d.modo}». Si el juego se acaba de actualizar, recarga la página.`);
   return m(d, ctx);
 }
 
