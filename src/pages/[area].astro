@@ -1,8 +1,10 @@
 ---
 import Archivador from '../layouts/Archivador.astro';
 import Catalogo from '../components/Catalogo.astro';
-import { grupos } from '../lib/catalogo';
-import { AREAS, type Area } from '../data/areas';
+import Cajonera from '../components/Cajonera.astro';
+import CajasAventura from '../components/CajasAventura.astro';
+import { grupos, aventuras } from '../lib/catalogo';
+import { AREAS, TIPOS, type Area, type Tipo } from '../data/areas';
 import { SITIO } from '../data/sitio';
 import { ruta } from '../lib/rutas';
 
@@ -13,12 +15,34 @@ export function getStaticPaths() {
 const { area } = Astro.props as { area: Area };
 const lista = await grupos(area.id);
 const vacio = area.vacio ?? `Todavía no hay nada de ${area.nombre}.`;
+const cajas = (await aventuras()).filter((a) => a.mapa.tema.area.id === area.id);
+const todos = lista.flatMap((g) => g.materiales);
+// cuántos hay de cada tipo, contando cada aventura como una caja y no como sus juegos
+const dentro = new Set(cajas.flatMap((c) => c.juegos.map((j) => j.id)));
+const cuenta = new Map<Tipo, number>();
+for (const m of todos) if (!dentro.has(m.id) && !cajas.some((c) => c.mapa.id === m.id)) cuenta.set(m.tipo, (cuenta.get(m.tipo) ?? 0) + 1);
+const partes = [
+  ...(cajas.length ? [`${cajas.length} ${cajas.length === 1 ? 'aventura' : 'aventuras'} con ${dentro.size} juegos`] : []),
+  ...[...cuenta].sort((a, b) => b[1] - a[1]).map(([t, n]) => `${n} ${(n === 1 ? TIPOS[t].nombre : TIPOS[t].plural).toLowerCase()}${t === 'juego' && cajas.length ? (n === 1 ? ' suelto' : ' sueltos') : ''}`),
+];
+const frase = partes.length > 1 ? partes.slice(0, -1).join(', ') + ' y ' + partes.at(-1) : partes[0];
 ---
 
 <Archivador activo={area.id} titulo={area.nombre} descripcion={`${area.nombre}: materiales de ${SITIO.nombre}.`}>
-  <header class="cabecera-area">
-    <h1 class="rotulo">{area.nombre}</h1>
-    <a class="volver" href={ruta('/')}>{SITIO.nombre}</a>
+  <header class="cabecera-area" style={`--area: ${area.color}`}>
+    <div class="cabecera-area-texto">
+      <p class="cabecera-area-miga"><a href={ruta('/')}>{SITIO.nombre}</a> · cajón de</p>
+      <h1 class="rotulo">{area.nombre}</h1>
+      {todos.length > 0 && <p class="cabecera-area-cuenta">Dentro hay {frase}.</p>}
+    </div>
+    <Cajonera area={area} />
   </header>
+
+  {cajas.length > 0 && (
+    <section class="aventuras aventuras-area" aria-label="Aventuras">
+      <CajasAventura cajas={cajas} />
+    </section>
+  )}
+
   <Catalogo grupos={lista} mostrarArea={false} vacio={vacio} />
 </Archivador>

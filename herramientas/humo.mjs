@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 const DIST = '/home/claude/cajon/dist', B = 'http://localhost:8791';
 try { execSync(`curl -sf -o /dev/null ${B}/`); } catch { execSync(`setsid nohup python3 -m http.server 8791 --directory ${DIST} >/tmp/srv-dist.log 2>&1 < /dev/null & sleep 1.2`, { shell: '/bin/bash' }); }
-const PAGINAS = ['', 'todo/', 'matematicas/', 'materiales/la-noria/', 'materiales/la-feria-de-otono/', 'materiales/la-gran-limpieza/', '404.html'];
+const PAGINAS = ['', 'todo/', 'lengua/', 'matematicas/', 'naturales/', 'sociales/', 'plastica/', 'valores/', 'otros-cursos/', 'materiales/la-noria/', 'materiales/la-feria-de-otono/', 'materiales/la-gran-limpieza/', '404.html'];
 const TAM = [['pc', 1280, 800, false], ['tab', 1024, 768, true], ['tabv', 768, 1024, true], ['mov', 390, 844, true]];
 const fallos = []; const mal = (m) => { fallos.push(m); console.log('  ✗ ' + m); };
 const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome' });

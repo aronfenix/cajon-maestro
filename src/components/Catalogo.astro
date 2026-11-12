@@ -133,7 +133,7 @@ const tiposPresentes = Object.entries(TIPOS).filter(([id]) =>
       }
       for (const t of temas) t.hidden = !t.querySelector('[data-material]:not([hidden])');
       for (const b of botones) b.setAttribute('aria-pressed', String(b.dataset.tipo === tipo));
-      cuenta.textContent = visibles === total || (!q && tipo === 'todo') ? `${total} materiales` : `Se ven ${visibles} de ${total}`;
+      cuenta.textContent = visibles === total || (!q && tipo === 'todo') ? total === 1 ? '1 material' : `${total} materiales` : `Se ven ${visibles} de ${total}`;
       vacio.hidden = visibles > 0;
       vacio.textContent = visibles > 0 ? '' : 'No hay nada con esa combinación. Prueba con otro tipo de material o borra la búsqueda.';
 

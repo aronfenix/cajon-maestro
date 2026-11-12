@@ -1,13 +1,12 @@
 ---
-import { Image } from 'astro:assets';
 import Archivador from '../layouts/Archivador.astro';
 import Miniatura from '../components/Miniatura.astro';
 import Cajon from '../components/Cajon.astro';
+import CajasAventura from '../components/CajasAventura.astro';
 import { aventuras, ultimos, catalogo } from '../lib/catalogo';
 import { TIPOS, AREAS } from '../data/areas';
 import { SITIO } from '../data/sitio';
 import { ruta } from '../lib/rutas';
-import { cajaDe } from '../lib/cajas';
 
 const cajas = await aventuras();
 const nuevos = await ultimos(4);
@@ -60,30 +59,7 @@ const fecha = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', month
       <section class="aventuras" aria-labelledby="aventuras-titulo">
         <h2 class="seccion-titulo" id="aventuras-titulo">Aventuras</h2>
         <p class="aventuras-intro">Cajas con un montón de juegos dentro y un mapa para recorrerlos. Cada juego se puede jugar suelto.</p>
-        <ul class="aventuras-lista">
-          {cajas.map((a) => (
-            <li>
-              <a class="aventura" href={a.mapa.url} style={`--area: ${a.mapa.tema.area.color}`}>
-                <span class="caja caja-grande">
-                  <span class="miniatura forma-juego tapa">
-                    {cajaDe(a.mapa.id) ? (
-                      <img class="color" src={cajaDe(a.mapa.id)!.tapa} alt="" loading="lazy" />
-                    ) : (
-                      a.mapa.portada && <Image class="color" src={a.mapa.portada} alt="" widths={[480, 960]} sizes="(max-width: 860px) 92vw, 480px" />
-                    )}
-                    <span class="precinto">{a.juegos.length} juegos</span>
-                    {Date.now() - a.mapa.fecha.getTime() < 21 * 864e5 && <span class="sello-nueva">Nueva</span>}
-                  </span>
-                </span>
-                <span class="aventura-texto">
-                  <span class="subrayado" style={`background: ${a.mapa.tema.area.color}`}>{a.mapa.tema.area.nombre}</span>
-                  <span class="aventura-titulo">{a.mapa.titulo}</span>
-                  <span class="material-meta">{a.zonas.length} zonas: {a.zonas.map((z) => z.nombre).join(', ')}.</span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
+        <CajasAventura cajas={cajas} />
       </section>
     )
   }

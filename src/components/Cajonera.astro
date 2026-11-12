@@ -1,0 +1,31 @@
+---
+// Cabecera de área: la cajonera de clase con una bandeja por área. La del área actual sale abierta y asoma su objeto.
+import { AREAS, type Area } from '../data/areas';
+import { ruta } from '../lib/rutas';
+interface Props { area: Area }
+const { area } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+export const OBJETO: Record<string, string> = {
+  lengua: 'libro', matematicas: 'regla', naturales: 'lupa', sociales: 'globo', plastica: 'pinceles', valores: 'corazon', 'otros-cursos': 'clips',
+};
+const GIRO: Record<string, string> = { matematicas: '-13deg', lengua: '-6deg', plastica: '8deg' };
+const obj = (id: string, w: number) => `${base}/cajon/obj-${OBJETO[id] ?? 'clips'}-${w}.webp`;
+---
+
+<div class="cajonera">
+  <nav class="cajonera-mueble" aria-label="Cajones de La cajonera">
+    {AREAS.map((a) => (
+      a.id === area.id ? (
+        <div class="bandeja abierta" style={`--area: ${a.color}`}>
+          <span class="bandeja-dentro"></span>
+          <img class="bandeja-objeto" style={GIRO[a.id] ? `--giro: ${GIRO[a.id]}` : undefined} src={obj(a.id, 720)} srcset={`${obj(a.id, 360)} 360w, ${obj(a.id, 720)} 720w`} sizes="(max-width: 760px) 60vw, 300px" alt="" fetchpriority="high" />
+          <span class="bandeja-frente"><span class="portaetiquetas" aria-current="page">{a.nombre}</span><span class="tirador"></span></span>
+        </div>
+      ) : (
+        <a class="bandeja" href={ruta(`/${a.id}/`)} style={`--area: ${a.color}`}>
+          <span class="bandeja-frente"><span class="portaetiquetas">{a.nombre}</span><span class="tirador"></span></span>
+        </a>
+      )
+    ))}
+  </nav>
+</div>
