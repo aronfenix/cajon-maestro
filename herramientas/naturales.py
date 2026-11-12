@@ -80,20 +80,22 @@ escribe('la-lupa', 'Acerca y aleja una lupa por los niveles de organización (c�
 # ------------------------------------------------------------------ 4. el viaje
 escribe('la-miga-perdida', 'Lleva una miga, una bocanada de aire o un desecho por el cuerpo, parada a parada. Si te equivocas, verás qué pasaría.', {
   'titulo': 'La miga perdida', 'personaje': 'boli',
-  'subtitulo': 'Una miga, una bocanada de aire, un desecho: cada uno tiene su camino por el cuerpo.',
-  'portada': {'objetivo': 'Lleva cada cosa por su camino eligiendo la siguiente parada. Si te equivocas, verás qué pasaría.', 'frase': 'Por la tráquea, no. Créeme.', 'dibujo': 'miga', 'piezas': ['estomago', 'pulmones'], 'rotulo': 'NUTRICIÓN'},
+  'subtitulo': 'Una miga, una bocanada de aire, un desecho: cada uno tiene su camino por el cuerpo, y su salida.',
+  'portada': {'objetivo': 'Lleva cada cosa por su tramo, ordena los tubos y averigua por dónde sale del cuerpo cada cosa.', 'frase': 'Por la tráquea, no. Créeme.', 'dibujo': 'miga', 'piezas': ['estomago', 'pulmones'], 'rotulo': 'NUTRICIÓN'},
   'historia': [H('fosforito', 'asombro', '¡Se le ha caído una miga dentro al maniquí! ¿Por dónde va?'), H('boli', 'seguro', 'Por donde tiene que ir. Y hay un cruce donde mucha gente se equivoca.')],
   'saludo': 'Cada cosa tiene **su camino**. Los atajos acaban en tos.',
   'observa': '¿Por qué tosemos cuando «se nos va por el otro lado»? ¿Qué dos caminos se cruzan en la faringe?',
   'niveles': [
-    {'modo': 'ruta', 'generar': {'rutas': ['miga']}},
-    {'modo': 'ruta', 'generar': {'rutas': ['aire']}},
-    {'modo': 'ruta', 'generar': {'rutas': ['desecho']}},
-    {'modo': 'ruta', 'generar': {'rutas': ['miga', 'aire']}},
-    {'modo': 'ruta', 'generar': {'rutas': ['resto', 'co2']}},
-    {'modo': 'ruta', 'generar': T},
-  ]}, 4, 'La nutrición como un viaje: elegir parada a parada por dónde va una miga, el oxígeno, un desecho o el dióxido de carbono. Cada error tiene su consecuencia.',
-  'Los cuatro aparatos de la nutrición trabajando juntos. Cada parada ofrece tres caminos y los equivocados están elegidos a propósito: la tráquea en vez del esófago, el estómago en vez del intestino para pasar a la sangre o los pulmones para un desecho que sale por los riñones.')
+    {'modo': 'ruta', 'generar': {'rutas': ['miga'], 'tramo': 3}},
+    {'modo': 'salida', 'generar': {'f': 1, 'n': 3}},
+    {'modo': 'ruta', 'generar': {'rutas': ['aire', 'desecho'], 'tramo': 3}},
+    {'modo': 'cadena', 'generar': {'tema': 'nutricion', 'intrusos': False}},
+    {'modo': 'salida', 'generar': {'f': 2, 'n': 4}},
+    {'modo': 'ruta', 'generar': {'rutas': ['resto', 'co2', 'aire'], 'tramo': 4}},
+    {'modo': 'cadena', 'generar': {'tema': 'nutricion', 'intrusos': True}},
+    {'modo': 'salida', 'generar': {'f': 3, 'min': 2, 'n': 4}},
+  ]}, 4, 'La nutrición como un viaje: llevar una miga, el aire o un desecho por su tramo del cuerpo, ordenar los tubos y decidir por dónde sale cada cosa (orina, sudor, restos de comida, dióxido de carbono).',
+  'Los cuatro aparatos de la nutrición trabajando juntos, con tres mecánicas que se alternan. En los tramos, cada parada ofrece tres caminos y los equivocados están elegidos a propósito: la tráquea en vez del esófago, el estómago en vez del intestino para pasar a la sangre. En «¿por dónde sale?» aparece una confusión clásica: los restos de comida no son excreción, porque nunca llegaron a la sangre.')
 
 # ------------------------------------------------------------------ 5. la consulta
 escribe('la-consulta', 'Pacientes con síntomas: descarta lo que sí funciona y encuentra el aparato de la nutrición que falla.', {
@@ -180,7 +182,8 @@ escribe('el-examen-del-maniqui', 'Repaso de todo el tema 1 de Naturales mezcland
     {'modo': 'cuenta', 'generar': {'f': 2}},
     {'modo': 'portero', 'generar': {'n': 5}},
     {'modo': 'zoom', 'generar': T},
-    {'modo': 'ruta', 'generar': {'rutas': ['miga', 'aire']}},
+    {'modo': 'ruta', 'generar': {'rutas': ['miga', 'aire'], 'tramo': 4}},
+    {'modo': 'salida', 'generar': {'f': 2, 'n': 3}},
     {'modo': 'averia', 'generar': {'sistema': 'nutricion', 'f': 2, 'min': 2}},
     {'modo': 'cadena', 'generar': {'tema': 'relacion', 'intrusos': True}},
     {'modo': 'musculo', 'generar': {'partes': ['brazo', 'pierna']}},

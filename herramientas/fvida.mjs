@@ -1,7 +1,7 @@
 // Prueba los juegos de Naturales: cada nivel de cada juego, captura del reto y lo juega a lo bruto hasta la corrección.
 // node fvida.mjs [slug ...]   (servidor de public/ en :8765)
 import { chromium } from 'playwright';
-const JUEGOS = { 'el-portero-de-la-celula': 6, 'una-o-muchas': 5, 'la-lupa': 6, 'la-miga-perdida': 6, 'la-consulta': 5, 'la-cadena-del-balon': 6, 'tira-y-afloja': 7, 'la-primera-celula': 7, 'el-examen-del-maniqui': 9 };
+const JUEGOS = { 'el-portero-de-la-celula': 6, 'una-o-muchas': 5, 'la-lupa': 6, 'la-miga-perdida': 8, 'la-consulta': 5, 'la-cadena-del-balon': 6, 'tira-y-afloja': 7, 'la-primera-celula': 7, 'el-examen-del-maniqui': 10 };
 const pedidos = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const ancho = process.argv.includes('--movil') ? [390, 844] : [1280, 800];
 const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome' });
@@ -19,6 +19,7 @@ async function juega() {
     if (await p.locator('.v-cuenta').count()) { await clic('.v-stepper .tecla >> nth=1'); await clic('.v-botones-cel .tecla'); await clic('.acciones .tecla'); continue; }
     if (await p.locator('.v-lupa').count()) { await clic('.acciones .tecla'); continue; }
     if (await p.locator('.v-cadena').count()) { for (let k = 0; k < 8; k++) await clic('.v-monton .v-ficha:not(.puesta)'); await clic('.acciones .tecla'); await clic('.v-hueco >> nth=0'); continue; }
+    if (await p.locator('.v-opciones-salida').count()) { await clic('.v-opciones-salida .v-tarjeta:not(:disabled)'); await p.waitForTimeout(150); continue; }
     if (await p.locator('.v-ruta').count()) { await clic('.v-opciones-ruta .v-tarjeta:not(:disabled)'); await p.waitForTimeout(100); continue; }
     if (await p.locator('.v-musculos').count()) { await clic('.v-musc >> nth=0 >> .tecla >> nth=0'); await clic('.v-musc >> nth=1 >> .tecla >> nth=1'); await clic('.acciones .tecla'); await p.waitForTimeout(700); continue; }
     if (await p.locator('.v-articulaciones').count()) { await clic('.v-art >> nth=3'); await clic('.acciones .tecla'); continue; }

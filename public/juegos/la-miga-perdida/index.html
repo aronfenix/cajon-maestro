@@ -22,9 +22,9 @@
   "volver": "../el-maniqui-de-ciencias/",
   "titulo": "La miga perdida",
   "personaje": "boli",
-  "subtitulo": "Una miga, una bocanada de aire, un desecho: cada uno tiene su camino por el cuerpo.",
+  "subtitulo": "Una miga, una bocanada de aire, un desecho: cada uno tiene su camino por el cuerpo, y su salida.",
   "portada": {
-    "objetivo": "Lleva cada cosa por su camino eligiendo la siguiente parada. Si te equivocas, verás qué pasaría.",
+    "objetivo": "Lleva cada cosa por su tramo, ordena los tubos y averigua por dónde sale del cuerpo cada cosa.",
     "frase": "Por la tráquea, no. Créeme.",
     "dibujo": "miga",
     "piezas": [
@@ -53,32 +53,39 @@
       "generar": {
         "rutas": [
           "miga"
-        ]
+        ],
+        "tramo": 3
+      }
+    },
+    {
+      "modo": "salida",
+      "generar": {
+        "f": 1,
+        "n": 3
       }
     },
     {
       "modo": "ruta",
       "generar": {
         "rutas": [
-          "aire"
-        ]
-      }
-    },
-    {
-      "modo": "ruta",
-      "generar": {
-        "rutas": [
+          "aire",
           "desecho"
-        ]
+        ],
+        "tramo": 3
       }
     },
     {
-      "modo": "ruta",
+      "modo": "cadena",
       "generar": {
-        "rutas": [
-          "miga",
-          "aire"
-        ]
+        "tema": "nutricion",
+        "intrusos": false
+      }
+    },
+    {
+      "modo": "salida",
+      "generar": {
+        "f": 2,
+        "n": 4
       }
     },
     {
@@ -86,13 +93,26 @@
       "generar": {
         "rutas": [
           "resto",
-          "co2"
-        ]
+          "co2",
+          "aire"
+        ],
+        "tramo": 4
       }
     },
     {
-      "modo": "ruta",
-      "generar": true
+      "modo": "cadena",
+      "generar": {
+        "tema": "nutricion",
+        "intrusos": true
+      }
+    },
+    {
+      "modo": "salida",
+      "generar": {
+        "f": 3,
+        "min": 2,
+        "n": 4
+      }
     }
   ]
 }

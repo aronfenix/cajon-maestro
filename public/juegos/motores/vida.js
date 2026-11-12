@@ -133,8 +133,10 @@ const ESTACIONES = {
   estomago: 'Estómago', 'intestino-delgado': 'Intestino delgado', 'intestino-grueso': 'Intestino grueso', ano: 'Recto y ano', sangre: 'Sangre', corazon: 'Corazón', celula: 'Una célula',
   rinones: 'Riñones', ureteres: 'Uréteres', vejiga: 'Vejiga', uretra: 'Uretra', fuera: 'Fuera del cuerpo',
 };
+const ART = { boca: 'la', nariz: 'las', faringe: 'la', esofago: 'el', laringe: 'la', traquea: 'la', bronquios: 'los', pulmones: 'los', estomago: 'el', 'intestino-delgado': 'el', 'intestino-grueso': 'el', ano: 'el', sangre: 'la', corazon: 'el', rinones: 'los', ureteres: 'los', vejiga: 'la', uretra: 'la' };
+const conArt = (k) => (ART[k] ? `${ART[k]} ${k === 'ano' ? 'recto' : ESTACIONES[k].toLowerCase()}` : ESTACIONES[k].toLowerCase());
 const RUTAS = {
-  miga: { f: 1, carga: 'miga', nombre: 'una miga de pan', meta: 'que sus nutrientes lleguen a una célula', pasos: [
+  miga: { f: 1, gen: 'f', carga: 'miga', nombre: 'una miga de pan', meta: 'que sus nutrientes lleguen a una célula', pasos: [
     ['boca', ['estomago', 'Todavía no: antes de llegar al estómago hay que tragar.'], ['nariz', 'Boca y nariz se juntan en la faringe, pero la comida no sube a la nariz.']],
     ['faringe', ['traquea', '**¡Cof, cof!** Por la tráquea va el aire. Si entra comida, te atragantas: por eso tosemos.'], ['laringe', 'La laringe es el camino del aire. La comida baja por el esófago.']],
     ['esofago', ['pulmones', 'El esófago no va a los pulmones: baja, detrás de la tráquea, hasta el estómago.'], ['intestino-delgado', 'Antes del intestino está el estómago, que deshace la comida.']],
@@ -143,7 +145,7 @@ const RUTAS = {
     ['sangre', ['rinones', 'Los riñones limpian la sangre de desechos. Los nutrientes van a las células.'], ['pulmones', 'A los pulmones la sangre va a por oxígeno. Los nutrientes van a las células.']],
     ['celula'],
   ] },
-  aire: { f: 2, carga: 'oxigeno', nombre: 'una bocanada de aire', meta: 'que su oxígeno llegue a una célula', pasos: [
+  aire: { f: 2, gen: 'f', carga: 'oxigeno', nombre: 'una bocanada de aire', meta: 'que su oxígeno llegue a una célula', pasos: [
     ['nariz', ['esofago', 'Antes de separarse, aire y comida pasan los dos por la faringe.'], ['pulmones', 'Todavía no: hay un buen trecho de tubos hasta los pulmones.']],
     ['faringe', ['esofago', 'Por el esófago baja la comida. El aire sigue por la laringe.'], ['estomago', 'El aire no va al estómago (si tragas mucho aire, eructas).']],
     ['laringe', ['bronquios', 'Entre la laringe y los bronquios hay un tubo con anillos: la tráquea.'], ['esofago', 'El esófago es el tubo de la comida.']],
@@ -154,7 +156,7 @@ const RUTAS = {
     ['corazon', ['pulmones', 'Ya viene de los pulmones con oxígeno: ahora toca repartirlo.'], ['estomago', 'El oxígeno va a todas las células, no al estómago en especial.']],
     ['celula'],
   ] },
-  desecho: { f: 2, carga: 'desecho', nombre: 'un desecho de una célula', meta: 'que salga del cuerpo', pasos: [
+  desecho: { f: 2, gen: 'm', carga: 'desecho', nombre: 'un desecho de una célula', meta: 'que salga del cuerpo', pasos: [
     ['celula', ['vejiga', 'La orina se fabrica en los riñones; para llegar allí, el desecho viaja en la **sangre**.'], ['pulmones', 'Por los pulmones sale el dióxido de carbono, no este desecho.']],
     ['sangre', ['pulmones', 'Por los pulmones sale el dióxido de carbono. Este desecho lo filtran los **riñones**.'], ['intestino-grueso', 'Al intestino grueso van los restos de comida, no los desechos de la sangre.']],
     ['rinones', ['vejiga', 'Casi: entre los riñones y la vejiga hay dos tubos, los **uréteres**.'], ['sangre', 'Hacia atrás no: los riñones acaban de limpiar la sangre.']],
@@ -163,14 +165,14 @@ const RUTAS = {
     ['uretra', ['vejiga', 'Hacia atrás no.'], ['rinones', 'Hacia atrás no: ya está saliendo.']],
     ['fuera'],
   ] },
-  resto: { f: 3, carga: 'resto', nombre: 'lo que el cuerpo no aprovecha de la comida', meta: 'que salga del cuerpo', pasos: [
+  resto: { f: 3, gen: 'm', carga: 'resto', nombre: 'lo que el cuerpo no aprovecha de la comida', meta: 'que salga del cuerpo', pasos: [
     ['estomago', ['sangre', 'Esto no se aprovecha: no pasa a la sangre.'], ['esofago', 'La comida no vuelve hacia atrás.']],
     ['intestino-delgado', ['sangre', 'Lo que pasa a la sangre son los nutrientes. Esto es lo que **no** sirve: sigue por el tubo.'], ['vejiga', 'La vejiga guarda la orina, que viene de los riñones.']],
     ['intestino-grueso', ['uretra', 'Por la uretra sale la orina. Los restos de comida siguen hasta el recto.'], ['estomago', 'Hacia atrás no.']],
     ['ano', ['uretra', 'Por la uretra sale la orina, no los restos de la comida.'], ['boca', 'Hacia atrás no.']],
     ['fuera'],
   ] },
-  co2: { f: 3, carga: 'co2', nombre: 'el dióxido de carbono de una célula', meta: 'que salga del cuerpo', pasos: [
+  co2: { f: 3, gen: 'm', carga: 'co2', nombre: 'el dióxido de carbono de una célula', meta: 'que salga del cuerpo', pasos: [
     ['celula', ['rinones', 'El dióxido de carbono no va directo a ningún órgano: primero lo recoge la **sangre**.'], ['fuera', 'Una célula de dentro del cuerpo no puede echarlo fuera sola.']],
     ['sangre', ['rinones', 'Los riñones sacan otros desechos, con la orina. El dióxido de carbono sale **respirando**.'], ['estomago', 'El dióxido de carbono no sale por el aparato digestivo.']],
     ['corazon', ['rinones', 'Los riñones sacan otros desechos. Este va hacia los **pulmones**.'], ['celula', 'Hacia atrás no: ya salió de la célula.']],
@@ -179,6 +181,23 @@ const RUTAS = {
     ['fuera'],
   ] },
 };
+
+// ---------- ¿por dónde sale del cuerpo?
+const SALIDAS = { nariz: ['nariz', 'Nariz y boca'], piel: ['mano', 'La piel'], uretra: ['uretra', 'Uretra'], ano: ['ano', 'Ano'] };
+const SALE = [
+  { f: 1, k: 'co2', t: 'El dióxido de carbono', sale: 'nariz', por: 'El dióxido de carbono sale **respirando**, por la nariz o la boca.' },
+  { f: 1, k: 'resto', t: 'Los restos de la comida que no se han aprovechado', sale: 'ano', por: 'Lo que no se digiere sale por el **ano**. Ojo: eso no es excreción, porque nunca llegó a la sangre.' },
+  { f: 1, k: 'vejiga', t: 'La orina', sale: 'uretra', por: 'La orina la fabrican los riñones y sale por la **uretra**.' },
+  { f: 2, k: 'agua', t: 'El sudor', sale: 'piel', por: 'El sudor lo fabrican las glándulas sudoríparas de la **piel**. También es excreción.' },
+  { f: 2, k: 'desecho', t: 'Un desecho que las células han soltado en la sangre', sale: 'uretra', por: 'Los riñones lo sacan de la sangre y lo mandan con la orina, por la **uretra**.' },
+  { f: 3, k: 'agua', t: 'El vaho que empaña un cristal cuando le echas el aliento', sale: 'nariz', por: 'Es agua que sale **respirando**: por eso el cristal frío se empaña.' },
+  { f: 3, k: 'miga', t: 'Una pipa que te has tragado entera, sin masticar', sale: 'ano', por: 'Si no se digiere, sigue por el tubo y sale por el **ano**, igual que entró.' },
+];
+ORDENAR.nutricion = [
+  { id: 'aire', titulo: 'El camino del aire, de fuera hacia dentro', pasos: ['nariz', 'faringe', 'laringe', 'traquea', 'bronquios', 'pulmones'].map((k) => ({ k, t: ESTACIONES[k] })), intrusos: [{ k: 'esofago', t: 'Esófago' }], por: 'Fosas nasales → faringe → laringe → tráquea → bronquios → pulmones. El esófago es el tubo de la comida.' },
+  { id: 'miga', titulo: 'El camino de la comida, de la boca hacia abajo', pasos: ['boca', 'faringe', 'esofago', 'estomago', 'intestino-delgado', 'intestino-grueso'].map((k) => ({ k, t: ESTACIONES[k] })), intrusos: [{ k: 'traquea', t: 'Tráquea' }], por: 'Boca → faringe → esófago → estómago → intestino delgado → intestino grueso. Por la tráquea va el aire.' },
+  { id: 'orina', titulo: 'El camino de un desecho de la sangre hasta salir', pasos: ['sangre', 'rinones', 'ureteres', 'vejiga', 'uretra'].map((k) => ({ k, t: ESTACIONES[k] })), intrusos: [{ k: 'intestino-grueso', t: 'Intestino grueso' }], por: 'Sangre → riñones → uréteres → vejiga → uretra. El intestino grueso es de la comida, no de la sangre.' },
+];
 
 // ---------- músculos: cada músculo solo sabe tirar
 const MOVIMIENTOS = {
@@ -241,7 +260,11 @@ export function generar(spec) {
     d.conIntrusos = g.intrusos ?? true;
   } else if (d.modo === 'ruta') {
     const ids = g.rutas ?? Object.keys(RUTAS);
-    d.ruta = saca('ruta', ids.map((k) => k)) ;
+    d.ruta = saca('ruta', ids.map((k) => k));
+    if (g.tramo) { const L = RUTAS[d.ruta].pasos.length; const k = Math.min(g.tramo, L - 1); d.desde = Math.floor(Math.random() * (L - k)); d.hasta = d.desde + k; }
+  } else if (d.modo === 'salida') {
+    const pool = SALE.filter((x) => x.f <= f && x.f >= (g.min ?? 1));
+    d.cosas = barajar(pool.slice()).slice(0, g.n ?? 4);
   } else if (d.modo === 'musculo') {
     d.parte = elige(g.partes ?? ['brazo']);
     const objs = MOVIMIENTOS[d.parte].objetivos.filter((o) => !g.objetivos || g.objetivos.includes(o.id));
@@ -255,7 +278,7 @@ export function generar(spec) {
   return d;
 }
 export function ronda(d, ctx) {
-  const m = { portero, averia, cuenta, zoom, cadena, ruta, musculo, articulacion, divide }[d.modo];
+  const m = { portero, averia, cuenta, zoom, cadena, ruta, salida, musculo, articulacion, divide }[d.modo];
   if (!m) throw new Error(`El motor vida no tiene el modo «${d.modo}».`);
   return m(d, ctx);
 }
@@ -481,8 +504,10 @@ function cadena(d, ctx) {
 // ---------------------------------------------------------------- el viaje por el cuerpo
 function ruta(d, ctx) {
   const R = RUTAS[d.ruta];
-  const pasos = R.pasos;
-  ctx.reto(`Lleva **${R.nombre}** hasta ${R.meta}. **¿Por dónde sigue?**`);
+  const tramo = d.desde != null;
+  const pasos = tramo ? R.pasos.slice(d.desde, d.hasta + 1) : R.pasos;
+  const lo = R.gen === 'f' ? 'Llévala' : 'Llévalo';
+  ctx.reto(tramo ? `${may(R.nombre)} está en **${conArt(pasos[0][0])}**. ${lo} hasta **${conArt(pasos.at(-1)[0])}**.` : `${lo} hasta ${R.meta}: **${R.nombre}**. ¿Por dónde sigue?`);
   ctx.pista(d.pista ?? 'Elige la siguiente parada. Si te equivocas, verás qué pasaría.');
   let i = 0, fallos = 0;
   const camino = el('ol', { class: 'v-camino', 'aria-label': 'El camino hasta ahora' });
@@ -521,7 +546,46 @@ function ruta(d, ctx) {
     opciones.replaceChildren();
     chispasEn(ahora, 14);
     const recorrido = pasos.map((p) => ESTACIONES[p[0]].toLowerCase()).join(' → ');
-    ctx.fin(porFallos(fallos), (fallos ? `Llegó, con ${fallos} ${fallos === 1 ? 'despiste' : 'despistes'}. ` : '**Sin perderse ni una vez.** ') + `El camino: ${recorrido}.`);
+    ctx.fin(porFallos(fallos), (fallos ? `Llegó, con ${fallos} ${fallos === 1 ? 'despiste' : 'despistes'}. ` : '**Sin perderse ni una vez.** ') + `${tramo ? 'El tramo' : 'El camino'}: ${recorrido}.`);
+  };
+  pinta();
+}
+
+// ---------------------------------------------------------------- ¿por dónde sale?
+function salida(d, ctx) {
+  const lista = d.cosas;
+  ctx.reto(d.texto ?? 'Todo lo que el cuerpo echa fuera sale por algún sitio. **¿Por dónde sale cada cosa?**');
+  ctx.pista(d.pista ?? 'Piensa de dónde viene: de la comida, de la sangre o del aire.');
+  const cosa = el('div', { class: 'v-sintoma v-cosa' });
+  const fila = el('ol', { class: 'v-portero-fila', 'aria-label': 'Lo que falta' }, lista.map((c) => el('li', { html: dib(c.k) })));
+  const opciones = el('div', { class: 'v-opciones v-opciones-salida' }, Object.entries(SALIDAS).map(([id, [icon, nombre]]) =>
+    el('button', { type: 'button', class: 'v-tarjeta', 'data-id': id, onclick: () => decide(id) }, el('span', { class: 'v-tarjeta-dibujo', html: dib(icon) }), el('span', { class: 'v-tarjeta-nombre', text: nombre }))));
+  ctx.escenario.append(el('div', { class: 'v-averia' }, cosa, fila, opciones));
+  let i = 0, fallos = 0; const malos = [];
+  const pinta = () => {
+    const c = lista[i];
+    cosa.replaceChildren(el('span', { class: 'v-sintoma-icono', html: dib(c.k) }), el('p', {}, el('b', { text: c.t })));
+    fila.querySelectorAll('li').forEach((li, k) => li.classList.toggle('ahora', k === i));
+    opciones.querySelectorAll('button').forEach((b) => { b.disabled = false; b.classList.remove('bien', 'tachada'); });
+    if (!lento()) gsap.from(cosa, { y: -24, opacity: 0, duration: 0.35, ease: 'back.out(2)' });
+    ctx.pistas([
+      { texto: 'Si viene de la **comida** y no se ha aprovechado, sigue por el tubo digestivo. Si viene de la **sangre**, lo sacan los riñones o la piel. Si es un gas, sale **respirando**.' },
+      { texto: `Esto viene ${c.sale === 'ano' ? 'de la comida' : c.sale === 'nariz' ? 'de respirar' : 'de la sangre'}.` },
+      { texto: `Sale por: **${SALIDAS[c.sale][1].toLowerCase()}**.` },
+    ]);
+  };
+  const decide = async (id) => {
+    const c = lista[i], ok = id === c.sale;
+    opciones.querySelectorAll('button').forEach((b) => (b.disabled = true));
+    const b = opciones.querySelector(`[data-id="${id}"]`);
+    b.classList.add(ok ? 'bien' : 'tachada'); suena(ok ? 'bien' : 'mal');
+    if (!ok) { fallos++; malos.push(c); temblor(b, 6); opciones.querySelector(`[data-id="${c.sale}"]`).classList.add('bien'); }
+    fila.children[i].classList.add(ok ? 'bien' : 'mal');
+    ctx.aviso(c.por.replace(/\*\*/g, ''), !ok);
+    await espera(ok ? 900 : 1900);
+    i++;
+    if (i < lista.length) return pinta();
+    ctx.fin(porFallos(fallos), fallos ? `**${lista.length - fallos} de ${lista.length}.** ` + malos.map((m) => m.por).join(' ') : '**Todo por su sitio.** Orina por la uretra, sudor por la piel, gases respirando y restos de comida por el ano.');
   };
   pinta();
 }
