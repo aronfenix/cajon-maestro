@@ -62,3 +62,7 @@ Si falta un campo obligatorio, un tema no existe o una portada no está, `npm ru
 ## Licencia
 
 Los materiales: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es). Las imágenes generadas con IA pueden no estar protegidas por derechos de autor.
+
+## Para hacer materiales nuevos
+
+Antes de crear un juego, herramienta o material, lee [docs/libro-de-estilo.md](docs/libro-de-estilo.md).
