@@ -5,6 +5,7 @@ const h = (tag, cls, html = '') => { const n = document.createElement(tag); if (
 
 /* ---------------------------------------------------------------- fondos */
 const FONDOS = {
+  laboratorio: `<g opacity=".5"><rect x="1380" y="60" width="150" height="260" rx="18" fill="#fffdf6" stroke="#1b1e3a" stroke-width="6"/><path d="M1455 60 v260 M1400 120 h40 M1470 120 h40" stroke="#1b1e3a" stroke-width="5"/><circle cx="1455" cy="40" r="18" fill="none" stroke="#1b1e3a" stroke-width="6"/></g><g opacity=".45"><path d="M90 820 l30 -140 h50 l30 140z" fill="#9bd84a" stroke="#1b1e3a" stroke-width="6"/><rect x="118" y="640" width="54" height="44" fill="#fffdf6" stroke="#1b1e3a" stroke-width="6"/></g>`,
   // el estuche de cremallera: tela rosa, cremallera turquesa, lápices en sus gomas
   // la mesa de manualidades: sobre la alfombrilla, recortes de cartulina, unas tijeras y un lápiz (solo en los bordes)
   estuche: `

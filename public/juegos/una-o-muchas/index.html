@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Una o muchas? · La cajonera</title>
+<meta name="description" content="Cuenta cuántos seres vivos y cuántas células hay: unicelulares, pluricelulares y alguna trampa.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "vida",
+  "area": "naturales",
+  "escena": "laboratorio",
+  "volver": "../el-maniqui-de-ciencias/",
+  "titulo": "¿Una o muchas?",
+  "personaje": "fosforito",
+  "subtitulo": "Hay seres vivos de una sola célula y seres vivos de muchísimas. Cuéntalos bien.",
+  "portada": {
+    "objetivo": "Cuenta cuántos seres vivos y cuántas células hay en cada lámina del microscopio.",
+    "frase": "¡Todo es importante! Hasta lo que no se ve.",
+    "dibujo": "ameba",
+    "piezas": [
+      "bacteria",
+      "paramecio"
+    ],
+    "rotulo": "MICROSCOPIO"
+  },
+  "historia": [
+    {
+      "quien": "fosforito",
+      "pose": "celebra",
+      "texto": "¡He encontrado el microscopio del laboratorio! ¡Hay bichos diminutos en el agua del florero!"
+    },
+    {
+      "quien": "goma",
+      "pose": "piensa",
+      "texto": "Bichos no. Seres vivos de una sola célula. Y no todo lo que se ve ahí está vivo."
+    }
+  ],
+  "saludo": "Una ameba es **una célula** y **un ser vivo**. Las dos cosas a la vez.",
+  "observa": "¿Puede una célula de tu cuerpo vivir sola en una charca, como una ameba? ¿Por qué?",
+  "niveles": [
+    {
+      "modo": "cuenta",
+      "generar": {
+        "f": 1
+      }
+    },
+    {
+      "modo": "cuenta",
+      "generar": {
+        "f": 2
+      }
+    },
+    {
+      "modo": "cuenta",
+      "generar": {
+        "f": 2,
+        "min": 2
+      }
+    },
+    {
+      "modo": "cuenta",
+      "generar": {
+        "f": 3,
+        "min": 2
+      }
+    },
+    {
+      "modo": "cuenta",
+      "generar": {
+        "f": 3,
+        "min": 3
+      }
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

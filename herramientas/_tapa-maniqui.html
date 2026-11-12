@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><style>
+@font-face{font-family:Stencil;src:url('juegos/motores/fonts/big-shoulders-stencil-latin-wght-normal.woff2')}
+@font-face{font-family:Atk;src:url('juegos/motores/fonts/atkinson-hyperlegible-next-latin-700-normal.woff2');font-weight:700}
+html,body{margin:0}body{width:1200px;height:750px;position:relative;overflow:hidden;background:url('cajon/plantilla-tapa.webp')}
+.fondo{position:absolute;inset:26px 30px;border-radius:6px;background-color:#d8eef0;background-image:linear-gradient(90deg,rgba(27,30,58,.13) 3px,transparent 3px),linear-gradient(rgba(27,30,58,.13) 3px,transparent 3px);background-size:78px 78px;box-shadow:inset 0 -110px 0 -20px #5bb3a8,inset 0 -116px 0 -20px #1b1e3a}
+.obj{position:absolute;filter:drop-shadow(8px 12px 0 rgba(10,40,50,.28))}.obj svg{width:100%;height:100%}
+.cartel{position:absolute;left:420px;top:130px;width:640px;padding:34px 30px 40px;background:#fffdf6;border:7px solid #1b1e3a;border-radius:14px;rotate:-2deg;box-shadow:14px 18px 0 rgba(10,40,50,.3);text-align:center}
+h1{margin:0;font-family:Stencil;font-weight:900;font-size:118px;line-height:.9;color:#1b1e3a;letter-spacing:.01em}
+.sub{position:absolute;left:520px;top:560px;padding:10px 26px;border:6px solid #1b1e3a;border-radius:12px;background:#9bd84a;font-family:Atk;font-weight:700;font-size:34px;color:#1b1e3a;rotate:1.5deg;box-shadow:8px 10px 0 rgba(10,40,50,.3)}
+.celo{position:absolute;width:150px;height:44px;background:rgba(255,236,170,.75);rotate:-28deg}
+</style><body><div class="fondo"></div><div id="o"></div>
+<div class="cartel"><h1>EL MANIQUÍ<br>DE CIENCIAS</h1></div><span class="celo" style="left:390px;top:120px"></span><span class="celo" style="left:990px;top:430px;rotate:32deg"></span>
+<div class="sub">5.º PRIMARIA · NATURALES</div>
+<script type="module">import { dib } from './juegos/motores/vida-dibujos.js';
+const P=[['maniqui',60,120,340,-4],['celula',920,30,170,12],['corazon',340,520,150,-14],['pulmones',150,520,150,8],['lupa',1010,560,140,-10],['hueso',40,30,140,-30],['neurona',260,40,120,0],['ameba',870,500,120,10]];
+document.getElementById('o').innerHTML=P.map(([k,x,y,w,r])=>`<span class="obj" style="left:${x}px;top:${y}px;width:${w}px;height:${w}px;rotate:${r}deg">${dib(k)}</span>`).join('');</script>

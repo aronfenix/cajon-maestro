@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La consulta · La cajonera</title>
+<meta name="description" content="Pacientes con síntomas: descarta lo que sí funciona y encuentra el aparato de la nutrición que falla.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "vida",
+  "area": "naturales",
+  "escena": "laboratorio",
+  "volver": "../el-maniqui-de-ciencias/",
+  "titulo": "La consulta",
+  "personaje": "boli",
+  "subtitulo": "Llegan pacientes con síntomas raros. Por lo que les pasa, averigua qué aparato no funciona.",
+  "portada": {
+    "objetivo": "Lee los síntomas, descarta lo que sí funciona y encuentra el aparato que falla.",
+    "frase": "Siguiente paciente. Que pase.",
+    "dibujo": "estetoscopio",
+    "piezas": [
+      "rinones",
+      "corazon"
+    ],
+    "rotulo": "CONSULTA"
+  },
+  "historia": [
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "He abierto consulta. Yo corrijo exámenes; esto es parecido: buscar dónde está el fallo."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Truco de veterana: primero tacha lo que sí funciona. Lo que queda, es."
+    }
+  ],
+  "saludo": "Primero, **lo que sí funciona**. Eso se tacha.",
+  "observa": "Si falla el aparato circulatorio, ¿por qué acaban notándolo todos los demás?",
+  "niveles": [
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "nutricion",
+        "f": 1
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "nutricion",
+        "f": 2,
+        "min": 2
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "nutricion",
+        "f": 2
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "nutricion",
+        "f": 3,
+        "min": 3
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "nutricion",
+        "f": 3,
+        "min": 2
+      }
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

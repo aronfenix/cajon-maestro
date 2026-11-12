@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El maniquí de Ciencias · La cajonera</title>
+<meta name="description" content="Aventura de Naturales: el maniquí del laboratorio se ha caído y hay que montarlo sabiendo qué hace cada pieza. Célula, niveles de organización, nutrición, relación y reproducción.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body data-area="naturales">
+<!-- Mapa de una aventura. Para otro bloque: copiar esta carpeta y cambiar los compartimentos. -->
+<script type="application/json" id="mapa">
+{
+  "titulo": "El maniquí de Ciencias",
+  "subtitulo": "El maniquí del laboratorio se ha caído del armario y tiene las piezas por toda la clase. Para montarlo hay que saber qué hace cada una. Se puede jugar en orden o empezar por cualquiera.",
+  "escena": "laboratorio",
+  "volver": "../../naturales/",
+  "textos": {
+    "sello": "MONTADO",
+    "hechos": "montadas",
+    "icono": "el-examen-del-maniqui",
+    "listo": "El maniquí está entero. Ya puedes hacer el examen.",
+    "boton": "Hacer el examen",
+    "repetir": "Repetir el examen"
+  },
+  "historia": [
+    {
+      "nota": "EL LUNES NECESITO EL MANIQUÍ DE CIENCIAS PARA EXPLICAR EL CUERPO HUMANO. ENTERO.",
+      "firma": "El profe"
+    },
+    {
+      "quien": "boli",
+      "pose": "asombro",
+      "texto": "¿Entero? Tiene el corazón debajo del radiador y un pulmón en la papelera."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "¡No vale encajar a lo loco! Si sabemos qué hace cada pieza, sabremos dónde va."
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Empezamos por lo más pequeño. Lo grande ya vendrá."
+    }
+  ],
+  "compartimentos": [
+    {
+      "nombre": "Lo más pequeño",
+      "material": "lab",
+      "quien": "goma",
+      "color": "#ffb3c7",
+      "juegos": [
+        {
+          "slug": "el-portero-de-la-celula",
+          "titulo": "El portero de la célula"
+        },
+        {
+          "slug": "una-o-muchas",
+          "titulo": "¿Una o muchas?"
+        },
+        {
+          "slug": "la-lupa",
+          "titulo": "La lupa"
+        }
+      ]
+    },
+    {
+      "nombre": "Comer y respirar",
+      "material": "lab",
+      "quien": "boli",
+      "color": "#ff8a1f",
+      "juegos": [
+        {
+          "slug": "la-miga-perdida",
+          "titulo": "La miga perdida"
+        }
+      ]
+    },
+    {
+      "nombre": "La consulta",
+      "material": "lab",
+      "quien": "boli",
+      "color": "#ffc531",
+      "juegos": [
+        {
+          "slug": "la-consulta",
+          "titulo": "La consulta"
+        }
+      ]
+    },
+    {
+      "nombre": "Ver y decidir",
+      "material": "lab",
+      "quien": "fosforito",
+      "color": "#5ec3ff",
+      "juegos": [
+        {
+          "slug": "la-cadena-del-balon",
+          "titulo": "La cadena del balón"
+        }
+      ]
+    },
+    {
+      "nombre": "Moverse",
+      "material": "lab",
+      "quien": "goma",
+      "color": "#9bd84a",
+      "juegos": [
+        {
+          "slug": "tira-y-afloja",
+          "titulo": "Tira y afloja"
+        }
+      ]
+    },
+    {
+      "nombre": "La primera célula",
+      "material": "lab",
+      "quien": "fosforito",
+      "color": "#cda8ff",
+      "juegos": [
+        {
+          "slug": "la-primera-celula",
+          "titulo": "La primera célula"
+        }
+      ]
+    }
+  ],
+  "final": {
+    "nombre": "El examen del maniquí",
+    "slug": "el-examen-del-maniqui",
+    "cerrado": "Se abre cuando el maniquí esté entero.",
+    "abierto": "Montado. El profe lo ha mirado dos veces.",
+    "historia": [
+      {
+        "quien": "boli",
+        "pose": "seguro",
+        "texto": "Lunes. El profe ha abierto el armario. El maniquí estaba entero, con el corazón en su sitio."
+      },
+      {
+        "quien": "fosforito",
+        "pose": "celebra",
+        "texto": "¡Ha dicho «qué bien lo habéis montado»! ¡Lo subrayo!"
+      },
+      {
+        "quien": "goma",
+        "pose": "animo",
+        "texto": "Lo difícil no era encajarlo. Era saber qué hace cada pieza."
+      }
+    ]
+  }
+}
+</script>
+<script type="module">
+import { montaMapa } from '../motores/mapa.js';
+montaMapa(JSON.parse(document.getElementById('mapa').textContent));
+</script>
+</body>
+</html>

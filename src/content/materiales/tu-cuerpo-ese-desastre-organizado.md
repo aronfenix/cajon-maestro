@@ -9,7 +9,7 @@ archivo: /archivos/tu-cuerpo-ese-desastre-organizado.pdf
 paginas: 38
 ia: Las imágenes están generadas con IA a partir de mis guiones.
 relacionados:
-  - laboratorio-vivo
+  - el-maniqui-de-ciencias
   - naturales-lo-basico-ilustrado
 orden: 6
 ---

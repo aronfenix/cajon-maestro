@@ -1,9 +1,15 @@
 // Pegatinas del álbum: una por juego, un dibujo sencillo que recuerda a lo que se hace en él.
 import { el } from './nucleo.js';
+import { D as V } from './vida-dibujos.js';
 const T = '#1b1e3a';
 // una pegatina por juego: un dibujo sencillo que recuerda a lo que se hace en él
 export const P = (cuerpo, fondo) => `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="#fff" stroke="${T}" stroke-width="3"/><circle cx="50" cy="50" r="39" fill="${fondo}"/>${cuerpo}</svg>`;
+// Naturales: el dibujo del juego, un poco más pequeño, sobre su color
+const PV = (k, fondo) => P(`<g transform="translate(19 19) scale(.62)">${V[k]}</g>`, fondo);
 export const DIBUJOS = {
+  'el-portero-de-la-celula': PV('celula', '#9bd84a'), 'una-o-muchas': PV('ameba', '#5ec3ff'), 'la-lupa': PV('lupa', '#ffc531'),
+  'la-miga-perdida': PV('miga', '#ff8ac4'), 'la-consulta': PV('estetoscopio', '#fff27a'), 'la-cadena-del-balon': PV('balon', '#ff8a1f'),
+  'tira-y-afloja': PV('musculo', '#7fd6ff'), 'la-primera-celula': PV('cigoto', '#cda8ff'), 'el-examen-del-maniqui': PV('maniqui', '#9bd84a'),
   'aduana-del-estuche': P(`<path d="M30 66 L50 30 L70 66Z" fill="#ffc531" stroke="${T}" stroke-width="4" stroke-linejoin="round"/><circle cx="50" cy="56" r="7" fill="none" stroke="#1b8f4e" stroke-width="3.5"/>`, '#ff7fae'),
   'la-goma-elastica': P(`<path d="M30 62 L40 34 L66 40 L70 64Z" fill="none" stroke="#e8417a" stroke-width="7" stroke-linejoin="round"/><circle cx="30" cy="62" r="5" fill="#d7263d" stroke="${T}" stroke-width="2"/><circle cx="40" cy="34" r="5" fill="#d7263d" stroke="${T}" stroke-width="2"/><circle cx="66" cy="40" r="5" fill="#d7263d" stroke="${T}" stroke-width="2"/><circle cx="70" cy="64" r="5" fill="#d7263d" stroke="${T}" stroke-width="2"/>`, '#9bd84a'),
   'quien-es-quien': P(`<text x="50" y="68" text-anchor="middle" font-family="Rotulo,sans-serif" font-weight="900" font-size="52" fill="${T}">?</text>`, '#ffc531'),

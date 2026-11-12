@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El portero de la célula · La cajonera</title>
+<meta name="description" content="Eres la membrana de una célula: decide qué entra y qué sale, y averigua qué parte falla por sus síntomas.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "vida",
+  "area": "naturales",
+  "escena": "laboratorio",
+  "volver": "../el-maniqui-de-ciencias/",
+  "titulo": "El portero de la célula",
+  "personaje": "goma",
+  "subtitulo": "La membrana decide qué entra en la célula y qué sale. Hoy la membrana eres tú.",
+  "portada": {
+    "objetivo": "Deja pasar lo que la célula necesita, echa lo que le sobra y averigua qué parte falla cuando algo va mal.",
+    "frase": "Aquí no entra cualquiera.",
+    "dibujo": "celula",
+    "piezas": [
+      "virus",
+      "oxigeno"
+    ],
+    "rotulo": "CÉLULA"
+  },
+  "historia": [
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Antes de montar nada, lo más pequeño: una célula. Tiene una puerta muy exigente."
+    },
+    {
+      "quien": "goma",
+      "pose": "pista",
+      "texto": "Se llama membrana. Deja pasar lo que hace falta y nada más. A ver qué tal se te da."
+    }
+  ],
+  "saludo": "Lo que **necesita**, dentro. Lo que **le sobra**, fuera.",
+  "observa": "Si la membrana dejara pasar todo, ¿qué le pasaría a la célula? ¿Y si no dejara pasar nada?",
+  "niveles": [
+    {
+      "modo": "portero",
+      "generar": {
+        "lados": [
+          "fuera"
+        ],
+        "n": 4
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "celula",
+        "f": 1
+      }
+    },
+    {
+      "modo": "portero",
+      "generar": {
+        "lados": [
+          "dentro"
+        ],
+        "n": 4
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "celula",
+        "f": 2
+      }
+    },
+    {
+      "modo": "portero",
+      "generar": {
+        "n": 6
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "celula",
+        "f": 3,
+        "min": 2
+      }
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

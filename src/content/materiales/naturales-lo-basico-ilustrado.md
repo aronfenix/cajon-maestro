@@ -9,6 +9,6 @@ archivo: /archivos/naturales-lo-basico-ilustrado.pdf
 paginas: 2
 ia: Las ilustraciones son modelos didácticos generados con IA.
 relacionados:
-  - laboratorio-vivo
+  - el-maniqui-de-ciencias
 orden: 7
 ---

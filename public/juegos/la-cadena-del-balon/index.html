@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La cadena del balón · La cajonera</title>
+<meta name="description" content="Ordena la cadena de la función de relación (sentidos, nervios, encéfalo, músculos) y encuentra el eslabón que falla.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "vida",
+  "area": "naturales",
+  "escena": "laboratorio",
+  "volver": "../el-maniqui-de-ciencias/",
+  "titulo": "La cadena del balón",
+  "personaje": "fosforito",
+  "subtitulo": "Ver, decidir, moverse: entre que ves venir el balón y lo coges pasan muchas cosas en muy poco tiempo.",
+  "portada": {
+    "objetivo": "Ordena la cadena de cada respuesta y averigua qué eslabón falla cuando algo sale mal.",
+    "frase": "¡Cógelo! Bueno, primero míralo.",
+    "dibujo": "balon",
+    "piezas": [
+      "ojo",
+      "encefalo"
+    ],
+    "rotulo": "RELACIÓN"
+  },
+  "historia": [
+    {
+      "quien": "fosforito",
+      "pose": "celebra",
+      "texto": "¡Le he lanzado el balón al maniquí y no lo ha cogido!"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Porque le falta media cadena. Para coger un balón hacen falta los ojos, los nervios, el encéfalo y los músculos. En ese orden."
+    }
+  ],
+  "saludo": "Primero se **capta**, luego se **decide**, al final se **mueve**.",
+  "observa": "¿Qué parte de la cadena entrena un portero para ser más rápido?",
+  "niveles": [
+    {
+      "modo": "cadena",
+      "generar": {
+        "tema": "relacion",
+        "intrusos": false
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "relacion",
+        "f": 1
+      }
+    },
+    {
+      "modo": "cadena",
+      "generar": {
+        "tema": "relacion",
+        "intrusos": true
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "relacion",
+        "f": 2,
+        "min": 2
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "relacion",
+        "f": 3,
+        "min": 3
+      }
+    },
+    {
+      "modo": "cadena",
+      "generar": {
+        "tema": "relacion",
+        "intrusos": true
+      }
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

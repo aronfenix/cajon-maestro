@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La lupa · La cajonera</title>
+<meta name="description" content="Acerca y aleja una lupa por los niveles de organización (célula, tejido, órgano, aparato, organismo) y ordena cadenas.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "vida",
+  "area": "naturales",
+  "escena": "laboratorio",
+  "volver": "../el-maniqui-de-ciencias/",
+  "titulo": "La lupa",
+  "personaje": "goma",
+  "subtitulo": "De una persona a una de sus células hay cinco niveles. La lupa los recorre todos.",
+  "portada": {
+    "objetivo": "Acerca y aleja la lupa hasta el nivel que se describe, y ordena cada cadena desde la célula hasta el organismo.",
+    "frase": "Mira de qué está hecho.",
+    "dibujo": "lupa",
+    "piezas": [
+      "neurona",
+      "corazon"
+    ],
+    "rotulo": "NIVELES"
+  },
+  "historia": [
+    {
+      "quien": "boli",
+      "pose": "asombro",
+      "texto": "Esta pieza del maniquí es el corazón. ¿Y esta otra? Un trozo de corazón. ¿Y esta? Un trozo del trozo."
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Para eso está la lupa. Cada nivel está hecho del anterior. Hasta llegar a la célula."
+    }
+  ],
+  "saludo": "Célula, tejido, órgano, aparato, organismo. **Cada uno está hecho del anterior.**",
+  "observa": "¿Por qué el corazón es un órgano y no un tejido? ¿Qué le faltaría para ser un aparato?",
+  "niveles": [
+    {
+      "modo": "cadena",
+      "generar": {
+        "tema": "niveles",
+        "intrusos": false
+      }
+    },
+    {
+      "modo": "zoom",
+      "generar": {
+        "niveles": [
+          "celula",
+          "organismo",
+          "tejido"
+        ]
+      }
+    },
+    {
+      "modo": "zoom",
+      "generar": {
+        "niveles": [
+          "tejido",
+          "organo"
+        ]
+      }
+    },
+    {
+      "modo": "cadena",
+      "generar": {
+        "tema": "niveles",
+        "intrusos": true
+      }
+    },
+    {
+      "modo": "zoom",
+      "generar": {
+        "niveles": [
+          "organo",
+          "aparato"
+        ]
+      }
+    },
+    {
+      "modo": "zoom",
+      "generar": true
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

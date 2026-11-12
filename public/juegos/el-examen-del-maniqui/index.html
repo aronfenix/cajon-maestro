@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El examen del maniquí · La cajonera</title>
+<meta name="description" content="Repaso de todo el tema 1 de Naturales mezclando los juegos del maniquí.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "vida",
+  "area": "naturales",
+  "escena": "laboratorio",
+  "volver": "../el-maniqui-de-ciencias/",
+  "titulo": "El examen del maniquí",
+  "personaje": "boli",
+  "subtitulo": "El maniquí ya está montado. Ahora el profe va a preguntar por cada pieza.",
+  "portada": {
+    "objetivo": "Un poco de todo: la célula, los niveles, la nutrición, la relación y la reproducción.",
+    "frase": "Pregunta el profe. Corrijo yo.",
+    "dibujo": "maniqui",
+    "piezas": [
+      "celula",
+      "corazon"
+    ],
+    "rotulo": "EXAMEN"
+  },
+  "historia": [
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Lunes. El maniquí está en su sitio. El profe ha sacado su libreta."
+    },
+    {
+      "quien": "fosforito",
+      "pose": "asombro",
+      "texto": "¡Va a preguntar por cada pieza! ¿Y si no me acuerdo?"
+    },
+    {
+      "quien": "goma",
+      "pose": "animo",
+      "texto": "Te acuerdas. Lo has montado tú."
+    }
+  ],
+  "saludo": "De todo un poco. **Sin prisa.**",
+  "observa": "¿Qué parte del tema te ha costado más? ¿Qué juego volverías a jugar antes del control?",
+  "niveles": [
+    {
+      "modo": "cuenta",
+      "generar": {
+        "f": 2
+      }
+    },
+    {
+      "modo": "portero",
+      "generar": {
+        "n": 5
+      }
+    },
+    {
+      "modo": "zoom",
+      "generar": true
+    },
+    {
+      "modo": "ruta",
+      "generar": {
+        "rutas": [
+          "miga",
+          "aire"
+        ]
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "nutricion",
+        "f": 2,
+        "min": 2
+      }
+    },
+    {
+      "modo": "cadena",
+      "generar": {
+        "tema": "relacion",
+        "intrusos": true
+      }
+    },
+    {
+      "modo": "musculo",
+      "generar": {
+        "partes": [
+          "brazo",
+          "pierna"
+        ]
+      }
+    },
+    {
+      "modo": "divide",
+      "generar": {
+        "n": [
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "modo": "averia",
+      "generar": {
+        "sistema": "celula",
+        "f": 3,
+        "min": 2
+      }
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

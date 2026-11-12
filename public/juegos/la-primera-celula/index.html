@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La primera célula · La cajonera</title>
+<meta name="description" content="Del cigoto al bebé: predice cuántas células salen al dividirse y ordena fecundación, embarazo y parto.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "vida",
+  "area": "naturales",
+  "escena": "laboratorio",
+  "volver": "../el-maniqui-de-ciencias/",
+  "titulo": "La primera célula",
+  "personaje": "fosforito",
+  "subtitulo": "Todos empezamos siendo una sola célula. Luego, a dividirse.",
+  "portada": {
+    "objetivo": "Predice cuántas células salen de cada división y ordena el camino desde la fecundación hasta el parto.",
+    "frase": "¡Una! ¡Dos! ¡Cuatro! ¡Esto no para!",
+    "dibujo": "cigoto",
+    "piezas": [
+      "ovulo",
+      "bebe"
+    ],
+    "rotulo": "REPRODUCCIÓN"
+  },
+  "historia": [
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Cada célula sale de la división de otra. Entonces, ¿de dónde sale la primera?"
+    },
+    {
+      "quien": "fosforito",
+      "pose": "pista",
+      "texto": "¡De la unión de un óvulo y un espermatozoide! Se llama cigoto. ¡Y luego se divide sin parar!"
+    }
+  ],
+  "saludo": "Cada vez que se divide, **todas** las células se parten en dos.",
+  "observa": "Si cada célula procede de la división de otra, ¿de dónde salió la primera célula de tu cuerpo?",
+  "niveles": [
+    {
+      "modo": "divide",
+      "generar": {
+        "n": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "modo": "divide",
+      "generar": {
+        "n": [
+          3
+        ]
+      }
+    },
+    {
+      "modo": "cadena",
+      "generar": {
+        "tema": "reproduccion",
+        "intrusos": false
+      }
+    },
+    {
+      "modo": "divide",
+      "generar": {
+        "n": [
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "modo": "cadena",
+      "generar": {
+        "tema": "reproduccion",
+        "intrusos": true
+      }
+    },
+    {
+      "modo": "divide",
+      "generar": {
+        "n": [
+          3,
+          4,
+          5
+        ],
+        "inverso": true
+      }
+    },
+    {
+      "modo": "divide",
+      "generar": {
+        "n": [
+          6
+        ]
+      }
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

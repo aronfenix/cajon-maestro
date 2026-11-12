@@ -3,6 +3,7 @@ import { ruta } from './rutas';
 const CAJAS: Record<string, string> = {
   'la-feria-de-otono': 'la-feria-de-otono',
   'la-gran-limpieza': 'la-gran-limpieza-del-cajon',
+  'el-maniqui-de-ciencias': 'el-maniqui-de-ciencias',
 };
 export function cajaDe(id: string) {
   const p = CAJAS[id];

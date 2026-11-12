@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tira y afloja · La cajonera</title>
+<meta name="description" content="Contrae y relaja dos músculos para mover el brazo y la pierna, y elige qué articulaciones mueves en cada gesto.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "vida",
+  "area": "naturales",
+  "escena": "laboratorio",
+  "volver": "../el-maniqui-de-ciencias/",
+  "titulo": "Tira y afloja",
+  "personaje": "goma",
+  "subtitulo": "Los músculos solo saben tirar. Para mover un hueso hacia un lado y hacia el otro hacen falta dos.",
+  "portada": {
+    "objetivo": "Contrae y relaja los músculos para mover el brazo y la pierna, y encuentra qué articulaciones mueves en cada gesto.",
+    "frase": "Aquí nadie empuja. Todos tiran.",
+    "dibujo": "musculo",
+    "piezas": [
+      "hueso",
+      "balon"
+    ],
+    "rotulo": "LOCOMOTOR"
+  },
+  "historia": [
+    {
+      "quien": "boli",
+      "pose": "piensa",
+      "texto": "El brazo del maniquí se dobla, pero no se estira solo. ¿Le falta un músculo que empuje?"
+    },
+    {
+      "quien": "goma",
+      "pose": "seguro",
+      "texto": "Ningún músculo empuja. Le falta el de detrás, que tira hacia el otro lado."
+    }
+  ],
+  "saludo": "Un músculo **contraído** se acorta y **tira**. Uno relajado se deja estirar.",
+  "observa": "Si los músculos solo tiran, ¿cómo estiras el brazo? ¿Cuántos músculos hacen falta para mover un hueso adelante y atrás?",
+  "niveles": [
+    {
+      "modo": "musculo",
+      "generar": {
+        "partes": [
+          "brazo"
+        ],
+        "objetivos": [
+          "dobla",
+          "estira"
+        ]
+      }
+    },
+    {
+      "modo": "articulacion",
+      "generar": {
+        "f": 1
+      }
+    },
+    {
+      "modo": "musculo",
+      "generar": {
+        "partes": [
+          "brazo"
+        ]
+      }
+    },
+    {
+      "modo": "articulacion",
+      "generar": {
+        "f": 2,
+        "min": 2
+      }
+    },
+    {
+      "modo": "musculo",
+      "generar": {
+        "partes": [
+          "pierna"
+        ]
+      }
+    },
+    {
+      "modo": "articulacion",
+      "generar": {
+        "f": 3,
+        "min": 3
+      }
+    },
+    {
+      "modo": "musculo",
+      "generar": {
+        "partes": [
+          "brazo",
+          "pierna"
+        ]
+      }
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>

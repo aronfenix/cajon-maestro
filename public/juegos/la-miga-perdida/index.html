@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La miga perdida · La cajonera</title>
+<meta name="description" content="Lleva una miga, una bocanada de aire o un desecho por el cuerpo, parada a parada. Si te equivocas, verás qué pasaría.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../motores/base.css">
+</head>
+<body>
+<!--
+  Este juego no tiene código propio: todo lo que cambia está en el bloque de abajo.
+  Para hacer otro con el mismo motor, copia esta carpeta, cambia el texto y los datos, y listo.
+  Instrucciones de cada motor: ../motores/
+-->
+<script type="application/json" id="config">
+{
+  "motor": "vida",
+  "area": "naturales",
+  "escena": "laboratorio",
+  "volver": "../el-maniqui-de-ciencias/",
+  "titulo": "La miga perdida",
+  "personaje": "boli",
+  "subtitulo": "Una miga, una bocanada de aire, un desecho: cada uno tiene su camino por el cuerpo.",
+  "portada": {
+    "objetivo": "Lleva cada cosa por su camino eligiendo la siguiente parada. Si te equivocas, verás qué pasaría.",
+    "frase": "Por la tráquea, no. Créeme.",
+    "dibujo": "miga",
+    "piezas": [
+      "estomago",
+      "pulmones"
+    ],
+    "rotulo": "NUTRICIÓN"
+  },
+  "historia": [
+    {
+      "quien": "fosforito",
+      "pose": "asombro",
+      "texto": "¡Se le ha caído una miga dentro al maniquí! ¿Por dónde va?"
+    },
+    {
+      "quien": "boli",
+      "pose": "seguro",
+      "texto": "Por donde tiene que ir. Y hay un cruce donde mucha gente se equivoca."
+    }
+  ],
+  "saludo": "Cada cosa tiene **su camino**. Los atajos acaban en tos.",
+  "observa": "¿Por qué tosemos cuando «se nos va por el otro lado»? ¿Qué dos caminos se cruzan en la faringe?",
+  "niveles": [
+    {
+      "modo": "ruta",
+      "generar": {
+        "rutas": [
+          "miga"
+        ]
+      }
+    },
+    {
+      "modo": "ruta",
+      "generar": {
+        "rutas": [
+          "aire"
+        ]
+      }
+    },
+    {
+      "modo": "ruta",
+      "generar": {
+        "rutas": [
+          "desecho"
+        ]
+      }
+    },
+    {
+      "modo": "ruta",
+      "generar": {
+        "rutas": [
+          "miga",
+          "aire"
+        ]
+      }
+    },
+    {
+      "modo": "ruta",
+      "generar": {
+        "rutas": [
+          "resto",
+          "co2"
+        ]
+      }
+    },
+    {
+      "modo": "ruta",
+      "generar": true
+    }
+  ]
+}
+</script>
+<script type="module" src="../motores/arranque.js"></script>
+<noscript><p style="margin:24px">Este juego necesita JavaScript.</p></noscript>
+</body>
+</html>
